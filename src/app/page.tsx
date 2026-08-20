@@ -87,9 +87,16 @@ const SAMPLE_CASES = [
           "Cam kết lợi nhuận cố định theo giờ",
           "Domain vừa đăng ký không có chứng chỉ bảo mật doanh nghiệp"
         ],
+        // Trong phần web_intelligence của ca Solana:
         external_evidence: [
-          { title: "Trang chủ chính thức của Solana Foundation", source_url: "https://solana.com" },
-          { title: "Tra cứu cảnh báo lừa đảo trên ChongLuaDao", source_url: "https://chongluadao.vn" }
+          {
+            title: "Cảnh báo tên miền đào ảo giả mạo Solana trên các diễn đàn Web3",
+            source_url: "https://www.google.com/search?q=solana+mining+drainer+scam+alert"
+          },
+          {
+            title: "Domain không thuộc hệ sinh thái chính thức solana.com",
+            source_url: "https://solana.com"
+          }
         ],
         confidence: 96,
       },
