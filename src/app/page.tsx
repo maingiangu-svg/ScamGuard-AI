@@ -5,8 +5,33 @@ import {
   ShieldAlert, AlertTriangle, UploadCloud, FileSearch, Brain, Forward,
   Copy, Check, Zap, Lock, RefreshCw, Eye, Activity, Fingerprint,
   Sparkles, ChevronRight, MessageSquare, Printer, Link2, Image as ImageIcon,
-  Users, Flame, Clock, ArrowUpRight, Share2, Send, Gamepad2, Bot, User
+  Users, Flame, Clock, ArrowUpRight, Share2, Send, Gamepad2, Bot, User, Globe,
+  ExternalLink
 } from "lucide-react";
+
+interface ExternalEvidenceItem {
+  title: string;
+  source_url: string;
+}
+
+interface WebIntelligence {
+  detected: boolean;
+  url: string | null;
+  domain: string | null;
+  brand_detected: string | null;
+  domain_match: "match" | "mismatch" | "unknown";
+  website_status: "accessible" | "unavailable" | "unknown";
+  suspicious_indicators: string[];
+  external_evidence: ExternalEvidenceItem[];
+  confidence: number;
+}
+
+interface RedFlagItem {
+  evidence: string;
+  official_fact: string;
+  official_link?: string | null;
+  explanation: string;
+}
 
 interface ForensicResult {
   scam_detected: boolean;
@@ -14,7 +39,8 @@ interface ForensicResult {
   threat_level: "CRITICAL" | "HIGH" | "MEDIUM" | "LOW" | "SAFE";
   scam_type: string;
   executive_summary: string;
-  red_flags: { evidence: string; explanation: string }[];
+  web_intelligence?: WebIntelligence;
+  red_flags: RedFlagItem[];
   psychological_tricks: { tactic: string; target_emotion: string; analysis: string }[];
   next_move_prediction: string;
   urgent_actions: string[];
@@ -45,9 +71,37 @@ const SAMPLE_CASES = [
       scam_detected: true, risk_score: 98, threat_level: "CRITICAL" as const,
       scam_type: "Crypto Phishing & Wallet Drainer",
       executive_summary: "Trang web giả mạo thương hiệu Solana trên domain lạ hashrate-accesscenter.com dụ cài file độc chiếm ví.",
+      web_intelligence: {
+        detected: true,
+        url: "https://hashrate-accesscenter.com/solana-miner",
+        domain: "hashrate-accesscenter.com",
+        brand_detected: "Solana Foundation",
+        domain_match: "mismatch" as const,
+        website_status: "accessible" as const,
+        suspicious_indicators: [
+          "Yêu cầu Approve quyền truy cập ví không giới hạn",
+          "Cam kết lợi nhuận cố định theo giờ",
+          "Domain vừa đăng ký không có chứng chỉ bảo mật doanh nghiệp"
+        ],
+        external_evidence: [
+          { title: "Trang chủ chính thức của Solana Foundation", source_url: "https://solana.com" },
+          { title: "Tra cứu cảnh báo lừa đảo trên ChongLuaDao", source_url: "https://chongluadao.vn" }
+        ],
+        confidence: 96,
+      },
       red_flags: [
-        { evidence: "Domain 'hashrate-accesscenter.com'", explanation: "Không thuộc sở hữu của Solana Foundation (solana.com)." },
-        { evidence: "Cam kết 0.065 SOL/giờ", explanation: "Lợi nhuận phi thực tế, dấu hiệu lừa đảo Ponzi." }
+        {
+          evidence: "Domain 'hashrate-accesscenter.com'",
+          official_fact: "Website chính thức duy nhất của Solana Foundation là solana.com.",
+          official_link: "https://solana.com",
+          explanation: "Không thuộc sở hữu của Solana Foundation, tên miền lạ tạo bẫy rút tiền ví."
+        },
+        {
+          evidence: "Cam kết 0.065 SOL/giờ (~1.56 SOL/ngày)",
+          official_fact: "Lãi suất staking/đào Solana chuẩn chỉ khoảng 6-7%/năm.",
+          official_link: "https://solana.com",
+          explanation: "Lợi nhuận phi thực tế gấp hàng trăm lần thực tế, dấu hiệu lừa đảo Ponzi rút cạn ví."
+        }
       ],
       psychological_tricks: [{ tactic: "FOMO lợi nhuận", target_emotion: "Lòng tham", analysis: "Tạo cảm giác bỏ lỡ tiền miễn phí mỗi giờ." }],
       next_move_prediction: "Yêu cầu ký lệnh Approve quyền truy cập ví không giới hạn để rút sạch tiền.",
@@ -61,7 +115,32 @@ const SAMPLE_CASES = [
       scam_detected: true, risk_score: 95, threat_level: "CRITICAL" as const,
       scam_type: "SMS Phishing Brandname",
       executive_summary: "Dùng trạm BTS giả chèn tin nhắn dọa đóng băng tài khoản để chiếm đoạt mã OTP.",
-      red_flags: [{ evidence: "Đường link đuôi lạ .vip", explanation: "Trang web giả mạo giao diện ngân hàng để thu thập mật khẩu." }],
+      web_intelligence: {
+        detected: true,
+        url: "https://vietcombank-login.vip/verify-otp",
+        domain: "vietcombank-login.vip",
+        brand_detected: "Vietcombank",
+        domain_match: "mismatch" as const,
+        website_status: "accessible" as const,
+        suspicious_indicators: [
+          "Trang đăng nhập ngân hàng giả mạo thu thập Username/Password",
+          "Yêu cầu nhập trực tiếp mã OTP giao dịch",
+          "Sử dụng tên miền giá rẻ TLD .vip"
+        ],
+        external_evidence: [
+          { title: "Trang chủ chính thức Ngân hàng Vietcombank", source_url: "https://www.vietcombank.com.vn" },
+          { title: "Cảnh báo trạm BTS giả mạo Brandname VCB", source_url: "https://www.vietcombank.com.vn" }
+        ],
+        confidence: 98,
+      },
+      red_flags: [
+        {
+          evidence: "Đường link đuôi lạ vietcombank-login.vip",
+          official_fact: "Website chính thức của Ngân hàng luôn dùng tên miền chính chủ .com.vn hoặc .vn (vd: vietcombank.com.vn).",
+          official_link: "https://www.vietcombank.com.vn",
+          explanation: "Trang web giả mạo giao diện ngân hàng để thu thập mật khẩu và mã OTP."
+        }
+      ],
       psychological_tricks: [{ tactic: "Đe dọa khóa tài khoản", target_emotion: "Sợ hãi", analysis: "Ép nạn nhân thao tác vội trong 5 phút." }],
       next_move_prediction: "Dùng OTP chiếm đoạt chuyển sạch tiền sang tài khoản rác.",
       urgent_actions: ["Không bấm vào link", "Gọi hotline ngân hàng trên thẻ để khóa tài khoản tạm thời"],
@@ -74,7 +153,31 @@ const SAMPLE_CASES = [
       scam_detected: true, risk_score: 92, threat_level: "HIGH" as const,
       scam_type: "Tuyển dụng CTV Đơn ảo",
       executive_summary: "Dụ làm nhiệm vụ đơn hàng ảo, ban đầu trả tiền sòng phẳng rồi viện cớ lỗi hệ thống chiếm đoạt tiền nạp.",
-      red_flags: [{ evidence: "Nạp tiền vào STK cá nhân", explanation: "Tiền đi thẳng vào tài khoản của kẻ lừa đảo." }],
+      web_intelligence: {
+        detected: true,
+        url: "https://shopee-nhiemvu.top/task-claim",
+        domain: "shopee-nhiemvu.top",
+        brand_detected: "Shopee Vietnam",
+        domain_match: "mismatch" as const,
+        website_status: "accessible" as const,
+        suspicious_indicators: [
+          "Yêu cầu chuyển khoản tiền vào STK cá nhân để nạp điểm nhiệm vụ",
+          "Dùng tên miền nhái thương hiệu Shopee đuôi .top"
+        ],
+        external_evidence: [
+          { title: "Trang chủ chính thức Shopee Việt Nam", source_url: "https://shopee.vn" },
+          { title: "Cảnh báo lừa đảo tuyển CTV từ Shopee", source_url: "https://shopee.vn" }
+        ],
+        confidence: 94,
+      },
+      red_flags: [
+        {
+          evidence: "Nạp tiền chuyển khoản vào STK cá nhân (NGUYEN VAN A)",
+          official_fact: "Shopee và các sàn TMĐT không bao giờ tuyển CTV thanh toán đơn hàng bằng chuyển khoản cá nhân.",
+          official_link: "https://shopee.vn",
+          explanation: "Tiền đi thẳng vào tài khoản của kẻ lừa đảo mà không có bất kỳ đơn hàng thực tế nào."
+        }
+      ],
       psychological_tricks: [{ tactic: "Bẫy chi phí chìm", target_emotion: "Tiếc tiền", analysis: "Ép nạp thêm tiền để cứu lại tiền đã bị treo." }],
       next_move_prediction: "Báo lỗi cú pháp, yêu cầu nạp thêm 50% tiền để kích hoạt hoàn tiền.",
       urgent_actions: ["Dừng chuyển thêm tiền", "Lưu sao kê và tin nhắn trình báo công an"],
@@ -95,9 +198,36 @@ const MOCK_COMMUNITY_FEED: CommunityFeedItem[] = [
       scam_detected: true, risk_score: 96, threat_level: "CRITICAL" as const,
       scam_type: "Sàn BO (Binary Options) Giả Mạo",
       executive_summary: "Sàn giao dịch quyền chọn nhị phân giả mạo thao túng nến đồ thị, dọa nạp thêm tiền thuế để rút.",
+      web_intelligence: {
+        detected: true,
+        url: "https://bo-trading-vip.net/trade",
+        domain: "bo-trading-vip.net",
+        brand_detected: "Binance / Sàn BO",
+        domain_match: "mismatch" as const,
+        website_status: "accessible" as const,
+        suspicious_indicators: [
+          "Cam kết bao lỗ 100% & hoa hồng 30%",
+          "Khóa tính năng rút tiền và yêu cầu nạp thêm phí thuế"
+        ],
+        external_evidence: [
+          { title: "Thông báo cảnh báo sàn BO từ UBCKNN", source_url: "https://ssc.gov.vn" },
+          { title: "Tra cứu lừa đảo tài chính tại ChongLuaDao", source_url: "https://chongluadao.vn" }
+        ],
+        confidence: 95,
+      },
       red_flags: [
-        { evidence: "Cam kết bao lỗ 100% & hoa hồng 30%", explanation: "Không sàn giao dịch tài chính hợp pháp nào bao lỗ." },
-        { evidence: "Domain lạ bo-trading-vip.net", explanation: "Tên miền vừa đăng ký không có giấy phép hoạt động." }
+        {
+          evidence: "Cam kết bao lỗ 100% & hoa hồng 30%",
+          official_fact: "Mọi hoạt động đầu tư tài chính được Nhà nước cấp phép đều có rủi ro, không bao giờ cam kết bao lỗ 100%.",
+          official_link: "https://ssc.gov.vn",
+          explanation: "Bẫy tâm lý dụ nạn nhân an tâm dồn số tiền lớn vào sàn."
+        },
+        {
+          evidence: "Domain lạ bo-trading-vip.net không giấy phép",
+          official_fact: "Ủy ban Chứng khoán Nhà nước (UBCKNN) không cấp phép cho bất kỳ sàn BO nào hoạt động tại VN.",
+          official_link: "https://ssc.gov.vn",
+          explanation: "Sàn tự tạo đồ thị ảo để chiếm đoạt tiền của người dùng."
+        }
       ],
       psychological_tricks: [{ tactic: "Tạo lòng tin ảo", target_emotion: "Lòng tham", analysis: "Cho thắng nhỏ ban đầu để nạn nhân tự tin dồn vốn lớn." }],
       next_move_prediction: "Yêu cầu nạp 20% phí xác minh tài khoản hoặc phí thuế thu nhập cá nhân mới cho rút tiền.",
@@ -116,9 +246,36 @@ const MOCK_COMMUNITY_FEED: CommunityFeedItem[] = [
       scam_detected: true, risk_score: 99, threat_level: "CRITICAL" as const,
       scam_type: "Fake Gov App / Android Malware",
       executive_summary: "Gửi link tải ứng dụng .APK chứa mã độc Accessibility Service để đọc OTP và tự động chuyển tiền.",
+      web_intelligence: {
+        detected: true,
+        url: "https://vneid-gov.apk-download.site/vneid.apk",
+        domain: "vneid-gov.apk-download.site",
+        brand_detected: "VNeID / Bộ Công An",
+        domain_match: "mismatch" as const,
+        website_status: "accessible" as const,
+        suspicious_indicators: [
+          "Gửi file .APK trực tiếp qua đường link giả mạo trang chính phủ",
+          "Yêu cầu cấp quyền Accessibility điều khiển thiết bị từ xa"
+        ],
+        external_evidence: [
+          { title: "Cổng thông tin Đề án 06 / VNeID Bộ Công An", source_url: "https://vneid.gov.vn" },
+          { title: "Cảnh báo mã độc VNeID từ Cục An toàn thông tin", source_url: "https://khonggianmang.vn" }
+        ],
+        confidence: 99,
+      },
       red_flags: [
-        { evidence: "Link tải file .APK ngoài Google Play", explanation: "Công an không bao giờ gửi link qua Zalo/SMS để cập nhật VNeID." },
-        { evidence: "Yêu cầu cấp quyền Accessibility (Hỗ trợ)", explanation: "Mã độc dùng quyền này để đọc màn hình và tự thao tác app ngân hàng." }
+        {
+          evidence: "Link tải file vneid-gov.apk ngoài Google Play",
+          official_fact: "VNeID chỉ phát hành duy nhất trên CH Play và App Store chính thức bởi Bộ Công an.",
+          official_link: "https://vneid.gov.vn",
+          explanation: "Công an không bao giờ gửi link qua Zalo/SMS để cập nhật VNeID."
+        },
+        {
+          evidence: "Yêu cầu cấp quyền Accessibility (Hỗ trợ)",
+          official_fact: "Ứng dụng hành chính công chính thức không bao giờ đòi hỏi quyền Accessibility.",
+          official_link: "https://khonggianmang.vn",
+          explanation: "Mã độc dùng quyền này để đọc màn hình và tự thao tác app ngân hàng chiếm đoạt tiền."
+        }
       ],
       psychological_tricks: [{ tactic: "Mạo danh cơ quan công quyền", target_emotion: "Nỗi sợ pháp lý", analysis: "Dọa khóa tài khoản/định danh nếu không làm ngay." }],
       next_move_prediction: "Âm thầm khóa màn hình nạn nhân và thực hiện chuyển cạn tiền tài khoản ngân hàng.",
@@ -137,9 +294,30 @@ const MOCK_COMMUNITY_FEED: CommunityFeedItem[] = [
       scam_detected: true, risk_score: 94, threat_level: "HIGH" as const,
       scam_type: "AI Deepfake Impersonation",
       executive_summary: "Sử dụng trí tuệ nhân tạo giả dạng khuôn mặt và giọng nói người thân trong thời gian ngắn để vay tiền gấp.",
+      web_intelligence: {
+        detected: false,
+        url: null,
+        domain: null,
+        brand_detected: null,
+        domain_match: "unknown" as const,
+        website_status: "unknown" as const,
+        suspicious_indicators: [],
+        external_evidence: [],
+        confidence: 0,
+      },
       red_flags: [
-        { evidence: "Tín hiệu video chập chờn, tắt nhanh trong vài giây", explanation: "Kẻ gian cố tình làm mờ để che đậy khuyết điểm mô phỏng cơ mặt AI." },
-        { evidence: "Yêu cầu chuyển tiền vào tài khoản tên người lạ", explanation: "Viện cớ tài khoản chính bị khóa hoặc mượn tài khoản bác sĩ." }
+        {
+          evidence: "Tín hiệu video chập chờn, tắt nhanh trong vài giây",
+          official_fact: "Công nghệ Deepfake video call thời gian thực chưa hoàn chỉnh cơ mặt và khó khớp voice dài.",
+          official_link: "https://khonggianmang.vn",
+          explanation: "Kẻ gian cố tình làm mờ giật lag để che đậy khuyết điểm mô phỏng AI."
+        },
+        {
+          evidence: "Yêu cầu chuyển tiền vào STK đứng tên người lạ",
+          official_fact: "Người thân cần vay gấp luôn dùng tài khoản chính chủ hoặc nhờ người thân xác nhận.",
+          official_link: "https://khonggianmang.vn",
+          explanation: "Viện cớ tài khoản chính bị khóa hoặc mượn tài khoản bác sĩ/bệnh viện."
+        }
       ],
       psychological_tricks: [{ tactic: "Tạo tình huống khẩn cấp", target_emotion: "Lo lắng cho người thân", analysis: "Gây hoảng loạn để nạn nhân không kịp gọi điện xác minh." }],
       next_move_prediction: "Tiếp tục hối thúc chuyển thêm tiền với lý do chi phí phẫu thuật/bồi thường chưa đủ.",
@@ -158,9 +336,36 @@ const MOCK_COMMUNITY_FEED: CommunityFeedItem[] = [
       scam_detected: true, risk_score: 89, threat_level: "HIGH" as const,
       scam_type: "Telegram Phishing & Session Hijacking",
       executive_summary: "Dụ nạn nhân nhập số điện thoại và mã OTP Telegram vào trang web giả mạo bình chọn để chiếm quyền quản trị tài khoản.",
+      web_intelligence: {
+        detected: true,
+        url: "https://vote-kids-2026.com/telegram-login",
+        domain: "vote-kids-2026.com",
+        brand_detected: "Telegram",
+        domain_match: "mismatch" as const,
+        website_status: "accessible" as const,
+        suspicious_indicators: [
+          "Form giả mạo trang đăng nhập Telegram yêu cầu nhập SĐT & OTP",
+          "Lấy danh nghĩa cuộc thi bình chọn ảnh trẻ em"
+        ],
+        external_evidence: [
+          { title: "Trang chủ chính thức Telegram", source_url: "https://telegram.org" },
+          { title: "Cảnh báo Phishing Telegram tại ChongLuaDao", source_url: "https://chongluadao.vn" }
+        ],
+        confidence: 92,
+      },
       red_flags: [
-        { evidence: "Yêu cầu nhập mã xác thực OTP Telegram", explanation: "Các trang bình chọn thật không bao giờ yêu cầu đăng nhập OTP Telegram." },
-        { evidence: "Tên miền giả mạo (vote-kids-2026.com)", explanation: "Domain lừa đảo được tạo hàng loạt nhằm thu thập session token." }
+        {
+          evidence: "Yêu cầu nhập mã xác thực OTP Telegram trên web vote-kids-2026.com",
+          official_fact: "Telegram không bao giờ yêu cầu nhập mã OTP xác thực đăng nhập ở các website bên ngoài.",
+          official_link: "https://telegram.org",
+          explanation: "Các trang bình chọn giả mạo thu thập mã OTP để cướp tài khoản Telegram."
+        },
+        {
+          evidence: "Tên miền giả mạo vote-kids-2026.com",
+          official_fact: "Hệ thống xác thực Telegram chính thức duy nhất hoạt động trên tên miền telegram.org.",
+          official_link: "https://telegram.org",
+          explanation: "Domain lừa đảo được tạo hàng loạt nhằm thu thập session token."
+        }
       ],
       psychological_tricks: [{ tactic: "Lợi dụng lòng tốt & tình bạn", target_emotion: "Nhiệt tình giúp đỡ", analysis: "Gửi tin nhắn từ tài khoản người quen đã bị hack trước đó." }],
       next_move_prediction: "Chiếm tài khoản Telegram và tiếp tục tự động gửi tin nhắn lừa đảo đến toàn bộ danh bạ.",
@@ -497,6 +702,93 @@ export default function ScamShieldDashboard() {
                 </div>
               </div>
 
+              {/* WEB INTELLIGENCE Section */}
+              {result.web_intelligence?.detected && (
+                <div className="p-4 rounded-xl bg-slate-900/90 border border-cyan-500/30 space-y-3 font-sans">
+                  <div className="flex items-center justify-between border-b border-slate-800 pb-2.5 gap-2 flex-wrap">
+                    <div className="flex items-center gap-2 overflow-hidden">
+                      <span className="text-[10px] uppercase tracking-wider font-mono font-bold px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 flex items-center gap-1 shrink-0">
+                        <Globe className="w-3 h-3 text-cyan-400" /> WEB INTELLIGENCE
+                      </span>
+                      <span className="text-xs font-mono font-semibold text-slate-200 truncate max-w-[200px] sm:max-w-xs">
+                        {result.web_intelligence.domain || result.web_intelligence.url}
+                      </span>
+                    </div>
+
+                    {/* Domain Match Status Badge */}
+                    {result.web_intelligence.domain_match === "mismatch" ? (
+                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded bg-red-500/20 text-red-400 border border-red-500/40 flex items-center gap-1 font-mono shrink-0">
+                        🚨 Tên miền giả mạo (MISMATCH)
+                      </span>
+                    ) : result.web_intelligence.domain_match === "match" ? (
+                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center gap-1 font-mono shrink-0">
+                        ✅ Domain chính thống (MATCH)
+                      </span>
+                    ) : (
+                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center gap-1 font-mono shrink-0">
+                        ⚠️ Chưa xác minh khớp (UNKNOWN)
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                    <div className="p-2.5 bg-slate-950 rounded-lg border border-slate-800 space-y-1">
+                      <div className="text-[10px] text-slate-400 font-bold uppercase">Thương hiệu tự xưng / Mạo danh:</div>
+                      <div className="font-bold text-slate-200">{result.web_intelligence.brand_detected || "Không rõ"}</div>
+                    </div>
+                    <div className="p-2.5 bg-slate-950 rounded-lg border border-slate-800 space-y-1">
+                      <div className="text-[10px] text-slate-400 font-bold uppercase">Độ tin cậy xác thực Web:</div>
+                      <div className="font-bold text-cyan-300 font-mono">{result.web_intelligence.confidence}% Confidence</div>
+                    </div>
+                  </div>
+
+                  {/* Suspicious Indicators */}
+                  {result.web_intelligence.suspicious_indicators?.length > 0 && (
+                    <div className="space-y-1">
+                      <div className="text-[10px] font-bold text-red-400 uppercase">Hành vi web nghi vấn:</div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {result.web_intelligence.suspicious_indicators.map((ind, idx) => (
+                          <span key={idx} className="text-[11px] px-2 py-0.5 bg-red-950/60 border border-red-800/60 text-red-300 rounded-md">
+                            • {ind}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* External Evidence with Clickable Source Links */}
+                  {result.web_intelligence.external_evidence?.length > 0 && (
+                    <div className="space-y-1.5">
+                      <div className="text-[10px] font-bold text-cyan-300 uppercase flex items-center gap-1">
+                        BẰNG CHỨNG ĐỐI CHIẾU EXTERNAL EVIDENCE (CLICK ĐỂ KIỂM CHỨNG):
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {result.web_intelligence.external_evidence.map((item, idx) => {
+                          const isObj = typeof item === "object" && item !== null;
+                          const title = isObj ? item.title : String(item);
+                          const sourceUrl = isObj ? item.source_url : `https://www.google.com/search?q=${encodeURIComponent(String(item))}`;
+
+                          return (
+                            <a
+                              key={idx}
+                              href={sourceUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="group/link text-[11px] text-slate-200 bg-slate-950 hover:bg-slate-900 p-2.5 rounded-lg border border-slate-800 hover:border-cyan-500/50 flex items-center justify-between gap-2 transition cursor-pointer"
+                            >
+                              <span className="truncate group-hover/link:text-cyan-300 transition">
+                                🔍 {title}
+                              </span>
+                              <ExternalLink className="w-3.5 h-3.5 text-cyan-400 shrink-0 opacity-70 group-hover/link:opacity-100 transition" />
+                            </a>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Tabs */}
               <div className="flex border-b border-slate-800 gap-2 print:hidden overflow-x-auto pb-0.5">
                 {(["overview", "psychology", "family", "roleplay"] as const).map((tab) => (
@@ -522,14 +814,49 @@ export default function ScamShieldDashboard() {
                     <div className="text-xs font-bold text-slate-300">Tóm tắt giám định:</div>
                     <p className="text-xs text-slate-400 leading-relaxed">{result.executive_summary}</p>
                   </div>
-                  <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                    <div className="text-xs font-bold text-slate-300">Dấu hiệu nhận biết:</div>
-                    {result.red_flags.map((f, i) => (
-                      <div key={i} className="p-2.5 bg-slate-950 rounded-lg text-xs space-y-0.5">
-                        <div className="font-bold text-red-400">🚨 {f.evidence}</div>
-                        <div className="text-slate-400 pl-4">{f.explanation}</div>
-                      </div>
-                    ))}
+                  <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
+                    <div className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                      <AlertTriangle className="w-4 h-4 text-red-400" /> So sánh Dẫn chứng Đối chiếu Thực tế (Evidence Comparator):
+                    </div>
+                    <div className="space-y-3">
+                      {result.red_flags.map((f, i) => (
+                        <div key={i} className="p-3 bg-slate-950 border border-slate-800/80 rounded-xl text-xs space-y-2">
+                          {/* Dòng 1: Evidence (Cảnh báo - Màu đỏ) */}
+                          <div className="flex items-start gap-2 bg-red-950/40 border border-red-900/40 p-2.5 rounded-lg text-red-300">
+                            <span className="px-1.5 py-0.5 rounded bg-red-900/70 text-red-200 text-[10px] font-bold uppercase shrink-0 font-mono">
+                              [Phát hiện trong dữ liệu]
+                            </span>
+                            <span className="font-bold">{f.evidence}</span>
+                          </div>
+
+                          {/* Dòng 2: Official Fact (Đối chiếu chuẩn - Màu xanh lá/Cyan) + Clickable Official Link */}
+                          <div className="flex items-center justify-between gap-2 bg-emerald-950/40 border border-emerald-900/40 p-2.5 rounded-lg text-emerald-300 flex-wrap">
+                            <div className="flex items-start gap-2">
+                              <span className="px-1.5 py-0.5 rounded bg-emerald-900/70 text-emerald-200 text-[10px] font-bold uppercase shrink-0 font-mono">
+                                [Thực tế chính thống]
+                              </span>
+                              <span className="font-semibold">{f.official_fact || f.explanation}</span>
+                            </div>
+                            {f.official_link && (
+                              <a
+                                href={f.official_link}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="inline-flex items-center gap-1 px-2 py-1 text-[10px] font-bold bg-emerald-900/60 hover:bg-emerald-800/80 text-emerald-200 rounded border border-emerald-700/50 transition cursor-pointer shrink-0 font-mono"
+                              >
+                                <span>Trang gốc</span>
+                                <ExternalLink className="w-3 h-3 text-emerald-300" />
+                              </a>
+                            )}
+                          </div>
+
+                          {/* Dòng 3: Explanation */}
+                          <div className="text-slate-400 pl-1 text-[11px] leading-relaxed pt-0.5">
+                            💡 <strong className="text-slate-300">Phân tích:</strong> {f.explanation}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                   <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-1.5">
                     <div className="text-xs font-bold text-amber-300">Hành động 60s:</div>

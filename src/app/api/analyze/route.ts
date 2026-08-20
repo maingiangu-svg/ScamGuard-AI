@@ -11,12 +11,42 @@ const FORENSIC_SCHEMA: Schema = {
     threat_level: { type: Type.STRING, enum: ["CRITICAL", "HIGH", "MEDIUM", "LOW", "SAFE"] },
     scam_type: { type: Type.STRING },
     executive_summary: { type: Type.STRING },
+    web_intelligence: {
+      type: Type.OBJECT,
+      properties: {
+        detected: { type: Type.BOOLEAN },
+        url: { type: Type.STRING, nullable: true },
+        domain: { type: Type.STRING, nullable: true },
+        brand_detected: { type: Type.STRING, nullable: true },
+        domain_match: { type: Type.STRING, enum: ["match", "mismatch", "unknown"] },
+        website_status: { type: Type.STRING, enum: ["accessible", "unavailable", "unknown"] },
+        suspicious_indicators: { type: Type.ARRAY, items: { type: Type.STRING } },
+        external_evidence: {
+          type: Type.ARRAY,
+          items: {
+            type: Type.OBJECT,
+            properties: {
+              title: { type: Type.STRING },
+              source_url: { type: Type.STRING },
+            },
+            required: ["title", "source_url"],
+          },
+        },
+        confidence: { type: Type.INTEGER },
+      },
+      required: ["detected", "domain_match", "website_status", "suspicious_indicators", "external_evidence", "confidence"],
+    },
     red_flags: {
       type: Type.ARRAY,
       items: {
         type: Type.OBJECT,
-        properties: { evidence: { type: Type.STRING }, explanation: { type: Type.STRING } },
-        required: ["evidence", "explanation"],
+        properties: {
+          evidence: { type: Type.STRING },
+          official_fact: { type: Type.STRING },
+          official_link: { type: Type.STRING, nullable: true },
+          explanation: { type: Type.STRING },
+        },
+        required: ["evidence", "official_fact", "explanation"],
       },
     },
     psychological_tricks: {
@@ -35,7 +65,11 @@ const FORENSIC_SCHEMA: Schema = {
       required: ["headline", "key_warning", "shareable_text"],
     },
   },
-  required: ["scam_detected", "risk_score", "threat_level", "scam_type", "executive_summary", "red_flags", "psychological_tricks", "next_move_prediction", "urgent_actions", "family_alert_card"],
+  required: [
+    "scam_detected", "risk_score", "threat_level", "scam_type", "executive_summary",
+    "web_intelligence", "red_flags", "psychological_tricks", "next_move_prediction",
+    "urgent_actions", "family_alert_card"
+  ],
 };
 
 export async function POST(req: NextRequest) {
@@ -63,7 +97,7 @@ export async function POST(req: NextRequest) {
       model: "gemini-2.5-flash",
       contents,
       config: {
-        systemInstruction: "Bạn là ScamShield Forensic AI - Giám định lừa đảo & thao túng tâm lý tại VN. Trả về đúng JSON Schema.",
+        systemInstruction: "Bạn là ScamShield Forensic AI - Giám định lừa đảo & thao túng tâm lý tại VN. Trả về đúng JSON Schema. Trong web_intelligence: trích xuất URL/domain nếu có (nếu không có URL thì detected: false, url: null, domain: null, brand_detected: null, domain_match: 'unknown', website_status: 'unknown', suspicious_indicators: [], external_evidence: [], confidence: 0). external_evidence chứa danh sách object { title, source_url } trỏ tới URL kiểm chứng công khai hoặc link Google Search query (https://www.google.com/search?q=...). Trong red_flags: mỗi mục có evidence (trích dẫn), official_fact (thực tế chính thống), official_link (URL trang chính thức đối chiếu hoặc null), explanation (phân tích).",
         responseMimeType: "application/json",
         responseSchema: FORENSIC_SCHEMA,
       },
