@@ -1,13 +1,15 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   ShieldAlert, AlertTriangle, UploadCloud, FileSearch, Brain, Forward,
   Copy, Check, Zap, Lock, RefreshCw, Eye, Activity, Fingerprint,
   Sparkles, ChevronRight, MessageSquare, Printer, Link2, Image as ImageIcon,
   Users, Flame, Clock, ArrowUpRight, Share2, Send, Gamepad2, Bot, User, Globe,
-  ExternalLink
+  ExternalLink, FileDown, X, HelpCircle
 } from "lucide-react";
+import html2canvas from "html2canvas";
+import { jsPDF } from "jspdf";
 
 interface ExternalEvidenceItem {
   title: string;
@@ -24,6 +26,8 @@ interface WebIntelligence {
   suspicious_indicators: string[];
   external_evidence: ExternalEvidenceItem[];
   confidence: number;
+  verified_live?: boolean;
+  http_status?: number | null;
 }
 
 interface RedFlagItem {
@@ -409,8 +413,23 @@ export default function ScamShieldDashboard() {
   // Roleplay state
   const [roleplayInput, setRoleplayInput] = useState("");
   const [roleplayMessages, setRoleplayMessages] = useState<RoleplayMessage[]>([]);
+  const [roleplayLoading, setRoleplayLoading] = useState(false);
+  const [exportingPdf, setExportingPdf] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const reportRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && !localStorage.getItem("scamshield-onboarded")) {
+      setShowOnboarding(true);
+    }
+  }, []);
+
+  const dismissOnboarding = () => {
+    localStorage.setItem("scamshield-onboarded", "1");
+    setShowOnboarding(false);
+  };
 
   const generateId = () => `VN-FS-${Math.floor(100000 + Math.random() * 900000)}`;
 
@@ -466,8 +485,8 @@ export default function ScamShieldDashboard() {
     }
   };
 
-  const handleSendRoleplay = (userText: string, isRiskyQuickChoice?: boolean) => {
-    if (!userText.trim()) return;
+  const handleSendRoleplay = async (userText: string, isRiskyQuickChoice?: boolean) => {
+    if (!userText.trim() || !result || roleplayLoading) return;
 
     const userMsg: RoleplayMessage = {
       id: `u-${Date.now()}`,
@@ -475,31 +494,91 @@ export default function ScamShieldDashboard() {
       text: userText,
     };
 
-    const lower = userText.toLowerCase();
-    const isDangerous = isRiskyQuickChoice || lower.includes("otp") || lower.includes("mật khẩu") || lower.includes("chuyển tiền") || lower.includes("nạp") || lower.includes("gửi link") || lower.includes("bấm link") || lower.includes("dạ anh");
-
-    const evalMsg: RoleplayMessage = {
-      id: `e-${Date.now()}`,
-      sender: "eval",
-      text: isDangerous
-        ? "⚠️ CẢNH BÁO NGUY HIỂM: Bạn vừa sa vào bẫy! Việc gửi mã OTP, bấm link lạ hoặc chuyển tiền sẽ khiến bạn bị chiếm đoạt tài khoản/tài sản tức thì."
-        : "✅ XỬ LÝ AN TOÀN: Rất tốt! Bạn giữ tâm lý tỉnh táo, không mắc bẫy tâm lý hối thúc và chủ động xác minh qua kênh chính thống.",
-      evalStatus: isDangerous ? "danger" : "safe",
-    };
-
-    const scammerReplyMsg: RoleplayMessage = {
-      id: `s-${Date.now()}`,
-      sender: "scammer",
-      text: isDangerous
-        ? "Bẫy thành công! Kẻ gian đã nhận được mã/thông tin và vừa thực hiện rút sạch số dư tài khoản của bạn. Hãy rút kinh nghiệm!"
-        : "Nạn nhân này quá tỉnh táo và dứt khoát! Kẻ lừa đảo dọa nạt không thành công đành phải ngắt cuộc gọi và chuyển mục tiêu khác.",
-    };
-
     setRoleplayMessages((prev) => {
       const base = prev.length > 0 ? prev : getInitialRoleplayMessages(result);
-      return [...base, userMsg, evalMsg, scammerReplyMsg];
+      return [...base, userMsg];
     });
     setRoleplayInput("");
+    setRoleplayLoading(true);
+
+    try {
+      const history = (roleplayMessages.length > 0 ? roleplayMessages : getInitialRoleplayMessages(result))
+        .map((m) => ({ sender: m.sender, text: m.text }));
+
+      const res = await fetch("/api/roleplay", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          scamType: result.scam_type,
+          scamContext: result.executive_summary,
+          userMessage: userText,
+          history,
+          isRiskyQuickChoice,
+        }),
+      });
+
+      if (!res.ok) throw new Error((await res.json()).error || "Lỗi roleplay");
+
+      const data = await res.json();
+
+      const evalMsg: RoleplayMessage = {
+        id: `e-${Date.now()}`,
+        sender: "eval",
+        text: data.eval_text,
+        evalStatus: data.eval_status,
+      };
+
+      const scammerReplyMsg: RoleplayMessage = {
+        id: `s-${Date.now()}`,
+        sender: "scammer",
+        text: data.scammer_reply,
+      };
+
+      setRoleplayMessages((prev) => [...prev, evalMsg, scammerReplyMsg]);
+    } catch {
+      const lower = userText.toLowerCase();
+      const isDangerous = isRiskyQuickChoice || lower.includes("otp") || lower.includes("mật khẩu") || lower.includes("chuyển tiền");
+      setRoleplayMessages((prev) => [
+        ...prev,
+        {
+          id: `e-${Date.now()}`,
+          sender: "eval",
+          text: isDangerous
+            ? "⚠️ CẢNH BÁO: Phản xạ nguy hiểm — không cung cấp OTP/mật khẩu/chuyển tiền cho người lạ."
+            : "✅ XỬ LÝ AN TOÀN: Giữ bình tĩnh và xác minh qua kênh chính thống.",
+          evalStatus: isDangerous ? "danger" : "safe",
+        },
+        {
+          id: `s-${Date.now()}`,
+          sender: "scammer",
+          text: isDangerous ? "Bẫy thành công! Hãy rút kinh nghiệm lần sau." : "Kẻ lừa đảo không thành công, chuyển sang mục tiêu khác.",
+        },
+      ]);
+    } finally {
+      setRoleplayLoading(false);
+    }
+  };
+
+  const handleExportPdf = async () => {
+    if (!reportRef.current || !result) return;
+    setExportingPdf(true);
+    try {
+      const canvas = await html2canvas(reportRef.current, {
+        backgroundColor: "#060913",
+        scale: 2,
+        useCORS: true,
+      });
+      const img = canvas.toDataURL("image/png");
+      const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+      const w = pdf.internal.pageSize.getWidth();
+      const h = (canvas.height * w) / canvas.width;
+      pdf.addImage(img, "PNG", 0, 0, w, h);
+      pdf.save(`ScamShield-${caseId || "report"}.pdf`);
+    } catch {
+      window.print();
+    } finally {
+      setExportingPdf(false);
+    }
   };
 
   const runAnalysis = async () => {
@@ -570,6 +649,25 @@ export default function ScamShieldDashboard() {
       </header>
 
       <main className="max-w-6xl mx-auto px-4 mt-8">
+        {showOnboarding && (
+          <div className="mb-6 bg-gradient-to-r from-cyan-950/60 to-indigo-950/60 border border-cyan-500/30 rounded-2xl p-4 print:hidden relative">
+            <button onClick={dismissOnboarding} className="absolute top-3 right-3 text-slate-400 hover:text-white cursor-pointer">
+              <X className="w-4 h-4" />
+            </button>
+            <div className="flex items-start gap-3">
+              <HelpCircle className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
+              <div>
+                <div className="text-sm font-bold text-cyan-200 mb-2">Hướng dẫn 3 bước — dành cho mọi người</div>
+                <ol className="text-xs text-slate-300 space-y-1.5 list-decimal list-inside">
+                  <li><strong>Chụp ảnh</strong> tin nhắn/SMS lạ hoặc <strong>dán link</strong> nghi vấn</li>
+                  <li>Bấm <strong>Bắt đầu Giám định</strong> — AI phân tích trong ~10 giây</li>
+                  <li>Đọc báo cáo → <strong>Gửi cảnh báo</strong> cho người thân qua Zalo</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="text-center max-w-2xl mx-auto mb-6 print:hidden">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-cyan-500/30 bg-cyan-950/30 text-cyan-300 text-xs font-semibold mb-2">
             <Sparkles className="w-3.5 h-3.5 text-cyan-400" /> AI Riser Vietnam 2026
@@ -680,12 +778,17 @@ export default function ScamShieldDashboard() {
 
           {/* Results Display */}
           {result && (
-            <div className="lg:col-span-7 space-y-4 print:w-full print:col-span-12">
-              <div className="flex justify-between items-center bg-slate-900/80 p-3 rounded-xl border border-slate-800 print:hidden">
+            <div ref={reportRef} className="lg:col-span-7 space-y-4 print:w-full print:col-span-12">
+              <div className="flex justify-between items-center bg-slate-900/80 p-3 rounded-xl border border-slate-800 print:hidden flex-wrap gap-2">
                 <div className="text-xs font-mono text-slate-400">HỒ SƠ: <strong className="text-cyan-300">{caseId}</strong></div>
-                <button onClick={() => window.print()} className="text-xs bg-slate-800 text-cyan-300 px-3 py-1.5 rounded-lg border border-cyan-500/30 flex items-center gap-1.5 cursor-pointer hover:bg-slate-700 transition">
-                  <Printer className="w-3.5 h-3.5" /> In Báo Cáo
-                </button>
+                <div className="flex gap-2">
+                  <button onClick={handleExportPdf} disabled={exportingPdf} className="text-xs bg-slate-800 text-cyan-300 px-3 py-1.5 rounded-lg border border-cyan-500/30 flex items-center gap-1.5 cursor-pointer hover:bg-slate-700 transition disabled:opacity-50">
+                    <FileDown className="w-3.5 h-3.5" /> {exportingPdf ? "Đang xuất..." : "Tải PDF"}
+                  </button>
+                  <button onClick={() => window.print()} className="text-xs bg-slate-800 text-cyan-300 px-3 py-1.5 rounded-lg border border-cyan-500/30 flex items-center gap-1.5 cursor-pointer hover:bg-slate-700 transition">
+                    <Printer className="w-3.5 h-3.5" /> In Báo Cáo
+                  </button>
+                </div>
               </div>
 
               <div className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 flex items-center justify-between">
@@ -739,6 +842,13 @@ export default function ScamShieldDashboard() {
                     <div className="p-2.5 bg-slate-950 rounded-lg border border-slate-800 space-y-1">
                       <div className="text-[10px] text-slate-400 font-bold uppercase">Độ tin cậy xác thực Web:</div>
                       <div className="font-bold text-cyan-300 font-mono">{result.web_intelligence.confidence}% Confidence</div>
+                      {result.web_intelligence.verified_live !== undefined && (
+                        <div className={`text-[10px] font-bold ${result.web_intelligence.verified_live ? "text-emerald-400" : "text-amber-400"}`}>
+                          {result.web_intelligence.verified_live
+                            ? `✓ Đã verify HTTP ${result.web_intelligence.http_status ?? "OK"}`
+                            : "⚠ URL không phản hồi khi kiểm tra thực tế"}
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -933,7 +1043,7 @@ export default function ScamShieldDashboard() {
                       <div className="text-xs font-bold text-cyan-300 flex items-center gap-1.5">
                         <Gamepad2 className="w-4 h-4 text-cyan-400" /> Giả Lập Phản Xạ Chống Lừa Đảo (Roleplay Lab)
                       </div>
-                      <div className="text-[11px] text-slate-400">Tập luyện đối đáp trực tiếp với kịch bản lừa đảo vừa phát hiện</div>
+                      <div className="text-[11px] text-slate-400">Powered by Gemini 2.5 Flash — luyện đối đáp với kịch bản lừa đảo thực tế</div>
                     </div>
                     <button
                       onClick={() => setRoleplayMessages(getInitialRoleplayMessages(result))}
@@ -953,7 +1063,7 @@ export default function ScamShieldDashboard() {
                               <Bot className="w-4 h-4" />
                             </div>
                             <div className="bg-red-950/40 border border-red-900/50 rounded-2xl rounded-tl-none p-3 text-xs text-red-200 leading-relaxed">
-                              <div className="text-[9px] font-bold text-red-400 uppercase mb-1">Kẻ lừa đảo (Scammer AI)</div>
+                              <div className="text-[9px] font-bold text-red-400 uppercase mb-1">Kẻ lừa đảo (Gemini AI)</div>
                               {msg.text}
                             </div>
                           </div>

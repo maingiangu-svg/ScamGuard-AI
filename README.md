@@ -1,36 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ScamShield Forensic AI
 
-## Getting Started
+> Giám định pháp y số & giải mã thao túng đa phương thức — dự án **AI Riser Vietnam 2026** (hạng mục Phòng chống lừa đảo)
 
-First, run the development server:
+Ứng dụng web giúp người Việt **phát hiện lừa đảo** qua ảnh chụp màn hình hoặc tin nhắn/link, powered by **Google Gemini 2.5 Flash**.
+
+## Tính năng
+
+- **Quét ảnh / text / URL** — phân tích đa phương thức bằng Gemini
+- **Báo cáo pháp y** — risk score, dấu hiệu vi phạm, so sánh bằng chứng
+- **Web Intelligence** — verify domain thật (HTTP check + đối chiếu brand VN)
+- **Giải mã tâm lý** — chiêu trò thao túng cảm xúc của kẻ lừa đảo
+- **Thẻ cảnh báo gia đình** — chia sẻ nhanh qua Zalo / Telegram
+- **Roleplay Lab** — luyện phản xạ với AI mô phỏng kẻ lừa đảo
+- **3 ca demo Việt Nam** — Solana drainer, SMS ngân hàng, CTV Shopee
+
+## Tech Stack
+
+| Layer | Công nghệ |
+|---|---|
+| Frontend | Next.js 16, React 19, Tailwind CSS 4 |
+| AI | Google Gemini 2.5 Flash (`@google/genai`) |
+| Deploy | Docker → Google Cloud Run |
+
+## Cài đặt local
 
 ```bash
+git clone https://github.com/maingiangu-svg/ScamGuard-AI.git
+cd ScamGuard-AI
+npm install
+cp .env.example .env.local
+# Điền GEMINI_API_KEY tại https://aistudio.google.com/apikey
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Mở [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deploy Google Cloud Run (+10 điểm bonus AI Riser)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+export GCP_PROJECT_ID=your-project-id
+export GEMINI_API_KEY=your-gemini-key
+chmod +x scripts/deploy-cloud-run.sh
+./scripts/deploy-cloud-run.sh
+```
 
-## Learn More
+Hoặc deploy thủ công:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+gcloud run deploy scamshield-forensic \
+  --source . \
+  --region asia-southeast1 \
+  --allow-unauthenticated \
+  --set-env-vars GEMINI_API_KEY=xxx
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Quy trình Google AI Studio
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Thiết kế prompt & schema tại [Google AI Studio](https://aistudio.google.com)
+2. Export logic sang Next.js API Route (`src/app/api/analyze/route.ts`)
+3. Deploy lên Cloud Run
 
-## Deploy on Vercel
+## AI Riser Vietnam 2026
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Chủ đề:** Phòng chống lừa đảo
+- **Đăng ký:** [goo.gle/airiservietnam](https://goo.gle/airiservietnam) (đến 30/8/2026)
+- **Hashtag:** #BuildwithGoogleAI #VibeCoding #AIRiserVietnam
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## License
+
+MIT

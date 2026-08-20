@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenAI, Type, Schema } from "@google/genai";
+import { enrichWebIntelligence, extractUrls } from "@/lib/url-verify";
+import { getClientIp, rateLimit } from "@/lib/rate-limit";
+import type { ForensicResult } from "@/lib/types";
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
@@ -74,8 +77,19 @@ const FORENSIC_SCHEMA: Schema = {
 
 export async function POST(req: NextRequest) {
   try {
+    const ip = getClientIp(req);
+    const { ok } = rateLimit(ip);
+    if (!ok) {
+      return NextResponse.json({ error: "Quá nhiều yêu cầu. Vui lòng thử lại sau 1 phút." }, { status: 429 });
+    }
+
+    if (!process.env.GEMINI_API_KEY) {
+      return NextResponse.json({ error: "Thiếu GEMINI_API_KEY trên server." }, { status: 500 });
+    }
+
     const contentType = req.headers.get("content-type") || "";
-    let contents: any[] = [];
+    let contents: { inlineData?: { mimeType: string; data: string }; text?: string }[] = [];
+    let sourceText = "";
 
     if (contentType.includes("multipart/form-data")) {
       const formData = await req.formData();
@@ -87,10 +101,12 @@ export async function POST(req: NextRequest) {
         { inlineData: { mimeType: image.type, data: buffer.toString("base64") } },
         { text: "Giám định pháp y kỹ thuật số & bóc tách tâm lý lừa đảo bức ảnh này." }
       ];
+      sourceText = "[image analysis]";
     } else {
       const { textInput } = await req.json();
       if (!textInput?.trim()) return NextResponse.json({ error: "Nội dung trống" }, { status: 400 });
-      contents = [{ text: `Giám định pháp y nội dung/đường link sau để tìm dấu hiệu lừa đảo: \n${textInput}` }];
+      sourceText = textInput.trim();
+      contents = [{ text: `Giám định pháp y nội dung/đường link sau để tìm dấu hiệu lừa đảo: \n${sourceText}` }];
     }
 
     const response = await ai.models.generateContent({
@@ -103,8 +119,22 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json(JSON.parse(response.text || "{}"));
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message || "Lỗi xử lý AI" }, { status: 500 });
+    const parsed: ForensicResult = JSON.parse(response.text || "{}");
+
+    const textForVerify = sourceText === "[image analysis]"
+      ? [parsed.web_intelligence?.url, parsed.executive_summary, ...(parsed.red_flags?.map((f) => f.evidence) || [])].filter(Boolean).join(" ")
+      : sourceText;
+
+    if (textForVerify && (parsed.web_intelligence?.detected || extractUrls(textForVerify).length > 0)) {
+      parsed.web_intelligence = await enrichWebIntelligence(parsed.web_intelligence, textForVerify);
+      if (parsed.web_intelligence?.domain_match === "mismatch" && parsed.risk_score < 85) {
+        parsed.risk_score = Math.min(99, parsed.risk_score + 10);
+      }
+    }
+
+    return NextResponse.json(parsed);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Lỗi xử lý AI";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
