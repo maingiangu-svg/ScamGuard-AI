@@ -606,7 +606,15 @@ export default function ScamShieldDashboard() {
           body: JSON.stringify({ textInput }),
         });
       }
-      if (!res.ok) throw new Error((await res.json()).error || "Lỗi giám định");
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        let rawErr = errData.error || "Lỗi giám định";
+        if (typeof rawErr === "object") rawErr = JSON.stringify(rawErr);
+        if (typeof rawErr === "string" && (rawErr.includes("API key not valid") || rawErr.includes("INVALID_ARGUMENT"))) {
+          rawErr = "⚠️ GEMINI_API_KEY trên server Cloud Run chưa hợp lệ hoặc chưa được thiết lập. Vui lòng cập nhật GEMINI_API_KEY trong Cloud Run Console.";
+        }
+        throw new Error(rawErr);
+      }
       const analysisData: ForensicResult = await res.json();
       const newId = generateId();
       setCaseId(newId);
