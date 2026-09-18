@@ -2,6 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenAI, Type, Schema } from "@google/genai";
 import { getClientIp, rateLimit } from "@/lib/rate-limit";
 
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
+
 const ROLEPLAY_SCHEMA: Schema = {
   type: Type.OBJECT,
   properties: {
@@ -12,17 +18,30 @@ const ROLEPLAY_SCHEMA: Schema = {
   required: ["eval_text", "eval_status", "scammer_reply"],
 };
 
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: corsHeaders,
+  });
+}
+
 export async function POST(req: NextRequest) {
   try {
     const ip = getClientIp(req);
     const { ok } = rateLimit(`roleplay:${ip}`);
     if (!ok) {
-      return NextResponse.json({ error: "Quá nhiều yêu cầu roleplay." }, { status: 429 });
+      return NextResponse.json(
+        { error: "Quá nhiều yêu cầu roleplay." },
+        { status: 429, headers: corsHeaders }
+      );
     }
 
     const { scamType, scamContext, userMessage, history, isRiskyQuickChoice } = await req.json();
     if (!userMessage?.trim()) {
-      return NextResponse.json({ error: "Tin nhắn trống" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Tin nhắn trống" },
+        { status: 400, headers: corsHeaders }
+      );
     }
 
     const apiKey = process.env.GEMINI_API_KEY;
@@ -48,7 +67,7 @@ export async function POST(req: NextRequest) {
         });
 
         if (response.text) {
-          return NextResponse.json(JSON.parse(response.text));
+          return NextResponse.json(JSON.parse(response.text), { headers: corsHeaders });
         }
       } catch (geminiErr) {
         console.warn("Roleplay Gemini call failed, using rule fallback:", geminiErr);
@@ -59,17 +78,20 @@ export async function POST(req: NextRequest) {
     const lower = userMessage.toLowerCase();
     const isDangerous = isRiskyQuickChoice || lower.includes("otp") || lower.includes("mật khẩu") || lower.includes("chuyển tiền") || lower.includes("nạp") || lower.includes("bấm link");
 
-    return NextResponse.json({
-      eval_text: isDangerous
-        ? "⚠️ CẢNH BÁO NGUY HIỂM: Bạn vừa sa vào bẫy! Việc gửi mã OTP, mật khẩu hoặc bấm link lạ sẽ khiến bạn bị chiếm đoạt tài khoản tức thì."
-        : "✅ XỬ LÝ AN TOÀN: Rất tốt! Bạn giữ tâm lý tỉnh táo, không mắc bẫy hối thúc và chủ động từ chối / báo cáo.",
-      eval_status: isDangerous ? "danger" : "safe",
-      scammer_reply: isDangerous
-        ? "Bẫy thành công! Kẻ gian đã nhận được thông tin xác thực và vừa thực hiện rút sạch số dư tài khoản. Hãy rút kinh nghiệm!"
-        : "Nạn nhân quá tỉnh táo và dứt khoát! Kẻ lừa đảo dọa nạt không thành công đành ngắt cuộc gọi để tìm mục tiêu khác.",
-    });
+    return NextResponse.json(
+      {
+        eval_text: isDangerous
+          ? "⚠️ CẢNH BÁO NGUY HIỂM: Bạn vừa sa vào bẫy! Việc gửi mã OTP, mật khẩu hoặc bấm link lạ sẽ khiến bạn bị chiếm đoạt tài khoản tức thì."
+          : "✅ XỬ LÝ AN TOÀN: Rất tốt! Bạn giữ tâm lý tỉnh táo, không mắc bẫy hối thúc và chủ động từ chối / báo cáo.",
+        eval_status: isDangerous ? "danger" : "safe",
+        scammer_reply: isDangerous
+          ? "Bẫy thành công! Kẻ gian đã nhận được thông tin xác thực và vừa thực hiện rút sạch số dư tài khoản. Hãy rút kinh nghiệm!"
+          : "Nạn nhân quá tỉnh táo và dứt khoát! Kẻ lừa đảo dọa nạt không thành công đành ngắt cuộc gọi để tìm mục tiêu khác.",
+      },
+      { headers: corsHeaders }
+    );
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Lỗi roleplay AI";
-    return NextResponse.json({ error: message }, { status: 500 });
+    return NextResponse.json({ error: message }, { status: 500, headers: corsHeaders });
   }
 }

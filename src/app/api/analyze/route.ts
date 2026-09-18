@@ -4,6 +4,12 @@ import { enrichWebIntelligence, extractUrls, checkBrandDomain, getDomain } from 
 import { getClientIp, rateLimit } from "@/lib/rate-limit";
 import type { ForensicResult } from "@/lib/types";
 
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
+
 const FORENSIC_SCHEMA: Schema = {
   type: Type.OBJECT,
   properties: {
@@ -151,12 +157,22 @@ function generateSmartFallback(sourceText: string): ForensicResult {
   };
 }
 
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: corsHeaders,
+  });
+}
+
 export async function POST(req: NextRequest) {
   try {
     const ip = getClientIp(req);
     const { ok } = rateLimit(ip);
     if (!ok) {
-      return NextResponse.json({ error: "Quá nhiều yêu cầu. Vui lòng thử lại sau 1 phút." }, { status: 429 });
+      return NextResponse.json(
+        { error: "Quá nhiều yêu cầu. Vui lòng thử lại sau 1 phút." },
+        { status: 429, headers: corsHeaders }
+      );
     }
 
     const apiKey = process.env.GEMINI_API_KEY;
@@ -168,7 +184,9 @@ export async function POST(req: NextRequest) {
     if (contentType.includes("multipart/form-data")) {
       const formData = await req.formData();
       const image = formData.get("image") as File;
-      if (!image) return NextResponse.json({ error: "Không tìm thấy ảnh" }, { status: 400 });
+      if (!image) {
+        return NextResponse.json({ error: "Không tìm thấy ảnh" }, { status: 400, headers: corsHeaders });
+      }
 
       const buffer = Buffer.from(await image.arrayBuffer());
       contents = [
@@ -177,8 +195,11 @@ export async function POST(req: NextRequest) {
       ];
       sourceText = "[image analysis]";
     } else {
-      const { textInput } = await req.json();
-      if (!textInput?.trim()) return NextResponse.json({ error: "Nội dung trống" }, { status: 400 });
+      const body = await req.json().catch(() => ({}));
+      const textInput = body.textInput || (body.url ? `URL: ${body.url}\nTitle: ${body.title || ''}` : '');
+      if (!textInput?.trim()) {
+        return NextResponse.json({ error: "Nội dung trống" }, { status: 400, headers: corsHeaders });
+      }
       sourceText = textInput.trim();
       contents = [{ text: `Giám định pháp y nội dung/đường link sau để tìm dấu hiệu lừa đảo: \n${sourceText}` }];
     }
@@ -221,9 +242,9 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    return NextResponse.json(parsed);
+    return NextResponse.json(parsed, { headers: corsHeaders });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Lỗi xử lý AI";
-    return NextResponse.json({ error: message }, { status: 500 });
+    return NextResponse.json({ error: message }, { status: 500, headers: corsHeaders });
   }
 }
