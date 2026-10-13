@@ -70,11 +70,15 @@ interface RoleplayMessage {
 
 const SAMPLE_CASES = [
   {
-    title: "Bẫy đào Solana 0.065 SOL/h", tag: "Crypto Drainer", summary: "Web mạo danh Solana cam kết lãi khủng theo giờ, dụ cài app độc rút tiền ví.",
+    title: "Solana Cloud Mining Trap 0.065 SOL/h",
+    tag: "Crypto Drainer",
+    summary: "Phishing site impersonating Solana Foundation, promising hourly yields to lure users into installing malicious wallet-draining scripts.",
     mockResult: {
-      scam_detected: true, risk_score: 98, threat_level: "CRITICAL" as const,
+      scam_detected: true,
+      risk_score: 98,
+      threat_level: "CRITICAL" as const,
       scam_type: "Crypto Phishing & Wallet Drainer",
-      executive_summary: "Trang web giả mạo thương hiệu Solana trên domain lạ hashrate-accesscenter.com dụ cài file độc chiếm ví.",
+      executive_summary: "Phishing platform impersonating the Solana Foundation on fraudulent domain hashrate-accesscenter.com designed to drain user Web3 wallets.",
       web_intelligence: {
         detected: true,
         url: "https://hashrate-accesscenter.com/solana-miner",
@@ -83,18 +87,17 @@ const SAMPLE_CASES = [
         domain_match: "mismatch" as const,
         website_status: "accessible" as const,
         suspicious_indicators: [
-          "Yêu cầu Approve quyền truy cập ví không giới hạn",
-          "Cam kết lợi nhuận cố định theo giờ",
-          "Domain vừa đăng ký không có chứng chỉ bảo mật doanh nghiệp"
+          "Requests unlimited wallet approval and asset permissions",
+          "Guarantees unrealistic fixed hourly returns",
+          "Newly registered domain lacking corporate SSL and verified entity"
         ],
-        // Trong phần web_intelligence của ca Solana:
         external_evidence: [
           {
-            title: "Cảnh báo tên miền đào ảo giả mạo Solana trên các diễn đàn Web3",
+            title: "Web3 Security Advisory: Fake Solana Cloud Mining Drainers",
             source_url: "https://www.google.com/search?q=solana+mining+drainer+scam+alert"
           },
           {
-            title: "Domain không thuộc hệ sinh thái chính thức solana.com",
+            title: "Official Solana Foundation Domain (solana.com)",
             source_url: "https://solana.com"
           }
         ],
@@ -103,29 +106,46 @@ const SAMPLE_CASES = [
       red_flags: [
         {
           evidence: "Domain 'hashrate-accesscenter.com'",
-          official_fact: "Website chính thức duy nhất của Solana Foundation là solana.com.",
+          official_fact: "The only official website of the Solana Foundation is solana.com.",
           official_link: "https://solana.com",
-          explanation: "Không thuộc sở hữu của Solana Foundation, tên miền lạ tạo bẫy rút tiền ví."
+          explanation: "Unregistered third-party domain creating a trap to drain connected Web3 wallets."
         },
         {
-          evidence: "Cam kết 0.065 SOL/giờ (~1.56 SOL/ngày)",
-          official_fact: "Lãi suất staking/đào Solana chuẩn chỉ khoảng 6-7%/năm.",
+          evidence: "Guaranteed 0.065 SOL/hour (~1.56 SOL/day)",
+          official_fact: "Legitimate Solana staking APY is approximately 6-7% annually.",
           official_link: "https://solana.com",
-          explanation: "Lợi nhuận phi thực tế gấp hàng trăm lần thực tế, dấu hiệu lừa đảo Ponzi rút cạn ví."
+          explanation: "Yield promises exceeding market benchmarks by 100x indicate a fraudulent Ponzi wallet drainer."
         }
       ],
-      psychological_tricks: [{ tactic: "FOMO lợi nhuận", target_emotion: "Lòng tham", analysis: "Tạo cảm giác bỏ lỡ tiền miễn phí mỗi giờ." }],
-      next_move_prediction: "Yêu cầu ký lệnh Approve quyền truy cập ví không giới hạn để rút sạch tiền.",
-      urgent_actions: ["Đóng tab ngay lập tức", "Thu hồi quyền truy cập ví qua Revoke.cash"],
-      family_alert_card: { headline: "CẢNH BÁO LỪA ĐẢO SÀN TIỀN ẢO", key_warning: "Hứa trả lãi theo giờ đều là bẫy rút cạn ví!", shareable_text: "🚨 CẢNH BÁO: Đang có web mạo danh Solana hứa đào tiền có lãi. Tuyệt đối không bấm hay nối ví kẻo mất sạch tiền!" }
+      psychological_tricks: [
+        {
+          tactic: "Profit FOMO",
+          target_emotion: "Greed",
+          analysis: "Instills urgency and fear of missing out on risk-free passive hourly income."
+        }
+      ],
+      next_move_prediction: "Requests unlimited token spending approval to siphon all native SOL and SPL tokens from the wallet.",
+      urgent_actions: [
+        "Close browser tab immediately",
+        "Revoke suspicious token approvals via Revoke.cash"
+      ],
+      family_alert_card: {
+        headline: "FRAUD ALERT: CRYPTO DRAINER PHISHING",
+        key_warning: "Any website promising hourly crypto profits is a wallet-draining scam!",
+        shareable_text: "🚨 WARNING: A fraudulent site is impersonating Solana promising high mining profits. Do not connect your crypto wallet or approve any transactions!"
+      }
     }
   },
   {
-    title: "SMS mạo danh Ngân hàng", tag: "Brand Phishing", summary: "Tin nhắn dọa khóa tài khoản ngân hàng do biến động số dư bất thường.",
+    title: "SMS Banking Brandname Spoofing",
+    tag: "Brand Phishing",
+    summary: "Fake SMS threatening that the bank account is locked due to suspicious transactions, coercing victims into entering OTP credentials.",
     mockResult: {
-      scam_detected: true, risk_score: 95, threat_level: "CRITICAL" as const,
-      scam_type: "SMS Phishing Brandname",
-      executive_summary: "Dùng trạm BTS giả chèn tin nhắn dọa đóng băng tài khoản để chiếm đoạt mã OTP.",
+      scam_detected: true,
+      risk_score: 95,
+      threat_level: "CRITICAL" as const,
+      scam_type: "SMS Brandname Phishing",
+      executive_summary: "Threat actor uses rogue BTS stations or SMS spoofing to broadcast fake account lock warnings and harvest two-factor credentials.",
       web_intelligence: {
         detected: true,
         url: "https://vietcombank-login.vip/verify-otp",
@@ -134,36 +154,53 @@ const SAMPLE_CASES = [
         domain_match: "mismatch" as const,
         website_status: "accessible" as const,
         suspicious_indicators: [
-          "Trang đăng nhập ngân hàng giả mạo thu thập Username/Password",
-          "Yêu cầu nhập trực tiếp mã OTP giao dịch",
-          "Sử dụng tên miền giá rẻ TLD .vip"
+          "Phishing login form collecting banking credentials and credentials",
+          "Demands real-time SMS/Smart OTP submission",
+          "Cheap generic TLD (.vip) impersonating financial institution"
         ],
         external_evidence: [
-          { title: "Trang chủ chính thức Ngân hàng Vietcombank", source_url: "https://www.vietcombank.com.vn" },
-          { title: "Cảnh báo trạm BTS giả mạo Brandname VCB", source_url: "https://www.vietcombank.com.vn" }
+          { title: "Official Vietcombank Banking Portal", source_url: "https://www.vietcombank.com.vn" },
+          { title: "Advisory on Fake BTS SMS Impersonation Attacks", source_url: "https://www.vietcombank.com.vn" }
         ],
         confidence: 98,
       },
       red_flags: [
         {
-          evidence: "Đường link đuôi lạ vietcombank-login.vip",
-          official_fact: "Website chính thức của Ngân hàng luôn dùng tên miền chính chủ .com.vn hoặc .vn (vd: vietcombank.com.vn).",
+          evidence: "Suspicious URL domain vietcombank-login.vip",
+          official_fact: "Official banking portals exclusively operate on registered enterprise domains (e.g., vietcombank.com.vn).",
           official_link: "https://www.vietcombank.com.vn",
-          explanation: "Trang web giả mạo giao diện ngân hàng để thu thập mật khẩu và mã OTP."
+          explanation: "Fraudulent clone page designed to intercept internet banking credentials and SMS OTP."
         }
       ],
-      psychological_tricks: [{ tactic: "Đe dọa khóa tài khoản", target_emotion: "Sợ hãi", analysis: "Ép nạn nhân thao tác vội trong 5 phút." }],
-      next_move_prediction: "Dùng OTP chiếm đoạt chuyển sạch tiền sang tài khoản rác.",
-      urgent_actions: ["Không bấm vào link", "Gọi hotline ngân hàng trên thẻ để khóa tài khoản tạm thời"],
-      family_alert_card: { headline: "CẢNH BÁO SMS GIẢ MẠO NGÂN HÀNG", key_warning: "Ngân hàng KHÔNG BAO GIỜ gửi link bắt nhập OTP!", shareable_text: "⚠️ CẢNH BÁO: Tuyệt đối không bấm link trong SMS dọa khóa tài khoản. Ngân hàng không bao giờ gửi link bắt nhập mã OTP!" }
+      psychological_tricks: [
+        {
+          tactic: "Account Freezing Threat",
+          target_emotion: "Fear",
+          analysis: "Creates artificial panic forcing victims to act within minutes without cross-checking."
+        }
+      ],
+      next_move_prediction: "Uses stolen credentials and OTP to execute unauthorized transfers to money mule accounts.",
+      urgent_actions: [
+        "Do not click or submit information",
+        "Immediately contact bank fraud hotline to freeze account"
+      ],
+      family_alert_card: {
+        headline: "CRITICAL ALERT: FAKE BANKING SMS",
+        key_warning: "Banks NEVER send links requiring you to enter OTP codes or passwords!",
+        shareable_text: "⚠️ WARNING: Do not click links in SMS claiming your bank account is locked. Banks never request passwords or OTP via SMS links!"
+      }
     }
   },
   {
-    title: "Tuyển CTV Shopee hoa hồng 20%", tag: "Task Scam", summary: "Làm nhiệm vụ chuyển khoản nạp tiền đơn hàng ảo nhận hoa hồng cao.",
+    title: "E-Commerce Task Scam (20% Commission)",
+    tag: "Task Scam",
+    summary: "Victims are solicited to transfer money for fake purchase orders with promises of high cashback, followed by total fund lockouts.",
     mockResult: {
-      scam_detected: true, risk_score: 92, threat_level: "HIGH" as const,
-      scam_type: "Tuyển dụng CTV Đơn ảo",
-      executive_summary: "Dụ làm nhiệm vụ đơn hàng ảo, ban đầu trả tiền sòng phẳng rồi viện cớ lỗi hệ thống chiếm đoạt tiền nạp.",
+      scam_detected: true,
+      risk_score: 92,
+      threat_level: "HIGH" as const,
+      scam_type: "E-Commerce Order Task Scam",
+      executive_summary: "Task scam luring victims with minor early payouts, then freezing funds and demanding larger deposits to unlock refunds.",
       web_intelligence: {
         detected: true,
         url: "https://shopee-nhiemvu.top/task-claim",
@@ -172,27 +209,40 @@ const SAMPLE_CASES = [
         domain_match: "mismatch" as const,
         website_status: "accessible" as const,
         suspicious_indicators: [
-          "Yêu cầu chuyển khoản tiền vào STK cá nhân để nạp điểm nhiệm vụ",
-          "Dùng tên miền nhái thương hiệu Shopee đuôi .top"
+          "Requires upfront wire transfers to personal bank accounts to complete tasks",
+          "Domain squatted brand name on .top TLD"
         ],
         external_evidence: [
-          { title: "Trang chủ chính thức Shopee Việt Nam", source_url: "https://shopee.vn" },
-          { title: "Cảnh báo lừa đảo tuyển CTV từ Shopee", source_url: "https://shopee.vn" }
+          { title: "Official Shopee Platform", source_url: "https://shopee.vn" },
+          { title: "Security Warning Regarding Recruitment & Order Tasks", source_url: "https://shopee.vn" }
         ],
         confidence: 94,
       },
       red_flags: [
         {
-          evidence: "Nạp tiền chuyển khoản vào STK cá nhân (NGUYEN VAN A)",
-          official_fact: "Shopee và các sàn TMĐT không bao giờ tuyển CTV thanh toán đơn hàng bằng chuyển khoản cá nhân.",
+          evidence: "Demands deposits into an individual bank account (JOHN DOE)",
+          official_fact: "Legitimate e-commerce marketplaces never recruit affiliates via personal wire transfers for order clearance.",
           official_link: "https://shopee.vn",
-          explanation: "Tiền đi thẳng vào tài khoản của kẻ lừa đảo mà không có bất kỳ đơn hàng thực tế nào."
+          explanation: "Funds are transferred directly into money mule accounts with zero real merchant connection."
         }
       ],
-      psychological_tricks: [{ tactic: "Bẫy chi phí chìm", target_emotion: "Tiếc tiền", analysis: "Ép nạp thêm tiền để cứu lại tiền đã bị treo." }],
-      next_move_prediction: "Báo lỗi cú pháp, yêu cầu nạp thêm 50% tiền để kích hoạt hoàn tiền.",
-      urgent_actions: ["Dừng chuyển thêm tiền", "Lưu sao kê và tin nhắn trình báo công an"],
-      family_alert_card: { headline: "CẢNH BÁO CTV MUA HÀNG ẢO", key_warning: "Không có việc gì chỉ ngồi chuyển khoản mà có lãi 20%!", shareable_text: "📢 CẢNH BÁO: Đừng tham gia nhóm làm nhiệm vụ nạp tiền mua hàng ăn hoa hồng. Càng nạp càng mất trắng!" }
+      psychological_tricks: [
+        {
+          tactic: "Sunk Cost Trap",
+          target_emotion: "Regret & Anxiety",
+          analysis: "Compels victims to deposit more funds under the pretext of unfreezing previously held deposits."
+        }
+      ],
+      next_move_prediction: "Claims system syntax error and demands an additional 50% deposit to unlock refund authorization.",
+      urgent_actions: [
+        "Halt all further deposits immediately",
+        "Export transaction logs and chat records for police reporting"
+      ],
+      family_alert_card: {
+        headline: "ALERT: ONLINE ORDER TASK SCAM",
+        key_warning: "No legitimate job pays 20% guaranteed commission simply for wire transferring money!",
+        shareable_text: "📢 WARNING: Never join online groups asking for upfront deposits to process shopping orders. You will lose all deposited funds!"
+      }
     }
   }
 ];
@@ -200,111 +250,143 @@ const SAMPLE_CASES = [
 const MOCK_COMMUNITY_FEED: CommunityFeedItem[] = [
   {
     id: "VN-FS-884192",
-    timestamp: "10 phút trước",
-    title: "Sàn BO cam kết bao lỗ 100% / ngày",
-    tag: "Sàn Quyền Chọn Giả",
-    summary: "Lừa nạp tiền đánh sàn BO Binance-like giả lập kết quả thắng ban đầu, sau đó khóa rút tiền dọa thu thuế.",
+    timestamp: "10 mins ago",
+    title: "Fake Binary Options (BO) Platform: 100% Loss Protection",
+    tag: "Fake Trading Exchange",
+    summary: "Rigged candlestick charts simulate initial trading wins, then withdrawal is locked demanding additional 'tax' deposits.",
     views: 342,
     result: {
-      scam_detected: true, risk_score: 96, threat_level: "CRITICAL" as const,
-      scam_type: "Sàn BO (Binary Options) Giả Mạo",
-      executive_summary: "Sàn giao dịch quyền chọn nhị phân giả mạo thao túng nến đồ thị, dọa nạp thêm tiền thuế để rút.",
+      scam_detected: true,
+      risk_score: 96,
+      threat_level: "CRITICAL" as const,
+      scam_type: "Fake Binary Options (BO) Exchange",
+      executive_summary: "Illegitimate binary options exchange manipulating prices and demanding fee deposits before permitting withdrawal.",
       web_intelligence: {
         detected: true,
         url: "https://bo-trading-vip.net/trade",
         domain: "bo-trading-vip.net",
-        brand_detected: "Binance / Sàn BO",
+        brand_detected: "Binance / BO Exchange",
         domain_match: "mismatch" as const,
         website_status: "accessible" as const,
         suspicious_indicators: [
-          "Cam kết bao lỗ 100% & hoa hồng 30%",
-          "Khóa tính năng rút tiền và yêu cầu nạp thêm phí thuế"
+          "Guarantees 100% loss protection & 30% commission",
+          "Locks withdrawals and demands unverified tax clearance fees"
         ],
         external_evidence: [
-          { title: "Thông báo cảnh báo sàn BO từ UBCKNN", source_url: "https://ssc.gov.vn" },
-          { title: "Tra cứu lừa đảo tài chính tại ChongLuaDao", source_url: "https://chongluadao.vn" }
+          { title: "Securities Commission Fraud Advisory", source_url: "https://ssc.gov.vn" },
+          { title: "ChongLuaDao Threat Database Entry", source_url: "https://chongluadao.vn" }
         ],
         confidence: 95,
       },
       red_flags: [
         {
-          evidence: "Cam kết bao lỗ 100% & hoa hồng 30%",
-          official_fact: "Mọi hoạt động đầu tư tài chính được Nhà nước cấp phép đều có rủi ro, không bao giờ cam kết bao lỗ 100%.",
+          evidence: "Guaranteed 100% loss protection & 30% commission",
+          official_fact: "All state-regulated financial investment vehicles entail risk and never guarantee 100% loss indemnity.",
           official_link: "https://ssc.gov.vn",
-          explanation: "Bẫy tâm lý dụ nạn nhân an tâm dồn số tiền lớn vào sàn."
+          explanation: "Psychological bait designed to reassure victims into depositing large sums of capital."
         },
         {
-          evidence: "Domain lạ bo-trading-vip.net không giấy phép",
-          official_fact: "Ủy ban Chứng khoán Nhà nước (UBCKNN) không cấp phép cho bất kỳ sàn BO nào hoạt động tại VN.",
+          evidence: "Unregulated domain bo-trading-vip.net without financial license",
+          official_fact: "State financial regulators do not license any binary options (BO) trading platforms.",
           official_link: "https://ssc.gov.vn",
-          explanation: "Sàn tự tạo đồ thị ảo để chiếm đoạt tiền của người dùng."
+          explanation: "The exchange synthesizes artificial candlestick charts to confiscate investor capital."
         }
       ],
-      psychological_tricks: [{ tactic: "Tạo lòng tin ảo", target_emotion: "Lòng tham", analysis: "Cho thắng nhỏ ban đầu để nạn nhân tự tin dồn vốn lớn." }],
-      next_move_prediction: "Yêu cầu nạp 20% phí xác minh tài khoản hoặc phí thuế thu nhập cá nhân mới cho rút tiền.",
-      urgent_actions: ["Không nạp thêm bất kỳ khoản tiền nào", "Lưu giữ lịch sử chuyển khoản & chụp màn hình nhóm Telegram"],
-      family_alert_card: { headline: "CẢNH BÁO SÀN BO LỪA ĐẢO BAO LỖ", key_warning: "Mọi cam kết bao lỗ 100% trên mạng đều là bẫy chiếm đoạt tài sản!", shareable_text: "🚨 CẢNH BÁO GIA ĐÌNH: Tuyệt đối không tham gia các sàn BO, sàn tài chính cam kết bao lỗ 100%. Càng nạp càng mất trắng!" }
+      psychological_tricks: [
+        {
+          tactic: "Artificial Trust Generation",
+          target_emotion: "Greed",
+          analysis: "Awards minor simulated wins initially so victims gain confidence and commit massive capital."
+        }
+      ],
+      next_move_prediction: "Demands a 20% account verification fee or personal income tax prepayment before releasing funds.",
+      urgent_actions: [
+        "Do not deposit any further funds",
+        "Archive bank transaction receipts & capture Telegram conversation logs"
+      ],
+      family_alert_card: {
+        headline: "WARNING: FAKE LOSS-PROTECTED TRADING PLATFORM",
+        key_warning: "Any online claim of 100% guaranteed loss protection is an asset-seizure scam!",
+        shareable_text: "🚨 FAMILY ALERT: Never participate in binary options or trading sites claiming 100% loss coverage. Any deposited funds will be stolen!"
+      }
     }
   },
   {
     id: "VN-FS-741029",
-    timestamp: "25 phút trước",
-    title: "Cuộc gọi / APK giả mạo VNeID mức 2",
-    tag: "Mã Độc Android",
-    summary: "Đối tượng xưng công an hướng dẫn cài file .APK VNeID giả để chiếm quyền điều khiển điện thoại và đọc mã OTP.",
+    timestamp: "25 mins ago",
+    title: "Malicious Android APK Impersonating Public Identification",
+    tag: "Android Malware",
+    summary: "Impostor posing as police directs victim to install Trojan .APK to seize device control and intercept banking OTP.",
     views: 518,
     result: {
-      scam_detected: true, risk_score: 99, threat_level: "CRITICAL" as const,
+      scam_detected: true,
+      risk_score: 99,
+      threat_level: "CRITICAL" as const,
       scam_type: "Fake Gov App / Android Malware",
-      executive_summary: "Gửi link tải ứng dụng .APK chứa mã độc Accessibility Service để đọc OTP và tự động chuyển tiền.",
+      executive_summary: "Distribution of malicious .APK exploiting Android Accessibility Service to remotely control banking apps and harvest OTP.",
       web_intelligence: {
         detected: true,
         url: "https://vneid-gov.apk-download.site/vneid.apk",
         domain: "vneid-gov.apk-download.site",
-        brand_detected: "VNeID / Bộ Công An",
+        brand_detected: "Public Identity Portal / Gov Authority",
         domain_match: "mismatch" as const,
         website_status: "accessible" as const,
         suspicious_indicators: [
-          "Gửi file .APK trực tiếp qua đường link giả mạo trang chính phủ",
-          "Yêu cầu cấp quyền Accessibility điều khiển thiết bị từ xa"
+          "Direct .APK download via spoofed government portal URL",
+          "Requests Accessibility Service permissions for remote device control"
         ],
         external_evidence: [
-          { title: "Cổng thông tin Đề án 06 / VNeID Bộ Công An", source_url: "https://vneid.gov.vn" },
-          { title: "Cảnh báo mã độc VNeID từ Cục An toàn thông tin", source_url: "https://khonggianmang.vn" }
+          { title: "Official National Identification App Portal", source_url: "https://vneid.gov.vn" },
+          { title: "National Cyber Security Center Malware Warning", source_url: "https://khonggianmang.vn" }
         ],
         confidence: 99,
       },
       red_flags: [
         {
-          evidence: "Link tải file vneid-gov.apk ngoài Google Play",
-          official_fact: "VNeID chỉ phát hành duy nhất trên CH Play và App Store chính thức bởi Bộ Công an.",
+          evidence: "Download link for vneid-gov.apk outside Google Play",
+          official_fact: "Official public identification apps are distributed strictly via Google Play and Apple App Store.",
           official_link: "https://vneid.gov.vn",
-          explanation: "Công an không bao giờ gửi link qua Zalo/SMS để cập nhật VNeID."
+          explanation: "Government authorities never send links over SMS or social media to install APK updates."
         },
         {
-          evidence: "Yêu cầu cấp quyền Accessibility (Hỗ trợ)",
-          official_fact: "Ứng dụng hành chính công chính thức không bao giờ đòi hỏi quyền Accessibility.",
+          evidence: "Demands Accessibility Service permissions",
+          official_fact: "Legitimate public administration applications never require Accessibility permissions.",
           official_link: "https://khonggianmang.vn",
-          explanation: "Mã độc dùng quyền này để đọc màn hình và tự thao tác app ngân hàng chiếm đoạt tiền."
+          explanation: "Malware exploits Accessibility to read screen content and automate illicit banking transfers."
         }
       ],
-      psychological_tricks: [{ tactic: "Mạo danh cơ quan công quyền", target_emotion: "Nỗi sợ pháp lý", analysis: "Dọa khóa tài khoản/định danh nếu không làm ngay." }],
-      next_move_prediction: "Âm thầm khóa màn hình nạn nhân và thực hiện chuyển cạn tiền tài khoản ngân hàng.",
-      urgent_actions: ["Tắt Wifi/4G hoặc ngắt nguồn điện thoại ngay", "Dùng máy khác gọi ngân hàng khóa khẩn cấp các tài khoản"],
-      family_alert_card: { headline: "CẢNH BÁO GIẢ MẠO CÔNG AN CÀI VNeID", key_warning: "Công an KHÔNG BAO GIỜ gọi điện bảo cài app qua file APK!", shareable_text: "⚠️ CẢNH BÁO: Không bấm link hay cài file APK từ cuộc gọi tự xưng công an hỗ trợ VNeID. Kẻ gian sẽ chiếm quyền máy rút sạch tiền!" }
+      psychological_tricks: [
+        {
+          tactic: "State Authority Impersonation",
+          target_emotion: "Legal Fear",
+          analysis: "Threatens legal sanctions or account freezing if instructions are not carried out immediately."
+        }
+      ],
+      next_move_prediction: "Remotely locks victim device display and executes unauthorized withdrawals from banking apps.",
+      urgent_actions: [
+        "Disconnect Wi-Fi/Cellular data and power down phone immediately",
+        "Use a separate phone to call banking fraud hotlines to freeze all accounts"
+      ],
+      family_alert_card: {
+        headline: "CRITICAL WARNING: POLICE IMPERSONATION & FAKE APK",
+        key_warning: "Law enforcement officers NEVER call asking you to install .APK files!",
+        shareable_text: "⚠️ ALERT: Never click links or install APK files from calls claiming to be police officers updating ID profiles. They will hijack your phone and drain your bank account!"
+      }
     }
   },
   {
     id: "VN-FS-629501",
-    timestamp: "1 giờ trước",
-    title: "Cuộc gọi Video Deepfake đòi nợ người thân",
+    timestamp: "1 hour ago",
+    title: "AI Deepfake Video Call Emergency Impersonation",
     tag: "AI Deepfake Video",
-    summary: "Kẻ gian cắt ghép hình ảnh Deepfake giả mặt người thân gọi video 5 giây cấp cứu cần chuyển tiền.",
+    summary: "Fraudsters synthesize 5-second video call mimicking family member in urgent medical distress needing rapid wire transfer.",
     views: 412,
     result: {
-      scam_detected: true, risk_score: 94, threat_level: "HIGH" as const,
+      scam_detected: true,
+      risk_score: 94,
+      threat_level: "HIGH" as const,
       scam_type: "AI Deepfake Impersonation",
-      executive_summary: "Sử dụng trí tuệ nhân tạo giả dạng khuôn mặt và giọng nói người thân trong thời gian ngắn để vay tiền gấp.",
+      executive_summary: "Real-time AI voice and face synthesis used in brief emergency distress call to trigger hasty wire transfer.",
       web_intelligence: {
         detected: false,
         url: null,
@@ -318,35 +400,50 @@ const MOCK_COMMUNITY_FEED: CommunityFeedItem[] = [
       },
       red_flags: [
         {
-          evidence: "Tín hiệu video chập chờn, tắt nhanh trong vài giây",
-          official_fact: "Công nghệ Deepfake video call thời gian thực chưa hoàn chỉnh cơ mặt và khó khớp voice dài.",
+          evidence: "Glitchy video stream terminated after a few seconds",
+          official_fact: "Current real-time generative deepfakes struggle with continuous facial consistency and prolonged voice alignment.",
           official_link: "https://khonggianmang.vn",
-          explanation: "Kẻ gian cố tình làm mờ giật lag để che đậy khuyết điểm mô phỏng AI."
+          explanation: "Attackers intentionally induce blur and latency to conceal AI synthesis artifacts."
         },
         {
-          evidence: "Yêu cầu chuyển tiền vào STK đứng tên người lạ",
-          official_fact: "Người thân cần vay gấp luôn dùng tài khoản chính chủ hoặc nhờ người thân xác nhận.",
+          evidence: "Demands immediate transfer to an unfamiliar third-party account",
+          official_fact: "Family members in legitimate emergencies use their own accounts or verified contacts.",
           official_link: "https://khonggianmang.vn",
-          explanation: "Viện cớ tài khoản chính bị khóa hoặc mượn tài khoản bác sĩ/bệnh viện."
+          explanation: "Pretends personal account is locked or provides an alleged hospital account."
         }
       ],
-      psychological_tricks: [{ tactic: "Tạo tình huống khẩn cấp", target_emotion: "Lo lắng cho người thân", analysis: "Gây hoảng loạn để nạn nhân không kịp gọi điện xác minh." }],
-      next_move_prediction: "Tiếp tục hối thúc chuyển thêm tiền với lý do chi phí phẫu thuật/bồi thường chưa đủ.",
-      urgent_actions: ["Tắt máy và gọi lại qua số điện thoại thường (GSM)", "Hỏi một câu hỏi riêng tư chỉ 2 người biết để kiểm chứng"],
-      family_alert_card: { headline: "CẢNH BÁO VIDEO CALL DEEPFAKE LỪA TIỀN", key_warning: "Thấy mặt qua Video Call vẫn có thể là AI giả mạo!", shareable_text: "📢 CẢNH BÁO: Nhận cuộc gọi video hỏi vay tiền gấp, hãy cúp máy và gọi điện trực tiếp vào SĐT chính chủ để xác minh!" }
+      psychological_tricks: [
+        {
+          tactic: "Fabricated Emergency",
+          target_emotion: "Family Concern",
+          analysis: "Induces panic to prevent the victim from calmly making a direct phone call to verify."
+        }
+      ],
+      next_move_prediction: "Follows up aggressively demanding additional money claiming surgical or compensation costs increased.",
+      urgent_actions: [
+        "Hang up and place a direct cellular call (GSM) to the family member",
+        "Ask a personal question only the real person would know to verify identity"
+      ],
+      family_alert_card: {
+        headline: "ALERT: DEEPFAKE VIDEO CALL MONEY REQUEST",
+        key_warning: "Seeing a familiar face on a video call can still be an AI-generated fake!",
+        shareable_text: "📢 WARNING: If you receive a video call from a relative asking for emergency money, hang up and call their direct phone number to verify!"
+      }
     }
   },
   {
     id: "VN-FS-391804",
-    timestamp: "2 giờ trước",
-    title: "Hack Telegram gửi link bình chọn cuộc thi",
+    timestamp: "2 hours ago",
+    title: "Compromised Telegram Account: Fake Contest Voting Phishing",
     tag: "Account Takeover",
-    summary: "Nhận tin nhắn từ tài khoản bạn bè nhờ click link bình chọn ảnh, thực chất là trang phishing cướp OTP Telegram.",
+    summary: "Compromised friend account shares link to vote in photo contest, leading to phishing site harvesting Telegram login OTP.",
     views: 295,
     result: {
-      scam_detected: true, risk_score: 89, threat_level: "HIGH" as const,
+      scam_detected: true,
+      risk_score: 89,
+      threat_level: "HIGH" as const,
       scam_type: "Telegram Phishing & Session Hijacking",
-      executive_summary: "Dụ nạn nhân nhập số điện thoại và mã OTP Telegram vào trang web giả mạo bình chọn để chiếm quyền quản trị tài khoản.",
+      executive_summary: "Session hijacking attack stealing phone numbers and 2FA authentication codes via fraudulent contest portals.",
       web_intelligence: {
         detected: true,
         url: "https://vote-kids-2026.com/telegram-login",
@@ -355,51 +452,64 @@ const MOCK_COMMUNITY_FEED: CommunityFeedItem[] = [
         domain_match: "mismatch" as const,
         website_status: "accessible" as const,
         suspicious_indicators: [
-          "Form giả mạo trang đăng nhập Telegram yêu cầu nhập SĐT & OTP",
-          "Lấy danh nghĩa cuộc thi bình chọn ảnh trẻ em"
+          "Phishing form spoofing Telegram login requesting phone number & OTP",
+          "Disguised as a children's talent photo voting competition"
         ],
         external_evidence: [
-          { title: "Trang chủ chính thức Telegram", source_url: "https://telegram.org" },
-          { title: "Cảnh báo Phishing Telegram tại ChongLuaDao", source_url: "https://chongluadao.vn" }
+          { title: "Official Telegram Portal", source_url: "https://telegram.org" },
+          { title: "ChongLuaDao Telegram Phishing Advisory", source_url: "https://chongluadao.vn" }
         ],
         confidence: 92,
       },
       red_flags: [
         {
-          evidence: "Yêu cầu nhập mã xác thực OTP Telegram trên web vote-kids-2026.com",
-          official_fact: "Telegram không bao giờ yêu cầu nhập mã OTP xác thực đăng nhập ở các website bên ngoài.",
+          evidence: "Requests Telegram OTP authentication code on vote-kids-2026.com",
+          official_fact: "Telegram never prompts users to submit login OTP codes on external third-party websites.",
           official_link: "https://telegram.org",
-          explanation: "Các trang bình chọn giả mạo thu thập mã OTP để cướp tài khoản Telegram."
+          explanation: "Phishing voting websites intercept OTP codes to take over Telegram user sessions."
         },
         {
-          evidence: "Tên miền giả mạo vote-kids-2026.com",
-          official_fact: "Hệ thống xác thực Telegram chính thức duy nhất hoạt động trên tên miền telegram.org.",
+          evidence: "Spoofed domain vote-kids-2026.com",
+          official_fact: "Legitimate Telegram authentication is strictly hosted on telegram.org domain infrastructure.",
           official_link: "https://telegram.org",
-          explanation: "Domain lừa đảo được tạo hàng loạt nhằm thu thập session token."
+          explanation: "Disposable domain used to harvest active session tokens."
         }
       ],
-      psychological_tricks: [{ tactic: "Lợi dụng lòng tốt & tình bạn", target_emotion: "Nhiệt tình giúp đỡ", analysis: "Gửi tin nhắn từ tài khoản người quen đã bị hack trước đó." }],
-      next_move_prediction: "Chiếm tài khoản Telegram và tiếp tục tự động gửi tin nhắn lừa đảo đến toàn bộ danh bạ.",
-      urgent_actions: ["Mở Telegram -> Settings -> Devices -> Terminate all other sessions", "Bật xác thực 2 lớp (Two-Step Verification)"],
-      family_alert_card: { headline: "CẢNH BÁO BẪY BÌNH CHỌN TRÊN TELEGRAM", key_warning: "Tuyệt đối không nhập mã OTP Telegram vào bất kỳ trang web nào!", shareable_text: "🚨 CẢNH BÁO: Nếu nhận tin nhắn nhờ bình chọn cuộc thi qua Telegram, không được bấm link hay nhập mã OTP kẻo bị cướp nick!" }
+      psychological_tricks: [
+        {
+          tactic: "Exploiting Social Goodwill",
+          target_emotion: "Helpfulness",
+          analysis: "Dispatches phishing lures from a known peer's compromised account to lower vigilance."
+        }
+      ],
+      next_move_prediction: "Hijacks Telegram account and automatically blasts phishing lures to all contacts in address book.",
+      urgent_actions: [
+        "Open Telegram -> Settings -> Devices -> Terminate all other sessions",
+        "Enable Two-Step Verification (cloud password)"
+      ],
+      family_alert_card: {
+        headline: "ALERT: TELEGRAM PHOTO CONTEST TRAP",
+        key_warning: "Never enter your Telegram login OTP on any external website!",
+        shareable_text: "🚨 WARNING: If you receive a message asking to vote in a contest via Telegram, do not click links or enter your OTP or your account will be stolen!"
+      }
     }
   }
 ];
 
 const QUICK_ROLEPLAY_RESPONSES = [
   {
-    label: "🛡️ Gọi Hotline xác minh",
-    text: "Tôi sẽ gọi trực tiếp hotline chính thức của ngân hàng/cơ quan công an để kiểm tra, không thao tác qua SMS hay link lạ!",
+    label: "🛡️ Call Official Hotline",
+    text: "I am hanging up to contact the official hotline of the institution directly. I do not take action through suspicious SMS or links.",
     isRisky: false,
   },
   {
-    label: "🛡️ Từ chối & Báo cáo",
-    text: "Tôi không có nhu cầu. Tôi biết đây là bẫy lừa đảo và sẽ báo cáo số điện thoại/tin nhắn này ngay lập tức!",
+    label: "🛡️ Decline & Report",
+    text: "I am not interested. This is an obvious fraudulent scheme and I am reporting this sender immediately.",
     isRisky: false,
   },
   {
-    label: "⚠️ Thử bẫy: Cung cấp OTP / Bấm link",
-    text: "Dạ anh gửi link hoặc để em đọc mã OTP cho anh để xử lý giúp em ngay với ạ!",
+    label: "⚠️ Bait Trap: Provide OTP / Click Link",
+    text: "Sure, please send me the link or I can read my OTP code to you right now to fix the issue!",
     isRisky: true,
   },
 ];
@@ -438,16 +548,17 @@ export default function ScamShieldDashboard() {
     setShowOnboarding(false);
   };
 
-  const generateId = () => `VN-FS-${Math.floor(100000 + Math.random() * 900000)}`;
+  const generateId = () => `SCAM-FS-${Math.floor(100000 + Math.random() * 900000)}`;
 
   const getInitialRoleplayMessages = (res: ForensicResult | null): RoleplayMessage[] => {
     if (!res) return [];
-    let scammerOpening = "🚨 [KỊCH BẢN GIẢ LẬP]: Thông báo khẩn từ hệ thống! Tài khoản/thông tin của bạn đang có sự cố nghiêm trọng, bấm vào link hoặc đọc mã OTP ngay trong 3 phút!";
+    let scammerOpening = "🚨 [SIMULATED SCENARIO]: Urgent alert from the system! Your account has encountered a critical anomaly. Click the link or provide your OTP within 3 minutes!";
     if (res.red_flags?.[0]?.evidence) {
-      scammerOpening = `🚨 [KỊCH BẢN LỪA ĐẢO THỰC TẾ]: "${res.red_flags[0].evidence}" - Yêu cầu bạn làm theo hướng dẫn ngay lập tức nếu không sẽ bị khóa vĩnh viễn!`;
+      scammerOpening = `🚨 [ACTIVE THREAT SCENARIO]: "${res.red_flags[0].evidence}" - You must comply with instructions immediately or face permanent suspension!`;
     } else if (res.scam_type) {
-      scammerOpening = `🚨 [KỊCH BẢN ${res.scam_type.toUpperCase()}]: Đối tượng đang hối thúc bạn chuyển tiền / bấm link / cung cấp mã OTP xác minh khẩn cấp!`;
+      scammerOpening = `🚨 [SIMULATED ${res.scam_type.toUpperCase()}]: The fraudster is pressuring you for emergency fund transfer, link activation, or OTP disclosure!`;
     }
+
     return [
       {
         id: "msg-init",
@@ -478,7 +589,7 @@ export default function ScamShieldDashboard() {
     if (typeof navigator !== "undefined" && navigator.share) {
       try {
         await navigator.share({
-          title: result.family_alert_card.headline || "Cảnh báo lừa đảo",
+          title: result.family_alert_card.headline || "Fraud Security Alert",
           text: shareText,
           url: window.location.href,
         });
@@ -524,7 +635,7 @@ export default function ScamShieldDashboard() {
         }),
       });
 
-      if (!res.ok) throw new Error((await res.json()).error || "Lỗi roleplay");
+      if (!res.ok) throw new Error((await res.json()).error || "Roleplay error");
 
       const data = await res.json();
 
@@ -544,21 +655,21 @@ export default function ScamShieldDashboard() {
       setRoleplayMessages((prev) => [...prev, evalMsg, scammerReplyMsg]);
     } catch {
       const lower = userText.toLowerCase();
-      const isDangerous = isRiskyQuickChoice || lower.includes("otp") || lower.includes("mật khẩu") || lower.includes("chuyển tiền");
+      const isDangerous = isRiskyQuickChoice || lower.includes("otp") || lower.includes("password") || lower.includes("transfer") || lower.includes("click");
       setRoleplayMessages((prev) => [
         ...prev,
         {
           id: `e-${Date.now()}`,
           sender: "eval",
           text: isDangerous
-            ? "⚠️ CẢNH BÁO: Phản xạ nguy hiểm — không cung cấp OTP/mật khẩu/chuyển tiền cho người lạ."
-            : "✅ XỬ LÝ AN TOÀN: Giữ bình tĩnh và xác minh qua kênh chính thống.",
+            ? "⚠️ CRITICAL WARNING: Dangerous response — never provide OTP, passwords, or initiate funds transfer to unauthorized parties."
+            : "✅ SECURE RESPONSE: Excellent composure — safely declining and verifying via authorized channels.",
           evalStatus: isDangerous ? "danger" : "safe",
         },
         {
           id: `s-${Date.now()}`,
           sender: "scammer",
-          text: isDangerous ? "Bẫy thành công! Hãy rút kinh nghiệm lần sau." : "Kẻ lừa đảo không thành công, chuyển sang mục tiêu khác.",
+          text: isDangerous ? "Trap succeeded! The fraudster has gained control of your credentials. Learn from this simulation." : "The fraudster failed to intimidate you and abandoned the attack to target someone else.",
         },
       ]);
     } finally {
@@ -608,10 +719,10 @@ export default function ScamShieldDashboard() {
       }
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}));
-        let rawErr = errData.error || "Lỗi giám định";
+        let rawErr = errData.error || "Forensic analysis failed";
         if (typeof rawErr === "object") rawErr = JSON.stringify(rawErr);
         if (typeof rawErr === "string" && (rawErr.includes("API key not valid") || rawErr.includes("INVALID_ARGUMENT"))) {
-          rawErr = "⚠️ GEMINI_API_KEY trên server Cloud Run chưa hợp lệ hoặc chưa được thiết lập. Vui lòng cập nhật GEMINI_API_KEY trong Cloud Run Console.";
+          rawErr = "⚠️ GEMINI_API_KEY is missing or invalid. Please configure GEMINI_API_KEY in your environment.";
         }
         throw new Error(rawErr);
       }
@@ -625,10 +736,10 @@ export default function ScamShieldDashboard() {
       // Auto-prepend new case to Community Feed
       const newFeedItem: CommunityFeedItem = {
         id: newId,
-        timestamp: "Vừa xong",
-        title: inputMode === "image" ? (file?.name ? `Ảnh: ${file.name}` : "Ảnh màn hình nghi vấn") : (textInput.slice(0, 30) + "..."),
-        tag: analysisData.scam_type || "Cảnh báo mới",
-        summary: analysisData.executive_summary || "Hệ thống vừa phân tích thành công",
+        timestamp: "Just now",
+        title: inputMode === "image" ? (file?.name ? `Image: ${file.name}` : "Suspicious Screenshot") : (textInput.slice(0, 30) + "..."),
+        tag: analysisData.scam_type || "New Alert",
+        summary: analysisData.executive_summary || "Investigation completed successfully",
         views: 1,
         result: analysisData,
       };
@@ -654,7 +765,7 @@ export default function ScamShieldDashboard() {
               <div className="font-black text-sm uppercase bg-gradient-to-r from-cyan-300 to-indigo-300 bg-clip-text text-transparent">
                 ScamShield Forensic AI
               </div>
-              <div className="text-[11px] text-slate-400">Giám định Pháp y Số & Giải mã Thao túng Đa phương thức</div>
+              <div className="text-[11px] text-slate-400">Digital Forensic Investigation & Multimodal Cognitive Deception Defense</div>
             </div>
           </div>
           <div className="text-xs text-slate-300 border border-slate-800 bg-slate-900 px-3 py-1.5 rounded-full font-mono flex items-center gap-1.5">
@@ -666,17 +777,17 @@ export default function ScamShieldDashboard() {
       <main className="max-w-6xl mx-auto px-4 mt-8">
         {showOnboarding && (
           <div className="mb-6 bg-gradient-to-r from-cyan-950/60 to-indigo-950/60 border border-cyan-500/30 rounded-2xl p-4 print:hidden relative">
-            <button onClick={dismissOnboarding} className="absolute top-3 right-3 text-slate-400 hover:text-white cursor-pointer">
+            <button onClick={dismissOnboarding} className="absolute top-3 right-3 text-slate-400 hover:text-white cursor-pointer" aria-label="Dismiss guide">
               <X className="w-4 h-4" />
             </button>
             <div className="flex items-start gap-3">
               <HelpCircle className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
               <div>
-                <div className="text-sm font-bold text-cyan-200 mb-2">Hướng dẫn 3 bước — dành cho mọi người</div>
+                <div className="text-sm font-bold text-cyan-200 mb-2">3-Step Quick Guide — Accessible to Everyone</div>
                 <ol className="text-xs text-slate-300 space-y-1.5 list-decimal list-inside">
-                  <li><strong>Chụp ảnh</strong> tin nhắn/SMS lạ hoặc <strong>dán link</strong> nghi vấn</li>
-                  <li>Bấm <strong>Bắt đầu Giám định</strong> — AI phân tích trong ~10 giây</li>
-                  <li>Đọc báo cáo → <strong>Gửi cảnh báo</strong> cho người thân qua Zalo</li>
+                  <li><strong>Screenshot</strong> suspicious SMS/chat or <strong>paste</strong> suspicious URLs / text</li>
+                  <li>Click <strong>Start Forensic Analysis</strong> — AI evaluates in ~10 seconds</li>
+                  <li>Review the report → <strong>Share emergency alert</strong> with friends and family</li>
                 </ol>
               </div>
             </div>
@@ -688,14 +799,14 @@ export default function ScamShieldDashboard() {
             <Sparkles className="w-3.5 h-3.5 text-cyan-400" /> AI Riser Vietnam 2026
           </div>
           <h1 className="text-3xl sm:text-4xl font-black">
-            Giám định Lừa đảo & Thao túng Tâm lý
+            Forensic Scam Detection & Cognitive Deception Analysis
           </h1>
         </div>
 
         {/* Quick presets */}
         <div className="mb-6 bg-slate-900/40 border border-slate-800 rounded-2xl p-3.5 print:hidden">
           <div className="text-[11px] font-bold text-slate-400 uppercase mb-2 flex items-center gap-1">
-            <Activity className="w-3.5 h-3.5 text-cyan-400" /> Ca thực tế thử nhanh:
+            <Activity className="w-3.5 h-3.5 text-cyan-400" /> Real-world Forensic Cases:
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
             {SAMPLE_CASES.map((s, idx) => (
@@ -731,13 +842,13 @@ export default function ScamShieldDashboard() {
                   onClick={() => { setInputMode("image"); setResult(null); }}
                   className={`flex-1 py-1.5 text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5 transition ${inputMode === "image" ? "bg-cyan-600 text-white" : "text-slate-400"}`}
                 >
-                  <ImageIcon className="w-3.5 h-3.5" /> Quét Ảnh chụp
+                  <ImageIcon className="w-3.5 h-3.5" /> Image Scan
                 </button>
                 <button
                   onClick={() => { setInputMode("text"); setResult(null); }}
                   className={`flex-1 py-1.5 text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5 transition ${inputMode === "text" ? "bg-cyan-600 text-white" : "text-slate-400"}`}
                 >
-                  <Link2 className="w-3.5 h-3.5" /> Quét Text / Link
+                  <Link2 className="w-3.5 h-3.5" /> Text / URL Scan
                 </button>
               </div>
 
@@ -761,18 +872,18 @@ export default function ScamShieldDashboard() {
                   ) : (
                     <div className="space-y-2">
                       <UploadCloud className="w-8 h-8 text-cyan-400 mx-auto" />
-                      <div className="text-xs font-semibold text-slate-300">Kéo thả hoặc bấm để chọn ảnh chụp màn hình</div>
+                      <div className="text-xs font-semibold text-slate-300">Drag & drop or click to upload screenshot</div>
                     </div>
                   )}
                 </div>
               ) : (
                 <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-4 space-y-2">
-                  <label className="text-xs font-bold text-slate-300">Dán nội dung tin nhắn, email hoặc URL nghi vấn:</label>
+                  <label className="text-xs font-bold text-slate-300">Paste suspicious message text, email, or URL:</label>
                   <textarea
                     rows={6}
                     value={textInput}
                     onChange={(e) => setTextInput(e.target.value)}
-                    placeholder="Ví dụ: 'Thong bao: Tai khoan ngan hang cua ban da bi khoa, vui long truy cap https://vietcombank-login.vip de xac thuc...'"
+                    placeholder="Example: 'Notice: Your banking profile has been restricted due to abnormal activity. Visit https://vietcombank-login.vip immediately to verify...'"
                     className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 font-mono"
                   />
                 </div>
@@ -783,7 +894,7 @@ export default function ScamShieldDashboard() {
                   onClick={runAnalysis}
                   className="w-full py-3 bg-gradient-to-r from-cyan-600 to-indigo-600 font-bold text-xs rounded-xl shadow-lg flex items-center justify-center gap-2 cursor-pointer active:scale-95 text-white"
                 >
-                  <FileSearch className="w-4 h-4" /> Bắt đầu Giám định
+                  <FileSearch className="w-4 h-4" /> Start Forensic Analysis
                 </button>
               )}
 
@@ -795,13 +906,13 @@ export default function ScamShieldDashboard() {
           {result && (
             <div ref={reportRef} className="lg:col-span-7 space-y-4 print:w-full print:col-span-12">
               <div className="flex justify-between items-center bg-slate-900/80 p-3 rounded-xl border border-slate-800 print:hidden flex-wrap gap-2">
-                <div className="text-xs font-mono text-slate-400">HỒ SƠ: <strong className="text-cyan-300">{caseId}</strong></div>
+                <div className="text-xs font-mono text-slate-400">CASE ID: <strong className="text-cyan-300">{caseId}</strong></div>
                 <div className="flex gap-2">
                   <button onClick={handleExportPdf} disabled={exportingPdf} className="text-xs bg-slate-800 text-cyan-300 px-3 py-1.5 rounded-lg border border-cyan-500/30 flex items-center gap-1.5 cursor-pointer hover:bg-slate-700 transition disabled:opacity-50">
-                    <FileDown className="w-3.5 h-3.5" /> {exportingPdf ? "Đang xuất..." : "Tải PDF"}
+                    <FileDown className="w-3.5 h-3.5" /> {exportingPdf ? "Exporting..." : "Download PDF"}
                   </button>
                   <button onClick={() => window.print()} className="text-xs bg-slate-800 text-cyan-300 px-3 py-1.5 rounded-lg border border-cyan-500/30 flex items-center gap-1.5 cursor-pointer hover:bg-slate-700 transition">
-                    <Printer className="w-3.5 h-3.5" /> In Báo Cáo
+                    <Printer className="w-3.5 h-3.5" /> Print Report
                   </button>
                 </div>
               </div>
@@ -813,7 +924,7 @@ export default function ScamShieldDashboard() {
                     <span className="text-[8px]">SCORE</span>
                   </div>
                   <div>
-                    <div className="text-xs text-slate-400">Loại hình</div>
+                    <div className="text-xs text-slate-400">Threat Category</div>
                     <div className="text-lg font-bold">{result.scam_type}</div>
                     <span className="text-[10px] px-2 py-0.5 rounded bg-red-500/20 text-red-400 font-bold">{result.threat_level}</span>
                   </div>
@@ -836,32 +947,32 @@ export default function ScamShieldDashboard() {
                     {/* Domain Match Status Badge */}
                     {result.web_intelligence.domain_match === "mismatch" ? (
                       <span className="text-[10px] font-bold px-2.5 py-0.5 rounded bg-red-500/20 text-red-400 border border-red-500/40 flex items-center gap-1 font-mono shrink-0">
-                        🚨 Tên miền giả mạo (MISMATCH)
+                        🚨 Fraudulent Domain (MISMATCH)
                       </span>
                     ) : result.web_intelligence.domain_match === "match" ? (
                       <span className="text-[10px] font-bold px-2.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center gap-1 font-mono shrink-0">
-                        ✅ Domain chính thống (MATCH)
+                        ✅ Legitimate Domain (MATCH)
                       </span>
                     ) : (
                       <span className="text-[10px] font-bold px-2.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center gap-1 font-mono shrink-0">
-                        ⚠️ Chưa xác minh khớp (UNKNOWN)
+                        ⚠️ Unverified Match (UNKNOWN)
                       </span>
                     )}
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                     <div className="p-2.5 bg-slate-950 rounded-lg border border-slate-800 space-y-1">
-                      <div className="text-[10px] text-slate-400 font-bold uppercase">Thương hiệu tự xưng / Mạo danh:</div>
-                      <div className="font-bold text-slate-200">{result.web_intelligence.brand_detected || "Không rõ"}</div>
+                      <div className="text-[10px] text-slate-400 font-bold uppercase">Claimed Brand / Impersonation Target:</div>
+                      <div className="font-bold text-slate-200">{result.web_intelligence.brand_detected || "Unidentified"}</div>
                     </div>
                     <div className="p-2.5 bg-slate-950 rounded-lg border border-slate-800 space-y-1">
-                      <div className="text-[10px] text-slate-400 font-bold uppercase">Độ tin cậy xác thực Web:</div>
+                      <div className="text-[10px] text-slate-400 font-bold uppercase">Web Verification Confidence:</div>
                       <div className="font-bold text-cyan-300 font-mono">{result.web_intelligence.confidence}% Confidence</div>
                       {result.web_intelligence.verified_live !== undefined && (
                         <div className={`text-[10px] font-bold ${result.web_intelligence.verified_live ? "text-emerald-400" : "text-amber-400"}`}>
                           {result.web_intelligence.verified_live
-                            ? `✓ Đã verify HTTP ${result.web_intelligence.http_status ?? "OK"}`
-                            : "⚠ URL không phản hồi khi kiểm tra thực tế"}
+                            ? `✓ Verified Live HTTP ${result.web_intelligence.http_status ?? "OK"}`
+                            : "⚠ URL unreachable during live probe"}
                         </div>
                       )}
                     </div>
@@ -870,7 +981,7 @@ export default function ScamShieldDashboard() {
                   {/* Suspicious Indicators */}
                   {result.web_intelligence.suspicious_indicators?.length > 0 && (
                     <div className="space-y-1">
-                      <div className="text-[10px] font-bold text-red-400 uppercase">Hành vi web nghi vấn:</div>
+                      <div className="text-[10px] font-bold text-red-400 uppercase">Suspicious Web Behaviors:</div>
                       <div className="flex flex-wrap gap-1.5">
                         {result.web_intelligence.suspicious_indicators.map((ind, idx) => (
                           <span key={idx} className="text-[11px] px-2 py-0.5 bg-red-950/60 border border-red-800/60 text-red-300 rounded-md">
@@ -885,7 +996,7 @@ export default function ScamShieldDashboard() {
                   {result.web_intelligence.external_evidence?.length > 0 && (
                     <div className="space-y-1.5">
                       <div className="text-[10px] font-bold text-cyan-300 uppercase flex items-center gap-1">
-                        BẰNG CHỨNG ĐỐI CHIẾU EXTERNAL EVIDENCE (CLICK ĐỂ KIỂM CHỨNG):
+                        EXTERNAL EVIDENCE BENCHMARKS (CLICK TO VERIFY):
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         {result.web_intelligence.external_evidence.map((item, idx) => {
@@ -924,10 +1035,10 @@ export default function ScamShieldDashboard() {
                       activeTab === tab ? "border-cyan-400 text-cyan-300" : "border-transparent text-slate-400 hover:text-slate-200"
                     }`}
                   >
-                    {tab === "overview" && "Dấu vết Vi phạm"}
-                    {tab === "psychology" && "Giải mã Tâm lý"}
-                    {tab === "family" && "Thẻ Cảnh báo Gia đình"}
-                    {tab === "roleplay" && "🎯 Tập Dượt Phản Xạ"}
+                    {tab === "overview" && "Forensic Evidence"}
+                    {tab === "psychology" && "Cognitive Deception"}
+                    {tab === "family" && "Family Alert Card"}
+                    {tab === "roleplay" && "🎯 Roleplay Reflex Lab"}
                   </button>
                 ))}
               </div>
@@ -936,29 +1047,29 @@ export default function ScamShieldDashboard() {
               {activeTab === "overview" && (
                 <div className="space-y-3">
                   <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                    <div className="text-xs font-bold text-slate-300">Tóm tắt giám định:</div>
+                    <div className="text-xs font-bold text-slate-300">Executive Forensic Summary:</div>
                     <p className="text-xs text-slate-400 leading-relaxed">{result.executive_summary}</p>
                   </div>
                   <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
                     <div className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
-                      <AlertTriangle className="w-4 h-4 text-red-400" /> So sánh Dẫn chứng Đối chiếu Thực tế (Evidence Comparator):
+                      <AlertTriangle className="w-4 h-4 text-red-400" /> Ground-Truth Evidence Comparator:
                     </div>
                     <div className="space-y-3">
                       {result.red_flags.map((f, i) => (
                         <div key={i} className="p-3 bg-slate-950 border border-slate-800/80 rounded-xl text-xs space-y-2">
-                          {/* Dòng 1: Evidence (Cảnh báo - Màu đỏ) */}
+                          {/* Row 1: Evidence (Detected - Red) */}
                           <div className="flex items-start gap-2 bg-red-950/40 border border-red-900/40 p-2.5 rounded-lg text-red-300">
                             <span className="px-1.5 py-0.5 rounded bg-red-900/70 text-red-200 text-[10px] font-bold uppercase shrink-0 font-mono">
-                              [Phát hiện trong dữ liệu]
+                              [Detected in Data]
                             </span>
                             <span className="font-bold">{f.evidence}</span>
                           </div>
 
-                          {/* Dòng 2: Official Fact (Đối chiếu chuẩn - Màu xanh lá/Cyan) + Clickable Official Link */}
+                          {/* Row 2: Official Fact (Official benchmark - Green/Emerald) + Clickable Official Link */}
                           <div className="flex items-center justify-between gap-2 bg-emerald-950/40 border border-emerald-900/40 p-2.5 rounded-lg text-emerald-300 flex-wrap">
                             <div className="flex items-start gap-2">
                               <span className="px-1.5 py-0.5 rounded bg-emerald-900/70 text-emerald-200 text-[10px] font-bold uppercase shrink-0 font-mono">
-                                [Thực tế chính thống]
+                                [Official Benchmark]
                               </span>
                               <span className="font-semibold">{f.official_fact || f.explanation}</span>
                             </div>
@@ -969,22 +1080,22 @@ export default function ScamShieldDashboard() {
                                 rel="noreferrer"
                                 className="inline-flex items-center gap-1 px-2 py-1 text-[10px] font-bold bg-emerald-900/60 hover:bg-emerald-800/80 text-emerald-200 rounded border border-emerald-700/50 transition cursor-pointer shrink-0 font-mono"
                               >
-                                <span>Trang gốc</span>
+                                <span>Source</span>
                                 <ExternalLink className="w-3 h-3 text-emerald-300" />
                               </a>
                             )}
                           </div>
 
-                          {/* Dòng 3: Explanation */}
+                          {/* Row 3: Explanation */}
                           <div className="text-slate-400 pl-1 text-[11px] leading-relaxed pt-0.5">
-                            💡 <strong className="text-slate-300">Phân tích:</strong> {f.explanation}
+                            💡 <strong className="text-slate-300">Forensic Analysis:</strong> {f.explanation}
                           </div>
                         </div>
                       ))}
                     </div>
                   </div>
                   <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-1.5">
-                    <div className="text-xs font-bold text-amber-300">Hành động 60s:</div>
+                    <div className="text-xs font-bold text-amber-300">60-Second Emergency Actions:</div>
                     {result.urgent_actions.map((a, i) => (
                       <div key={i} className="text-xs text-slate-300 flex items-center gap-1.5"><Zap className="w-3.5 h-3.5 text-cyan-400" /> {a}</div>
                     ))}
@@ -995,12 +1106,12 @@ export default function ScamShieldDashboard() {
               {/* Tab 2: Psychology */}
               {activeTab === "psychology" && (
                 <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
-                  <div className="text-xs font-bold text-purple-300">Đòn thao túng cảm xúc của kẻ gian:</div>
+                  <div className="text-xs font-bold text-purple-300">Psychological Exploitation Tactics:</div>
                   {result.psychological_tricks.map((t, i) => (
                     <div key={i} className="p-3 bg-slate-950 rounded-lg text-xs space-y-1 border border-purple-900/30">
                       <div className="flex justify-between font-bold text-purple-300">
                         <span>{t.tactic}</span>
-                        <span className="text-[10px] px-2 py-0.5 bg-purple-950 rounded text-purple-400">Đánh vào: {t.target_emotion}</span>
+                        <span className="text-[10px] px-2 py-0.5 bg-purple-950 rounded text-purple-400">Target Emotion: {t.target_emotion}</span>
                       </div>
                       <p className="text-slate-400">{t.analysis}</p>
                     </div>
@@ -1012,16 +1123,16 @@ export default function ScamShieldDashboard() {
               {activeTab === "family" && (
                 <div className="p-4 rounded-xl bg-slate-900 border border-indigo-500/30 space-y-3">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-                    <span className="text-xs font-bold text-indigo-300">Nội dung gửi nhanh người thân (Zalo/Telegram):</span>
+                    <span className="text-xs font-bold text-indigo-300">Quick Family Emergency Dispatch (Messaging/Telegram):</span>
                     <div className="flex items-center gap-1.5 flex-wrap">
                       <button
                         onClick={() => {
                           const text = encodeURIComponent(result.family_alert_card.shareable_text);
-                          window.open(`https://zalo.me/share?text=${text}`, "_blank");
+                          window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank");
                         }}
-                        className="text-xs bg-[#0068ff] hover:bg-[#0054d1] text-white px-2.5 py-1 rounded-md flex items-center gap-1 cursor-pointer font-semibold transition"
+                        className="text-xs bg-[#25D366] hover:bg-[#20ba5a] text-white px-2.5 py-1 rounded-md flex items-center gap-1 cursor-pointer font-semibold transition"
                       >
-                        <Share2 className="w-3.5 h-3.5" /> Gửi qua Zalo
+                        <Share2 className="w-3.5 h-3.5" /> WhatsApp / Chat
                       </button>
 
                       <button
@@ -1032,7 +1143,7 @@ export default function ScamShieldDashboard() {
                         }}
                         className="text-xs bg-[#24A1DE] hover:bg-[#1f8ec4] text-white px-2.5 py-1 rounded-md flex items-center gap-1 cursor-pointer font-semibold transition"
                       >
-                        <Send className="w-3.5 h-3.5" /> Gửi Telegram
+                        <Send className="w-3.5 h-3.5" /> Telegram
                       </button>
 
                       <button
@@ -1040,7 +1151,7 @@ export default function ScamShieldDashboard() {
                         className="text-xs bg-indigo-600 hover:bg-indigo-700 text-white px-2.5 py-1 rounded-md flex items-center gap-1 cursor-pointer font-semibold transition"
                       >
                         {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-                        {copied ? "Đã copy!" : "Copy"}
+                        {copied ? "Copied!" : "Copy"}
                       </button>
                     </div>
                   </div>
@@ -1056,15 +1167,15 @@ export default function ScamShieldDashboard() {
                   <div className="flex justify-between items-center border-b border-slate-800 pb-3">
                     <div>
                       <div className="text-xs font-bold text-cyan-300 flex items-center gap-1.5">
-                        <Gamepad2 className="w-4 h-4 text-cyan-400" /> Giả Lập Phản Xạ Chống Lừa Đảo (Roleplay Lab)
+                        <Gamepad2 className="w-4 h-4 text-cyan-400" /> Anti-Fraud Reflex Simulation (Roleplay Lab)
                       </div>
-                      <div className="text-[11px] text-slate-400">Powered by Gemini 2.5 Flash — luyện đối đáp với kịch bản lừa đảo thực tế</div>
+                      <div className="text-[11px] text-slate-400">Powered by Gemini 2.5 Flash — practice countering active fraud scenarios in real time</div>
                     </div>
                     <button
                       onClick={() => setRoleplayMessages(getInitialRoleplayMessages(result))}
                       className="text-[11px] px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg flex items-center gap-1 cursor-pointer transition border border-slate-700"
                     >
-                      <RefreshCw className="w-3 h-3 text-cyan-400" /> Đặt lại
+                      <RefreshCw className="w-3 h-3 text-cyan-400" /> Reset
                     </button>
                   </div>
 
@@ -1078,7 +1189,7 @@ export default function ScamShieldDashboard() {
                               <Bot className="w-4 h-4" />
                             </div>
                             <div className="bg-red-950/40 border border-red-900/50 rounded-2xl rounded-tl-none p-3 text-xs text-red-200 leading-relaxed">
-                              <div className="text-[9px] font-bold text-red-400 uppercase mb-1">Kẻ lừa đảo (Gemini AI)</div>
+                              <div className="text-[9px] font-bold text-red-400 uppercase mb-1">Scammer (Gemini AI)</div>
                               {msg.text}
                             </div>
                           </div>
@@ -1088,7 +1199,7 @@ export default function ScamShieldDashboard() {
                         return (
                           <div key={msg.id} className="flex gap-2.5 items-start justify-end ml-auto max-w-[88%]">
                             <div className="bg-cyan-950/60 border border-cyan-800/50 rounded-2xl rounded-tr-none p-3 text-xs text-cyan-100 leading-relaxed">
-                              <div className="text-[9px] font-bold text-cyan-400 uppercase mb-1 text-right">Bạn (Nạn nhân)</div>
+                              <div className="text-[9px] font-bold text-cyan-400 uppercase mb-1 text-right">You (Target)</div>
                               {msg.text}
                             </div>
                             <div className="w-7 h-7 rounded-lg bg-cyan-950 border border-cyan-800 flex items-center justify-center text-cyan-400 shrink-0 text-xs font-bold">
@@ -1118,7 +1229,7 @@ export default function ScamShieldDashboard() {
 
                   {/* Quick Responses */}
                   <div className="space-y-1.5">
-                    <div className="text-[10px] uppercase font-bold text-slate-400">Gợi ý câu trả lời nhanh (Click thử ngay):</div>
+                    <div className="text-[10px] uppercase font-bold text-slate-400">Quick Reflex Responses (Click to test):</div>
                     <div className="flex flex-wrap gap-2">
                       {QUICK_ROLEPLAY_RESPONSES.map((qr, idx) => (
                         <button
@@ -1148,14 +1259,14 @@ export default function ScamShieldDashboard() {
                       type="text"
                       value={roleplayInput}
                       onChange={(e) => setRoleplayInput(e.target.value)}
-                      placeholder="Nhập câu trả lời của bạn đối đáp với kẻ gian..."
+                      placeholder="Enter your response to counter the fraudster..."
                       className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 font-sans"
                     />
                     <button
                       type="submit"
                       className="px-4 py-2 bg-gradient-to-r from-cyan-600 to-indigo-600 font-bold text-xs rounded-xl shadow-lg flex items-center gap-1.5 cursor-pointer active:scale-95 text-white"
                     >
-                      <Send className="w-3.5 h-3.5" /> Gửi
+                      <Send className="w-3.5 h-3.5" /> Send
                     </button>
                   </form>
                 </div>
@@ -1184,11 +1295,11 @@ export default function ScamShieldDashboard() {
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> Live Real-time
                   </span>
                 </div>
-                <p className="text-xs text-slate-400">Cảnh báo lừa đảo mới nhất được cộng đồng phát hiện và giám định</p>
+                <p className="text-xs text-slate-400">Latest scam threats identified and verified by community members</p>
               </div>
             </div>
             <div className="text-xs text-slate-400 font-mono flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800 self-start sm:self-auto">
-              <Flame className="w-3.5 h-3.5 text-amber-400 animate-bounce" /> {communityFeed.length} ca đã ghi nhận
+              <Flame className="w-3.5 h-3.5 text-amber-400 animate-bounce" /> {communityFeed.length} cases recorded
             </div>
           </div>
 
@@ -1224,10 +1335,10 @@ export default function ScamShieldDashboard() {
 
                 <div className="flex items-center justify-between pt-2.5 border-t border-slate-900 text-[11px]">
                   <span className="text-slate-400 flex items-center gap-1">
-                    <Eye className="w-3.5 h-3.5 text-cyan-400/80" /> {item.views} lượt xem
+                    <Eye className="w-3.5 h-3.5 text-cyan-400/80" /> {item.views} views
                   </span>
                   <span className="text-cyan-400 font-bold group-hover:translate-x-0.5 transition flex items-center gap-1">
-                    Xem Giám định <ArrowUpRight className="w-3.5 h-3.5" />
+                    Inspect Case <ArrowUpRight className="w-3.5 h-3.5" />
                   </span>
                 </div>
               </div>

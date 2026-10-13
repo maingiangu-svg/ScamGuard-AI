@@ -107,7 +107,7 @@ export async function verifyUrlLive(url: string): Promise<{
         accessible: false,
         statusCode: null,
         finalUrl: null,
-        error: err instanceof Error ? err.message : "Không thể kết nối",
+        error: err instanceof Error ? err.message : "Connection failed",
       };
     }
   }
@@ -129,13 +129,13 @@ export async function enrichWebIntelligence(
 
   const suspicious: string[] = [...(webIntel?.suspicious_indicators || [])];
   if (brandCheck.match === "mismatch") {
-    suspicious.push(`Domain "${domain}" không khớp trang chính thức (${brandCheck.officialDomain})`);
+    suspicious.push(`Domain "${domain}" does not match the official domain (${brandCheck.officialDomain})`);
   }
   if (!liveCheck.accessible) {
-    suspicious.push(`Không truy cập được URL (HTTP ${liveCheck.statusCode ?? "timeout"})`);
+    suspicious.push(`Unable to reach URL (HTTP ${liveCheck.statusCode ?? "timeout"})`);
   }
   if (domain.endsWith(".vip") || domain.endsWith(".top") || domain.endsWith(".xyz")) {
-    suspicious.push(`TLD rủi ro cao (.${domain.split(".").pop()}) thường dùng cho phishing`);
+    suspicious.push(`High-risk TLD (.${domain.split(".").pop()}) frequently associated with phishing`);
   }
 
   return {
@@ -149,7 +149,7 @@ export async function enrichWebIntelligence(
     external_evidence: webIntel?.external_evidence?.length
       ? webIntel.external_evidence
       : brandCheck.officialDomain
-        ? [{ title: `Trang chính thức ${brandCheck.brand}`, source_url: `https://${brandCheck.officialDomain}` }]
+        ? [{ title: `Official website of ${brandCheck.brand}`, source_url: `https://${brandCheck.officialDomain}` }]
         : [],
     confidence: Math.min(99, (webIntel?.confidence || 70) + (brandCheck.match === "mismatch" ? 10 : 0)),
     verified_live: liveCheck.accessible,

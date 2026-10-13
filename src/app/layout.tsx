@@ -4,7 +4,7 @@ import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
-  subsets: ["latin", "vietnamese"],
+  subsets: ["latin"],
 });
 
 const geistMono = Geist_Mono({
@@ -13,16 +13,16 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ScamShield Forensic AI — Giám định Lừa đảo",
+  title: "ScamShield Forensic AI — Multimodal Deception & Scam Intelligence",
   description:
-    "Ứng dụng AI phòng chống lừa đảo Việt Nam. Quét ảnh, phân tích tin nhắn/link, giải mã thao túng tâm lý — xây dựng với Google Gemini 2.5 Flash cho AI Riser Vietnam 2026.",
-  keywords: ["lừa đảo", "scam", "phishing", "Gemini", "AI Riser Vietnam 2026", "phòng chống lừa đảo"],
-  authors: [{ name: "ScamShield Team" }],
+    "AI-powered digital forensic analysis and cognitive deception decoding for fraud prevention, engineered with Google Gemini 2.5 Flash.",
+  keywords: ["cyber forensic", "scam detection", "phishing intelligence", "Gemini 2.5 Flash", "fraud prevention", "AI security"],
+  authors: [{ name: "ScamShield Research Team" }],
   manifest: "/manifest.json",
   openGraph: {
     title: "ScamShield Forensic AI",
-    description: "Giám định pháp y số & giải mã thao túng đa phương thức",
-    locale: "vi_VN",
+    description: "Multimodal digital forensics and cognitive manipulation decoding",
+    locale: "en_US",
     type: "website",
   },
 };
@@ -37,7 +37,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
-      lang="vi"
+      lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>

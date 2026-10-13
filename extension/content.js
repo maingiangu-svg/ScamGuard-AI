@@ -14,12 +14,12 @@
 
     const textSpan = document.createElement("span");
     textSpan.className = "scamguard-banner-text";
-    textSpan.textContent = messageText || "🔴 CẢNH BÁO: Trang web này có nguy cơ lừa đảo cao!";
+    textSpan.textContent = messageText || "🔴 WARNING: This website poses a high risk of scam or phishing!";
 
     const closeBtn = document.createElement("button");
     closeBtn.id = "scamguard-banner-close-btn";
     closeBtn.className = "scamguard-banner-button";
-    closeBtn.textContent = "Xác nhận / Đóng";
+    closeBtn.textContent = "Acknowledge / Dismiss";
     closeBtn.addEventListener("click", () => {
       const el = document.getElementById("scamguard-alert-banner");
       if (el) {
@@ -88,8 +88,8 @@
 
       if (isHighRisk) {
         const warningText = data.executive_summary
-          ? `🔴 CẢNH BÁO: Trang web này có nguy cơ lừa đảo cao! (${data.scam_type || "Nghi vấn lừa đảo"})`
-          : "🔴 CẢNH BÁO: Trang web này có nguy cơ lừa đảo cao!";
+          ? `🔴 WARNING: High scam/phishing risk detected! (${data.scam_type || "Suspicious Activity"})`
+          : "🔴 WARNING: This website poses a high risk of scam or phishing!";
         injectWarningBanner(warningText);
       }
     } catch (err) {
