@@ -49,6 +49,13 @@ interface ForensicResult {
   next_move_prediction: string;
   urgent_actions: string[];
   family_alert_card: { headline: string; key_warning: string; shareable_text: string };
+  ml_classifier?: {
+    ml_risk_score: number;
+    ml_label: string;
+    ml_confidence: number;
+    ml_top_signals: string[];
+    model_ready: boolean;
+  };
 }
 
 interface CommunityFeedItem {
@@ -930,6 +937,54 @@ export default function ScamShieldDashboard() {
                   </div>
                 </div>
               </div>
+
+              {/* ML PRE-CLASSIFIER BADGE */}
+              {result.ml_classifier?.model_ready && (
+                <div className="p-4 rounded-xl bg-gradient-to-r from-indigo-950/60 to-purple-950/60 border border-indigo-500/40 space-y-2.5">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] uppercase tracking-wider font-mono font-bold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 flex items-center gap-1">
+                        <Brain className="w-3 h-3" /> ML PRE-CLASSIFIER
+                      </span>
+                      <span className="text-[10px] text-slate-400 font-mono">TF-IDF + Gradient Boosting</span>
+                    </div>
+                    <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded font-mono ${
+                      result.ml_classifier.ml_label === "SCAM"
+                        ? "bg-red-500/20 text-red-400 border border-red-500/40"
+                        : result.ml_classifier.ml_label === "SUSPICIOUS"
+                        ? "bg-amber-500/20 text-amber-300 border border-amber-500/40"
+                        : "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40"
+                    }`}>
+                      {result.ml_classifier.ml_label === "SCAM" ? "🔴" : result.ml_classifier.ml_label === "SUSPICIOUS" ? "🟡" : "🟢"} {result.ml_classifier.ml_label}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    {/* Mini progress bar */}
+                    <div className="flex-1 h-2 bg-slate-800 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full rounded-full transition-all ${
+                          result.ml_classifier.ml_risk_score >= 60 ? "bg-red-500" :
+                          result.ml_classifier.ml_risk_score >= 35 ? "bg-amber-400" : "bg-emerald-400"
+                        }`}
+                        style={{ width: `${result.ml_classifier.ml_risk_score}%` }}
+                      />
+                    </div>
+                    <span className="text-xs font-mono font-bold text-indigo-300 shrink-0">
+                      {result.ml_classifier.ml_risk_score}/100 · {result.ml_classifier.ml_confidence}% conf.
+                    </span>
+                  </div>
+                  {result.ml_classifier.ml_top_signals?.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5">
+                      <span className="text-[10px] text-slate-500 font-bold uppercase">Key signals:</span>
+                      {result.ml_classifier.ml_top_signals.map((sig, i) => (
+                        <span key={i} className="text-[10px] px-1.5 py-0.5 bg-indigo-950/60 border border-indigo-800/60 text-indigo-300 rounded font-mono">
+                          {sig}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* WEB INTELLIGENCE Section */}
               {result.web_intelligence?.detected && (

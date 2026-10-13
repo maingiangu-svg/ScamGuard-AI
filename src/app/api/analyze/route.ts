@@ -3,6 +3,35 @@ import { GoogleGenAI, Type, Schema } from "@google/genai";
 import { enrichWebIntelligence, extractUrls, checkBrandDomain, getDomain } from "@/lib/url-verify";
 import { getClientIp, rateLimit } from "@/lib/rate-limit";
 import type { ForensicResult } from "@/lib/types";
+import { spawn } from "child_process";
+import path from "path";
+
+// ─── ML Pre-Classifier (Python subprocess) ───────────────────────────────────
+async function runMLClassifier(text: string, url: string): Promise<{
+  ml_risk_score: number;
+  ml_label: string;
+  ml_confidence: number;
+  ml_top_signals: string[];
+  model_ready: boolean;
+} | null> {
+  return new Promise((resolve) => {
+    const scriptPath = path.join(process.cwd(), "ml_model", "predict.py");
+    const payload = JSON.stringify({ text: text.slice(0, 2000), url });
+    const python = spawn("python3", [scriptPath], { cwd: process.cwd(), timeout: 8000 });
+    let out = "";
+    let errOut = "";
+    python.stdin.write(payload);
+    python.stdin.end();
+    python.stdout.on("data", (d: Buffer) => { out += d.toString(); });
+    python.stderr.on("data", (d: Buffer) => { errOut += d.toString(); });
+    python.on("close", (code: number) => {
+      if (code !== 0 || !out.trim()) { resolve(null); return; }
+      try { resolve(JSON.parse(out.trim())); }
+      catch { resolve(null); }
+    });
+    python.on("error", () => resolve(null));
+  });
+}
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -274,7 +303,18 @@ Anti-Hallucination & Structured Output Rules:
       "Contact official organizational support to verify authenticity",
     ];
 
-    let finalResponse = buildStructuredResponse(
+    // ── ML Pre-Classifier (Layer 1) ─────────────────────────────────────────
+    const mlResult = await runMLClassifier(sourceText, targetUrlForWhitelist);
+
+    // ── Fuse ML score + Gemini score (weighted average) ──────────────────────
+    if (mlResult?.model_ready && mlResult.ml_risk_score > 0) {
+      // 40% ML weight + 60% Gemini/rule weight
+      const fusedScore = Math.round(0.40 * mlResult.ml_risk_score + 0.60 * riskScore);
+      riskScore = Math.min(99, fusedScore);
+      riskLevel = riskScore > 70 ? "HIGH" : riskScore > 40 ? "MEDIUM" : "LOW";
+    }
+
+    let finalResponse: any = buildStructuredResponse(
       riskScore,
       riskLevel,
       reasons,
@@ -283,6 +323,17 @@ Anti-Hallucination & Structured Output Rules:
       scamType,
       urgentActions
     );
+
+    // Attach ML metadata to response for UI display
+    if (mlResult) {
+      finalResponse.ml_classifier = {
+        ml_risk_score  : mlResult.ml_risk_score,
+        ml_label       : mlResult.ml_label,
+        ml_confidence  : mlResult.ml_confidence,
+        ml_top_signals : mlResult.ml_top_signals,
+        model_ready    : mlResult.model_ready,
+      };
+    }
 
     const textForVerify = [targetUrlForWhitelist, summary, ...reasons].filter(Boolean).join(" ");
     if (textForVerify && (finalResponse.web_intelligence?.detected || extractUrls(textForVerify).length > 0)) {
