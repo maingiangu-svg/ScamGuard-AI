@@ -926,14 +926,22 @@ export default function ScamShieldDashboard() {
 
               <div className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className={`w-16 h-16 rounded-xl border-2 flex flex-col items-center justify-center font-black ${result.risk_score >= 75 ? "text-red-400 border-red-500 bg-red-950/30" : "text-emerald-400 border-emerald-500 bg-emerald-950/30"}`}>
+                  <div className={`w-16 h-16 rounded-xl border-2 flex flex-col items-center justify-center font-black ${
+                    result.threat_level === "SAFE" ? "text-emerald-400 border-emerald-500 bg-emerald-950/30"
+                    : result.threat_level === "LOW" || result.threat_level === "MEDIUM" ? "text-amber-300 border-amber-500 bg-amber-950/30"
+                    : "text-red-400 border-red-500 bg-red-950/30"
+                  }`}>
                     <span className="text-2xl">{result.risk_score}</span>
                     <span className="text-[8px]">SCORE</span>
                   </div>
                   <div>
                     <div className="text-xs text-slate-400">Threat Category</div>
                     <div className="text-lg font-bold">{result.scam_type}</div>
-                    <span className="text-[10px] px-2 py-0.5 rounded bg-red-500/20 text-red-400 font-bold">{result.threat_level}</span>
+                    <span className={`text-[10px] px-2 py-0.5 rounded font-bold ${
+                      result.threat_level === "SAFE" ? "bg-emerald-500/20 text-emerald-400"
+                      : result.threat_level === "LOW" || result.threat_level === "MEDIUM" ? "bg-amber-500/20 text-amber-300"
+                      : "bg-red-500/20 text-red-400"
+                    }`}>{result.threat_level}</span>
                   </div>
                 </div>
               </div>

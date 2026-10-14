@@ -2,18 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenAI, Type, Schema } from "@google/genai";
 import { enrichWebIntelligence, extractUrls, checkBrandDomain, getDomain } from "@/lib/url-verify";
 import { getClientIp, rateLimit } from "@/lib/rate-limit";
-import type { ForensicResult } from "@/lib/types";
+import { createAssessment, getRiskLevels, isMLAvailable } from "@/lib/analysis-assessment";
+import type { AnalysisAssessment, MLClassification } from "@/lib/analysis-assessment";
 import { spawn } from "child_process";
 import path from "path";
 
 // ─── ML Pre-Classifier (Python subprocess) ───────────────────────────────────
-async function runMLClassifier(text: string, url: string): Promise<{
-  ml_risk_score: number;
-  ml_label: string;
-  ml_confidence: number;
-  ml_top_signals: string[];
-  model_ready: boolean;
-} | null> {
+async function runMLClassifier(text: string, url: string): Promise<MLClassification | null> {
   return new Promise((resolve) => {
     const scriptPath = path.join(process.cwd(), "ml_model", "predict.py");
     const payload = JSON.stringify({ text: text.slice(0, 2000), url });
@@ -99,7 +94,6 @@ function checkWhitelist(urlStr: string): { isWhitelisted: boolean; domain: strin
 
 function buildStructuredResponse(
   riskScore: number,
-  riskLevel: "LOW" | "MEDIUM" | "HIGH",
   reasons: string[],
   detectedPatterns: string[],
   summary: string,
@@ -107,13 +101,9 @@ function buildStructuredResponse(
   urgentActions?: string[],
   webIntel?: any
 ): any {
-  const scamDetected = riskLevel === "HIGH" || riskScore > 70;
-  const threatLevelMap: Record<string, "CRITICAL" | "HIGH" | "MEDIUM" | "LOW" | "SAFE"> = {
-    HIGH: "CRITICAL",
-    MEDIUM: "HIGH",
-    LOW: "SAFE",
-  };
-  const threatLevel = threatLevelMap[riskLevel] || (scamDetected ? "CRITICAL" : "SAFE");
+  const { riskLevel, threatLevel } = getRiskLevels(riskScore);
+  const scamDetected = riskLevel === "HIGH";
+  const needsReview = riskLevel !== "LOW";
 
   return {
     riskScore,
@@ -124,7 +114,7 @@ function buildStructuredResponse(
     scam_detected: scamDetected,
     risk_score: riskScore,
     threat_level: threatLevel,
-    scam_type: scamType || (scamDetected ? "Phishing / Brand Impersonation" : "Legitimate Website"),
+    scam_type: scamType || (needsReview ? "Suspicious Content" : "No Scam Indicators Detected"),
     executive_summary: summary,
     web_intelligence: webIntel || {
       detected: false,
@@ -135,27 +125,23 @@ function buildStructuredResponse(
       website_status: "unknown",
       suspicious_indicators: detectedPatterns,
       external_evidence: [],
-      confidence: 90,
-      verified_live: true,
+      confidence: 0,
+      verified_live: false,
     },
-    red_flags: reasons.map((r) => ({
+    red_flags: needsReview ? reasons.map((r) => ({
       evidence: r,
-      official_fact: "Benchmarked against authoritative cybersecurity standards and verified sources.",
-      official_link: "https://khonggianmang.vn",
+      official_fact: "Tín hiệu dựa trên nội dung được cung cấp; chưa được xác minh bằng nguồn độc lập.",
       explanation: r,
-    })),
-    psychological_tricks: scamDetected
-      ? [{ tactic: "Urgency & Fear Coercion", target_emotion: "Anxiety & Panic", analysis: summary }]
-      : [],
-    next_move_prediction: scamDetected ? "Attempts to harvest OTPs, credentials, or initiate unauthorized transactions." : "None",
-    urgent_actions: urgentActions || [
-      "Do not provide one-time passwords (OTP) or credentials to any unverified party",
-      "Verify communications directly through verified official support channels",
-    ],
+    })) : [],
+    psychological_tricks: [],
+    next_move_prediction: needsReview ? "Chưa đủ dữ liệu để dự đoán hành vi tiếp theo." : "None",
+    urgent_actions: urgentActions || (needsReview ? [
+      "Verify requests independently before sharing information or transferring money.",
+    ] : []),
     family_alert_card: {
-      headline: scamDetected ? "CRITICAL FRAUD & PHISHING ALERT" : "VERIFIED LEGITIMATE WEBSITE",
-      key_warning: scamDetected ? "Never disclose personal credentials, passwords, or OTPs!" : "This website is verified as legitimate and safe.",
-      shareable_text: scamDetected ? "⚠️ ALERT: Exercise high vigilance regarding suspicious links or urgent credential requests!" : "✅ Safe and verified website.",
+      headline: scamDetected ? `${threatLevel} RISK ALERT` : needsReview ? "SUSPICIOUS CONTENT — VERIFY FIRST" : "NO CLEAR SCAM INDICATORS",
+      key_warning: needsReview ? "Verify requests before sharing credentials or transferring money." : "No clear scam indicators detected. This does not guarantee safety.",
+      shareable_text: needsReview ? "⚠️ Verify suspicious content independently before acting." : "No clear scam indicators detected in the provided content; continue to verify unusual requests.",
     },
   };
 }
@@ -217,7 +203,6 @@ export async function POST(req: NextRequest) {
     if (isWhitelisted && wlDomain) {
       const whitelistResult = buildStructuredResponse(
         0,
-        "LOW",
         [`Domain ${wlDomain} is on the official verified whitelist.`],
         [],
         `Verified legitimate website belonging to ${wlBrand || wlDomain}.`,
@@ -241,7 +226,7 @@ export async function POST(req: NextRequest) {
 
     // 2. Non-whitelisted domain: Send url, title, bodyText to Gemini 2.5 Flash
     const apiKey = process.env.GEMINI_API_KEY;
-    let geminiParsed: any = null;
+    let geminiParsed: Partial<AnalysisAssessment> | null = null;
 
     if (apiKey && apiKey.trim() !== "" && apiKey !== "your_gemini_api_key_here") {
       try {
@@ -276,7 +261,7 @@ Anti-Hallucination & Structured Output Rules:
 2. riskScore must be an integer between 0 and 100.
 3. reasons is an array of specific anomalies, red flags, or fraudulent indicators discovered.
 4. detectedPatterns is an array describing identified threat patterns (e.g., unauthorized credential harvesting, banking impersonation, high-yield investment fraud, OTP coercion).
-5. summary is a concise English forensic summary.
+5. summary is a concise Vietnamese forensic summary.
 6. If evidence is ambiguous or insufficient, default riskLevel to "LOW".`,
             responseMimeType: "application/json",
             responseSchema: FORENSIC_SCHEMA,
@@ -287,36 +272,25 @@ Anti-Hallucination & Structured Output Rules:
           geminiParsed = JSON.parse(response.text);
         }
       } catch (geminiError: any) {
-        console.warn("Gemini API call failed, using rule-based fallback analysis:", geminiError?.message || geminiError);
+        console.warn("Gemini API call failed, falling back to the available ML model:", geminiError?.message || geminiError);
       }
     }
 
-    // Fallback if Gemini unavailable or not configured
-    let riskScore = geminiParsed?.riskScore ?? (sourceText.toLowerCase().includes("vneid") || sourceText.toLowerCase().includes("vcb") ? 95 : 75);
-    let riskLevel: "LOW" | "MEDIUM" | "HIGH" = geminiParsed?.riskLevel || (riskScore > 70 ? "HIGH" : riskScore > 40 ? "MEDIUM" : "LOW");
-    let reasons: string[] = geminiParsed?.reasons || ["Detected suspicious indicators of organizational impersonation or sensitive credential extraction."];
-    let detectedPatterns: string[] = geminiParsed?.detectedPatterns || ["Sensitive credential extraction form"];
-    let summary: string = geminiParsed?.summary || "Content displays prominent indicators of deception or phishing behavior.";
-    let scamType: string = geminiParsed?.scam_type || "Phishing / Brand Impersonation";
-    let urgentActions: string[] = geminiParsed?.urgent_actions || [
-      "Do not click unknown links or disclose OTP credentials",
-      "Contact official organizational support to verify authenticity",
-    ];
-
-    // ── ML Pre-Classifier (Layer 1) ─────────────────────────────────────────
-    const mlResult = await runMLClassifier(sourceText, targetUrlForWhitelist);
-
-    // ── Fuse ML score + Gemini score (weighted average) ──────────────────────
-    if (mlResult?.model_ready && mlResult.ml_risk_score > 0) {
-      // 40% ML weight + 60% Gemini/rule weight
-      const fusedScore = Math.round(0.40 * mlResult.ml_risk_score + 0.60 * riskScore);
-      riskScore = Math.min(99, fusedScore);
-      riskLevel = riskScore > 70 ? "HIGH" : riskScore > 40 ? "MEDIUM" : "LOW";
+    // The local classifiers support text and URLs, not image pixels.
+    const mlResult = isImage ? null : await runMLClassifier(sourceText, targetUrlForWhitelist);
+    const assessment = createAssessment(geminiParsed, mlResult, !!targetUrlForWhitelist);
+    if (!assessment) {
+      return NextResponse.json(
+        { error: isImage
+          ? "Chưa thể phân tích ảnh lúc này. Hãy nhập nội dung văn bản hoặc thử lại sau."
+          : "Dịch vụ phân tích chưa sẵn sàng. Vui lòng thử lại sau." },
+        { status: 503, headers: corsHeaders }
+      );
     }
+    const { riskScore, reasons, detectedPatterns, summary, scam_type: scamType, urgent_actions: urgentActions } = assessment;
 
     let finalResponse: any = buildStructuredResponse(
       riskScore,
-      riskLevel,
       reasons,
       detectedPatterns,
       summary,
@@ -331,7 +305,7 @@ Anti-Hallucination & Structured Output Rules:
         ml_label       : mlResult.ml_label,
         ml_confidence  : mlResult.ml_confidence,
         ml_top_signals : mlResult.ml_top_signals,
-        model_ready    : mlResult.model_ready,
+        model_ready    : isMLAvailable(mlResult),
       };
     }
 
@@ -339,10 +313,19 @@ Anti-Hallucination & Structured Output Rules:
     if (textForVerify && (finalResponse.web_intelligence?.detected || extractUrls(textForVerify).length > 0)) {
       finalResponse.web_intelligence = await enrichWebIntelligence(finalResponse.web_intelligence, textForVerify);
       if (finalResponse.web_intelligence?.domain_match === "mismatch" && finalResponse.riskScore < 85) {
-        finalResponse.riskScore = Math.min(99, finalResponse.riskScore + 10);
-        finalResponse.risk_score = finalResponse.riskScore;
-        finalResponse.riskLevel = "HIGH";
-        finalResponse.scam_detected = true;
+        const mismatchReason = "Tên miền không khớp với thương hiệu được nhận diện; cần kiểm chứng độc lập.";
+        finalResponse = {
+          ...finalResponse,
+          ...buildStructuredResponse(
+            Math.min(99, finalResponse.riskScore + 10),
+            [...reasons, mismatchReason],
+            [...detectedPatterns, "Brand domain mismatch"],
+            `${summary} ${mismatchReason}`,
+            "Domain / Brand Mismatch",
+            urgentActions,
+            finalResponse.web_intelligence,
+          ),
+        };
       }
     }
 

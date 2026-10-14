@@ -32,10 +32,10 @@ def install(package):
     import subprocess
     subprocess.check_call([sys.executable, "-m", "pip", "install", package, "-q"])
 
-required = ["scikit-learn", "pandas", "numpy"]
-for pkg in required:
+required = {"scikit-learn": "sklearn", "pandas": "pandas", "numpy": "numpy"}
+for pkg, module in required.items():
     try:
-        __import__(pkg.replace("-", "_").split("==")[0])
+        __import__(module)
     except ImportError:
         print(f"  📦 Installing {pkg}...")
         install(pkg)
@@ -43,15 +43,16 @@ for pkg in required:
 import pandas as pd
 import numpy as np
 from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
+from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.model_selection import StratifiedKFold, cross_val_score
+from sklearn.model_selection import StratifiedKFold, cross_validate
 from sklearn.metrics import (
     accuracy_score, f1_score, roc_auc_score,
     precision_score, recall_score, classification_report
 )
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import LabelEncoder
+from sklearn.pipeline import Pipeline, FeatureUnion
+from sklearn.preprocessing import FunctionTransformer
+from joblib import parallel_backend
 
 # ─── Paths ────────────────────────────────────────────────────────────────────
 ROOT        = Path(__file__).parent.parent   # scamshield-forensic/
@@ -250,7 +251,7 @@ def extract_url_features(url: str) -> list:
         url_len      = len(url)
         domain_part  = re.sub(r"https?://", "", url).split("/")[0]
         domain_len   = len(domain_part)
-        path_len     = len(url) - len(domain_part) - 8   # approx
+        path_len     = max(0, len(url) - len(domain_part) - 8)
 
         # Suspicious keywords
         sus_keywords = ["login", "verify", "secure", "update", "bank", "otp",
@@ -310,6 +311,22 @@ def build_url_feature_matrix(urls):
 # 3. TRAINING
 # ══════════════════════════════════════════════════════════════════════════════
 
+def evaluate_model(model, X, y):
+    """Fit once per fold, fitting TF-IDF only on that fold's training data."""
+    cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+    with parallel_backend("threading"):
+        scores = cross_validate(
+            model, X, y, cv=cv, scoring=["accuracy", "f1", "roc_auc"],
+            n_jobs=4, error_score="raise", verbose=2,
+        )
+    acc_scores, f1_scores, auc_scores = (
+        scores["test_accuracy"], scores["test_f1"], scores["test_roc_auc"]
+    )
+    for i, (a, f, r) in enumerate(zip(acc_scores, f1_scores, auc_scores), 1):
+        print(f"     Fold {i}/5: Accuracy={a:.3f}  F1={f:.3f}  AUC-ROC={r:.3f}")
+    return acc_scores, f1_scores, auc_scores
+
+
 def train_sms_model(df: pd.DataFrame):
     """TF-IDF + Logistic Regression for SMS / text classification."""
     print(f"\n  {BOLD}🏋️  Training SMS Text Classifier…{W}")
@@ -331,21 +348,12 @@ def train_sms_model(df: pd.DataFrame):
         sublinear_tf=True,
         min_df=1,
     )
-    X_vec = tfidf.fit_transform(X)
-
     clf = LogisticRegression(max_iter=1000, C=5.0, solver="lbfgs",
                              class_weight="balanced", random_state=42)
 
-    # 5-Fold cross-validation
-    cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
-    acc_scores = cross_val_score(clf, X_vec, y, cv=cv, scoring="accuracy")
-    f1_scores  = cross_val_score(clf, X_vec, y, cv=cv, scoring="f1")
-    auc_scores = cross_val_score(clf, X_vec, y, cv=cv, scoring="roc_auc")
-
-    for i, (a, f, r) in enumerate(zip(acc_scores, f1_scores, auc_scores), 1):
-        print(f"     Fold {i}/5: Accuracy={a:.3f}  F1={f:.3f}  AUC-ROC={r:.3f}")
-
-    clf.fit(X_vec, y)   # final fit on full data
+    model = Pipeline([("tfidf", tfidf), ("classifier", clf)])
+    acc_scores, f1_scores, auc_scores = evaluate_model(model, X, y)
+    model.fit(X, y)   # final fit on full data
 
     metrics = {
         "sms_accuracy": float(acc_scores.mean()),
@@ -374,17 +382,13 @@ def train_url_model(df: pd.DataFrame):
     urls = df["url"].fillna("").values
     y    = df["label_enc"].values
 
-    # Feature matrix: numeric hand-crafted features
-    print(f"     Extracting URL features from {len(urls):,} samples…")
-    X = build_url_feature_matrix(urls)
-
     # Also use TF-IDF on URL characters as second view
     tfidf_url = TfidfVectorizer(analyzer="char_wb", ngram_range=(2, 4),
                                 max_features=5000, sublinear_tf=True)
-    X_char = tfidf_url.fit_transform(urls)
-
-    import scipy.sparse as sp
-    X_combined = sp.hstack([sp.csr_matrix(X), X_char])
+    features = FeatureUnion([
+        ("numeric", FunctionTransformer(build_url_feature_matrix)),
+        ("tfidf", tfidf_url),
+    ])
 
     clf = GradientBoostingClassifier(
         n_estimators=100, max_depth=4,
@@ -392,27 +396,11 @@ def train_url_model(df: pd.DataFrame):
         subsample=0.8,
     )
 
-    cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
-
-    # Gradient Boosting doesn't support sparse natively in all sklearn builds;
-    # convert to dense for small datasets, or use RandomForest as fallback.
-    try:
-        acc_scores = cross_val_score(clf, X_combined.toarray(), y, cv=cv, scoring="accuracy")
-        f1_scores  = cross_val_score(clf, X_combined.toarray(), y, cv=cv, scoring="f1")
-        auc_scores = cross_val_score(clf, X_combined.toarray(), y, cv=cv, scoring="roc_auc")
-        clf.fit(X_combined.toarray(), y)
-    except Exception:
-        # Fallback: RandomForest (handles sparse directly)
-        warn("Switching to RandomForest (sparse-compatible fallback)…")
-        clf = RandomForestClassifier(n_estimators=200, random_state=42,
-                                     class_weight="balanced", n_jobs=-1)
-        acc_scores = cross_val_score(clf, X_combined, y, cv=cv, scoring="accuracy")
-        f1_scores  = cross_val_score(clf, X_combined, y, cv=cv, scoring="f1")
-        auc_scores = cross_val_score(clf, X_combined, y, cv=cv, scoring="roc_auc")
-        clf.fit(X_combined, y)
-
-    for i, (a, f, r) in enumerate(zip(acc_scores, f1_scores, auc_scores), 1):
-        print(f"     Fold {i}/5: Accuracy={a:.3f}  F1={f:.3f}  AUC-ROC={r:.3f}")
+    model = Pipeline([("features", features), ("classifier", clf)])
+    acc_scores, f1_scores, auc_scores = evaluate_model(model, urls, y)
+    info("Fitting final URL model on the selected training data…")
+    model.fit(urls, y)
+    tfidf_url = model.named_steps["features"].transformer_list[1][1]
 
     metrics = {
         "url_accuracy": float(acc_scores.mean()),
