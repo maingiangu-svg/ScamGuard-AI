@@ -339,8 +339,8 @@ def train_sms_model(df: pd.DataFrame):
                    "scam": 1, "legit": 0}
     df["label_enc"] = df["label"].map(label_map).fillna(0).astype(int)
 
-    X = df["text"].fillna("").values
-    y = df["label_enc"].values
+    X = np.array(df["text"].fillna("").tolist(), dtype=object)
+    y = np.array(df["label_enc"].tolist(), dtype=int)
 
     tfidf = TfidfVectorizer(
         max_features=10_000,
@@ -379,8 +379,8 @@ def train_url_model(df: pd.DataFrame):
         df = df.sample(50_000, random_state=42)
         info(f"Subsampled URL dataset to 50,000 rows for speed")
 
-    urls = df["url"].fillna("").values
-    y    = df["label_enc"].values
+    urls = np.array(df["url"].fillna("").tolist(), dtype=object)
+    y    = np.array(df["label_enc"].tolist(), dtype=int)
 
     # Also use TF-IDF on URL characters as second view
     tfidf_url = TfidfVectorizer(analyzer="char_wb", ngram_range=(2, 4),

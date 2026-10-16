@@ -173,9 +173,12 @@ export async function POST(req: NextRequest) {
     let imageBuffer: Buffer | null = null;
     let imageMimeType = "";
 
+    let language = "en";
+
     if (contentType.includes("multipart/form-data")) {
       const formData = await req.formData();
       const image = formData.get("image") as File;
+      language = (formData.get("language") as string) || "en";
       if (!image) {
         return NextResponse.json({ error: "No image file provided" }, { status: 400, headers: corsHeaders });
       }
@@ -188,6 +191,7 @@ export async function POST(req: NextRequest) {
       url = body.url || "";
       title = body.title || "";
       bodyText = body.bodyText || body.textInput || "";
+      language = body.language || "en";
 
       if (!url && !title && !bodyText) {
         return NextResponse.json({ error: "Request payload is empty" }, { status: 400, headers: corsHeaders });
@@ -249,6 +253,7 @@ Body/Content: ${bodyText || "No detailed text provided"}`,
           ];
         }
 
+        const isVi = language === "vi";
         const response = await ai.models.generateContent({
           model: "gemini-2.5-flash",
           contents,
@@ -259,9 +264,9 @@ Evaluate fraud and phishing risk based on the provided URL, Title, and Content d
 Anti-Hallucination & Structured Output Rules:
 1. riskLevel must be strictly one of: "LOW", "MEDIUM", "HIGH".
 2. riskScore must be an integer between 0 and 100.
-3. reasons is an array of specific anomalies, red flags, or fraudulent indicators discovered.
-4. detectedPatterns is an array describing identified threat patterns (e.g., unauthorized credential harvesting, banking impersonation, high-yield investment fraud, OTP coercion).
-5. summary is a concise Vietnamese forensic summary.
+3. reasons is an array of specific anomalies, red flags, or fraudulent indicators discovered (written in ${isVi ? "Vietnamese" : "English"}).
+4. detectedPatterns is an array describing identified threat patterns (written in ${isVi ? "Vietnamese" : "English"}).
+5. summary is a concise ${isVi ? "Vietnamese" : "English"} forensic summary.
 6. If evidence is ambiguous or insufficient, default riskLevel to "LOW".`,
             responseMimeType: "application/json",
             responseSchema: FORENSIC_SCHEMA,

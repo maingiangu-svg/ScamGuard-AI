@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
+import { translations, type Language } from "@/lib/i18n";
 
 interface ExternalEvidenceItem {
   title: string;
@@ -540,6 +541,25 @@ export default function ScamShieldDashboard() {
   const [roleplayLoading, setRoleplayLoading] = useState(false);
   const [exportingPdf, setExportingPdf] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [lang, setLang] = useState<Language>("en");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const savedLang = localStorage.getItem("scamshield-lang") as Language;
+      if (savedLang === "en" || savedLang === "vi") {
+        setLang(savedLang);
+      }
+    }
+  }, []);
+
+  const toggleLang = (newLang: Language) => {
+    setLang(newLang);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("scamshield-lang", newLang);
+    }
+  };
+
+  const t = translations[lang];
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const reportRef = useRef<HTMLDivElement>(null);
@@ -715,13 +735,14 @@ export default function ScamShieldDashboard() {
         if (!file) return;
         const fd = new FormData();
         fd.append("image", file);
+        fd.append("language", lang);
         res = await fetch("/api/analyze", { method: "POST", body: fd });
       } else {
         if (!textInput.trim()) return;
         res = await fetch("/api/analyze", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ textInput }),
+          body: JSON.stringify({ textInput, language: lang }),
         });
       }
       if (!res.ok) {
@@ -763,20 +784,44 @@ export default function ScamShieldDashboard() {
   return (
     <div className="min-h-screen bg-[#060913] text-slate-100 font-sans pb-20 selection:bg-cyan-500 selection:text-black">
       <header className="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur sticky top-0 z-50 print:hidden">
-        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-2">
           <div className="flex items-center space-x-3">
             <div className="p-2.5 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-xl text-white shadow-lg">
               <ShieldAlert className="w-5 h-5 animate-pulse" />
             </div>
             <div>
               <div className="font-black text-sm uppercase bg-gradient-to-r from-cyan-300 to-indigo-300 bg-clip-text text-transparent">
-                ScamShield Forensic AI
+                {t.header.appTitle}
               </div>
-              <div className="text-[11px] text-slate-400">Digital Forensic Investigation & Multimodal Cognitive Deception Defense</div>
+              <div className="text-[11px] text-slate-400 hidden sm:block">{t.header.appSubtitle}</div>
             </div>
           </div>
-          <div className="text-xs text-slate-300 border border-slate-800 bg-slate-900 px-3 py-1.5 rounded-full font-mono flex items-center gap-1.5">
-            <Lock className="w-3.5 h-3.5 text-cyan-400" /> Gemini 2.5 Flash
+          <div className="flex items-center gap-2">
+            {/* Language Switcher Button */}
+            <div className="flex items-center bg-slate-900 border border-slate-800 rounded-full p-0.5 text-xs font-bold">
+              <button
+                onClick={() => toggleLang("en")}
+                className={`px-2.5 py-1 rounded-full transition flex items-center gap-1 cursor-pointer ${
+                  lang === "en" ? "bg-cyan-500 text-slate-950 shadow font-extrabold" : "text-slate-400 hover:text-white"
+                }`}
+                title="Switch to English (Default)"
+              >
+                <span>🇬🇧</span> EN
+              </button>
+              <button
+                onClick={() => toggleLang("vi")}
+                className={`px-2.5 py-1 rounded-full transition flex items-center gap-1 cursor-pointer ${
+                  lang === "vi" ? "bg-cyan-500 text-slate-950 shadow font-extrabold" : "text-slate-400 hover:text-white"
+                }`}
+                title="Chuyển sang Tiếng Việt"
+              >
+                <span>🇻🇳</span> VI
+              </button>
+            </div>
+
+            <div className="text-xs text-slate-300 border border-slate-800 bg-slate-900 px-3 py-1.5 rounded-full font-mono hidden md:flex items-center gap-1.5">
+              <Lock className="w-3.5 h-3.5 text-cyan-400" /> {t.header.modelBadge}
+            </div>
           </div>
         </div>
       </header>
@@ -784,17 +829,17 @@ export default function ScamShieldDashboard() {
       <main className="max-w-6xl mx-auto px-4 mt-8">
         {showOnboarding && (
           <div className="mb-6 bg-gradient-to-r from-cyan-950/60 to-indigo-950/60 border border-cyan-500/30 rounded-2xl p-4 print:hidden relative">
-            <button onClick={dismissOnboarding} className="absolute top-3 right-3 text-slate-400 hover:text-white cursor-pointer" aria-label="Dismiss guide">
+            <button onClick={dismissOnboarding} className="absolute top-3 right-3 text-slate-400 hover:text-white cursor-pointer" aria-label={t.onboarding.dismiss}>
               <X className="w-4 h-4" />
             </button>
             <div className="flex items-start gap-3">
               <HelpCircle className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
               <div>
-                <div className="text-sm font-bold text-cyan-200 mb-2">3-Step Quick Guide — Accessible to Everyone</div>
+                <div className="text-sm font-bold text-cyan-200 mb-2">{t.onboarding.guideTitle}</div>
                 <ol className="text-xs text-slate-300 space-y-1.5 list-decimal list-inside">
-                  <li><strong>Screenshot</strong> suspicious SMS/chat or <strong>paste</strong> suspicious URLs / text</li>
-                  <li>Click <strong>Start Forensic Analysis</strong> — AI evaluates in ~10 seconds</li>
-                  <li>Review the report → <strong>Share emergency alert</strong> with friends and family</li>
+                  <li><strong>{lang === "vi" ? "Chụp ảnh" : "Screenshot"}</strong> {t.onboarding.step1}</li>
+                  <li><strong>{lang === "vi" ? "Bấm" : "Click"}</strong> {t.onboarding.step2}</li>
+                  <li><strong>{lang === "vi" ? "Báo cáo" : "Report"}</strong> {t.onboarding.step3}</li>
                 </ol>
               </div>
             </div>
@@ -803,17 +848,17 @@ export default function ScamShieldDashboard() {
 
         <div className="text-center max-w-2xl mx-auto mb-6 print:hidden">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-cyan-500/30 bg-cyan-950/30 text-cyan-300 text-xs font-semibold mb-2">
-            <Sparkles className="w-3.5 h-3.5 text-cyan-400" /> AI Riser Vietnam 2026
+            <Sparkles className="w-3.5 h-3.5 text-cyan-400" /> {t.hero.badge}
           </div>
           <h1 className="text-3xl sm:text-4xl font-black">
-            Forensic Scam Detection & Cognitive Deception Analysis
+            {t.hero.headline}
           </h1>
         </div>
 
         {/* Quick presets */}
         <div className="mb-6 bg-slate-900/40 border border-slate-800 rounded-2xl p-3.5 print:hidden">
           <div className="text-[11px] font-bold text-slate-400 uppercase mb-2 flex items-center gap-1">
-            <Activity className="w-3.5 h-3.5 text-cyan-400" /> Real-world Forensic Cases:
+            <Activity className="w-3.5 h-3.5 text-cyan-400" /> {t.hero.realCases}
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
             {SAMPLE_CASES.map((s, idx) => (
@@ -849,13 +894,13 @@ export default function ScamShieldDashboard() {
                   onClick={() => { setInputMode("image"); setResult(null); }}
                   className={`flex-1 py-1.5 text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5 transition ${inputMode === "image" ? "bg-cyan-600 text-white" : "text-slate-400"}`}
                 >
-                  <ImageIcon className="w-3.5 h-3.5" /> Image Scan
+                  <ImageIcon className="w-3.5 h-3.5" /> {t.input.tabImage}
                 </button>
                 <button
                   onClick={() => { setInputMode("text"); setResult(null); }}
                   className={`flex-1 py-1.5 text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5 transition ${inputMode === "text" ? "bg-cyan-600 text-white" : "text-slate-400"}`}
                 >
-                  <Link2 className="w-3.5 h-3.5" /> Text / URL Scan
+                  <Link2 className="w-3.5 h-3.5" /> {t.input.tabText}
                 </button>
               </div>
 
@@ -879,18 +924,19 @@ export default function ScamShieldDashboard() {
                   ) : (
                     <div className="space-y-2">
                       <UploadCloud className="w-8 h-8 text-cyan-400 mx-auto" />
-                      <div className="text-xs font-semibold text-slate-300">Drag & drop or click to upload screenshot</div>
+                      <div className="text-xs font-semibold text-slate-300">{t.input.dropzoneTitle}</div>
+                      <div className="text-[11px] text-slate-500">{t.input.dropzoneSubtitle}</div>
                     </div>
                   )}
                 </div>
               ) : (
                 <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-4 space-y-2">
-                  <label className="text-xs font-bold text-slate-300">Paste suspicious message text, email, or URL:</label>
+                  <label className="text-xs font-bold text-slate-300">{t.input.pastePlaceholder}</label>
                   <textarea
                     rows={6}
                     value={textInput}
                     onChange={(e) => setTextInput(e.target.value)}
-                    placeholder="Example: 'Notice: Your banking profile has been restricted due to abnormal activity. Visit https://vietcombank-login.vip immediately to verify...'"
+                    placeholder={lang === "vi" ? "Ví dụ: 'Thong bao: Tai khoan ngan hang cua ban da bi khoa. Truy cap https://vietcombank-login.vip de xac thuc ngay...'" : "Example: 'Notice: Your banking profile has been restricted. Visit https://vietcombank-login.vip immediately to verify...'"}
                     className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 font-mono"
                   />
                 </div>
@@ -901,8 +947,15 @@ export default function ScamShieldDashboard() {
                   onClick={runAnalysis}
                   className="w-full py-3 bg-gradient-to-r from-cyan-600 to-indigo-600 font-bold text-xs rounded-xl shadow-lg flex items-center justify-center gap-2 cursor-pointer active:scale-95 text-white"
                 >
-                  <FileSearch className="w-4 h-4" /> Start Forensic Analysis
+                  <FileSearch className="w-4 h-4" /> {t.input.btnAnalyze}
                 </button>
+              )}
+
+              {loading && (
+                <div className="p-3 bg-cyan-950/40 border border-cyan-800/40 rounded-xl text-cyan-300 text-xs flex items-center gap-2 animate-pulse">
+                  <RefreshCw className="w-4 h-4 animate-spin text-cyan-400" />
+                  <span>{t.input.analyzing}</span>
+                </div>
               )}
 
               {error && <div className="p-3 bg-red-950/60 border border-red-800 rounded-xl text-red-300 text-xs">{error}</div>}
@@ -924,27 +977,52 @@ export default function ScamShieldDashboard() {
                 </div>
               </div>
 
-              <div className="p-5 rounded-2xl bg-slate-900/90 border border-slate-800 flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className={`w-16 h-16 rounded-xl border-2 flex flex-col items-center justify-center font-black ${
-                    result.threat_level === "SAFE" ? "text-emerald-400 border-emerald-500 bg-emerald-950/30"
-                    : result.threat_level === "LOW" || result.threat_level === "MEDIUM" ? "text-amber-300 border-amber-500 bg-amber-950/30"
-                    : "text-red-400 border-red-500 bg-red-950/30"
-                  }`}>
-                    <span className="text-2xl">{result.risk_score}</span>
-                    <span className="text-[8px]">SCORE</span>
+              {/* ── VERDICT BANNER ─────────────────────────────────────────── */}
+              {(() => {
+                const s = result.risk_score;
+                const verdict =
+                  s >= 80 ? { label: t.verdict.scamDetected,   emoji: "🚨", color: "red",     action: t.verdict.actionScam,        bg: "from-red-950/80 to-red-900/40",     border: "border-red-500",     text: "text-red-300",     badge: "bg-red-500/20 text-red-300 border-red-500/50" } :
+                  s >= 60 ? { label: t.verdict.highRisk,        emoji: "🔶", color: "orange",   action: t.verdict.actionHigh,      bg: "from-orange-950/80 to-amber-900/40",border: "border-orange-500",  text: "text-orange-300",  badge: "bg-orange-500/20 text-orange-300 border-orange-500/50" } :
+                  s >= 31 ? { label: t.verdict.suspicious,       emoji: "⚠️", color: "yellow",   action: t.verdict.actionSuspicious,       bg: "from-amber-950/80 to-yellow-900/30",border: "border-amber-400",   text: "text-amber-300",   badge: "bg-amber-500/20 text-amber-300 border-amber-500/50" } :
+                            { label: t.verdict.safe,             emoji: "✅", color: "green",    action: t.verdict.actionSafe,                      bg: "from-emerald-950/80 to-green-900/30",border:"border-emerald-500", text: "text-emerald-300", badge: "bg-emerald-500/20 text-emerald-300 border-emerald-500/50" };
+
+                return (
+                  <div className={`rounded-2xl bg-gradient-to-br ${verdict.bg} border-2 ${verdict.border} p-5 space-y-3`}>
+                    {/* Top row: verdict label + score badge */}
+                    <div className="flex items-center justify-between flex-wrap gap-3">
+                      <div className="flex items-center gap-3">
+                        {/* Pulsing indicator */}
+                        <span className="relative flex h-5 w-5 shrink-0">
+                          {s >= 60 && <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-60 ${s >= 80 ? "bg-red-500" : "bg-orange-400"}`} />}
+                          <span className={`relative inline-flex h-5 w-5 rounded-full ${s >= 80 ? "bg-red-500" : s >= 60 ? "bg-orange-400" : s >= 31 ? "bg-amber-400" : "bg-emerald-400"}`} />
+                        </span>
+                        <span className={`text-2xl sm:text-3xl font-black tracking-tight ${verdict.text}`}>
+                          {verdict.emoji} {verdict.label}
+                        </span>
+                      </div>
+                      {/* Numeric score — secondary, smaller */}
+                      <span className={`text-[11px] font-mono font-bold px-2.5 py-1 rounded-lg border ${verdict.badge}`}>
+                        {t.verdict.riskScore}: {s}/100
+                      </span>
+                    </div>
+
+                    {/* Action instruction */}
+                    <div className={`flex items-start gap-2 rounded-xl px-3 py-2.5 bg-black/20 border ${verdict.border} border-opacity-30`}>
+                      <Zap className={`w-4 h-4 shrink-0 mt-0.5 ${verdict.text}`} />
+                      <p className={`text-sm font-semibold ${verdict.text}`}>{verdict.action}</p>
+                    </div>
+
+                    {/* Scam type + threat level */}
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-xs text-slate-400">{t.verdict.category}:</span>
+                      <span className="text-xs font-bold text-slate-200">{result.scam_type}</span>
+                      <span className={`text-[10px] px-2 py-0.5 rounded font-mono font-bold border ${verdict.badge}`}>
+                        {result.threat_level}
+                      </span>
+                    </div>
                   </div>
-                  <div>
-                    <div className="text-xs text-slate-400">Threat Category</div>
-                    <div className="text-lg font-bold">{result.scam_type}</div>
-                    <span className={`text-[10px] px-2 py-0.5 rounded font-bold ${
-                      result.threat_level === "SAFE" ? "bg-emerald-500/20 text-emerald-400"
-                      : result.threat_level === "LOW" || result.threat_level === "MEDIUM" ? "bg-amber-500/20 text-amber-300"
-                      : "bg-red-500/20 text-red-400"
-                    }`}>{result.threat_level}</span>
-                  </div>
-                </div>
-              </div>
+                );
+              })()}
 
               {/* ML PRE-CLASSIFIER BADGE */}
               {result.ml_classifier?.model_ready && (
@@ -952,9 +1030,9 @@ export default function ScamShieldDashboard() {
                   <div className="flex items-center justify-between flex-wrap gap-2">
                     <div className="flex items-center gap-2">
                       <span className="text-[10px] uppercase tracking-wider font-mono font-bold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 flex items-center gap-1">
-                        <Brain className="w-3 h-3" /> ML PRE-CLASSIFIER
+                        <Brain className="w-3 h-3" /> {t.mlBadge.badgeTitle}
                       </span>
-                      <span className="text-[10px] text-slate-400 font-mono">TF-IDF + Gradient Boosting</span>
+                      <span className="text-[10px] text-slate-400 font-mono">{t.mlBadge.subtext}</span>
                     </div>
                     <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded font-mono ${
                       result.ml_classifier.ml_label === "SCAM"
@@ -978,12 +1056,12 @@ export default function ScamShieldDashboard() {
                       />
                     </div>
                     <span className="text-xs font-mono font-bold text-indigo-300 shrink-0">
-                      {result.ml_classifier.ml_risk_score}/100 · {result.ml_classifier.ml_confidence}% conf.
+                      {result.ml_classifier.ml_risk_score}/100 · {result.ml_classifier.ml_confidence}% {t.mlBadge.confidence}
                     </span>
                   </div>
                   {result.ml_classifier.ml_top_signals?.length > 0 && (
                     <div className="flex flex-wrap gap-1.5">
-                      <span className="text-[10px] text-slate-500 font-bold uppercase">Key signals:</span>
+                      <span className="text-[10px] text-slate-500 font-bold uppercase">{t.mlBadge.keySignals}</span>
                       {result.ml_classifier.ml_top_signals.map((sig, i) => (
                         <span key={i} className="text-[10px] px-1.5 py-0.5 bg-indigo-950/60 border border-indigo-800/60 text-indigo-300 rounded font-mono">
                           {sig}
@@ -1000,7 +1078,7 @@ export default function ScamShieldDashboard() {
                   <div className="flex items-center justify-between border-b border-slate-800 pb-2.5 gap-2 flex-wrap">
                     <div className="flex items-center gap-2 overflow-hidden">
                       <span className="text-[10px] uppercase tracking-wider font-mono font-bold px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 flex items-center gap-1 shrink-0">
-                        <Globe className="w-3 h-3 text-cyan-400" /> WEB INTELLIGENCE
+                        <Globe className="w-3 h-3 text-cyan-400" /> {t.webIntel.badgeTitle}
                       </span>
                       <span className="text-xs font-mono font-semibold text-slate-200 truncate max-w-[200px] sm:max-w-xs">
                         {result.web_intelligence.domain || result.web_intelligence.url}
@@ -1010,32 +1088,32 @@ export default function ScamShieldDashboard() {
                     {/* Domain Match Status Badge */}
                     {result.web_intelligence.domain_match === "mismatch" ? (
                       <span className="text-[10px] font-bold px-2.5 py-0.5 rounded bg-red-500/20 text-red-400 border border-red-500/40 flex items-center gap-1 font-mono shrink-0">
-                        🚨 Fraudulent Domain (MISMATCH)
+                        {t.webIntel.fraudulentDomain}
                       </span>
                     ) : result.web_intelligence.domain_match === "match" ? (
                       <span className="text-[10px] font-bold px-2.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center gap-1 font-mono shrink-0">
-                        ✅ Legitimate Domain (MATCH)
+                        {t.webIntel.legitimateDomain}
                       </span>
                     ) : (
                       <span className="text-[10px] font-bold px-2.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center gap-1 font-mono shrink-0">
-                        ⚠️ Unverified Match (UNKNOWN)
+                        {t.webIntel.unverifiedMatch}
                       </span>
                     )}
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                     <div className="p-2.5 bg-slate-950 rounded-lg border border-slate-800 space-y-1">
-                      <div className="text-[10px] text-slate-400 font-bold uppercase">Claimed Brand / Impersonation Target:</div>
-                      <div className="font-bold text-slate-200">{result.web_intelligence.brand_detected || "Unidentified"}</div>
+                      <div className="text-[10px] text-slate-400 font-bold uppercase">{t.webIntel.targetBrand}</div>
+                      <div className="font-bold text-slate-200">{result.web_intelligence.brand_detected || t.webIntel.unidentified}</div>
                     </div>
                     <div className="p-2.5 bg-slate-950 rounded-lg border border-slate-800 space-y-1">
-                      <div className="text-[10px] text-slate-400 font-bold uppercase">Web Verification Confidence:</div>
+                      <div className="text-[10px] text-slate-400 font-bold uppercase">{t.webIntel.confidence}</div>
                       <div className="font-bold text-cyan-300 font-mono">{result.web_intelligence.confidence}% Confidence</div>
                       {result.web_intelligence.verified_live !== undefined && (
                         <div className={`text-[10px] font-bold ${result.web_intelligence.verified_live ? "text-emerald-400" : "text-amber-400"}`}>
                           {result.web_intelligence.verified_live
-                            ? `✓ Verified Live HTTP ${result.web_intelligence.http_status ?? "OK"}`
-                            : "⚠ URL unreachable during live probe"}
+                            ? `${t.webIntel.verifiedLive} ${result.web_intelligence.http_status ?? "OK"}`
+                            : t.webIntel.unreachable}
                         </div>
                       )}
                     </div>
@@ -1044,7 +1122,7 @@ export default function ScamShieldDashboard() {
                   {/* Suspicious Indicators */}
                   {result.web_intelligence.suspicious_indicators?.length > 0 && (
                     <div className="space-y-1">
-                      <div className="text-[10px] font-bold text-red-400 uppercase">Suspicious Web Behaviors:</div>
+                      <div className="text-[10px] font-bold text-red-400 uppercase">{t.webIntel.suspiciousBehaviors}</div>
                       <div className="flex flex-wrap gap-1.5">
                         {result.web_intelligence.suspicious_indicators.map((ind, idx) => (
                           <span key={idx} className="text-[11px] px-2 py-0.5 bg-red-950/60 border border-red-800/60 text-red-300 rounded-md">
@@ -1059,7 +1137,7 @@ export default function ScamShieldDashboard() {
                   {result.web_intelligence.external_evidence?.length > 0 && (
                     <div className="space-y-1.5">
                       <div className="text-[10px] font-bold text-cyan-300 uppercase flex items-center gap-1">
-                        EXTERNAL EVIDENCE BENCHMARKS (CLICK TO VERIFY):
+                        {t.webIntel.threatEvidence}
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         {result.web_intelligence.external_evidence.map((item, idx) => {
@@ -1098,10 +1176,10 @@ export default function ScamShieldDashboard() {
                       activeTab === tab ? "border-cyan-400 text-cyan-300" : "border-transparent text-slate-400 hover:text-slate-200"
                     }`}
                   >
-                    {tab === "overview" && "Forensic Evidence"}
-                    {tab === "psychology" && "Cognitive Deception"}
-                    {tab === "family" && "Family Alert Card"}
-                    {tab === "roleplay" && "🎯 Roleplay Reflex Lab"}
+                    {tab === "overview" && t.tabs.overview}
+                    {tab === "psychology" && t.tabs.psychology}
+                    {tab === "family" && t.tabs.family}
+                    {tab === "roleplay" && t.tabs.roleplay}
                   </button>
                 ))}
               </div>
@@ -1110,12 +1188,12 @@ export default function ScamShieldDashboard() {
               {activeTab === "overview" && (
                 <div className="space-y-3">
                   <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                    <div className="text-xs font-bold text-slate-300">Executive Forensic Summary:</div>
+                    <div className="text-xs font-bold text-slate-300">{t.overview.executiveSummary}</div>
                     <p className="text-xs text-slate-400 leading-relaxed">{result.executive_summary}</p>
                   </div>
                   <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
                     <div className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
-                      <AlertTriangle className="w-4 h-4 text-red-400" /> Ground-Truth Evidence Comparator:
+                      <AlertTriangle className="w-4 h-4 text-red-400" /> {t.overview.evidenceComparator}
                     </div>
                     <div className="space-y-3">
                       {result.red_flags.map((f, i) => (
@@ -1123,7 +1201,7 @@ export default function ScamShieldDashboard() {
                           {/* Row 1: Evidence (Detected - Red) */}
                           <div className="flex items-start gap-2 bg-red-950/40 border border-red-900/40 p-2.5 rounded-lg text-red-300">
                             <span className="px-1.5 py-0.5 rounded bg-red-900/70 text-red-200 text-[10px] font-bold uppercase shrink-0 font-mono">
-                              [Detected in Data]
+                              {t.overview.detectedInData}
                             </span>
                             <span className="font-bold">{f.evidence}</span>
                           </div>
@@ -1132,7 +1210,7 @@ export default function ScamShieldDashboard() {
                           <div className="flex items-center justify-between gap-2 bg-emerald-950/40 border border-emerald-900/40 p-2.5 rounded-lg text-emerald-300 flex-wrap">
                             <div className="flex items-start gap-2">
                               <span className="px-1.5 py-0.5 rounded bg-emerald-900/70 text-emerald-200 text-[10px] font-bold uppercase shrink-0 font-mono">
-                                [Official Benchmark]
+                                {t.overview.officialBenchmark}
                               </span>
                               <span className="font-semibold">{f.official_fact || f.explanation}</span>
                             </div>
@@ -1143,7 +1221,7 @@ export default function ScamShieldDashboard() {
                                 rel="noreferrer"
                                 className="inline-flex items-center gap-1 px-2 py-1 text-[10px] font-bold bg-emerald-900/60 hover:bg-emerald-800/80 text-emerald-200 rounded border border-emerald-700/50 transition cursor-pointer shrink-0 font-mono"
                               >
-                                <span>Source</span>
+                                <span>{t.webIntel.source}</span>
                                 <ExternalLink className="w-3 h-3 text-emerald-300" />
                               </a>
                             )}
@@ -1151,14 +1229,14 @@ export default function ScamShieldDashboard() {
 
                           {/* Row 3: Explanation */}
                           <div className="text-slate-400 pl-1 text-[11px] leading-relaxed pt-0.5">
-                            💡 <strong className="text-slate-300">Forensic Analysis:</strong> {f.explanation}
+                            💡 <strong className="text-slate-300">{t.overview.forensicAnalysis}</strong> {f.explanation}
                           </div>
                         </div>
                       ))}
                     </div>
                   </div>
                   <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-1.5">
-                    <div className="text-xs font-bold text-amber-300">60-Second Emergency Actions:</div>
+                    <div className="text-xs font-bold text-amber-300">{t.overview.emergencyActions}</div>
                     {result.urgent_actions.map((a, i) => (
                       <div key={i} className="text-xs text-slate-300 flex items-center gap-1.5"><Zap className="w-3.5 h-3.5 text-cyan-400" /> {a}</div>
                     ))}
@@ -1169,14 +1247,14 @@ export default function ScamShieldDashboard() {
               {/* Tab 2: Psychology */}
               {activeTab === "psychology" && (
                 <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
-                  <div className="text-xs font-bold text-purple-300">Psychological Exploitation Tactics:</div>
-                  {result.psychological_tricks.map((t, i) => (
+                  <div className="text-xs font-bold text-purple-300">{t.psychology.title}</div>
+                  {result.psychological_tricks.map((tr, i) => (
                     <div key={i} className="p-3 bg-slate-950 rounded-lg text-xs space-y-1 border border-purple-900/30">
                       <div className="flex justify-between font-bold text-purple-300">
-                        <span>{t.tactic}</span>
-                        <span className="text-[10px] px-2 py-0.5 bg-purple-950 rounded text-purple-400">Target Emotion: {t.target_emotion}</span>
+                        <span>{tr.tactic}</span>
+                        <span className="text-[10px] px-2 py-0.5 bg-purple-950 rounded text-purple-400">{t.psychology.targetEmotion} {tr.target_emotion}</span>
                       </div>
-                      <p className="text-slate-400">{t.analysis}</p>
+                      <p className="text-slate-400">{tr.analysis}</p>
                     </div>
                   ))}
                 </div>
@@ -1186,7 +1264,7 @@ export default function ScamShieldDashboard() {
               {activeTab === "family" && (
                 <div className="p-4 rounded-xl bg-slate-900 border border-indigo-500/30 space-y-3">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-                    <span className="text-xs font-bold text-indigo-300">Quick Family Emergency Dispatch (Messaging/Telegram):</span>
+                    <span className="text-xs font-bold text-indigo-300">{t.family.title}</span>
                     <div className="flex items-center gap-1.5 flex-wrap">
                       <button
                         onClick={() => {
@@ -1214,7 +1292,7 @@ export default function ScamShieldDashboard() {
                         className="text-xs bg-indigo-600 hover:bg-indigo-700 text-white px-2.5 py-1 rounded-md flex items-center gap-1 cursor-pointer font-semibold transition"
                       >
                         {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-                        {copied ? "Copied!" : "Copy"}
+                        {copied ? t.family.copied : t.family.copyBtn}
                       </button>
                     </div>
                   </div>
@@ -1230,15 +1308,15 @@ export default function ScamShieldDashboard() {
                   <div className="flex justify-between items-center border-b border-slate-800 pb-3">
                     <div>
                       <div className="text-xs font-bold text-cyan-300 flex items-center gap-1.5">
-                        <Gamepad2 className="w-4 h-4 text-cyan-400" /> Anti-Fraud Reflex Simulation (Roleplay Lab)
+                        <Gamepad2 className="w-4 h-4 text-cyan-400" /> {t.roleplay.title}
                       </div>
-                      <div className="text-[11px] text-slate-400">Powered by Gemini 2.5 Flash — practice countering active fraud scenarios in real time</div>
+                      <div className="text-[11px] text-slate-400">{t.roleplay.subtitle}</div>
                     </div>
                     <button
                       onClick={() => setRoleplayMessages(getInitialRoleplayMessages(result))}
                       className="text-[11px] px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg flex items-center gap-1 cursor-pointer transition border border-slate-700"
                     >
-                      <RefreshCw className="w-3 h-3 text-cyan-400" /> Reset
+                      <RefreshCw className="w-3 h-3 text-cyan-400" /> {t.roleplay.resetChat}
                     </button>
                   </div>
 
@@ -1262,7 +1340,7 @@ export default function ScamShieldDashboard() {
                         return (
                           <div key={msg.id} className="flex gap-2.5 items-start justify-end ml-auto max-w-[88%]">
                             <div className="bg-cyan-950/60 border border-cyan-800/50 rounded-2xl rounded-tr-none p-3 text-xs text-cyan-100 leading-relaxed">
-                              <div className="text-[9px] font-bold text-cyan-400 uppercase mb-1 text-right">You (Target)</div>
+                              <div className="text-[9px] font-bold text-cyan-400 uppercase mb-1 text-right">{lang === "vi" ? "Bạn (Nạn nhân)" : "You (Target)"}</div>
                               {msg.text}
                             </div>
                             <div className="w-7 h-7 rounded-lg bg-cyan-950 border border-cyan-800 flex items-center justify-center text-cyan-400 shrink-0 text-xs font-bold">
@@ -1292,7 +1370,7 @@ export default function ScamShieldDashboard() {
 
                   {/* Quick Responses */}
                   <div className="space-y-1.5">
-                    <div className="text-[10px] uppercase font-bold text-slate-400">Quick Reflex Responses (Click to test):</div>
+                    <div className="text-[10px] uppercase font-bold text-slate-400">{lang === "vi" ? "Phản xạ nhanh (Bấm để thử nghiệm):" : "Quick Reflex Responses (Click to test):"}</div>
                     <div className="flex flex-wrap gap-2">
                       {QUICK_ROLEPLAY_RESPONSES.map((qr, idx) => (
                         <button
@@ -1322,14 +1400,14 @@ export default function ScamShieldDashboard() {
                       type="text"
                       value={roleplayInput}
                       onChange={(e) => setRoleplayInput(e.target.value)}
-                      placeholder="Enter your response to counter the fraudster..."
+                      placeholder={t.roleplay.placeholder}
                       className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 font-sans"
                     />
                     <button
                       type="submit"
                       className="px-4 py-2 bg-gradient-to-r from-cyan-600 to-indigo-600 font-bold text-xs rounded-xl shadow-lg flex items-center gap-1.5 cursor-pointer active:scale-95 text-white"
                     >
-                      <Send className="w-3.5 h-3.5" /> Send
+                      <Send className="w-3.5 h-3.5" /> {t.roleplay.send}
                     </button>
                   </form>
                 </div>
@@ -1353,12 +1431,12 @@ export default function ScamShieldDashboard() {
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h2 className="text-base font-bold text-slate-100">Live Community Scam Feed</h2>
+                  <h2 className="text-base font-bold text-slate-100">{t.community.title}</h2>
                   <span className="text-[10px] uppercase tracking-wider font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> Live Real-time
                   </span>
                 </div>
-                <p className="text-xs text-slate-400">Latest scam threats identified and verified by community members</p>
+                <p className="text-xs text-slate-400">{t.community.subtitle}</p>
               </div>
             </div>
             <div className="text-xs text-slate-400 font-mono flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800 self-start sm:self-auto">
