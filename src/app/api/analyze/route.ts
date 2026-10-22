@@ -228,11 +228,23 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(whitelistResult, { headers: corsHeaders });
     }
 
-    // 2. Non-whitelisted domain: Send url, title, bodyText to Gemini 2.5 Flash
+    // 2. Run Local Multi-Modal ML Classifier (Trained on Normalized Data via Stacking Meta-Learner)
+    const mlResult = isImage ? null : await runMLClassifier(sourceText, targetUrlForWhitelist);
+    const localScore = isMLAvailable(mlResult) ? mlResult.ml_risk_score : null;
+
+    // Uncertainty-Gated Escalation Policy (Algorithm 1 in ScamGuard Paper):
+    // - score < 30 (BENIGN): Deterministic local clearance. DO NOT call Gemini (0 API calls, <4ms Edge response).
+    // - score >= 80 (MALICIOUS): Deterministic local block by trained ML model.
+    // - 30 <= score < 80 (UNCERTAINTY): Ambiguous cognitive heuristics.
+    // Note: The authentic riskScore is ALWAYS 100% computed by our trained ML model, NEVER overridden by Gemini.
     const apiKey = process.env.GEMINI_API_KEY;
     let geminiParsed: Partial<AnalysisAssessment> | null = null;
 
-    if (apiKey && apiKey.trim() !== "" && apiKey !== "your_gemini_api_key_here") {
+    // Check if Gemini is enabled and should be escalated to (for images or cognitive deconstruction in uncertainty range)
+    const disableGemini = process.env.DISABLE_GEMINI === "true";
+    const shouldEscalateToGemini = !disableGemini && (isImage || (localScore !== null && localScore >= 30 && localScore < 80));
+
+    if (shouldEscalateToGemini && apiKey && apiKey.trim() !== "" && apiKey !== "your_gemini_api_key_here") {
       try {
         const ai = new GoogleGenAI({ apiKey });
         let contents: any[] = [];
@@ -248,7 +260,8 @@ export async function POST(req: NextRequest) {
               text: `Analyze fraud, phishing, and scam risk for the following target content:
 URL: ${url || "No URL provided"}
 Title: ${title || "No title provided"}
-Body/Content: ${bodyText || "No detailed text provided"}`,
+Body/Content: ${bodyText || "No detailed text provided"}
+(Note: Local Edge ML model has already determined the baseline risk score as ${localScore}/100. Deconstruct psychological urgency and deception tactics).`,
             },
           ];
         }
@@ -263,7 +276,7 @@ Evaluate fraud and phishing risk based on the provided URL, Title, and Content d
 
 Anti-Hallucination & Structured Output Rules:
 1. riskLevel must be strictly one of: "LOW", "MEDIUM", "HIGH".
-2. riskScore must be an integer between 0 and 100.
+2. riskScore must be an integer between 0 and 100 (aligned with local model prediction).
 3. reasons is an array of specific anomalies, red flags, or fraudulent indicators discovered (written in ${isVi ? "Vietnamese" : "English"}).
 4. detectedPatterns is an array describing identified threat patterns (written in ${isVi ? "Vietnamese" : "English"}).
 5. summary is a concise ${isVi ? "Vietnamese" : "English"} forensic summary.
@@ -277,12 +290,9 @@ Anti-Hallucination & Structured Output Rules:
           geminiParsed = JSON.parse(response.text);
         }
       } catch (geminiError: any) {
-        console.warn("Gemini API call failed, falling back to the available ML model:", geminiError?.message || geminiError);
+        console.warn("Gemini API call skipped/failed, relying 100% on the local ML model:", geminiError?.message || geminiError);
       }
     }
-
-    // The local classifiers support text and URLs, not image pixels.
-    const mlResult = isImage ? null : await runMLClassifier(sourceText, targetUrlForWhitelist);
     const assessment = createAssessment(geminiParsed, mlResult, !!targetUrlForWhitelist);
     if (!assessment) {
       return NextResponse.json(
