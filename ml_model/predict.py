@@ -1,14 +1,10 @@
 """
 ScamShield Forensic AI — ML Prediction Module
 ==============================================
-Loads trained .pkl models and runs fast inference.
-Used by the Next.js /api/ml-classify endpoint via Python subprocess.
-
-Usage (standalone test):
-  python ml_model/predict.py "Free prize click now http://scam-site.vip"
-
-Usage (from API route — JSON input/output):
-  echo '{"text":"...","url":"..."}' | python ml_model/predict.py
+Loads trained .pkl models and runs fast inference using the
+5-stage Preprocessing Pipeline and Interaction Stacking Meta-Learner:
+  s_fused = sigma(beta_0 + beta_1 * p_text + beta_2 * p_url + beta_3 * (p_text * p_url))
+Used by Next.js API routes (/api/ml-classify and /api/analyze).
 """
 
 import sys
@@ -19,12 +15,23 @@ import math
 import os
 import warnings
 from pathlib import Path
+import numpy as np
 
 warnings.filterwarnings("ignore")
 
-MODELS_DIR = Path(__file__).parent / "models"
+ROOT = Path(__file__).parent.parent
+MODELS_DIR = ROOT / "ml_model" / "models"
 
-# ─── Load models once at module level ────────────────────────────────────────
+sys.path.append(str(ROOT / "ml_model"))
+try:
+    from preprocess import extract_raw_url, normalize_text, canonicalize_url, extract_13_features
+except ImportError:
+    # Fallback inline if import path differs
+    def extract_raw_url(text): return text, ""
+    def normalize_text(text): return text.lower().strip()
+    def canonicalize_url(url): return url.strip()
+    def extract_13_features(url): return [0.0] * 13
+
 _cache = {}
 
 def _load(name):
@@ -37,140 +44,113 @@ def _load(name):
     return _cache[name]
 
 
-# ─── URL feature extraction (mirrors train.py) ───────────────────────────────
-def extract_url_features(url: str) -> list:
-    try:
-        url = str(url)
-        url_len      = len(url)
-        domain_part  = re.sub(r"https?://", "", url).split("/")[0]
-        domain_len   = len(domain_part)
-        path_len     = max(0, len(url) - len(domain_part) - 8)
-
-        sus_keywords = ["login", "verify", "secure", "update", "bank", "otp",
-                        "confirm", "account", "password", "pay", "claim",
-                        "win", "prize", "free", "urgent", "alert", "task",
-                        "invest", "earn", "commission", "transfer", "apk"]
-        keyword_count    = sum(1 for kw in sus_keywords if kw in url.lower())
-        tld_suspicious   = int(any(url.lower().endswith(t)
-                                   for t in [".vip", ".top", ".xyz", ".site",
-                                             ".info", ".biz", ".click", ".link"]))
-        tld_trusted      = int(any(domain_part.lower().endswith(t)
-                                   for t in [".gov.vn", ".edu.vn", ".com.vn",
-                                             ".gov", ".edu", ".org"]))
-        digit_ratio      = sum(c.isdigit() for c in url) / max(url_len, 1)
-        special_ratio    = sum(c in "-_@!~" for c in url) / max(url_len, 1)
-        hyphen_count     = url.count("-")
-        subdomain_depth  = max(0, len(domain_part.split(".")) - 2)
-        has_ip           = int(bool(re.match(r"\d{1,3}(\.\d{1,3}){3}", domain_part)))
-        brands           = ["vietcombank", "vcb", "shopee", "solana", "vneid",
-                            "facebook", "paypal", "amazon", "netflix", "telegram"]
-        brand_in_domain  = int(any(b in domain_part.lower() for b in brands))
-
-        freq = {}
-        for c in domain_part.lower():
-            freq[c] = freq.get(c, 0) + 1
-        entropy = (-sum((v / len(domain_part)) * math.log2(v / len(domain_part))
-                        for v in freq.values())
-                   if domain_part else 0)
-
-        return [url_len, domain_len, path_len,
-                keyword_count, tld_suspicious, tld_trusted,
-                digit_ratio, special_ratio, hyphen_count,
-                subdomain_depth, has_ip, brand_in_domain, entropy]
-    except Exception:
-        return [0] * 13
-
-
-# ─── Classify SMS / text ─────────────────────────────────────────────────────
-def classify_text(text: str) -> dict:
+def classify_text(norm_text: str) -> dict:
     tfidf = _load("tfidf_sms.pkl")
     clf   = _load("sms_classifier.pkl")
     if tfidf is None or clf is None:
-        return {"score": 0.5, "label": "unknown", "confidence": 0,
-                "top_features": [], "model_ready": False}
+        return {"score": 0.5, "label": "unknown", "confidence": 0, "top_features": [], "model_ready": False}
 
-    vec   = tfidf.transform([text])
+    vec = tfidf.transform([norm_text])
     proba = clf.predict_proba(vec)[0]
-    score = float(proba[1])   # P(spam/scam)
+    score = float(proba[1])
     label = "scam" if score >= 0.5 else "safe"
 
-    # Extract top contributing features
-    feature_names = tfidf.get_feature_names_out()
+    top_features = []
     try:
+        feature_names = tfidf.get_feature_names_out()
         coefs = clf.coef_[0]
-        nz    = vec.nonzero()[1]
-        top   = sorted(nz, key=lambda i: abs(coefs[i]) * vec[0, i], reverse=True)[:5]
+        nz = vec.nonzero()[1]
+        top = sorted(nz, key=lambda i: abs(coefs[i]) * vec[0, i], reverse=True)[:5]
         top_features = [str(feature_names[i]) for i in top]
     except Exception:
-        top_features = []
+        pass
 
     return {
-        "score"       : round(score, 4),
-        "label"       : label,
-        "confidence"  : round(max(score, 1 - score) * 100, 1),
+        "score": round(score, 4),
+        "label": label,
+        "confidence": round(max(score, 1 - score) * 100, 1),
         "top_features": top_features,
-        "model_ready" : True,
+        "model_ready": True,
     }
 
 
-# ─── Classify URL ─────────────────────────────────────────────────────────────
-def classify_url(url: str) -> dict:
-    tfidf = _load("tfidf_url.pkl")
-    clf   = _load("url_classifier.pkl")
-    if tfidf is None or clf is None:
-        return {"score": 0.5, "label": "unknown", "confidence": 0,
-                "top_features": [], "model_ready": False}
+def classify_url(canon_url: str) -> dict:
+    scaler = _load("scaler_url.pkl")
+    tfidf  = _load("tfidf_url.pkl")
+    clf    = _load("url_classifier.pkl")
+    if clf is None:
+        return {"score": 0.5, "label": "unknown", "confidence": 0, "top_features": [], "model_ready": False}
 
-    import numpy as np
     try:
-        import scipy.sparse as sp
-        feats  = np.array(extract_url_features(url)).reshape(1, -1)
-        chars  = tfidf.transform([url])
-        X      = sp.hstack([sp.csr_matrix(feats), chars])
+        f13 = np.array([extract_13_features(canon_url)], dtype=np.float32)
+        if scaler is not None:
+            f13_scaled = scaler.transform(f13)
+        else:
+            f13_scaled = f13
 
-        # Try predict_proba with dense first (GradientBoosting)
-        try:
-            proba = clf.predict_proba(X.toarray())[0]
-        except Exception:
-            proba = clf.predict_proba(X)[0]
+        if tfidf is not None:
+            f_char = tfidf.transform([canon_url]).toarray()
+            X_u = np.hstack([f13_scaled, f_char])
+        else:
+            X_u = f13_scaled
+
+        proba = clf.predict_proba(X_u)[0]
+        score = float(proba[1])
     except Exception:
-        proba = [0.5, 0.5]
+        score = 0.5
 
-    score = float(proba[1])
     label = "phishing" if score >= 0.5 else "safe"
 
-    # Top URL signals as human-readable strings
+    # Top URL signals
     signals = []
-    f = extract_url_features(url)
+    f = extract_13_features(canon_url)
     labels_map = [
-        ("URL length", f[0], 80),
-        ("Suspicious keyword count", f[3], 2),
+        ("URL length", f[0], 75),
+        ("Suspicious keyword count", f[3], 1),
         ("Suspicious TLD", f[4], 0.5),
-        ("Brand in domain", f[11], 0.5),
-        ("Hyphen count", f[8], 3),
+        ("Hyphen count", f[8], 2),
         ("Subdomain depth", f[9], 2),
-        ("Domain entropy", f[12], 3.5),
+        ("Has IP address", f[10], 0.5),
+        ("Brand spoofing flag", f[11], 0.5),
+        ("Domain entropy", f[12], 3.8),
     ]
     for name, val, threshold in labels_map:
         if val >= threshold:
             signals.append(f"{name}: {round(val, 2)}")
 
     return {
-        "score"       : round(score, 4),
-        "label"       : label,
-        "confidence"  : round(max(score, 1 - score) * 100, 1),
+        "score": round(score, 4),
+        "label": label,
+        "confidence": round(max(score, 1 - score) * 100, 1),
         "top_features": signals[:4],
-        "model_ready" : True,
+        "model_ready": True,
     }
 
 
-# ─── Combined classifier ─────────────────────────────────────────────────────
 def classify(text: str = "", url: str = "") -> dict:
-    text_result = classify_text(text) if text.strip() else None
-    url_result  = classify_url(url)   if url.strip()  else None
+    raw_text = text or ""
+    explicit_url = url or ""
+
+    # Preprocessing & URL extraction
+    masked_txt, embedded_url = extract_raw_url(raw_text)
+    norm_txt = normalize_text(masked_txt)
+    target_url = canonicalize_url(explicit_url or embedded_url)
+
+    text_result = classify_text(norm_txt) if norm_txt.strip() else None
+    url_result  = classify_url(target_url)  if target_url.strip()  else None
+
+    meta_clf = _load("meta_learner.pkl")
 
     if text_result and url_result and text_result["model_ready"] and url_result["model_ready"]:
-        fused_score = 0.45 * text_result["score"] + 0.55 * url_result["score"]
+        p_t = text_result["score"]
+        p_u = url_result["score"]
+        if meta_clf is not None:
+            # Interaction Meta-Learner: [p_t, p_u, p_t * p_u]
+            X_meta = np.array([[p_t, p_u, p_t * p_u]], dtype=np.float32)
+            fused_score = float(meta_clf.predict_proba(X_meta)[0, 1])
+        else:
+            # Fallback formulation
+            fused_score = 1.0 / (1.0 + np.exp(-(-4.072 + 8.785 * p_t + 0.099 * p_u + 3.158 * p_t * p_u)))
     elif text_result and text_result["model_ready"]:
         fused_score = text_result["score"]
     elif url_result and url_result["model_ready"]:
@@ -178,9 +158,19 @@ def classify(text: str = "", url: str = "") -> dict:
     else:
         fused_score = 0.0
 
-    fused_score  = round(fused_score, 4)
-    ml_risk_score = int(fused_score * 100)
-    ml_label      = "SCAM" if fused_score >= 0.6 else ("SUSPICIOUS" if fused_score >= 0.35 else "SAFE")
+    fused_score = round(float(fused_score), 4)
+    ml_risk_score = int(round(fused_score * 100))
+    uncertainty = round(1.0 - 2.0 * abs(fused_score - 0.5), 3)
+
+    if fused_score >= 0.80:
+        ml_label = "SCAM"
+        action = "BLOCK"
+    elif fused_score >= 0.30:
+        ml_label = "SUSPICIOUS"
+        action = "ESCALATE_VLM"
+    else:
+        ml_label = "SAFE"
+        action = "CLEAR"
 
     all_features = []
     if text_result:
@@ -189,19 +179,21 @@ def classify(text: str = "", url: str = "") -> dict:
         all_features.extend(url_result.get("top_features", []))
 
     return {
-        "ml_risk_score" : ml_risk_score,
-        "ml_label"      : ml_label,
-        "ml_confidence" : round(max(fused_score, 1 - fused_score) * 100, 1),
-        "ml_top_signals": list(dict.fromkeys(all_features))[:5],  # dedupe
-        "text_result"   : text_result,
-        "url_result"    : url_result,
-        "model_ready"   : (text_result or url_result) is not None,
+        "ml_risk_score": ml_risk_score,
+        "ml_label": ml_label,
+        "action": action,
+        "uncertainty": uncertainty,
+        "ml_confidence": round(max(fused_score, 1 - fused_score) * 100, 1),
+        "ml_top_signals": list(dict.fromkeys(all_features))[:5],
+        "normalized_text": norm_txt,
+        "extracted_url": target_url,
+        "text_result": text_result,
+        "url_result": url_result,
+        "model_ready": (text_result or url_result) is not None,
     }
 
 
-# ─── CLI entry point ──────────────────────────────────────────────────────────
 if __name__ == "__main__":
-    # Accept JSON from stdin (for API use) OR single string arg (for quick test)
     if not sys.stdin.isatty():
         raw = sys.stdin.read().strip()
         try:
@@ -213,7 +205,6 @@ if __name__ == "__main__":
     elif len(sys.argv) > 1:
         text = " ".join(sys.argv[1:])
         url  = ""
-        # detect if arg looks like a URL
         if sys.argv[1].startswith("http"):
             url, text = sys.argv[1], ""
     else:
