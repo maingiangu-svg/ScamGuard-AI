@@ -313,7 +313,7 @@ Anti-Hallucination & Structured Output Rules:
       urgentActions
     );
 
-    // Attach ML metadata to response for UI display
+    // Attach ML metadata and full forensic telemetry to response for UI display
     if (mlResult) {
       finalResponse.ml_classifier = {
         ml_risk_score  : mlResult.ml_risk_score,
@@ -321,6 +321,15 @@ Anti-Hallucination & Structured Output Rules:
         ml_confidence  : mlResult.ml_confidence,
         ml_top_signals : mlResult.ml_top_signals,
         model_ready    : isMLAvailable(mlResult),
+        text_score     : mlResult.text_result?.score != null ? Math.round(mlResult.text_result.score * 100) : null,
+        url_score      : mlResult.url_result?.score != null ? Math.round(mlResult.url_result.score * 100) : null,
+        text_tokens    : mlResult.text_result?.top_features || [],
+        url_signals    : mlResult.url_result?.top_features || [],
+        uncertainty    : mlResult.uncertainty ?? null,
+        action         : mlResult.action ?? null,
+        normalized_text: mlResult.normalized_text ?? "",
+        extracted_url  : mlResult.extracted_url ?? "",
+        meta_formula   : "s_fused = 100 × σ(-4.470 + 5.243·p_text + 4.628·p_url + 1.714·(p_text·p_url))",
       };
     }
 

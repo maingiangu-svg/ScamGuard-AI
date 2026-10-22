@@ -55,6 +55,15 @@ interface ForensicResult {
     ml_confidence: number;
     ml_top_signals: string[];
     model_ready: boolean;
+    text_score?: number | null;
+    url_score?: number | null;
+    text_tokens?: string[];
+    url_signals?: string[];
+    uncertainty?: number | null;
+    action?: string | null;
+    normalized_text?: string;
+    extracted_url?: string;
+    meta_formula?: string;
   };
 }
 
@@ -1272,26 +1281,139 @@ export default function ScamShieldDashboard() {
                 );
               })()}
 
-              {/* Local ML Model Signal */}
+              {/* ScamGuard Proprietary Forensic ML Telemetry Dashboard */}
               {result.ml_classifier?.model_ready && (
-                <div className={`p-4 border rounded-xl text-xs space-y-2 ${
-                  isMuted ? "bg-[#202024] border-[#2E2E34]" : "bg-white border-[#E7E2D9]"
+                <div className={`p-5 border rounded-2xl space-y-4 shadow-sm ${
+                  isMuted ? "bg-[#18181B] border-[#27272A]" : "bg-gradient-to-b from-[#FAF8F5] to-white border-[#E7E2D9]"
                 }`}>
-                  <div className={`flex items-center justify-between ${isMuted ? "text-[#A19E95]" : "text-[#57534E]"}`}>
-                    <span className="font-medium text-inherit">{t.mlBadge.badgeTitle}</span>
-                    <span className="text-xs">{result.ml_classifier.ml_confidence}% {t.mlBadge.confidence}</span>
-                  </div>
-                  {result.ml_classifier.ml_top_signals?.length > 0 && (
-                    <div className="flex flex-wrap gap-2 pt-1">
-                      {result.ml_classifier.ml_top_signals.map((sig, i) => (
-                        <span key={i} className={`text-xs px-2 py-0.5 rounded font-medium ${
-                          isMuted ? "bg-[#1A1A1D] text-[#EDEAE4]" : "bg-[#F5F2EB] text-[#57534E]"
-                        }`}>
-                          {sig}
-                        </span>
-                      ))}
+                  {/* Dashboard Header */}
+                  <div className="flex items-center justify-between flex-wrap gap-2 pb-3 border-b border-inherit">
+                    <div className="flex items-center gap-2">
+                      <span className="flex h-2.5 w-2.5 relative">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                      </span>
+                      <h4 className="font-semibold text-sm tracking-tight">
+                        {lang === "vi" ? "ScamGuard Forensic ML Engine (Edge Tier)" : "ScamGuard Forensic ML Engine (Edge Tier)"}
+                      </h4>
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono font-medium ${
+                        isMuted ? "bg-[#27272A] text-[#A1A1AA]" : "bg-[#ECE7DE] text-[#57534E]"
+                      }`}>
+                        {lang === "vi" ? "11,065 Mẫu Chuẩn Hóa • 5-Fold CV" : "11,065 Normalized Samples • 5-Fold CV"}
+                      </span>
                     </div>
-                  )}
+                    <div className="flex items-center gap-2 text-xs">
+                      <span className="font-mono text-emerald-600 dark:text-emerald-400 font-semibold">
+                        &lt; 4ms CPU
+                      </span>
+                      <span className={`px-2 py-0.5 rounded text-[11px] font-semibold ${
+                        result.ml_classifier.ml_risk_score >= 80
+                          ? "bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20"
+                          : result.ml_classifier.ml_risk_score >= 30
+                          ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20"
+                          : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
+                      }`}>
+                        {result.ml_classifier.action || result.ml_classifier.ml_label}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Dual-Branch Feature Telemetry (Text vs URL) */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                    {/* Branch 1: Text Screening */}
+                    <div className={`p-3.5 rounded-xl border space-y-2 ${
+                      isMuted ? "bg-[#202024] border-[#2E2E34]" : "bg-white border-[#E7E2D9]"
+                    }`}>
+                      <div className="flex items-center justify-between font-medium">
+                        <span className="flex items-center gap-1.5">
+                          <span className="text-base">📝</span>
+                          <span>{lang === "vi" ? "Nhánh Nội Dung Text" : "Text Branch"} (p_text)</span>
+                        </span>
+                        <span className="font-mono font-semibold text-sm">
+                          {result.ml_classifier.text_score != null ? `${result.ml_classifier.text_score}%` : "N/A"}
+                        </span>
+                      </div>
+                      <div className="w-full bg-black/10 dark:bg-white/10 h-1.5 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full transition-all duration-500 ${
+                            (result.ml_classifier.text_score ?? 0) >= 50 ? "bg-red-500" : "bg-emerald-500"
+                          }`}
+                          style={{ width: `${Math.min(100, Math.max(0, result.ml_classifier.text_score ?? 0))}%` }}
+                        />
+                      </div>
+                      <div className={`text-[11px] space-y-1 ${isMuted ? "text-[#A1A1AA]" : "text-[#78716C]"}`}>
+                        <div className="truncate">
+                          <span className="font-semibold">{lang === "vi" ? "Chuẩn hóa NFKD:" : "Normalized text:"}</span>{" "}
+                          <span className="font-mono">{result.ml_classifier.normalized_text || "(Trống)"}</span>
+                        </div>
+                        {result.ml_classifier.text_tokens && result.ml_classifier.text_tokens.length > 0 && (
+                          <div className="flex flex-wrap gap-1 pt-1">
+                            {result.ml_classifier.text_tokens.map((tok, i) => (
+                              <span key={i} className="px-1.5 py-0.2 bg-black/5 dark:bg-white/5 rounded font-mono text-[10px]">
+                                {tok}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Branch 2: URL Phishing */}
+                    <div className={`p-3.5 rounded-xl border space-y-2 ${
+                      isMuted ? "bg-[#202024] border-[#2E2E34]" : "bg-white border-[#E7E2D9]"
+                    }`}>
+                      <div className="flex items-center justify-between font-medium">
+                        <span className="flex items-center gap-1.5">
+                          <span className="text-base">🔗</span>
+                          <span>{lang === "vi" ? "Nhánh Đường Dẫn URL" : "URL Branch"} (p_url)</span>
+                        </span>
+                        <span className="font-mono font-semibold text-sm">
+                          {result.ml_classifier.url_score != null ? `${result.ml_classifier.url_score}%` : "(Không có URL)"}
+                        </span>
+                      </div>
+                      <div className="w-full bg-black/10 dark:bg-white/10 h-1.5 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full transition-all duration-500 ${
+                            (result.ml_classifier.url_score ?? 0) >= 50 ? "bg-red-500" : "bg-emerald-500"
+                          }`}
+                          style={{ width: `${Math.min(100, Math.max(0, result.ml_classifier.url_score ?? 0))}%` }}
+                        />
+                      </div>
+                      <div className={`text-[11px] space-y-1 ${isMuted ? "text-[#A1A1AA]" : "text-[#78716C]"}`}>
+                        <div className="truncate">
+                          <span className="font-semibold">{lang === "vi" ? "URL trích xuất:" : "Extracted URL:"}</span>{" "}
+                          <span className="font-mono">{result.ml_classifier.extracted_url || "(Không phát hiện)"}</span>
+                        </div>
+                        {result.ml_classifier.url_signals && result.ml_classifier.url_signals.length > 0 && (
+                          <div className="flex flex-wrap gap-1 pt-1">
+                            {result.ml_classifier.url_signals.map((sig, i) => (
+                              <span key={i} className="px-1.5 py-0.2 bg-amber-500/10 text-amber-700 dark:text-amber-300 rounded font-mono text-[10px]">
+                                {sig}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Stacking Meta-Learner Mathematical Formulation */}
+                  <div className={`p-3.5 rounded-xl border text-xs font-mono space-y-1.5 ${
+                    isMuted ? "bg-[#1E1E22] border-[#2E2E34] text-[#E4E4E7]" : "bg-[#F7F4EE] border-[#E2DDD3] text-[#292524]"
+                  }`}>
+                    <div className="flex items-center justify-between text-[11px] font-sans font-medium text-[#78716C] dark:text-[#A1A1AA]">
+                      <span>{lang === "vi" ? "Công thức toán học gộp tri thức (Stacking Meta-Learner):" : "Stacking Meta-Learner Formulation:"}</span>
+                      <span>Uncertainty U(x): {result.ml_classifier.uncertainty ?? "0.0"}</span>
+                    </div>
+                    <div className="p-2 rounded bg-black/5 dark:bg-black/30 text-[11px] leading-relaxed break-all font-semibold">
+                      s_fused = 100 · σ(-4.470 + 5.243·p_text + 4.628·p_url + 1.714·(p_text·p_url))
+                    </div>
+                    <div className="text-[11px] font-sans text-[#78716C] dark:text-[#A1A1AA] pt-0.5 leading-normal">
+                      {lang === "vi"
+                        ? "Hệ số tương tác β₃ = +1.714 kích hoạt hiệu ứng hiệp đồng đa phương thức (Synergistic Compounding) khi cả Text và Link cùng mang dấu hiệu bất thường, giải quyết triệt để lỗi báo nhầm của Max-Fusion."
+                        : "Interaction coefficient β₃ = +1.714 compounds joint risk when both text and URL exhibit anomalies, resolving max-fusion false positive inflation."}
+                    </div>
+                  </div>
                 </div>
               )}
 

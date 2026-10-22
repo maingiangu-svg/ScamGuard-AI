@@ -8,6 +8,12 @@ export interface MLClassification {
   ml_confidence: number;
   ml_top_signals: string[];
   model_ready: boolean;
+  text_result?: { score: number; label: string; confidence: number; top_features: string[] } | null;
+  url_result?: { score: number; label: string; confidence: number; top_features: string[] } | null;
+  uncertainty?: number | null;
+  action?: string | null;
+  normalized_text?: string;
+  extracted_url?: string;
 }
 
 export interface AnalysisAssessment {

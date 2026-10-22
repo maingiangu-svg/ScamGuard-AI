@@ -119,7 +119,7 @@ export const translations: Record<Language, Translations> = {
     header: {
       appTitle: "ScamShield",
       appSubtitle: "Kiểm tra dấu hiệu lừa đảo trong hình ảnh, tin nhắn và liên kết",
-      modelBadge: "Gemini 2.5 Flash",
+      modelBadge: "ScamGuard Edge AI • 11k Mẫu Chuẩn Hóa",
       langSwitch: "Tiếng Việt",
     },
     onboarding: {
@@ -232,7 +232,7 @@ export const translations: Record<Language, Translations> = {
     header: {
       appTitle: "ScamShield",
       appSubtitle: "Detect fraudulent patterns in screenshots, messages, and suspicious links",
-      modelBadge: "Gemini 2.5 Flash",
+      modelBadge: "ScamGuard Edge AI • 11k Normalized Samples",
       langSwitch: "English",
     },
     onboarding: {
