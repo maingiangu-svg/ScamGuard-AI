@@ -2,11 +2,10 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import {
-  ShieldAlert, AlertTriangle, UploadCloud, FileSearch, Brain, Forward,
-  Copy, Check, Zap, Lock, RefreshCw, Eye, Activity, Fingerprint,
-  Sparkles, ChevronRight, MessageSquare, Printer, Link2, Image as ImageIcon,
-  Users, Flame, Clock, ArrowUpRight, Share2, Send, Gamepad2, Bot, User, Globe,
-  ExternalLink, FileDown, X, HelpCircle
+  ShieldAlert, UploadCloud, FileSearch, Check,
+  Link2, Image as ImageIcon, ExternalLink, FileDown,
+  Printer, Share2, Copy, Send, RefreshCw, X, ArrowRight,
+  AlertCircle, Moon, Sun
 } from "lucide-react";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
@@ -65,7 +64,6 @@ interface CommunityFeedItem {
   title: string;
   tag: string;
   summary: string;
-  views: number;
   result: ForensicResult;
 }
 
@@ -76,17 +74,24 @@ interface RoleplayMessage {
   evalStatus?: "safe" | "danger";
 }
 
-const SAMPLE_CASES = [
+// Multilingual Sample Cases
+const getSampleCases = (lang: Language) => [
   {
-    title: "Solana Cloud Mining Trap 0.065 SOL/h",
-    tag: "Crypto Drainer",
-    summary: "Phishing site impersonating Solana Foundation, promising hourly yields to lure users into installing malicious wallet-draining scripts.",
+    title: lang === "vi"
+      ? "Dự án đầu tư Solana cam kết trả lãi theo giờ"
+      : "Fake Solana investment promising hourly returns",
+    tag: lang === "vi" ? "Bẫy tiền mã hóa" : "Crypto drainer",
+    summary: lang === "vi"
+      ? "Trang web hứa hẹn lãi suất cố định mỗi giờ nhằm dụ người dùng cấp quyền rút tiền từ ví Web3."
+      : "Phishing site promising unrealistic hourly yields to trick victims into signing wallet-draining approvals.",
     mockResult: {
       scam_detected: true,
       risk_score: 98,
       threat_level: "CRITICAL" as const,
-      scam_type: "Crypto Phishing & Wallet Drainer",
-      executive_summary: "Phishing platform impersonating the Solana Foundation on fraudulent domain hashrate-accesscenter.com designed to drain user Web3 wallets.",
+      scam_type: lang === "vi" ? "Lừa đảo tiền mã hóa & chiếm đoạt ví" : "Crypto Phishing & Wallet Drainer",
+      executive_summary: lang === "vi"
+        ? "Nền tảng lừa đảo giả mạo Solana Foundation trên tên miền lạ hashrate-accesscenter.com nhằm chiếm quyền kiểm soát ví người dùng."
+        : "Fraudulent platform impersonating the Solana Foundation on an unverified domain designed to siphon connected Web3 wallet assets.",
       web_intelligence: {
         detected: true,
         url: "https://hashrate-accesscenter.com/solana-miner",
@@ -94,18 +99,24 @@ const SAMPLE_CASES = [
         brand_detected: "Solana Foundation",
         domain_match: "mismatch" as const,
         website_status: "accessible" as const,
-        suspicious_indicators: [
-          "Requests unlimited wallet approval and asset permissions",
-          "Guarantees unrealistic fixed hourly returns",
-          "Newly registered domain lacking corporate SSL and verified entity"
-        ],
+        suspicious_indicators: lang === "vi"
+          ? [
+              "Yêu cầu cấp toàn quyền truy cập tài sản trong ví",
+              "Cam kết lợi nhuận cố định phi thực tế theo giờ",
+              "Tên miền mới đăng ký, không có chứng chỉ pháp nhân"
+            ]
+          : [
+              "Requests unlimited wallet asset permissions",
+              "Guarantees unrealistic fixed hourly returns",
+              "Newly registered domain lacking corporate SSL and legal identity"
+            ],
         external_evidence: [
           {
-            title: "Web3 Security Advisory: Fake Solana Cloud Mining Drainers",
+            title: lang === "vi" ? "Cảnh báo thủ đoạn rút ruột ví điện tử Web3" : "Web3 Security Advisory: Fake Cloud Mining Drainers",
             source_url: "https://www.google.com/search?q=solana+mining+drainer+scam+alert"
           },
           {
-            title: "Official Solana Foundation Domain (solana.com)",
+            title: lang === "vi" ? "Trang web chính thức của Solana Foundation (solana.com)" : "Official Solana Foundation Domain (solana.com)",
             source_url: "https://solana.com"
           }
         ],
@@ -113,288 +124,68 @@ const SAMPLE_CASES = [
       },
       red_flags: [
         {
-          evidence: "Domain 'hashrate-accesscenter.com'",
-          official_fact: "The only official website of the Solana Foundation is solana.com.",
+          evidence: "hashrate-accesscenter.com",
+          official_fact: lang === "vi" ? "Địa chỉ chính thức duy nhất của Solana là solana.com." : "The only official website of the Solana Foundation is solana.com.",
           official_link: "https://solana.com",
-          explanation: "Unregistered third-party domain creating a trap to drain connected Web3 wallets."
+          explanation: lang === "vi"
+            ? "Tên miền của bên thứ ba không được xác minh, tạo ra nhằm mục đích chiếm quyền ví khi kết nối."
+            : "Unregistered third-party domain crafted to drain connected cryptocurrency wallets."
         },
         {
-          evidence: "Guaranteed 0.065 SOL/hour (~1.56 SOL/day)",
-          official_fact: "Legitimate Solana staking APY is approximately 6-7% annually.",
+          evidence: lang === "vi" ? "Cam kết lợi nhuận 0.065 SOL/giờ (~1.56 SOL/ngày)" : "Guaranteed 0.065 SOL/hour (~1.56 SOL/day)",
+          official_fact: lang === "vi" ? "Lợi suất gửi staking chính thức của mạng lưới Solana chỉ khoảng 6-7% mỗi năm." : "Official Solana staking yield is approximately 6-7% annually.",
           official_link: "https://solana.com",
-          explanation: "Yield promises exceeding market benchmarks by 100x indicate a fraudulent Ponzi wallet drainer."
+          explanation: lang === "vi"
+            ? "Mức lãi gấp hàng trăm lần thực tế là dấu hiệu điển hình của mô hình lừa đảo ponzi."
+            : "Yield promises exceeding market benchmarks by over 100x indicate a fraudulent ponzi scheme."
         }
       ],
       psychological_tricks: [
         {
-          tactic: "Profit FOMO",
-          target_emotion: "Greed",
-          analysis: "Instills urgency and fear of missing out on risk-free passive hourly income."
+          tactic: lang === "vi" ? "Tạo cảm giác sợ bỏ lỡ cơ hội (FOMO)" : "Profit FOMO",
+          target_emotion: lang === "vi" ? "Kỳ vọng kiếm tiền nhanh" : "Greed & Urgency",
+          analysis: lang === "vi"
+            ? "Kích thích tâm lý muốn có nguồn thu nhập thụ động mà không phải chịu rủi ro."
+            : "Instills urgency and fear of missing out on risk-free passive hourly income."
         }
       ],
-      next_move_prediction: "Requests unlimited token spending approval to siphon all native SOL and SPL tokens from the wallet.",
-      urgent_actions: [
-        "Close browser tab immediately",
-        "Revoke suspicious token approvals via Revoke.cash"
-      ],
+      next_move_prediction: lang === "vi"
+        ? "Yêu cầu ký lệnh phê duyệt giao dịch không giới hạn để chuyển toàn bộ token ra khỏi ví của bạn."
+        : "Requests unlimited token spending approval to siphon all native SOL and tokens from the wallet.",
+      urgent_actions: lang === "vi"
+        ? [
+            "Đóng ngay tab trình duyệt đang mở",
+            "Hủy quyền phê duyệt hợp đồng đáng ngờ qua Revoke.cash nếu đã lỡ kết nối ví"
+          ]
+        : [
+            "Close the browser tab immediately",
+            "Revoke suspicious token approvals via Revoke.cash"
+          ],
       family_alert_card: {
-        headline: "FRAUD ALERT: CRYPTO DRAINER PHISHING",
-        key_warning: "Any website promising hourly crypto profits is a wallet-draining scam!",
-        shareable_text: "🚨 WARNING: A fraudulent site is impersonating Solana promising high mining profits. Do not connect your crypto wallet or approve any transactions!"
+        headline: lang === "vi" ? "Cảnh báo lừa đảo đầu tư tiền mã hóa" : "Alert: Fake Crypto Yield Mining Trap",
+        key_warning: lang === "vi" ? "Không bao giờ kết nối ví cá nhân vào các trang web hứa hẹn trả lãi theo giờ!" : "Never connect personal Web3 wallets to sites promising hourly returns!",
+        shareable_text: lang === "vi"
+          ? "CẢNH BÁO: Đừng bấm vào các liên kết mời tham gia 'đào coin nhận lãi theo giờ'. Đây là bẫy rút sạch tiền trong ví điện tử!"
+          : "WARNING: Never join sites promising guaranteed hourly cryptocurrency yields. Connecting your wallet will drain all deposited funds!"
       }
     }
   },
   {
-    title: "SMS Banking Brandname Spoofing",
-    tag: "Brand Phishing",
-    summary: "Fake SMS threatening that the bank account is locked due to suspicious transactions, coercing victims into entering OTP credentials.",
+    title: lang === "vi"
+      ? "Cuộc gọi video Deepfake giả người thân mượn tiền gấp"
+      : "AI deepfake video call mimicking a family member",
+    tag: lang === "vi" ? "Mạo danh Deepfake" : "Deepfake fraud",
+    summary: lang === "vi"
+      ? "Kẻ gian giả mạo khuôn mặt và giọng nói trong vài giây chập chờn để tạo tình huống khẩn cấp giả tạo."
+      : "Fraudsters synthesize a brief, glitchy emergency call to pressure victims into urgent money transfers.",
     mockResult: {
-      scam_detected: true,
-      risk_score: 95,
-      threat_level: "CRITICAL" as const,
-      scam_type: "SMS Brandname Phishing",
-      executive_summary: "Threat actor uses rogue BTS stations or SMS spoofing to broadcast fake account lock warnings and harvest two-factor credentials.",
-      web_intelligence: {
-        detected: true,
-        url: "https://vietcombank-login.vip/verify-otp",
-        domain: "vietcombank-login.vip",
-        brand_detected: "Vietcombank",
-        domain_match: "mismatch" as const,
-        website_status: "accessible" as const,
-        suspicious_indicators: [
-          "Phishing login form collecting banking credentials and credentials",
-          "Demands real-time SMS/Smart OTP submission",
-          "Cheap generic TLD (.vip) impersonating financial institution"
-        ],
-        external_evidence: [
-          { title: "Official Vietcombank Banking Portal", source_url: "https://www.vietcombank.com.vn" },
-          { title: "Advisory on Fake BTS SMS Impersonation Attacks", source_url: "https://www.vietcombank.com.vn" }
-        ],
-        confidence: 98,
-      },
-      red_flags: [
-        {
-          evidence: "Suspicious URL domain vietcombank-login.vip",
-          official_fact: "Official banking portals exclusively operate on registered enterprise domains (e.g., vietcombank.com.vn).",
-          official_link: "https://www.vietcombank.com.vn",
-          explanation: "Fraudulent clone page designed to intercept internet banking credentials and SMS OTP."
-        }
-      ],
-      psychological_tricks: [
-        {
-          tactic: "Account Freezing Threat",
-          target_emotion: "Fear",
-          analysis: "Creates artificial panic forcing victims to act within minutes without cross-checking."
-        }
-      ],
-      next_move_prediction: "Uses stolen credentials and OTP to execute unauthorized transfers to money mule accounts.",
-      urgent_actions: [
-        "Do not click or submit information",
-        "Immediately contact bank fraud hotline to freeze account"
-      ],
-      family_alert_card: {
-        headline: "CRITICAL ALERT: FAKE BANKING SMS",
-        key_warning: "Banks NEVER send links requiring you to enter OTP codes or passwords!",
-        shareable_text: "⚠️ WARNING: Do not click links in SMS claiming your bank account is locked. Banks never request passwords or OTP via SMS links!"
-      }
-    }
-  },
-  {
-    title: "E-Commerce Task Scam (20% Commission)",
-    tag: "Task Scam",
-    summary: "Victims are solicited to transfer money for fake purchase orders with promises of high cashback, followed by total fund lockouts.",
-    mockResult: {
-      scam_detected: true,
-      risk_score: 92,
-      threat_level: "HIGH" as const,
-      scam_type: "E-Commerce Order Task Scam",
-      executive_summary: "Task scam luring victims with minor early payouts, then freezing funds and demanding larger deposits to unlock refunds.",
-      web_intelligence: {
-        detected: true,
-        url: "https://shopee-nhiemvu.top/task-claim",
-        domain: "shopee-nhiemvu.top",
-        brand_detected: "Shopee Vietnam",
-        domain_match: "mismatch" as const,
-        website_status: "accessible" as const,
-        suspicious_indicators: [
-          "Requires upfront wire transfers to personal bank accounts to complete tasks",
-          "Domain squatted brand name on .top TLD"
-        ],
-        external_evidence: [
-          { title: "Official Shopee Platform", source_url: "https://shopee.vn" },
-          { title: "Security Warning Regarding Recruitment & Order Tasks", source_url: "https://shopee.vn" }
-        ],
-        confidence: 94,
-      },
-      red_flags: [
-        {
-          evidence: "Demands deposits into an individual bank account (JOHN DOE)",
-          official_fact: "Legitimate e-commerce marketplaces never recruit affiliates via personal wire transfers for order clearance.",
-          official_link: "https://shopee.vn",
-          explanation: "Funds are transferred directly into money mule accounts with zero real merchant connection."
-        }
-      ],
-      psychological_tricks: [
-        {
-          tactic: "Sunk Cost Trap",
-          target_emotion: "Regret & Anxiety",
-          analysis: "Compels victims to deposit more funds under the pretext of unfreezing previously held deposits."
-        }
-      ],
-      next_move_prediction: "Claims system syntax error and demands an additional 50% deposit to unlock refund authorization.",
-      urgent_actions: [
-        "Halt all further deposits immediately",
-        "Export transaction logs and chat records for police reporting"
-      ],
-      family_alert_card: {
-        headline: "ALERT: ONLINE ORDER TASK SCAM",
-        key_warning: "No legitimate job pays 20% guaranteed commission simply for wire transferring money!",
-        shareable_text: "📢 WARNING: Never join online groups asking for upfront deposits to process shopping orders. You will lose all deposited funds!"
-      }
-    }
-  }
-];
-
-const MOCK_COMMUNITY_FEED: CommunityFeedItem[] = [
-  {
-    id: "VN-FS-884192",
-    timestamp: "10 mins ago",
-    title: "Fake Binary Options (BO) Platform: 100% Loss Protection",
-    tag: "Fake Trading Exchange",
-    summary: "Rigged candlestick charts simulate initial trading wins, then withdrawal is locked demanding additional 'tax' deposits.",
-    views: 342,
-    result: {
-      scam_detected: true,
-      risk_score: 96,
-      threat_level: "CRITICAL" as const,
-      scam_type: "Fake Binary Options (BO) Exchange",
-      executive_summary: "Illegitimate binary options exchange manipulating prices and demanding fee deposits before permitting withdrawal.",
-      web_intelligence: {
-        detected: true,
-        url: "https://bo-trading-vip.net/trade",
-        domain: "bo-trading-vip.net",
-        brand_detected: "Binance / BO Exchange",
-        domain_match: "mismatch" as const,
-        website_status: "accessible" as const,
-        suspicious_indicators: [
-          "Guarantees 100% loss protection & 30% commission",
-          "Locks withdrawals and demands unverified tax clearance fees"
-        ],
-        external_evidence: [
-          { title: "Securities Commission Fraud Advisory", source_url: "https://ssc.gov.vn" },
-          { title: "ChongLuaDao Threat Database Entry", source_url: "https://chongluadao.vn" }
-        ],
-        confidence: 95,
-      },
-      red_flags: [
-        {
-          evidence: "Guaranteed 100% loss protection & 30% commission",
-          official_fact: "All state-regulated financial investment vehicles entail risk and never guarantee 100% loss indemnity.",
-          official_link: "https://ssc.gov.vn",
-          explanation: "Psychological bait designed to reassure victims into depositing large sums of capital."
-        },
-        {
-          evidence: "Unregulated domain bo-trading-vip.net without financial license",
-          official_fact: "State financial regulators do not license any binary options (BO) trading platforms.",
-          official_link: "https://ssc.gov.vn",
-          explanation: "The exchange synthesizes artificial candlestick charts to confiscate investor capital."
-        }
-      ],
-      psychological_tricks: [
-        {
-          tactic: "Artificial Trust Generation",
-          target_emotion: "Greed",
-          analysis: "Awards minor simulated wins initially so victims gain confidence and commit massive capital."
-        }
-      ],
-      next_move_prediction: "Demands a 20% account verification fee or personal income tax prepayment before releasing funds.",
-      urgent_actions: [
-        "Do not deposit any further funds",
-        "Archive bank transaction receipts & capture Telegram conversation logs"
-      ],
-      family_alert_card: {
-        headline: "WARNING: FAKE LOSS-PROTECTED TRADING PLATFORM",
-        key_warning: "Any online claim of 100% guaranteed loss protection is an asset-seizure scam!",
-        shareable_text: "🚨 FAMILY ALERT: Never participate in binary options or trading sites claiming 100% loss coverage. Any deposited funds will be stolen!"
-      }
-    }
-  },
-  {
-    id: "VN-FS-741029",
-    timestamp: "25 mins ago",
-    title: "Malicious Android APK Impersonating Public Identification",
-    tag: "Android Malware",
-    summary: "Impostor posing as police directs victim to install Trojan .APK to seize device control and intercept banking OTP.",
-    views: 518,
-    result: {
-      scam_detected: true,
-      risk_score: 99,
-      threat_level: "CRITICAL" as const,
-      scam_type: "Fake Gov App / Android Malware",
-      executive_summary: "Distribution of malicious .APK exploiting Android Accessibility Service to remotely control banking apps and harvest OTP.",
-      web_intelligence: {
-        detected: true,
-        url: "https://vneid-gov.apk-download.site/vneid.apk",
-        domain: "vneid-gov.apk-download.site",
-        brand_detected: "Public Identity Portal / Gov Authority",
-        domain_match: "mismatch" as const,
-        website_status: "accessible" as const,
-        suspicious_indicators: [
-          "Direct .APK download via spoofed government portal URL",
-          "Requests Accessibility Service permissions for remote device control"
-        ],
-        external_evidence: [
-          { title: "Official National Identification App Portal", source_url: "https://vneid.gov.vn" },
-          { title: "National Cyber Security Center Malware Warning", source_url: "https://khonggianmang.vn" }
-        ],
-        confidence: 99,
-      },
-      red_flags: [
-        {
-          evidence: "Download link for vneid-gov.apk outside Google Play",
-          official_fact: "Official public identification apps are distributed strictly via Google Play and Apple App Store.",
-          official_link: "https://vneid.gov.vn",
-          explanation: "Government authorities never send links over SMS or social media to install APK updates."
-        },
-        {
-          evidence: "Demands Accessibility Service permissions",
-          official_fact: "Legitimate public administration applications never require Accessibility permissions.",
-          official_link: "https://khonggianmang.vn",
-          explanation: "Malware exploits Accessibility to read screen content and automate illicit banking transfers."
-        }
-      ],
-      psychological_tricks: [
-        {
-          tactic: "State Authority Impersonation",
-          target_emotion: "Legal Fear",
-          analysis: "Threatens legal sanctions or account freezing if instructions are not carried out immediately."
-        }
-      ],
-      next_move_prediction: "Remotely locks victim device display and executes unauthorized withdrawals from banking apps.",
-      urgent_actions: [
-        "Disconnect Wi-Fi/Cellular data and power down phone immediately",
-        "Use a separate phone to call banking fraud hotlines to freeze all accounts"
-      ],
-      family_alert_card: {
-        headline: "CRITICAL WARNING: POLICE IMPERSONATION & FAKE APK",
-        key_warning: "Law enforcement officers NEVER call asking you to install .APK files!",
-        shareable_text: "⚠️ ALERT: Never click links or install APK files from calls claiming to be police officers updating ID profiles. They will hijack your phone and drain your bank account!"
-      }
-    }
-  },
-  {
-    id: "VN-FS-629501",
-    timestamp: "1 hour ago",
-    title: "AI Deepfake Video Call Emergency Impersonation",
-    tag: "AI Deepfake Video",
-    summary: "Fraudsters synthesize 5-second video call mimicking family member in urgent medical distress needing rapid wire transfer.",
-    views: 412,
-    result: {
       scam_detected: true,
       risk_score: 94,
       threat_level: "HIGH" as const,
-      scam_type: "AI Deepfake Impersonation",
-      executive_summary: "Real-time AI voice and face synthesis used in brief emergency distress call to trigger hasty wire transfer.",
+      scam_type: lang === "vi" ? "Mạo danh bằng công nghệ AI Deepfake" : "AI Deepfake Impersonation",
+      executive_summary: lang === "vi"
+        ? "Kẻ xấu ghép mặt và giọng nói của người quen trong cuộc gọi video chập chờn để tạo tình huống khẩn cấp giả tạo."
+        : "Real-time AI voice and face synthesis used in a brief emergency call to trigger a hasty wire transfer.",
       web_intelligence: {
         detected: false,
         url: null,
@@ -408,116 +199,285 @@ const MOCK_COMMUNITY_FEED: CommunityFeedItem[] = [
       },
       red_flags: [
         {
-          evidence: "Glitchy video stream terminated after a few seconds",
-          official_fact: "Current real-time generative deepfakes struggle with continuous facial consistency and prolonged voice alignment.",
+          evidence: lang === "vi" ? "Cuộc gọi hình ảnh chập chờn và ngắt đột ngột sau vài giây" : "Glitchy video stream disconnected after a few seconds",
+          official_fact: lang === "vi" ? "Kẻ gian cố tình tạo mạng chập chờn để che giấu các lỗi ghép ảnh do AI tạo ra." : "Generative deepfakes often struggle with continuous facial consistency, so attackers fake lag.",
           official_link: "https://khonggianmang.vn",
-          explanation: "Attackers intentionally induce blur and latency to conceal AI synthesis artifacts."
+          explanation: lang === "vi"
+            ? "Công nghệ Deepfake thời gian thực còn nhiều khuyết điểm quanh viền mắt và khẩu hình miệng."
+            : "Attackers intentionally induce blur and latency to conceal AI synthesis artifacts."
         },
         {
-          evidence: "Demands immediate transfer to an unfamiliar third-party account",
-          official_fact: "Family members in legitimate emergencies use their own accounts or verified contacts.",
+          evidence: lang === "vi" ? "Yêu cầu chuyển tiền vào số tài khoản lạ mang tên người khác" : "Demands money transfer to an unfamiliar third-party account",
+          official_fact: lang === "vi" ? "Người thân trong gia đình khi gặp sự cố thật thường nhận tiền qua tài khoản chính chủ của họ." : "Family members in legitimate emergencies use their own accounts or verified contacts.",
           official_link: "https://khonggianmang.vn",
-          explanation: "Pretends personal account is locked or provides an alleged hospital account."
+          explanation: lang === "vi"
+            ? "Kẻ gian viện lý do tài khoản cá nhân bị lỗi hoặc nhờ chuyển vào số tài khoản của bệnh viện."
+            : "Pretends personal account is frozen or provides a fabricated clinic account."
         }
       ],
       psychological_tricks: [
         {
-          tactic: "Fabricated Emergency",
-          target_emotion: "Family Concern",
-          analysis: "Induces panic to prevent the victim from calmly making a direct phone call to verify."
+          tactic: lang === "vi" ? "Tạo áp lực khẩn cấp giả tạo" : "Fabricated Emergency",
+          target_emotion: lang === "vi" ? "Lo lắng cho người thân" : "Family Concern",
+          analysis: lang === "vi"
+            ? "Đẩy nạn nhân vào trạng thái hoảng loạn để không kịp gọi điện kiểm tra chéo."
+            : "Induces panic to prevent the victim from calmly placing a direct call to verify."
         }
       ],
-      next_move_prediction: "Follows up aggressively demanding additional money claiming surgical or compensation costs increased.",
-      urgent_actions: [
-        "Hang up and place a direct cellular call (GSM) to the family member",
-        "Ask a personal question only the real person would know to verify identity"
-      ],
+      next_move_prediction: lang === "vi"
+        ? "Tiếp tục hối thúc chuyển thêm tiền với lý do chi phí cấp cứu phát sinh ngoài dự kiến."
+        : "Follows up aggressively demanding additional transfers claiming unexpected medical costs.",
+      urgent_actions: lang === "vi"
+        ? [
+            "Tắt máy ngay và gọi trực tiếp vào số điện thoại viễn thông thông thường của người đó",
+            "Hỏi một câu hỏi riêng tư mà chỉ người thân thực sự mới biết để xác minh"
+          ]
+        : [
+            "Hang up and place a direct cellular call (GSM) to the family member",
+            "Ask a personal question only the real person would know to verify identity"
+          ],
       family_alert_card: {
-        headline: "ALERT: DEEPFAKE VIDEO CALL MONEY REQUEST",
-        key_warning: "Seeing a familiar face on a video call can still be an AI-generated fake!",
-        shareable_text: "📢 WARNING: If you receive a video call from a relative asking for emergency money, hang up and call their direct phone number to verify!"
+        headline: lang === "vi" ? "Cảnh báo cuộc gọi video mạo danh người thân" : "Alert: Deepfake Video Call Money Request",
+        key_warning: lang === "vi" ? "Thấy mặt người quen trên video call vẫn có thể là sản phẩm ghép nối của AI!" : "Seeing a familiar face on a video call can still be an AI-generated fake!",
+        shareable_text: lang === "vi"
+          ? "CẢNH BÁO GIA ĐÌNH: Nếu nhận được cuộc gọi video từ người thân nhờ chuyển tiền gấp, hãy cúp máy và gọi lại số điện thoại chính để xác nhận!"
+          : "FAMILY ALERT: If you receive a video call from a relative asking for emergency money, hang up and call their direct phone number to verify!"
       }
     }
   },
   {
-    id: "VN-FS-391804",
-    timestamp: "2 hours ago",
-    title: "Compromised Telegram Account: Fake Contest Voting Phishing",
-    tag: "Account Takeover",
-    summary: "Compromised friend account shares link to vote in photo contest, leading to phishing site harvesting Telegram login OTP.",
-    views: 295,
-    result: {
+    title: lang === "vi"
+      ? "Yêu cầu cài tệp APK giả mạo cổng dịch vụ công"
+      : "Malicious APK mimicking official government portal",
+    tag: lang === "vi" ? "Mã độc Android" : "Android malware",
+    summary: lang === "vi"
+      ? "Đường dẫn tải tệp APK mạo danh cơ quan nhà nước nhằm chiếm quyền trợ năng và đọc mã OTP."
+      : "Fraudulent download link installing Trojan software to hijack accessibility services and intercept bank OTPs.",
+    mockResult: {
       scam_detected: true,
-      risk_score: 89,
-      threat_level: "HIGH" as const,
-      scam_type: "Telegram Phishing & Session Hijacking",
-      executive_summary: "Session hijacking attack stealing phone numbers and 2FA authentication codes via fraudulent contest portals.",
+      risk_score: 99,
+      threat_level: "CRITICAL" as const,
+      scam_type: lang === "vi" ? "Mã độc chiếm quyền điều khiển điện thoại" : "Android Banking Malware",
+      executive_summary: lang === "vi"
+        ? "Đường link phân phối tệp .APK độc hại giả mạo cổng dịch vụ công để kiểm soát ứng dụng ngân hàng và đánh cắp OTP."
+        : "Distribution of malicious .APK exploiting Android Accessibility Service to remotely control banking apps and harvest OTP.",
       web_intelligence: {
         detected: true,
-        url: "https://vote-kids-2026.com/telegram-login",
-        domain: "vote-kids-2026.com",
-        brand_detected: "Telegram",
+        url: "https://dichvucong-gov.apk-store.site/app.apk",
+        domain: "dichvucong-gov.apk-store.site",
+        brand_detected: lang === "vi" ? "Cổng Dịch vụ công Quốc gia" : "Government Identity Authority",
         domain_match: "mismatch" as const,
         website_status: "accessible" as const,
-        suspicious_indicators: [
-          "Phishing form spoofing Telegram login requesting phone number & OTP",
-          "Disguised as a children's talent photo voting competition"
-        ],
+        suspicious_indicators: lang === "vi"
+          ? [
+              "Tải tệp tin .APK trực tiếp bên ngoài kho ứng dụng Google Play",
+              "Yêu cầu cấp quyền Accessibility (Trợ năng) để điều khiển từ xa"
+            ]
+          : [
+              "Direct .APK download outside Google Play",
+              "Demands Accessibility Service permissions for remote control"
+            ],
         external_evidence: [
-          { title: "Official Telegram Portal", source_url: "https://telegram.org" },
-          { title: "ChongLuaDao Telegram Phishing Advisory", source_url: "https://chongluadao.vn" }
+          { title: "Cổng thông tin Cục An toàn thông tin", source_url: "https://khonggianmang.vn" }
         ],
-        confidence: 92,
+        confidence: 99,
       },
       red_flags: [
         {
-          evidence: "Requests Telegram OTP authentication code on vote-kids-2026.com",
-          official_fact: "Telegram never prompts users to submit login OTP codes on external third-party websites.",
-          official_link: "https://telegram.org",
-          explanation: "Phishing voting websites intercept OTP codes to take over Telegram user sessions."
+          evidence: "dichvucong-gov.apk-store.site",
+          official_fact: lang === "vi" ? "Các ứng dụng dịch vụ công chính thức chỉ được phân phối qua Google Play và Apple App Store." : "Official public administration apps are distributed strictly via Google Play and App Store.",
+          official_link: "https://khonggianmang.vn",
+          explanation: lang === "vi"
+            ? "Cơ quan nhà nước không bao giờ gửi link qua Zalo hay SMS để yêu cầu người dân cài đặt file APK."
+            : "Government agencies never send links over SMS or social media to install APK updates."
         },
         {
-          evidence: "Spoofed domain vote-kids-2026.com",
-          official_fact: "Legitimate Telegram authentication is strictly hosted on telegram.org domain infrastructure.",
-          official_link: "https://telegram.org",
-          explanation: "Disposable domain used to harvest active session tokens."
+          evidence: "Accessibility Service",
+          official_fact: lang === "vi" ? "Ứng dụng hành chính công hợp pháp không bao giờ yêu cầu quyền trợ năng." : "Legitimate public administration applications never require Accessibility permissions.",
+          official_link: "https://khonggianmang.vn",
+          explanation: lang === "vi"
+            ? "Quyền này cho phép mã độc tự động đọc màn hình và tự duyệt lệnh chuyển tiền ngân hàng."
+            : "Malware exploits Accessibility to read screen content and automate illicit banking transfers."
         }
       ],
       psychological_tricks: [
         {
-          tactic: "Exploiting Social Goodwill",
-          target_emotion: "Helpfulness",
-          analysis: "Dispatches phishing lures from a known peer's compromised account to lower vigilance."
+          tactic: lang === "vi" ? "Mạo danh quyền lực pháp lý" : "State Authority Impersonation",
+          target_emotion: lang === "vi" ? "Sợ hãi rắc rối thủ tục" : "Legal Fear",
+          analysis: lang === "vi"
+            ? "Đe dọa khóa tài khoản định danh hoặc phạt hành chính nếu không làm theo hướng dẫn ngay."
+            : "Threatens legal sanctions or account freezing if instructions are not carried out immediately."
         }
       ],
-      next_move_prediction: "Hijacks Telegram account and automatically blasts phishing lures to all contacts in address book.",
-      urgent_actions: [
-        "Open Telegram -> Settings -> Devices -> Terminate all other sessions",
-        "Enable Two-Step Verification (cloud password)"
-      ],
+      next_move_prediction: lang === "vi"
+        ? "Chiếm quyền điều khiển màn hình, tự mở ứng dụng ngân hàng và chuyển tiền trong lúc người dùng không để ý."
+        : "Remotely locks victim device display and executes unauthorized withdrawals from banking apps.",
+      urgent_actions: lang === "vi"
+        ? [
+            "Tắt ngay kết nối Wi-Fi, 4G hoặc tắt nguồn điện thoại",
+            "Dùng một máy khác gọi ngay đến tổng đài ngân hàng để khóa tài khoản và thẻ"
+          ]
+        : [
+            "Disconnect Wi-Fi and mobile data immediately, or power down the phone",
+            "Use a separate phone to call banking fraud hotlines to freeze all accounts"
+          ],
       family_alert_card: {
-        headline: "ALERT: TELEGRAM PHOTO CONTEST TRAP",
-        key_warning: "Never enter your Telegram login OTP on any external website!",
-        shareable_text: "🚨 WARNING: If you receive a message asking to vote in a contest via Telegram, do not click links or enter your OTP or your account will be stolen!"
+        headline: lang === "vi" ? "Cảnh báo tệp tin độc hại mạo danh cơ quan chức năng" : "Critical Warning: Fake APK Malware",
+        key_warning: lang === "vi" ? "Công an hay cán bộ nhà nước không bao giờ gửi link bắt cài file APK!" : "Law enforcement officers never send links asking you to install .APK files!",
+        shareable_text: lang === "vi"
+          ? "CẢNH BÁO: Tuyệt đối không bấm link cài đặt file APK từ người tự xưng là cán bộ công an hay thuế. Điện thoại sẽ bị chiếm quyền và mất tiền!"
+          : "CRITICAL ALERT: Never install APK files from callers claiming to be police or tax officers. They hijack your phone and drain your bank account!"
       }
     }
   }
 ];
 
-const QUICK_ROLEPLAY_RESPONSES = [
+// Multilingual Mock Feed
+const getMockCommunityFeed = (lang: Language): CommunityFeedItem[] => [
   {
-    label: "🛡️ Call Official Hotline",
-    text: "I am hanging up to contact the official hotline of the institution directly. I do not take action through suspicious SMS or links.",
+    id: "case-01",
+    timestamp: lang === "vi" ? "Hôm nay" : "Today",
+    title: lang === "vi"
+      ? "Sàn giao dịch quyền chọn nhị phân cam kết bảo hiểm 100% vốn"
+      : "Binary options platform promising 100% capital protection",
+    tag: lang === "vi" ? "Đầu tư giả mạo" : "Fake investment",
+    summary: lang === "vi"
+      ? "Biểu đồ nến lập trình sẵn để tạo cảm giác có lãi, sau đó chặn rút tiền và đòi nộp thêm thuế."
+      : "Rigged charts simulate early trading wins, then lock withdrawals demanding advance fee and tax payments.",
+    result: {
+      scam_detected: true,
+      risk_score: 96,
+      threat_level: "CRITICAL" as const,
+      scam_type: lang === "vi" ? "Sàn đầu tư tài chính lừa đảo" : "Fake Trading Platform",
+      executive_summary: lang === "vi"
+        ? "Sàn giao dịch không phép tạo biểu đồ ảo để dụ người dùng nạp thêm tiền trước khi cắt đứt liên lạc."
+        : "Unregulated binary options exchange manipulating prices and demanding fee deposits before permitting withdrawals.",
+      web_intelligence: {
+        detected: true,
+        url: "https://bo-trade-vip.net",
+        domain: "bo-trade-vip.net",
+        brand_detected: "Sàn chứng khoán",
+        domain_match: "mismatch" as const,
+        website_status: "accessible" as const,
+        suspicious_indicators: [
+          "Guarantees 100% loss indemnity",
+          "Demands advance tax fee before withdrawal"
+        ],
+        external_evidence: [
+          { title: "Ủy ban Chứng khoán Nhà nước", source_url: "https://ssc.gov.vn" }
+        ],
+        confidence: 95,
+      },
+      red_flags: [
+        {
+          evidence: "100% capital protection",
+          official_fact: lang === "vi" ? "Mọi hình thức đầu tư tài chính hợp pháp đều có rủi ro và không thể cam kết hoàn vốn 100%." : "Regulated financial investments carry risk and never guarantee 100% capital preservation.",
+          official_link: "https://ssc.gov.vn",
+          explanation: lang === "vi" ? "Lời hứa phi thực tế nhằm làm mờ đi cảnh giác của người mới tham gia." : "Psychological bait designed to reassure victims into depositing large sums."
+        }
+      ],
+      psychological_tricks: [
+        {
+          tactic: "Tạo niềm tin ảo",
+          target_emotion: "Kỳ vọng lợi nhuận",
+          analysis: "Cho rút thử số tiền nhỏ ban đầu để tạo niềm tin trước khi yêu cầu nạp số tiền lớn."
+        }
+      ],
+      next_move_prediction: "Yêu cầu đóng 20% phí xác minh tài khoản trước khi cho rút tiền.",
+      urgent_actions: [
+        "Ngừng nạp thêm bất kỳ khoản tiền nào",
+        "Lưu lại lịch sử giao dịch và tin nhắn"
+      ],
+      family_alert_card: {
+        headline: "Cảnh báo sàn đầu tư cam kết bảo hiểm vốn",
+        key_warning: "Bất kỳ lời mời đầu tư nào cam kết không bao giờ lỗ đều là lừa đảo!",
+        shareable_text: "CẢNH BÁO: Đừng tin vào các nhóm đầu tư cam kết bảo hiểm 100% vốn. Nạp tiền vào là sẽ không rút ra được!"
+      }
+    }
+  },
+  {
+    id: "case-02",
+    timestamp: lang === "vi" ? "Hôm qua" : "Yesterday",
+    title: lang === "vi"
+      ? "Tin nhắn nhờ bình chọn cuộc thi ảnh để đánh cắp tài khoản Telegram"
+      : "Photo contest voting link designed to hijack Telegram accounts",
+    tag: lang === "vi" ? "Đánh cắp tài khoản" : "Account takeover",
+    summary: lang === "vi"
+      ? "Người quen bị hack nhắn tin nhờ bình chọn, trang web yêu cầu nhập mã OTP Telegram."
+      : "Compromised friend asks for a vote, directing victims to a phishing form harvesting login OTPs.",
+    result: {
+      scam_detected: true,
+      risk_score: 95,
+      threat_level: "CRITICAL" as const,
+      scam_type: lang === "vi" ? "Đánh cắp tài khoản mạng xã hội" : "Telegram Phishing",
+      executive_summary: lang === "vi"
+        ? "Trang web bình chọn giả mạo thu thập mã xác nhận OTP để đăng nhập và chiếm quyền tài khoản Telegram."
+        : "Spoofed voting portal capturing Telegram authentication OTP to hijack active user sessions.",
+      web_intelligence: {
+        detected: true,
+        url: "https://vote-khoanhkhac-2026.com",
+        domain: "vote-khoanhkhac-2026.com",
+        brand_detected: "Telegram",
+        domain_match: "mismatch" as const,
+        website_status: "accessible" as const,
+        suspicious_indicators: [
+          "Phishing form asking for Telegram OTP",
+          "Recently registered disposable domain"
+        ],
+        external_evidence: [
+          { title: "Telegram Security", source_url: "https://telegram.org" }
+        ],
+        confidence: 97,
+      },
+      red_flags: [
+        {
+          evidence: "vote-khoanhkhac-2026.com",
+          official_fact: lang === "vi" ? "Mã OTP chỉ dùng để đăng nhập vào ứng dụng Telegram, không bao giờ dùng để bình chọn cuộc thi." : "Telegram login codes are strictly for application login, never for voting contests.",
+          official_link: "https://telegram.org",
+          explanation: lang === "vi" ? "Kẻ gian dùng mã này để đăng nhập vào tài khoản của bạn trên thiết bị của chúng." : "Attackers use this OTP to authenticate on their own devices."
+        }
+      ],
+      psychological_tricks: [
+        {
+          tactic: "Lợi dụng sự nhiệt tình giúp đỡ bạn bè",
+          target_emotion: "Tin tưởng người quen",
+          analysis: "Tin nhắn gửi từ tài khoản người quen đã bị chiếm đoạt khiến người nhận ít đề phòng."
+        }
+      ],
+      next_move_prediction: "Chiếm đoạt tài khoản và tiếp tục gửi tin nhắn vay tiền đến toàn bộ danh bạ.",
+      urgent_actions: [
+        "Vào Cài đặt Telegram -> Thiết bị -> Đăng xuất khỏi tất cả các phiên lạ",
+        "Bật xác thực hai bước (mật khẩu phụ)"
+      ],
+      family_alert_card: {
+        headline: "Cảnh báo bẫy bình chọn cuộc thi qua tin nhắn",
+        key_warning: "Tuyệt đối không nhập mã OTP Telegram trên bất kỳ trang web nào!",
+        shareable_text: "CẢNH BÁO: Nhận được tin nhắn nhờ vote cuộc thi thì đừng bấm link hay nhập mã xác thực, nếu không tài khoản sẽ bị cướp ngay lập tức!"
+      }
+    }
+  }
+];
+
+const getQuickRoleplayResponses = (lang: Language) => [
+  {
+    label: lang === "vi" ? "Gọi lại số hotline chính thức để xác minh" : "Call official hotline directly to verify",
+    text: lang === "vi"
+      ? "Tôi sẽ tự liên hệ lên hotline chính thức của ngân hàng để kiểm tra. Tôi không cung cấp thông tin qua tin nhắn hay link lạ."
+      : "I will contact the bank's official customer support line directly. I never share credentials over chat or external links.",
     isRisky: false,
   },
   {
-    label: "🛡️ Decline & Report",
-    text: "I am not interested. This is an obvious fraudulent scheme and I am reporting this sender immediately.",
+    label: lang === "vi" ? "Từ chối và báo cáo số điện thoại" : "Decline and report the contact",
+    text: lang === "vi"
+      ? "Tôi không có nhu cầu. Đây là dấu hiệu lừa đảo và tôi sẽ báo cáo số điện thoại này đến cơ quan chức năng."
+      : "I am not interested. This is a fraudulent scheme and I am reporting this number immediately.",
     isRisky: false,
   },
   {
-    label: "⚠️ Bait Trap: Provide OTP / Click Link",
-    text: "Sure, please send me the link or I can read my OTP code to you right now to fix the issue!",
+    label: lang === "vi" ? "Làm theo hướng dẫn: Gửi mã OTP hoặc bấm link" : "Trap: Provide OTP code or click the link",
+    text: lang === "vi"
+      ? "Vâng, để tôi đọc mã OTP vừa gửi về điện thoại cho bạn để xử lý giúp tôi luôn nhé!"
+      : "Sure, let me read you the OTP code I just received so you can unlock my account!",
     isRisky: true,
   },
 ];
@@ -533,8 +493,11 @@ export default function ScamShieldDashboard() {
   const [error, setError] = useState<string | null>(null);
   const [caseId, setCaseId] = useState("");
   const [activeTab, setActiveTab] = useState<"overview" | "psychology" | "family" | "roleplay">("overview");
-  const [communityFeed, setCommunityFeed] = useState<CommunityFeedItem[]>(MOCK_COMMUNITY_FEED);
-  
+  const [isDragging, setIsDragging] = useState(false);
+
+  // Theme state: defaults to "muted" (warm graphite/obsidian - not white, not pure black)
+  const [theme, setTheme] = useState<"muted" | "light">("muted");
+
   // Roleplay state
   const [roleplayInput, setRoleplayInput] = useState("");
   const [roleplayMessages, setRoleplayMessages] = useState<RoleplayMessage[]>([]);
@@ -549,6 +512,10 @@ export default function ScamShieldDashboard() {
       if (savedLang === "en" || savedLang === "vi") {
         setLang(savedLang);
       }
+      const savedTheme = localStorage.getItem("scamshield-theme") as "muted" | "light";
+      if (savedTheme === "muted" || savedTheme === "light") {
+        setTheme(savedTheme);
+      }
     }
   }, []);
 
@@ -559,7 +526,18 @@ export default function ScamShieldDashboard() {
     }
   };
 
+  const toggleTheme = (newTheme: "muted" | "light") => {
+    setTheme(newTheme);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("scamshield-theme", newTheme);
+    }
+  };
+
+  const isMuted = theme === "muted";
   const t = translations[lang];
+  const sampleCases = getSampleCases(lang);
+  const communityFeed = getMockCommunityFeed(lang);
+  const quickRoleplayResponses = getQuickRoleplayResponses(lang);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const reportRef = useRef<HTMLDivElement>(null);
@@ -570,20 +548,51 @@ export default function ScamShieldDashboard() {
     }
   }, []);
 
+  // Global paste handler: Ctrl+V or Cmd+V anywhere to paste screenshot
+  useEffect(() => {
+    const handleGlobalPaste = (e: ClipboardEvent) => {
+      const target = e.target as HTMLElement;
+      if (target && (target.tagName === "TEXTAREA" || target.tagName === "INPUT")) {
+        return;
+      }
+
+      const items = e.clipboardData?.items;
+      if (!items) return;
+
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].type.indexOf("image") !== -1) {
+          const pastedFile = items[i].getAsFile();
+          if (pastedFile) {
+            setInputMode("image");
+            handleFile(pastedFile);
+            e.preventDefault();
+            break;
+          }
+        }
+      }
+    };
+
+    window.addEventListener("paste", handleGlobalPaste);
+    return () => window.removeEventListener("paste", handleGlobalPaste);
+  }, []);
+
   const dismissOnboarding = () => {
     localStorage.setItem("scamshield-onboarded", "1");
     setShowOnboarding(false);
   };
 
-  const generateId = () => `SCAM-FS-${Math.floor(100000 + Math.random() * 900000)}`;
+  const generateId = () => `scam-${Math.floor(1000 + Math.random() * 9000)}`;
 
   const getInitialRoleplayMessages = (res: ForensicResult | null): RoleplayMessage[] => {
     if (!res) return [];
-    let scammerOpening = "🚨 [SIMULATED SCENARIO]: Urgent alert from the system! Your account has encountered a critical anomaly. Click the link or provide your OTP within 3 minutes!";
+    let scammerOpening = lang === "vi"
+      ? "Thông báo khẩn từ hệ thống! Tài khoản của bạn vừa ghi nhận giao dịch bất thường. Bấm vào liên kết hoặc đọc mã xác thực trong 3 phút để không bị khóa thẻ!"
+      : "Urgent alert! An unauthorized transaction was detected on your account. Click the verification link or provide your OTP within 3 minutes to avoid card suspension!";
+
     if (res.red_flags?.[0]?.evidence) {
-      scammerOpening = `🚨 [ACTIVE THREAT SCENARIO]: "${res.red_flags[0].evidence}" - You must comply with instructions immediately or face permanent suspension!`;
-    } else if (res.scam_type) {
-      scammerOpening = `🚨 [SIMULATED ${res.scam_type.toUpperCase()}]: The fraudster is pressuring you for emergency fund transfer, link activation, or OTP disclosure!`;
+      scammerOpening = lang === "vi"
+        ? `"${res.red_flags[0].evidence}" — Bạn cần thao tác theo đúng hướng dẫn ngay bây giờ để được hỗ trợ!`
+        : `"${res.red_flags[0].evidence}" — You must follow our instructions immediately to resolve this matter!`;
     }
 
     return [
@@ -602,12 +611,23 @@ export default function ScamShieldDashboard() {
     setError(null);
   };
 
+  const handleSelectCase = (sample: typeof sampleCases[0]) => {
+    setFile(null);
+    setPreviewUrl(null);
+    setTextInput("");
+    setCaseId(generateId());
+    setResult(sample.mockResult);
+    setRoleplayMessages(getInitialRoleplayMessages(sample.mockResult));
+    setActiveTab("overview");
+    window.scrollTo({ top: 380, behavior: "smooth" });
+  };
+
   const handleSelectFeedItem = (item: CommunityFeedItem) => {
     setCaseId(item.id);
     setResult(item.result);
     setRoleplayMessages(getInitialRoleplayMessages(item.result));
     setActiveTab("overview");
-    window.scrollTo({ top: 180, behavior: "smooth" });
+    window.scrollTo({ top: 380, behavior: "smooth" });
   };
 
   const handleNativeShare = async () => {
@@ -616,11 +636,11 @@ export default function ScamShieldDashboard() {
     if (typeof navigator !== "undefined" && navigator.share) {
       try {
         await navigator.share({
-          title: result.family_alert_card.headline || "Fraud Security Alert",
+          title: result.family_alert_card.headline || "Cảnh báo an toàn",
           text: shareText,
           url: window.location.href,
         });
-      } catch (e) {
+      } catch {
         // User closed native share dialog
       }
     } else {
@@ -682,21 +702,23 @@ export default function ScamShieldDashboard() {
       setRoleplayMessages((prev) => [...prev, evalMsg, scammerReplyMsg]);
     } catch {
       const lower = userText.toLowerCase();
-      const isDangerous = isRiskyQuickChoice || lower.includes("otp") || lower.includes("password") || lower.includes("transfer") || lower.includes("click");
+      const isDangerous = isRiskyQuickChoice || lower.includes("otp") || lower.includes("mật khẩu") || lower.includes("chuyển") || lower.includes("password");
       setRoleplayMessages((prev) => [
         ...prev,
         {
           id: `e-${Date.now()}`,
           sender: "eval",
           text: isDangerous
-            ? "⚠️ CRITICAL WARNING: Dangerous response — never provide OTP, passwords, or initiate funds transfer to unauthorized parties."
-            : "✅ SECURE RESPONSE: Excellent composure — safely declining and verifying via authorized channels.",
+            ? (lang === "vi" ? "Rất nguy hiểm: Tuyệt đối không bao giờ cung cấp mã OTP, mật khẩu hay chuyển tiền theo yêu cầu của người lạ." : "Dangerous: Never share OTP codes, passwords, or send funds to unverified parties.")
+            : (lang === "vi" ? "Xử lý an toàn: Phản hồi bình tĩnh và chủ động xác minh qua kênh chính thống." : "Safe response: Staying calm and verifying through official channels."),
           evalStatus: isDangerous ? "danger" : "safe",
         },
         {
           id: `s-${Date.now()}`,
           sender: "scammer",
-          text: isDangerous ? "Trap succeeded! The fraudster has gained control of your credentials. Learn from this simulation." : "The fraudster failed to intimidate you and abandoned the attack to target someone else.",
+          text: isDangerous
+            ? (lang === "vi" ? "Kẻ lừa đảo đã đạt được mục đích chiếm đoạt thông tin. Đây là bài học để bạn cảnh giác hơn ngoài đời thực." : "The scammer succeeded in capturing credentials. Use this simulation to stay alert.")
+            : (lang === "vi" ? "Kẻ lừa đảo thấy bạn cảnh giác và đã chủ động ngắt cuộc gọi để tìm nạn nhân khác." : "The scammer realized you were cautious and abandoned the attempt."),
         },
       ]);
     } finally {
@@ -709,7 +731,7 @@ export default function ScamShieldDashboard() {
     setExportingPdf(true);
     try {
       const canvas = await html2canvas(reportRef.current, {
-        backgroundColor: "#060913",
+        backgroundColor: isMuted ? "#161618" : "#FAF8F5",
         scale: 2,
         useCORS: true,
       });
@@ -747,10 +769,12 @@ export default function ScamShieldDashboard() {
       }
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}));
-        let rawErr = errData.error || "Forensic analysis failed";
+        let rawErr = errData.error || (lang === "vi" ? "Không thể hoàn thành kiểm tra" : "Forensic analysis failed");
         if (typeof rawErr === "object") rawErr = JSON.stringify(rawErr);
         if (typeof rawErr === "string" && (rawErr.includes("API key not valid") || rawErr.includes("INVALID_ARGUMENT"))) {
-          rawErr = "⚠️ GEMINI_API_KEY is missing or invalid. Please configure GEMINI_API_KEY in your environment.";
+          rawErr = lang === "vi"
+            ? "Chưa cấu hình GEMINI_API_KEY hợp lệ trong môi trường chạy."
+            : "GEMINI_API_KEY is missing or invalid in your environment.";
         }
         throw new Error(rawErr);
       }
@@ -760,18 +784,6 @@ export default function ScamShieldDashboard() {
       setResult(analysisData);
       setRoleplayMessages(getInitialRoleplayMessages(analysisData));
       setActiveTab("overview");
-
-      // Auto-prepend new case to Community Feed
-      const newFeedItem: CommunityFeedItem = {
-        id: newId,
-        timestamp: "Just now",
-        title: inputMode === "image" ? (file?.name ? `Image: ${file.name}` : "Suspicious Screenshot") : (textInput.slice(0, 30) + "..."),
-        tag: analysisData.scam_type || "New Alert",
-        summary: analysisData.executive_summary || "Investigation completed successfully",
-        views: 1,
-        result: analysisData,
-      };
-      setCommunityFeed((prev) => [newFeedItem, ...prev]);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -780,290 +792,501 @@ export default function ScamShieldDashboard() {
   };
 
   const activeRoleplayList = roleplayMessages.length > 0 ? roleplayMessages : getInitialRoleplayMessages(result);
+  const canAnalyze = (inputMode === "image" && !!file) || (inputMode === "text" && !!textInput.trim());
 
   return (
-    <div className="min-h-screen bg-[#060913] text-slate-100 font-sans pb-20 selection:bg-cyan-500 selection:text-black">
-      <header className="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur sticky top-0 z-50 print:hidden">
-        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-2">
-          <div className="flex items-center space-x-3">
-            <div className="p-2.5 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-xl text-white shadow-lg">
-              <ShieldAlert className="w-5 h-5 animate-pulse" />
+    <div className={`min-h-screen transition-colors duration-200 selection:bg-[#E5484D]/25 selection:text-inherit pb-24 ${
+      isMuted
+        ? "bg-[#161618] text-[#EDEAE4]"
+        : "bg-[#FAF8F5] text-[#1C1917]"
+    }`}>
+      {/* ── TOP NAVIGATION ──────────────────────────────────────────────────────── */}
+      <header className={`border-b backdrop-blur-md sticky top-0 z-40 print:hidden transition-colors ${
+        isMuted
+          ? "border-[#2E2E34] bg-[#161618]/90"
+          : "border-[#E7E2D9] bg-[#FAF8F5]/90"
+      }`}>
+        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-[#E5484D] text-white flex items-center justify-center shadow-xs">
+              <ShieldAlert className="w-4 h-4" />
             </div>
             <div>
-              <div className="font-black text-sm uppercase bg-gradient-to-r from-cyan-300 to-indigo-300 bg-clip-text text-transparent">
-                {t.header.appTitle}
+              <div className="font-semibold text-base tracking-tight flex items-center gap-2">
+                <span>{t.header.appTitle}</span>
               </div>
-              <div className="text-[11px] text-slate-400 hidden sm:block">{t.header.appSubtitle}</div>
+              <p className={`text-xs hidden sm:block ${isMuted ? "text-[#A19E95]" : "text-[#57534E]"}`}>
+                {t.header.appSubtitle}
+              </p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            {/* Language Switcher Button */}
-            <div className="flex items-center bg-slate-900 border border-slate-800 rounded-full p-0.5 text-xs font-bold">
-              <button
-                onClick={() => toggleLang("en")}
-                className={`px-2.5 py-1 rounded-full transition flex items-center gap-1 cursor-pointer ${
-                  lang === "en" ? "bg-cyan-500 text-slate-950 shadow font-extrabold" : "text-slate-400 hover:text-white"
-                }`}
-                title="Switch to English (Default)"
-              >
-                <span>🇬🇧</span> EN
-              </button>
+
+          <div className="flex items-center gap-3">
+            {/* Theme Toggle (Muted Dark vs Warm Light) */}
+            <button
+              onClick={() => toggleTheme(isMuted ? "light" : "muted")}
+              className={`p-1.5 px-2.5 rounded-lg border text-xs flex items-center gap-1.5 transition cursor-pointer ${
+                isMuted
+                  ? "bg-[#202024] border-[#2E2E34] text-[#A19E95] hover:text-[#EDEAE4]"
+                  : "bg-white border-[#E7E2D9] text-[#57534E] hover:text-[#1C1917]"
+              }`}
+              title={isMuted ? (lang === "vi" ? "Chuyển sang nền sáng" : "Switch to light theme") : (lang === "vi" ? "Chuyển sang nền trầm" : "Switch to muted dark theme")}
+            >
+              {isMuted ? <Sun className="w-3.5 h-3.5 text-amber-400" /> : <Moon className="w-3.5 h-3.5 text-[#57534E]" />}
+              <span className="hidden sm:inline font-medium text-[11px]">
+                {isMuted ? (lang === "vi" ? "Tối trầm" : "Muted") : (lang === "vi" ? "Sáng" : "Light")}
+              </span>
+            </button>
+
+            {/* Language Switcher */}
+            <div className={`flex items-center text-xs ${isMuted ? "text-[#A19E95]" : "text-[#57534E]"}`}>
               <button
                 onClick={() => toggleLang("vi")}
-                className={`px-2.5 py-1 rounded-full transition flex items-center gap-1 cursor-pointer ${
-                  lang === "vi" ? "bg-cyan-500 text-slate-950 shadow font-extrabold" : "text-slate-400 hover:text-white"
+                className={`px-2 py-1 transition cursor-pointer ${
+                  lang === "vi" ? (isMuted ? "text-[#EDEAE4] font-semibold" : "text-[#1C1917] font-semibold") : (isMuted ? "hover:text-[#EDEAE4]" : "hover:text-[#1C1917]")
                 }`}
-                title="Chuyển sang Tiếng Việt"
               >
-                <span>🇻🇳</span> VI
+                VI
+              </button>
+              <span className={isMuted ? "text-[#3E3E48]" : "text-[#D6D0C4]"}>/</span>
+              <button
+                onClick={() => toggleLang("en")}
+                className={`px-2 py-1 transition cursor-pointer ${
+                  lang === "en" ? (isMuted ? "text-[#EDEAE4] font-semibold" : "text-[#1C1917] font-semibold") : (isMuted ? "hover:text-[#EDEAE4]" : "hover:text-[#1C1917]")
+                }`}
+              >
+                EN
               </button>
             </div>
 
-            <div className="text-xs text-slate-300 border border-slate-800 bg-slate-900 px-3 py-1.5 rounded-full font-mono hidden md:flex items-center gap-1.5">
-              <Lock className="w-3.5 h-3.5 text-cyan-400" /> {t.header.modelBadge}
-            </div>
+            <span className={`hidden md:inline-flex items-center px-2.5 py-1 text-xs border rounded-md font-medium ${
+              isMuted
+                ? "bg-[#202024] border-[#2E2E34] text-[#A19E95]"
+                : "bg-[#F5F2EB] border-[#E7E2D9] text-[#57534E]"
+            }`}>
+              {t.header.modelBadge}
+            </span>
           </div>
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 mt-8">
+      <main className="max-w-6xl mx-auto px-6 mt-10">
+        {/* Onboarding Banner (Clean, Dismissible) */}
         {showOnboarding && (
-          <div className="mb-6 bg-gradient-to-r from-cyan-950/60 to-indigo-950/60 border border-cyan-500/30 rounded-2xl p-4 print:hidden relative">
-            <button onClick={dismissOnboarding} className="absolute top-3 right-3 text-slate-400 hover:text-white cursor-pointer" aria-label={t.onboarding.dismiss}>
+          <div className={`mb-8 p-4 border rounded-xl shadow-xs relative print:hidden ${
+            isMuted
+              ? "bg-[#202024] border-[#2E2E34]"
+              : "bg-white border-[#E7E2D9]"
+          }`}>
+            <button
+              onClick={dismissOnboarding}
+              className={`absolute top-3 right-3 cursor-pointer ${isMuted ? "text-[#71717A] hover:text-[#EDEAE4]" : "text-[#78716C] hover:text-[#1C1917]"}`}
+              aria-label={t.onboarding.dismiss}
+            >
               <X className="w-4 h-4" />
             </button>
-            <div className="flex items-start gap-3">
-              <HelpCircle className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
-              <div>
-                <div className="text-sm font-bold text-cyan-200 mb-2">{t.onboarding.guideTitle}</div>
-                <ol className="text-xs text-slate-300 space-y-1.5 list-decimal list-inside">
-                  <li><strong>{lang === "vi" ? "Chụp ảnh" : "Screenshot"}</strong> {t.onboarding.step1}</li>
-                  <li><strong>{lang === "vi" ? "Bấm" : "Click"}</strong> {t.onboarding.step2}</li>
-                  <li><strong>{lang === "vi" ? "Báo cáo" : "Report"}</strong> {t.onboarding.step3}</li>
-                </ol>
+            <div className="pr-8">
+              <div className="text-sm font-semibold mb-1">
+                {t.onboarding.guideTitle}
+              </div>
+              <div className={`grid grid-cols-1 md:grid-cols-3 gap-3 text-[13px] mt-2 ${isMuted ? "text-[#A19E95]" : "text-[#57534E]"}`}>
+                <div className="flex items-start gap-2">
+                  <span className={`w-5 h-5 rounded-full font-semibold flex items-center justify-center shrink-0 text-xs ${
+                    isMuted ? "bg-[#2E2E34] text-[#EDEAE4]" : "bg-[#F5F2EB] text-[#1C1917]"
+                  }`}>1</span>
+                  <span>{t.onboarding.step1}</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className={`w-5 h-5 rounded-full font-semibold flex items-center justify-center shrink-0 text-xs ${
+                    isMuted ? "bg-[#2E2E34] text-[#EDEAE4]" : "bg-[#F5F2EB] text-[#1C1917]"
+                  }`}>2</span>
+                  <span>{t.onboarding.step2}</span>
+                </div>
+                <div className="flex items-start gap-2">
+                  <span className={`w-5 h-5 rounded-full font-semibold flex items-center justify-center shrink-0 text-xs ${
+                    isMuted ? "bg-[#2E2E34] text-[#EDEAE4]" : "bg-[#F5F2EB] text-[#1C1917]"
+                  }`}>3</span>
+                  <span>{t.onboarding.step3}</span>
+                </div>
               </div>
             </div>
           </div>
         )}
 
-        <div className="text-center max-w-2xl mx-auto mb-6 print:hidden">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-cyan-500/30 bg-cyan-950/30 text-cyan-300 text-xs font-semibold mb-2">
-            <Sparkles className="w-3.5 h-3.5 text-cyan-400" /> {t.hero.badge}
+        {/* ── HERO HEADER WITH EDITORIAL ILLUSTRATION ──────────────────────────── */}
+        <div className="mb-10 print:hidden flex items-center justify-between gap-6 flex-wrap md:flex-nowrap">
+          <div className="max-w-xl">
+            <h1 className="text-3xl sm:text-4xl font-editorial font-normal tracking-tight mb-2 leading-tight">
+              {t.hero.headline}
+            </h1>
+            <p className={`text-[15px] leading-relaxed ${isMuted ? "text-[#A19E95]" : "text-[#57534E]"}`}>
+              {t.hero.headlineSub}
+            </p>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-black">
-            {t.hero.headline}
-          </h1>
+
+          {/* Hand-drawn style illustration: Shield protecting a conversation */}
+          <div className="hidden sm:flex shrink-0 items-center justify-center" aria-hidden="true">
+            <svg
+              width="130"
+              height="100"
+              viewBox="0 0 130 100"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              {/* Soft sketch background bubble */}
+              <rect x="15" y="16" width="76" height="52" rx="14" fill={isMuted ? "#202024" : "#F5F2EB"} stroke={isMuted ? "#383840" : "#1C1917"} strokeWidth="1.75" strokeLinejoin="round" />
+              <path d="M26 68L22 79L36 68" fill={isMuted ? "#202024" : "#F5F2EB"} stroke={isMuted ? "#383840" : "#1C1917"} strokeWidth="1.75" strokeLinejoin="round" />
+              {/* Message lines in bubble */}
+              <line x1="28" y1="32" x2="68" y2="32" stroke={isMuted ? "#71717A" : "#A8A29E"} strokeWidth="2.5" strokeLinecap="round" />
+              <line x1="28" y1="42" x2="52" y2="42" stroke={isMuted ? "#71717A" : "#A8A29E"} strokeWidth="2.5" strokeLinecap="round" />
+              
+              {/* Suspicious link warning dot in bubble */}
+              <circle cx="75" cy="42" r="3" fill="#E5484D" />
+
+              {/* Protective Shield Overlay */}
+              <path
+                d="M84 28C98 28 106 20 106 20C106 20 114 28 128 28C128 52 118 68 106 74C94 68 84 52 84 28Z"
+                fill={isMuted ? "#161618" : "#FAF8F5"}
+                stroke={isMuted ? "#EDEAE4" : "#1C1917"}
+                strokeWidth="1.75"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M93 34C102 34 106 28 106 28C106 28 110 34 119 34C119 50 113 60 106 65C99 60 93 50 93 34Z"
+                fill="#E5484D"
+                fillOpacity={isMuted ? "0.15" : "0.08"}
+                stroke="#E5484D"
+                strokeWidth="1.25"
+                strokeDasharray="2 2"
+              />
+
+              {/* Magnifying Glass */}
+              <circle cx="58" cy="52" r="16" fill={isMuted ? "#161618" : "#FAF8F5"} stroke={isMuted ? "#EDEAE4" : "#1C1917"} strokeWidth="1.75" />
+              <circle cx="58" cy="52" r="13" stroke="#E5484D" strokeWidth="1" strokeDasharray="3 3" />
+              <line x1="69" y1="64" x2="84" y2="80" stroke={isMuted ? "#EDEAE4" : "#1C1917"} strokeWidth="3" strokeLinecap="round" />
+            </svg>
+          </div>
         </div>
 
-        {/* Quick presets */}
-        <div className="mb-6 bg-slate-900/40 border border-slate-800 rounded-2xl p-3.5 print:hidden">
-          <div className="text-[11px] font-bold text-slate-400 uppercase mb-2 flex items-center gap-1">
-            <Activity className="w-3.5 h-3.5 text-cyan-400" /> {t.hero.realCases}
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-            {SAMPLE_CASES.map((s, idx) => (
-              <button
-                key={idx}
-                onClick={() => {
-                  setFile(null);
-                  setPreviewUrl(null);
-                  setTextInput("");
-                  setCaseId(generateId());
-                  setResult(s.mockResult);
-                  setRoleplayMessages(getInitialRoleplayMessages(s.mockResult));
-                  setActiveTab("overview");
-                }}
-                className="text-left p-2.5 rounded-xl border border-slate-800 bg-slate-950 hover:border-cyan-500/50 transition flex flex-col justify-between cursor-pointer group"
-              >
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-xs font-bold text-slate-200 group-hover:text-cyan-300">{s.title}</span>
-                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-400">{s.tag}</span>
+        {/* ── ASYMMETRIC MAIN GRID: EQUAL HEIGHT STRETCH (items-stretch) ────────── */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+          {/* LEFT: Hero Upload & Input (~62% width) */}
+          <div className={result ? "lg:col-span-5 print:hidden" : "lg:col-span-7 print:hidden"}>
+            <div className={`border rounded-2xl p-7 shadow-xs flex flex-col justify-between h-full space-y-5 transition-colors ${
+              isMuted
+                ? "bg-[#202024] border-[#2E2E34]"
+                : "bg-white border-[#E7E2D9]"
+            }`}>
+              <div className="flex-1 flex flex-col">
+                {/* Simple Underline Tab Bar */}
+                <div className={`flex border-b gap-6 mb-5 ${isMuted ? "border-[#2E2E34]" : "border-[#E7E2D9]"}`}>
+                  <button
+                    onClick={() => { setInputMode("image"); setResult(null); }}
+                    className={`pb-3 text-sm transition cursor-pointer flex items-center gap-2 ${
+                      inputMode === "image"
+                        ? `border-b-2 border-[#E5484D] font-semibold ${isMuted ? "text-[#EDEAE4]" : "text-[#1C1917]"}`
+                        : `${isMuted ? "text-[#A19E95] hover:text-[#EDEAE4]" : "text-[#57534E] hover:text-[#1C1917]"}`
+                    }`}
+                  >
+                    <ImageIcon className="w-4 h-4" />
+                    {t.input.tabImage}
+                  </button>
+                  <button
+                    onClick={() => { setInputMode("text"); setResult(null); }}
+                    className={`pb-3 text-sm transition cursor-pointer flex items-center gap-2 ${
+                      inputMode === "text"
+                        ? `border-b-2 border-[#E5484D] font-semibold ${isMuted ? "text-[#EDEAE4]" : "text-[#1C1917]"}`
+                        : `${isMuted ? "text-[#A19E95] hover:text-[#EDEAE4]" : "text-[#57534E] hover:text-[#1C1917]"}`
+                    }`}
+                  >
+                    <Link2 className="w-4 h-4" />
+                    {t.input.tabText}
+                  </button>
                 </div>
-                <p className="text-[11px] text-slate-400 line-clamp-1">{s.summary}</p>
-              </button>
-            ))}
-          </div>
-        </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          {/* Input Box */}
-          <div className={result ? "lg:col-span-5 print:hidden" : "col-span-12 flex justify-center print:hidden"}>
-            <div className={result ? "space-y-3 w-full" : "max-w-2xl w-full space-y-3"}>
-              <div className="flex border border-slate-800 bg-slate-900/80 p-1 rounded-xl">
-                <button
-                  onClick={() => { setInputMode("image"); setResult(null); }}
-                  className={`flex-1 py-1.5 text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5 transition ${inputMode === "image" ? "bg-cyan-600 text-white" : "text-slate-400"}`}
-                >
-                  <ImageIcon className="w-3.5 h-3.5" /> {t.input.tabImage}
-                </button>
-                <button
-                  onClick={() => { setInputMode("text"); setResult(null); }}
-                  className={`flex-1 py-1.5 text-xs font-semibold rounded-lg flex items-center justify-center gap-1.5 transition ${inputMode === "text" ? "bg-cyan-600 text-white" : "text-slate-400"}`}
-                >
-                  <Link2 className="w-3.5 h-3.5" /> {t.input.tabText}
-                </button>
+                {/* Dropzone Fills Full Height (flex-1) */}
+                {inputMode === "image" ? (
+                  <div
+                    onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+                    onDragLeave={() => setIsDragging(false)}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      setIsDragging(false);
+                      e.dataTransfer.files[0] && handleFile(e.dataTransfer.files[0]);
+                    }}
+                    onClick={() => fileInputRef.current?.click()}
+                    className={`flex-1 min-h-[250px] border rounded-xl p-8 text-center cursor-pointer flex flex-col items-center justify-center transition ${
+                      isDragging
+                        ? "border-[#E5484D] bg-[#E5484D]/10 ring-1 ring-[#E5484D]/30"
+                        : isMuted
+                        ? "border-[#383840] bg-[#1A1A1D] hover:border-[#52525B] hover:bg-[#1E1E22]"
+                        : "border-[#D6D0C4] bg-[#FAF8F5]/60 hover:border-[#1C1917] hover:bg-[#FAF8F5]"
+                    }`}
+                  >
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])}
+                    />
+
+                    {previewUrl ? (
+                      <div className={`relative max-h-60 overflow-hidden rounded-lg border ${isMuted ? "border-[#2E2E34]" : "border-[#E7E2D9]"}`}>
+                        <img src={previewUrl} alt="Preview" className="max-h-60 object-contain" />
+                        {loading && (
+                          <div className={`absolute inset-0 backdrop-blur-xs flex items-center justify-center ${isMuted ? "bg-[#161618]/80" : "bg-white/80"}`}>
+                            <RefreshCw className="w-6 h-6 text-[#E5484D] animate-spin" />
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="space-y-2.5">
+                        <UploadCloud className="w-8 h-8 mx-auto stroke-[1.75]" />
+                        <div className="text-sm font-semibold">
+                          {isDragging ? t.input.dropzoneDragActive : t.input.dropzoneTitle}
+                        </div>
+                        <p className={`text-[14px] max-w-sm leading-normal ${isMuted ? "text-[#A19E95]" : "text-[#57534E]"}`}>
+                          {t.input.dropzoneSubtitle}
+                        </p>
+                        {/* Neutral Gray Paste Hint (Not red alert) */}
+                        <p className={`text-xs pt-1 font-normal ${isMuted ? "text-[#71717A]" : "text-[#78716C]"}`}>
+                          {t.input.pasteHint}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex-1 flex flex-col">
+                    <textarea
+                      rows={8}
+                      value={textInput}
+                      onChange={(e) => setTextInput(e.target.value)}
+                      placeholder={t.input.pastePlaceholder}
+                      className={`flex-1 min-h-[250px] w-full border rounded-xl p-4 text-[15px] placeholder:text-[#71717A] focus:outline-none transition leading-relaxed ${
+                        isMuted
+                          ? "bg-[#1A1A1D] border-[#383840] text-[#EDEAE4] focus:border-[#EDEAE4] focus:bg-[#202024]"
+                          : "bg-[#FAF8F5]/60 border-[#D6D0C4] text-[#1C1917] focus:border-[#1C1917] focus:bg-white"
+                      }`}
+                    />
+                  </div>
+                )}
               </div>
 
-              {inputMode === "image" ? (
-                <div
-                  onDragOver={(e) => e.preventDefault()}
-                  onDrop={(e) => { e.preventDefault(); e.dataTransfer.files[0] && handleFile(e.dataTransfer.files[0]); }}
-                  onClick={() => fileInputRef.current?.click()}
-                  className="border-2 border-dashed border-slate-800 hover:border-cyan-500/50 bg-slate-900/30 rounded-2xl p-6 text-center cursor-pointer min-h-[220px] flex flex-col items-center justify-center"
-                >
-                  <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleFile(e.target.files[0])} />
-                  {previewUrl ? (
-                    <div className="relative max-h-56 overflow-hidden rounded-lg">
-                      <img src={previewUrl} alt="Preview" className="max-h-56 object-contain" />
-                      {loading && (
-                        <div className="absolute inset-0 bg-slate-950/80 backdrop-blur flex items-center justify-center">
-                          <RefreshCw className="w-8 h-8 text-cyan-400 animate-spin" />
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="space-y-2">
-                      <UploadCloud className="w-8 h-8 text-cyan-400 mx-auto" />
-                      <div className="text-xs font-semibold text-slate-300">{t.input.dropzoneTitle}</div>
-                      <div className="text-[11px] text-slate-500">{t.input.dropzoneSubtitle}</div>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-4 space-y-2">
-                  <label className="text-xs font-bold text-slate-300">{t.input.pastePlaceholder}</label>
-                  <textarea
-                    rows={6}
-                    value={textInput}
-                    onChange={(e) => setTextInput(e.target.value)}
-                    placeholder={lang === "vi" ? "Ví dụ: 'Thong bao: Tai khoan ngan hang cua ban da bi khoa. Truy cap https://vietcombank-login.vip de xac thuc ngay...'" : "Example: 'Notice: Your banking profile has been restricted. Visit https://vietcombank-login.vip immediately to verify...'"}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 font-mono"
-                  />
-                </div>
-              )}
-
-              {((inputMode === "image" && file) || (inputMode === "text" && textInput.trim())) && !loading && (
+              {/* Pinned Primary CTA Button at Bottom */}
+              <div className="space-y-3 pt-2">
                 <button
                   onClick={runAnalysis}
-                  className="w-full py-3 bg-gradient-to-r from-cyan-600 to-indigo-600 font-bold text-xs rounded-xl shadow-lg flex items-center justify-center gap-2 cursor-pointer active:scale-95 text-white"
+                  disabled={!canAnalyze || loading}
+                  className={`w-full py-3.5 px-5 font-medium text-sm rounded-xl transition flex items-center justify-center gap-2 ${
+                    canAnalyze && !loading
+                      ? "bg-[#E5484D] hover:bg-[#D93D42] text-white shadow-xs cursor-pointer active:scale-[0.99]"
+                      : "bg-[#E5484D]/30 text-white/50 cursor-not-allowed"
+                  }`}
                 >
-                  <FileSearch className="w-4 h-4" /> {t.input.btnAnalyze}
+                  <FileSearch className="w-4 h-4" />
+                  {t.input.btnAnalyze}
                 </button>
-              )}
 
-              {loading && (
-                <div className="p-3 bg-cyan-950/40 border border-cyan-800/40 rounded-xl text-cyan-300 text-xs flex items-center gap-2 animate-pulse">
-                  <RefreshCw className="w-4 h-4 animate-spin text-cyan-400" />
-                  <span>{t.input.analyzing}</span>
-                </div>
-              )}
+                {loading && (
+                  <div className={`p-4 border rounded-xl text-xs flex items-center gap-3 ${
+                    isMuted
+                      ? "bg-[#1A1A1D] border-[#2E2E34] text-[#A19E95]"
+                      : "bg-[#F5F2EB] border-[#E7E2D9] text-[#57534E]"
+                  }`}>
+                    <RefreshCw className="w-4 h-4 animate-spin text-[#E5484D]" />
+                    <div>
+                      <div className="font-semibold text-inherit">{t.input.analyzing}</div>
+                      <div className="text-xs opacity-80 mt-0.5">{t.input.analyzingSubtitle}</div>
+                    </div>
+                  </div>
+                )}
 
-              {error && <div className="p-3 bg-red-950/60 border border-red-800 rounded-xl text-red-300 text-xs">{error}</div>}
+                {error && (
+                  <div className="p-4 bg-[#FEF2F2] border border-[#FEE2E2] rounded-xl text-xs text-[#991B1B] flex items-start gap-2.5">
+                    <AlertCircle className="w-4 h-4 text-[#E5484D] shrink-0 mt-0.5" />
+                    <div className="leading-relaxed">{error}</div>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
-          {/* Results Display */}
+          {/* RIGHT: Real-world cases (Height-matched to Left column before results) */}
+          {!result && (
+            <div className="lg:col-span-5 print:hidden">
+              <div className={`p-7 rounded-2xl border flex flex-col justify-between h-full shadow-xs transition-colors ${
+                isMuted
+                  ? "bg-[#202024] border-[#2E2E34]"
+                  : "bg-white border-[#E7E2D9]"
+              }`}>
+                <div>
+                  <div className={`flex items-center justify-between mb-4 pb-3 border-b ${isMuted ? "border-[#2E2E34]" : "border-[#E7E2D9]"}`}>
+                    <h2 className="text-sm font-semibold tracking-tight">
+                      {t.hero.realCases}
+                    </h2>
+                    <span className={`text-xs ${isMuted ? "text-[#A19E95]" : "text-[#57534E]"}`}>
+                      {t.hero.sampleHelper}
+                    </span>
+                  </div>
+
+                  <div className={`divide-y ${isMuted ? "divide-[#2E2E34]" : "divide-[#EFECE6]"}`}>
+                    {sampleCases.map((s, idx) => (
+                      <div
+                        key={idx}
+                        onClick={() => handleSelectCase(s)}
+                        className="py-4 first:pt-1 last:pb-1 cursor-pointer group"
+                      >
+                        <div className="flex items-start justify-between gap-3 mb-1">
+                          <div className="text-[14px] font-semibold group-hover:text-[#E5484D] transition leading-snug">
+                            {s.title}
+                          </div>
+                          {/* Dark gray text label with a small coral dot before it */}
+                          <span className={`inline-flex items-center gap-1.5 text-xs font-medium shrink-0 ${
+                            isMuted ? "text-[#A19E95]" : "text-[#57534E]"
+                          }`}>
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#E5484D] shrink-0" />
+                            {s.tag}
+                          </span>
+                        </div>
+                        <p className={`text-[13px] line-clamp-2 leading-relaxed ${
+                          isMuted ? "text-[#A19E95]" : "text-[#57534E]"
+                        }`}>
+                          {s.summary}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Grounded Disclaimer */}
+                <div className={`pt-4 border-t text-xs ${
+                  isMuted ? "border-[#2E2E34] text-[#71717A]" : "border-[#E7E2D9] text-[#78716C]"
+                }`}>
+                  {t.hero.scenarioDisclaimer}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ── RESULT REPORT DISPLAY ───────────────────────────────────────────── */}
           {result && (
-            <div ref={reportRef} className="lg:col-span-7 space-y-4 print:w-full print:col-span-12">
-              <div className="flex justify-between items-center bg-slate-900/80 p-3 rounded-xl border border-slate-800 print:hidden flex-wrap gap-2">
-                <div className="text-xs font-mono text-slate-400">CASE ID: <strong className="text-cyan-300">{caseId}</strong></div>
+            <div ref={reportRef} className="lg:col-span-7 space-y-6 print:w-full print:col-span-12">
+              {/* Report Header Bar */}
+              <div className={`flex items-center justify-between p-4 border rounded-xl shadow-xs print:hidden flex-wrap gap-2 ${
+                isMuted
+                  ? "bg-[#202024] border-[#2E2E34]"
+                  : "bg-white border-[#E7E2D9]"
+              }`}>
+                <div className={`text-xs ${isMuted ? "text-[#A19E95]" : "text-[#57534E]"}`}>
+                  {lang === "vi" ? "Mã giám định: " : "Case ID: "}
+                  <span className="font-semibold text-inherit">{caseId}</span>
+                </div>
                 <div className="flex gap-2">
-                  <button onClick={handleExportPdf} disabled={exportingPdf} className="text-xs bg-slate-800 text-cyan-300 px-3 py-1.5 rounded-lg border border-cyan-500/30 flex items-center gap-1.5 cursor-pointer hover:bg-slate-700 transition disabled:opacity-50">
-                    <FileDown className="w-3.5 h-3.5" /> {exportingPdf ? "Exporting..." : "Download PDF"}
+                  <button
+                    onClick={handleExportPdf}
+                    disabled={exportingPdf}
+                    className={`text-xs px-3.5 py-1.5 rounded-lg border flex items-center gap-1.5 cursor-pointer font-medium transition disabled:opacity-50 ${
+                      isMuted
+                        ? "bg-[#2A2A30] hover:bg-[#33333A] text-[#EDEAE4] border-[#383840]"
+                        : "bg-[#F5F2EB] hover:bg-[#EAE6DD] text-[#1C1917] border-[#E7E2D9]"
+                    }`}
+                  >
+                    <FileDown className="w-3.5 h-3.5 opacity-70" />
+                    {exportingPdf ? (lang === "vi" ? "Đang xuất..." : "Exporting...") : t.family.downloadPdf}
                   </button>
-                  <button onClick={() => window.print()} className="text-xs bg-slate-800 text-cyan-300 px-3 py-1.5 rounded-lg border border-cyan-500/30 flex items-center gap-1.5 cursor-pointer hover:bg-slate-700 transition">
-                    <Printer className="w-3.5 h-3.5" /> Print Report
+                  <button
+                    onClick={() => window.print()}
+                    className={`text-xs px-3.5 py-1.5 rounded-lg border flex items-center gap-1.5 cursor-pointer font-medium transition ${
+                      isMuted
+                        ? "bg-[#2A2A30] hover:bg-[#33333A] text-[#EDEAE4] border-[#383840]"
+                        : "bg-[#F5F2EB] hover:bg-[#EAE6DD] text-[#1C1917] border-[#E7E2D9]"
+                    }`}
+                  >
+                    <Printer className="w-3.5 h-3.5 opacity-70" />
+                    {t.family.printReport}
                   </button>
                 </div>
               </div>
 
-              {/* ── VERDICT BANNER ─────────────────────────────────────────── */}
+              {/* ── VERDICT CARD ────────────────────────────────────────────────────── */}
               {(() => {
                 const s = result.risk_score;
-                const verdict =
-                  s >= 80 ? { label: t.verdict.scamDetected,   emoji: "🚨", color: "red",     action: t.verdict.actionScam,        bg: "from-red-950/80 to-red-900/40",     border: "border-red-500",     text: "text-red-300",     badge: "bg-red-500/20 text-red-300 border-red-500/50" } :
-                  s >= 60 ? { label: t.verdict.highRisk,        emoji: "🔶", color: "orange",   action: t.verdict.actionHigh,      bg: "from-orange-950/80 to-amber-900/40",border: "border-orange-500",  text: "text-orange-300",  badge: "bg-orange-500/20 text-orange-300 border-orange-500/50" } :
-                  s >= 31 ? { label: t.verdict.suspicious,       emoji: "⚠️", color: "yellow",   action: t.verdict.actionSuspicious,       bg: "from-amber-950/80 to-yellow-900/30",border: "border-amber-400",   text: "text-amber-300",   badge: "bg-amber-500/20 text-amber-300 border-amber-500/50" } :
-                            { label: t.verdict.safe,             emoji: "✅", color: "green",    action: t.verdict.actionSafe,                      bg: "from-emerald-950/80 to-green-900/30",border:"border-emerald-500", text: "text-emerald-300", badge: "bg-emerald-500/20 text-emerald-300 border-emerald-500/50" };
+                const isScam = s >= 70;
+                const isSuspicious = s >= 40 && s < 70;
 
                 return (
-                  <div className={`rounded-2xl bg-gradient-to-br ${verdict.bg} border-2 ${verdict.border} p-5 space-y-3`}>
-                    {/* Top row: verdict label + score badge */}
-                    <div className="flex items-center justify-between flex-wrap gap-3">
-                      <div className="flex items-center gap-3">
-                        {/* Pulsing indicator */}
-                        <span className="relative flex h-5 w-5 shrink-0">
-                          {s >= 60 && <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-60 ${s >= 80 ? "bg-red-500" : "bg-orange-400"}`} />}
-                          <span className={`relative inline-flex h-5 w-5 rounded-full ${s >= 80 ? "bg-red-500" : s >= 60 ? "bg-orange-400" : s >= 31 ? "bg-amber-400" : "bg-emerald-400"}`} />
-                        </span>
-                        <span className={`text-2xl sm:text-3xl font-black tracking-tight ${verdict.text}`}>
-                          {verdict.emoji} {verdict.label}
-                        </span>
+                  <div className={`p-6 rounded-2xl border space-y-4 shadow-xs ${
+                    isMuted
+                      ? isScam
+                        ? "bg-[#202024] border-[#7F1D1D]"
+                        : isSuspicious
+                        ? "bg-[#202024] border-[#78350F]"
+                        : "bg-[#202024] border-[#064E3B]"
+                      : isScam
+                      ? "bg-white border-[#FCA5A5]"
+                      : isSuspicious
+                      ? "bg-white border-[#FDE68A]"
+                      : "bg-white border-[#A7F3D0]"
+                  }`}>
+                    <div className="flex items-start justify-between flex-wrap gap-3">
+                      <div>
+                        <div className="flex items-center gap-2.5 mb-1.5">
+                          <span className={`w-3 h-3 rounded-full ${
+                            isScam ? "bg-[#E5484D]" : isSuspicious ? "bg-[#F59E0B]" : "bg-[#10B981]"
+                          }`} />
+                          <span className={`text-xl font-semibold tracking-tight ${
+                            isScam ? "text-[#E5484D]" : isSuspicious ? "text-[#D97706]" : "text-[#059669]"
+                          }`}>
+                            {s >= 80 ? t.verdict.scamDetected : s >= 60 ? t.verdict.highRisk : s >= 31 ? t.verdict.suspicious : t.verdict.safe}
+                          </span>
+                        </div>
+                        <div className={`text-sm ${isMuted ? "text-[#A19E95]" : "text-[#57534E]"}`}>
+                          {t.verdict.category}: <span className="font-semibold text-inherit">{result.scam_type}</span>
+                        </div>
                       </div>
-                      {/* Numeric score — secondary, smaller */}
-                      <span className={`text-[11px] font-mono font-bold px-2.5 py-1 rounded-lg border ${verdict.badge}`}>
-                        {t.verdict.riskScore}: {s}/100
-                      </span>
+
+                      {/* Score pill */}
+                      <div className="text-right">
+                        <div className="text-3xl font-semibold tracking-tight">
+                          {s} <span className={`text-sm font-normal ${isMuted ? "text-[#71717A]" : "text-[#78716C]"}`}>/ 100</span>
+                        </div>
+                        <div className={`text-xs mt-0.5 ${isMuted ? "text-[#A19E95]" : "text-[#57534E]"}`}>
+                          {t.verdict.riskScore}
+                        </div>
+                      </div>
                     </div>
 
-                    {/* Action instruction */}
-                    <div className={`flex items-start gap-2 rounded-xl px-3 py-2.5 bg-black/20 border ${verdict.border} border-opacity-30`}>
-                      <Zap className={`w-4 h-4 shrink-0 mt-0.5 ${verdict.text}`} />
-                      <p className={`text-sm font-semibold ${verdict.text}`}>{verdict.action}</p>
-                    </div>
-
-                    {/* Scam type + threat level */}
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-xs text-slate-400">{t.verdict.category}:</span>
-                      <span className="text-xs font-bold text-slate-200">{result.scam_type}</span>
-                      <span className={`text-[10px] px-2 py-0.5 rounded font-mono font-bold border ${verdict.badge}`}>
-                        {result.threat_level}
-                      </span>
+                    {/* Action Advice Box */}
+                    <div className={`p-4 rounded-xl text-sm leading-relaxed border ${
+                      isScam
+                        ? isMuted ? "bg-[#7F1D1D]/20 text-[#FCA5A5] border-[#7F1D1D]/50" : "bg-[#FEF2F2] text-[#991B1B] border-[#FEE2E2]"
+                        : isSuspicious
+                        ? isMuted ? "bg-[#78350F]/20 text-[#FCD34D] border-[#78350F]/50" : "bg-[#FFFBEB] text-[#92400E] border-[#FEF3C7]"
+                        : isMuted ? "bg-[#064E3B]/20 text-[#6EE7B7] border-[#064E3B]/50" : "bg-[#F0FDF4] text-[#166534] border-[#DCFCE7]"
+                    }`}>
+                      <span className="font-semibold">{lang === "vi" ? "Khuyến nghị an toàn: " : "Safety advice: "}</span>
+                      {s >= 80 ? t.verdict.actionScam : s >= 60 ? t.verdict.actionHigh : s >= 31 ? t.verdict.actionSuspicious : t.verdict.actionSafe}
                     </div>
                   </div>
                 );
               })()}
 
-              {/* ML PRE-CLASSIFIER BADGE */}
+              {/* Local ML Model Signal */}
               {result.ml_classifier?.model_ready && (
-                <div className="p-4 rounded-xl bg-gradient-to-r from-indigo-950/60 to-purple-950/60 border border-indigo-500/40 space-y-2.5">
-                  <div className="flex items-center justify-between flex-wrap gap-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] uppercase tracking-wider font-mono font-bold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 flex items-center gap-1">
-                        <Brain className="w-3 h-3" /> {t.mlBadge.badgeTitle}
-                      </span>
-                      <span className="text-[10px] text-slate-400 font-mono">{t.mlBadge.subtext}</span>
-                    </div>
-                    <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded font-mono ${
-                      result.ml_classifier.ml_label === "SCAM"
-                        ? "bg-red-500/20 text-red-400 border border-red-500/40"
-                        : result.ml_classifier.ml_label === "SUSPICIOUS"
-                        ? "bg-amber-500/20 text-amber-300 border border-amber-500/40"
-                        : "bg-emerald-500/20 text-emerald-400 border border-emerald-500/40"
-                    }`}>
-                      {result.ml_classifier.ml_label === "SCAM" ? "🔴" : result.ml_classifier.ml_label === "SUSPICIOUS" ? "🟡" : "🟢"} {result.ml_classifier.ml_label}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    {/* Mini progress bar */}
-                    <div className="flex-1 h-2 bg-slate-800 rounded-full overflow-hidden">
-                      <div
-                        className={`h-full rounded-full transition-all ${
-                          result.ml_classifier.ml_risk_score >= 60 ? "bg-red-500" :
-                          result.ml_classifier.ml_risk_score >= 35 ? "bg-amber-400" : "bg-emerald-400"
-                        }`}
-                        style={{ width: `${result.ml_classifier.ml_risk_score}%` }}
-                      />
-                    </div>
-                    <span className="text-xs font-mono font-bold text-indigo-300 shrink-0">
-                      {result.ml_classifier.ml_risk_score}/100 · {result.ml_classifier.ml_confidence}% {t.mlBadge.confidence}
-                    </span>
+                <div className={`p-4 border rounded-xl text-xs space-y-2 ${
+                  isMuted ? "bg-[#202024] border-[#2E2E34]" : "bg-white border-[#E7E2D9]"
+                }`}>
+                  <div className={`flex items-center justify-between ${isMuted ? "text-[#A19E95]" : "text-[#57534E]"}`}>
+                    <span className="font-medium text-inherit">{t.mlBadge.badgeTitle}</span>
+                    <span className="text-xs">{result.ml_classifier.ml_confidence}% {t.mlBadge.confidence}</span>
                   </div>
                   {result.ml_classifier.ml_top_signals?.length > 0 && (
-                    <div className="flex flex-wrap gap-1.5">
-                      <span className="text-[10px] text-slate-500 font-bold uppercase">{t.mlBadge.keySignals}</span>
+                    <div className="flex flex-wrap gap-2 pt-1">
                       {result.ml_classifier.ml_top_signals.map((sig, i) => (
-                        <span key={i} className="text-[10px] px-1.5 py-0.5 bg-indigo-950/60 border border-indigo-800/60 text-indigo-300 rounded font-mono">
+                        <span key={i} className={`text-xs px-2 py-0.5 rounded font-medium ${
+                          isMuted ? "bg-[#1A1A1D] text-[#EDEAE4]" : "bg-[#F5F2EB] text-[#57534E]"
+                        }`}>
                           {sig}
                         </span>
                       ))}
@@ -1072,74 +1295,52 @@ export default function ScamShieldDashboard() {
                 </div>
               )}
 
-              {/* WEB INTELLIGENCE Section */}
+              {/* Web Domain Intelligence */}
               {result.web_intelligence?.detected && (
-                <div className="p-4 rounded-xl bg-slate-900/90 border border-cyan-500/30 space-y-3 font-sans">
-                  <div className="flex items-center justify-between border-b border-slate-800 pb-2.5 gap-2 flex-wrap">
-                    <div className="flex items-center gap-2 overflow-hidden">
-                      <span className="text-[10px] uppercase tracking-wider font-mono font-bold px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-300 border border-cyan-500/30 flex items-center gap-1 shrink-0">
-                        <Globe className="w-3 h-3 text-cyan-400" /> {t.webIntel.badgeTitle}
-                      </span>
-                      <span className="text-xs font-mono font-semibold text-slate-200 truncate max-w-[200px] sm:max-w-xs">
+                <div className={`p-5 border rounded-xl text-xs space-y-3 ${
+                  isMuted ? "bg-[#202024] border-[#2E2E34]" : "bg-white border-[#E7E2D9]"
+                }`}>
+                  <div className={`flex items-center justify-between border-b pb-3 flex-wrap gap-2 ${
+                    isMuted ? "border-[#2E2E34]" : "border-[#E7E2D9]"
+                  }`}>
+                    <div>
+                      <div className={`text-xs ${isMuted ? "text-[#A19E95]" : "text-[#57534E]"}`}>{t.webIntel.badgeTitle}</div>
+                      <div className="font-medium text-sm mt-0.5">
                         {result.web_intelligence.domain || result.web_intelligence.url}
-                      </span>
-                    </div>
-
-                    {/* Domain Match Status Badge */}
-                    {result.web_intelligence.domain_match === "mismatch" ? (
-                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded bg-red-500/20 text-red-400 border border-red-500/40 flex items-center gap-1 font-mono shrink-0">
-                        {t.webIntel.fraudulentDomain}
-                      </span>
-                    ) : result.web_intelligence.domain_match === "match" ? (
-                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center gap-1 font-mono shrink-0">
-                        {t.webIntel.legitimateDomain}
-                      </span>
-                    ) : (
-                      <span className="text-[10px] font-bold px-2.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center gap-1 font-mono shrink-0">
-                        {t.webIntel.unverifiedMatch}
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                    <div className="p-2.5 bg-slate-950 rounded-lg border border-slate-800 space-y-1">
-                      <div className="text-[10px] text-slate-400 font-bold uppercase">{t.webIntel.targetBrand}</div>
-                      <div className="font-bold text-slate-200">{result.web_intelligence.brand_detected || t.webIntel.unidentified}</div>
-                    </div>
-                    <div className="p-2.5 bg-slate-950 rounded-lg border border-slate-800 space-y-1">
-                      <div className="text-[10px] text-slate-400 font-bold uppercase">{t.webIntel.confidence}</div>
-                      <div className="font-bold text-cyan-300 font-mono">{result.web_intelligence.confidence}% Confidence</div>
-                      {result.web_intelligence.verified_live !== undefined && (
-                        <div className={`text-[10px] font-bold ${result.web_intelligence.verified_live ? "text-emerald-400" : "text-amber-400"}`}>
-                          {result.web_intelligence.verified_live
-                            ? `${t.webIntel.verifiedLive} ${result.web_intelligence.http_status ?? "OK"}`
-                            : t.webIntel.unreachable}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Suspicious Indicators */}
-                  {result.web_intelligence.suspicious_indicators?.length > 0 && (
-                    <div className="space-y-1">
-                      <div className="text-[10px] font-bold text-red-400 uppercase">{t.webIntel.suspiciousBehaviors}</div>
-                      <div className="flex flex-wrap gap-1.5">
-                        {result.web_intelligence.suspicious_indicators.map((ind, idx) => (
-                          <span key={idx} className="text-[11px] px-2 py-0.5 bg-red-950/60 border border-red-800/60 text-red-300 rounded-md">
-                            • {ind}
-                          </span>
-                        ))}
                       </div>
+                    </div>
+                    <span className={`text-xs font-medium ${
+                      result.web_intelligence.domain_match === "mismatch"
+                        ? "text-[#E5484D]"
+                        : "text-[#10B981]"
+                    }`}>
+                      {result.web_intelligence.domain_match === "mismatch"
+                        ? t.webIntel.fraudulentDomain
+                        : t.webIntel.legitimateDomain}
+                    </span>
+                  </div>
+
+                  {result.web_intelligence.brand_detected && (
+                    <div className={isMuted ? "text-[#A19E95]" : "text-[#57534E]"}>
+                      {t.webIntel.targetBrand} <strong className="text-inherit">{result.web_intelligence.brand_detected}</strong>
                     </div>
                   )}
 
-                  {/* External Evidence with Clickable Source Links */}
+                  {result.web_intelligence.suspicious_indicators?.length > 0 && (
+                    <div className="space-y-1.5 pt-1">
+                      <div className="text-xs font-medium text-[#E5484D]">{t.webIntel.suspiciousBehaviors}</div>
+                      <ul className={`list-disc list-inside space-y-1 text-xs ${isMuted ? "text-[#A19E95]" : "text-[#57534E]"}`}>
+                        {result.web_intelligence.suspicious_indicators.map((ind, idx) => (
+                          <li key={idx}>{ind}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
                   {result.web_intelligence.external_evidence?.length > 0 && (
-                    <div className="space-y-1.5">
-                      <div className="text-[10px] font-bold text-cyan-300 uppercase flex items-center gap-1">
-                        {t.webIntel.threatEvidence}
-                      </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div className={`pt-2 border-t ${isMuted ? "border-[#2E2E34]" : "border-[#E7E2D9]"}`}>
+                      <div className={`text-xs font-medium mb-2 ${isMuted ? "text-[#A19E95]" : "text-[#57534E]"}`}>{t.webIntel.threatEvidence}</div>
+                      <div className="space-y-1.5">
                         {result.web_intelligence.external_evidence.map((item, idx) => {
                           const isObj = typeof item === "object" && item !== null;
                           const title = isObj ? item.title : String(item);
@@ -1151,12 +1352,14 @@ export default function ScamShieldDashboard() {
                               href={sourceUrl}
                               target="_blank"
                               rel="noreferrer"
-                              className="group/link text-[11px] text-slate-200 bg-slate-950 hover:bg-slate-900 p-2.5 rounded-lg border border-slate-800 hover:border-cyan-500/50 flex items-center justify-between gap-2 transition cursor-pointer"
+                              className={`text-xs flex items-center justify-between p-2.5 rounded-lg border transition ${
+                                isMuted
+                                  ? "bg-[#1A1A1D] hover:bg-[#2A2A30] border-[#383840] text-[#EDEAE4]"
+                                  : "bg-[#FAF8F5] hover:bg-[#F5F2EB] border-[#E7E2D9] text-[#1C1917]"
+                              }`}
                             >
-                              <span className="truncate group-hover/link:text-cyan-300 transition">
-                                🔍 {title}
-                              </span>
-                              <ExternalLink className="w-3.5 h-3.5 text-cyan-400 shrink-0 opacity-70 group-hover/link:opacity-100 transition" />
+                              <span className="truncate">{title}</span>
+                              <ExternalLink className="w-3.5 h-3.5 opacity-60 shrink-0 ml-2" />
                             </a>
                           );
                         })}
@@ -1166,14 +1369,18 @@ export default function ScamShieldDashboard() {
                 </div>
               )}
 
-              {/* Tabs */}
-              <div className="flex border-b border-slate-800 gap-2 print:hidden overflow-x-auto pb-0.5">
+              {/* ── RESULT TABS (Underline Style) ─────────────────────────────────── */}
+              <div className={`flex border-b gap-6 print:hidden overflow-x-auto pb-0 ${
+                isMuted ? "border-[#2E2E34]" : "border-[#E7E2D9]"
+              }`}>
                 {(["overview", "psychology", "family", "roleplay"] as const).map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`pb-2 px-3 text-xs font-bold border-b-2 whitespace-nowrap cursor-pointer transition ${
-                      activeTab === tab ? "border-cyan-400 text-cyan-300" : "border-transparent text-slate-400 hover:text-slate-200"
+                    className={`pb-3 text-xs tracking-tight transition cursor-pointer whitespace-nowrap ${
+                      activeTab === tab
+                        ? `border-b-2 border-[#E5484D] font-semibold ${isMuted ? "text-[#EDEAE4]" : "text-[#1C1917]"}`
+                        : `${isMuted ? "text-[#A19E95] hover:text-[#EDEAE4]" : "text-[#57534E] hover:text-[#1C1917]"}`
                     }`}
                   >
                     {tab === "overview" && t.tabs.overview}
@@ -1186,151 +1393,193 @@ export default function ScamShieldDashboard() {
 
               {/* Tab 1: Overview */}
               {activeTab === "overview" && (
-                <div className="space-y-3">
-                  <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                    <div className="text-xs font-bold text-slate-300">{t.overview.executiveSummary}</div>
-                    <p className="text-xs text-slate-400 leading-relaxed">{result.executive_summary}</p>
+                <div className="space-y-4">
+                  {/* Executive Summary */}
+                  <div className={`p-6 border rounded-2xl space-y-2 shadow-xs ${
+                    isMuted ? "bg-[#202024] border-[#2E2E34]" : "bg-white border-[#E7E2D9]"
+                  }`}>
+                    <div className={`text-xs font-semibold ${isMuted ? "text-[#A19E95]" : "text-[#57534E]"}`}>{t.overview.executiveSummary}</div>
+                    <p className="text-[15px] leading-relaxed">{result.executive_summary}</p>
                   </div>
-                  <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
-                    <div className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
-                      <AlertTriangle className="w-4 h-4 text-red-400" /> {t.overview.evidenceComparator}
-                    </div>
-                    <div className="space-y-3">
-                      {result.red_flags.map((f, i) => (
-                        <div key={i} className="p-3 bg-slate-950 border border-slate-800/80 rounded-xl text-xs space-y-2">
-                          {/* Row 1: Evidence (Detected - Red) */}
-                          <div className="flex items-start gap-2 bg-red-950/40 border border-red-900/40 p-2.5 rounded-lg text-red-300">
-                            <span className="px-1.5 py-0.5 rounded bg-red-900/70 text-red-200 text-[10px] font-bold uppercase shrink-0 font-mono">
-                              {t.overview.detectedInData}
-                            </span>
-                            <span className="font-bold">{f.evidence}</span>
-                          </div>
 
-                          {/* Row 2: Official Fact (Official benchmark - Green/Emerald) + Clickable Official Link */}
-                          <div className="flex items-center justify-between gap-2 bg-emerald-950/40 border border-emerald-900/40 p-2.5 rounded-lg text-emerald-300 flex-wrap">
-                            <div className="flex items-start gap-2">
-                              <span className="px-1.5 py-0.5 rounded bg-emerald-900/70 text-emerald-200 text-[10px] font-bold uppercase shrink-0 font-mono">
-                                {t.overview.officialBenchmark}
-                              </span>
-                              <span className="font-semibold">{f.official_fact || f.explanation}</span>
+                  {/* Evidence Comparator */}
+                  {result.red_flags?.length > 0 && (
+                    <div className={`p-6 border rounded-2xl space-y-4 shadow-xs ${
+                      isMuted ? "bg-[#202024] border-[#2E2E34]" : "bg-white border-[#E7E2D9]"
+                    }`}>
+                      <div className={`text-xs font-semibold ${isMuted ? "text-[#A19E95]" : "text-[#57534E]"}`}>{t.overview.evidenceComparator}</div>
+                      <div className="space-y-3">
+                        {result.red_flags.map((f, i) => (
+                          <div key={i} className={`p-4 rounded-xl border text-xs space-y-2.5 ${
+                            isMuted ? "bg-[#1A1A1D] border-[#2E2E34]" : "bg-[#FAF8F5] border-[#E7E2D9]"
+                          }`}>
+                            <div className={`p-3 rounded-lg border ${
+                              isMuted ? "bg-[#7F1D1D]/20 text-[#FCA5A5] border-[#7F1D1D]/40" : "bg-[#FEF2F2] text-[#991B1B] border-[#FEE2E2]"
+                            }`}>
+                              <span className="font-semibold">{t.overview.detectedInData}: </span>
+                              <span>{f.evidence}</span>
                             </div>
-                            {f.official_link && (
-                              <a
-                                href={f.official_link}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="inline-flex items-center gap-1 px-2 py-1 text-[10px] font-bold bg-emerald-900/60 hover:bg-emerald-800/80 text-emerald-200 rounded border border-emerald-700/50 transition cursor-pointer shrink-0 font-mono"
-                              >
-                                <span>{t.webIntel.source}</span>
-                                <ExternalLink className="w-3 h-3 text-emerald-300" />
-                              </a>
-                            )}
-                          </div>
 
-                          {/* Row 3: Explanation */}
-                          <div className="text-slate-400 pl-1 text-[11px] leading-relaxed pt-0.5">
-                            💡 <strong className="text-slate-300">{t.overview.forensicAnalysis}</strong> {f.explanation}
+                            <div className={`p-3 rounded-lg border flex items-center justify-between gap-2 flex-wrap ${
+                              isMuted ? "bg-[#064E3B]/20 text-[#6EE7B7] border-[#064E3B]/40" : "bg-[#F0FDF4] text-[#166534] border-[#DCFCE7]"
+                            }`}>
+                              <div>
+                                <span className="font-semibold">{t.overview.officialBenchmark}: </span>
+                                <span>{f.official_fact || f.explanation}</span>
+                              </div>
+                              {f.official_link && (
+                                <a
+                                  href={f.official_link}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="text-xs text-[#10B981] hover:underline flex items-center gap-1 shrink-0 font-medium"
+                                >
+                                  <span>{t.webIntel.source}</span>
+                                  <ExternalLink className="w-3.5 h-3.5" />
+                                </a>
+                              )}
+                            </div>
+
+                            <p className={`text-xs leading-relaxed pt-1 ${isMuted ? "text-[#A19E95]" : "text-[#57534E]"}`}>
+                              {f.explanation}
+                            </p>
                           </div>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                  <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-1.5">
-                    <div className="text-xs font-bold text-amber-300">{t.overview.emergencyActions}</div>
-                    {result.urgent_actions.map((a, i) => (
-                      <div key={i} className="text-xs text-slate-300 flex items-center gap-1.5"><Zap className="w-3.5 h-3.5 text-cyan-400" /> {a}</div>
-                    ))}
-                  </div>
+                  )}
+
+                  {/* Immediate Emergency Actions */}
+                  {result.urgent_actions?.length > 0 && (
+                    <div className={`p-6 border rounded-2xl space-y-3 shadow-xs ${
+                      isMuted ? "bg-[#202024] border-[#2E2E34]" : "bg-white border-[#E7E2D9]"
+                    }`}>
+                      <div className="text-xs font-semibold">{t.overview.emergencyActions}</div>
+                      <div className="space-y-2">
+                        {result.urgent_actions.map((act, i) => (
+                          <div key={i} className={`text-xs flex items-start gap-2.5 ${isMuted ? "text-[#A19E95]" : "text-[#57534E]"}`}>
+                            <span className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 text-xs font-semibold mt-0.5 ${
+                              isMuted ? "bg-[#1A1A1D] border-[#383840] text-[#EDEAE4]" : "bg-[#FAF8F5] border-[#D6D0C4] text-[#1C1917]"
+                            }`}>
+                              {i + 1}
+                            </span>
+                            <span className="leading-relaxed">{act}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
               {/* Tab 2: Psychology */}
               {activeTab === "psychology" && (
-                <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-3">
-                  <div className="text-xs font-bold text-purple-300">{t.psychology.title}</div>
-                  {result.psychological_tricks.map((tr, i) => (
-                    <div key={i} className="p-3 bg-slate-950 rounded-lg text-xs space-y-1 border border-purple-900/30">
-                      <div className="flex justify-between font-bold text-purple-300">
-                        <span>{tr.tactic}</span>
-                        <span className="text-[10px] px-2 py-0.5 bg-purple-950 rounded text-purple-400">{t.psychology.targetEmotion} {tr.target_emotion}</span>
+                <div className={`p-6 border rounded-2xl space-y-4 shadow-xs ${
+                  isMuted ? "bg-[#202024] border-[#2E2E34]" : "bg-white border-[#E7E2D9]"
+                }`}>
+                  <div className={`text-xs font-semibold ${isMuted ? "text-[#A19E95]" : "text-[#57534E]"}`}>{t.psychology.title}</div>
+                  <div className="space-y-3">
+                    {result.psychological_tricks.map((tr, i) => (
+                      <div key={i} className={`p-4 rounded-xl border space-y-1.5 text-xs ${
+                        isMuted ? "bg-[#1A1A1D] border-[#2E2E34]" : "bg-[#FAF8F5] border-[#E7E2D9]"
+                      }`}>
+                        <div className="flex justify-between items-center flex-wrap gap-2">
+                          <span className="font-semibold text-sm">{tr.tactic}</span>
+                          <span className="text-xs text-[#E5484D] font-medium">
+                            {t.psychology.targetEmotion} {tr.target_emotion}
+                          </span>
+                        </div>
+                        <p className={`leading-relaxed text-[13px] ${isMuted ? "text-[#A19E95]" : "text-[#57534E]"}`}>{tr.analysis}</p>
                       </div>
-                      <p className="text-slate-400">{tr.analysis}</p>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               )}
 
               {/* Tab 3: Family Share */}
               {activeTab === "family" && (
-                <div className="p-4 rounded-xl bg-slate-900 border border-indigo-500/30 space-y-3">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-                    <span className="text-xs font-bold text-indigo-300">{t.family.title}</span>
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      <button
-                        onClick={() => {
-                          const text = encodeURIComponent(result.family_alert_card.shareable_text);
-                          window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank");
-                        }}
-                        className="text-xs bg-[#25D366] hover:bg-[#20ba5a] text-white px-2.5 py-1 rounded-md flex items-center gap-1 cursor-pointer font-semibold transition"
-                      >
-                        <Share2 className="w-3.5 h-3.5" /> WhatsApp / Chat
-                      </button>
+                <div className={`p-6 border rounded-2xl space-y-4 shadow-xs ${
+                  isMuted ? "bg-[#202024] border-[#2E2E34]" : "bg-white border-[#E7E2D9]"
+                }`}>
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <div className="text-sm font-semibold">{t.family.title}</div>
+                      <div className={`text-xs mt-0.5 ${isMuted ? "text-[#A19E95]" : "text-[#57534E]"}`}>{t.family.keyWarning}</div>
+                    </div>
 
-                      <button
-                        onClick={() => {
-                          const text = encodeURIComponent(result.family_alert_card.shareable_text);
-                          const url = encodeURIComponent(typeof window !== "undefined" ? window.location.href : "");
-                          window.open(`https://t.me/share/url?url=${url}&text=${text}`, "_blank");
-                        }}
-                        className="text-xs bg-[#24A1DE] hover:bg-[#1f8ec4] text-white px-2.5 py-1 rounded-md flex items-center gap-1 cursor-pointer font-semibold transition"
-                      >
-                        <Send className="w-3.5 h-3.5" /> Telegram
-                      </button>
-
+                    <div className="flex items-center gap-2 flex-wrap">
                       <button
                         onClick={handleNativeShare}
-                        className="text-xs bg-indigo-600 hover:bg-indigo-700 text-white px-2.5 py-1 rounded-md flex items-center gap-1 cursor-pointer font-semibold transition"
+                        className="text-xs bg-[#E5484D] hover:bg-[#D93D42] text-white px-3.5 py-2 rounded-lg flex items-center gap-1.5 cursor-pointer font-medium transition"
                       >
-                        {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                        <Share2 className="w-3.5 h-3.5" />
+                        {lang === "vi" ? "Gửi cảnh báo" : "Share alert"}
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(result.family_alert_card.shareable_text);
+                          setCopied(true);
+                          setTimeout(() => setCopied(false), 2000);
+                        }}
+                        className={`text-xs px-3.5 py-2 rounded-lg border flex items-center gap-1.5 cursor-pointer font-medium transition ${
+                          isMuted
+                            ? "bg-[#2A2A30] hover:bg-[#33333A] text-[#EDEAE4] border-[#383840]"
+                            : "bg-[#FAF8F5] hover:bg-[#EAE6DD] text-[#1C1917] border-[#E7E2D9]"
+                        }`}
+                      >
+                        {copied ? <Check className="w-3.5 h-3.5 text-[#10B981]" /> : <Copy className="w-3.5 h-3.5" />}
                         {copied ? t.family.copied : t.family.copyBtn}
                       </button>
                     </div>
                   </div>
-                  <div className="bg-[#005c4b] p-3.5 rounded-xl text-xs text-white whitespace-pre-wrap leading-relaxed shadow-inner font-sans">
+
+                  <div className={`p-5 rounded-xl border text-[14px] leading-relaxed whitespace-pre-wrap ${
+                    isMuted ? "bg-[#1A1A1D] border-[#2E2E34]" : "bg-[#FAF8F5] border-[#E7E2D9]"
+                  }`}>
                     {result.family_alert_card.shareable_text}
                   </div>
                 </div>
               )}
 
-              {/* Tab 4: Roleplay Lab */}
+              {/* Tab 4: Roleplay Practice */}
               {activeTab === "roleplay" && (
-                <div className="p-4 rounded-xl bg-slate-900 border border-cyan-500/30 space-y-4">
-                  <div className="flex justify-between items-center border-b border-slate-800 pb-3">
+                <div className={`p-6 border rounded-2xl space-y-4 shadow-xs ${
+                  isMuted ? "bg-[#202024] border-[#2E2E34]" : "bg-white border-[#E7E2D9]"
+                }`}>
+                  <div className={`flex justify-between items-center border-b pb-3 ${
+                    isMuted ? "border-[#2E2E34]" : "border-[#E7E2D9]"
+                  }`}>
                     <div>
-                      <div className="text-xs font-bold text-cyan-300 flex items-center gap-1.5">
-                        <Gamepad2 className="w-4 h-4 text-cyan-400" /> {t.roleplay.title}
-                      </div>
-                      <div className="text-[11px] text-slate-400">{t.roleplay.subtitle}</div>
+                      <div className="text-sm font-semibold">{t.roleplay.title}</div>
+                      <p className={`text-xs ${isMuted ? "text-[#A19E95]" : "text-[#57534E]"}`}>{t.roleplay.subtitle}</p>
                     </div>
                     <button
                       onClick={() => setRoleplayMessages(getInitialRoleplayMessages(result))}
-                      className="text-[11px] px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg flex items-center gap-1 cursor-pointer transition border border-slate-700"
+                      className={`text-xs flex items-center gap-1 cursor-pointer ${
+                        isMuted ? "text-[#A19E95] hover:text-[#EDEAE4]" : "text-[#57534E] hover:text-[#1C1917]"
+                      }`}
                     >
-                      <RefreshCw className="w-3 h-3 text-cyan-400" /> {t.roleplay.resetChat}
+                      <RefreshCw className="w-3 h-3" /> {t.roleplay.resetChat}
                     </button>
                   </div>
 
-                  {/* Chat Log Window */}
-                  <div className="bg-slate-950/90 border border-slate-800 rounded-xl p-3.5 space-y-3 max-h-80 overflow-y-auto font-sans">
+                  {/* Clean Messaging Interface */}
+                  <div className={`p-5 rounded-xl border space-y-3.5 max-h-80 overflow-y-auto text-xs ${
+                    isMuted ? "bg-[#1A1A1D] border-[#2E2E34]" : "bg-[#FAF8F5] border-[#E7E2D9]"
+                  }`}>
                     {activeRoleplayList.map((msg) => {
                       if (msg.sender === "scammer") {
                         return (
-                          <div key={msg.id} className="flex gap-2.5 items-start max-w-[88%]">
-                            <div className="w-7 h-7 rounded-lg bg-red-950 border border-red-800 flex items-center justify-center text-red-400 shrink-0 text-xs font-bold">
-                              <Bot className="w-4 h-4" />
+                          <div key={msg.id} className="max-w-[85%]">
+                            <div className="text-[11px] text-[#A8A29E] mb-1 font-medium">
+                              {lang === "vi" ? "Kẻ lừa đảo" : "Scammer"}
                             </div>
-                            <div className="bg-red-950/40 border border-red-900/50 rounded-2xl rounded-tl-none p-3 text-xs text-red-200 leading-relaxed">
-                              <div className="text-[9px] font-bold text-red-400 uppercase mb-1">Scammer (Gemini AI)</div>
+                            <div className={`p-3.5 rounded-2xl rounded-tl-xs border leading-relaxed text-[13px] ${
+                              isMuted
+                                ? "bg-[#7F1D1D]/20 text-[#FCA5A5] border-[#7F1D1D]/50"
+                                : "bg-[#FEF2F2] border-[#FEE2E2] text-[#991B1B]"
+                            }`}>
                               {msg.text}
                             </div>
                           </div>
@@ -1338,13 +1587,16 @@ export default function ScamShieldDashboard() {
                       }
                       if (msg.sender === "user") {
                         return (
-                          <div key={msg.id} className="flex gap-2.5 items-start justify-end ml-auto max-w-[88%]">
-                            <div className="bg-cyan-950/60 border border-cyan-800/50 rounded-2xl rounded-tr-none p-3 text-xs text-cyan-100 leading-relaxed">
-                              <div className="text-[9px] font-bold text-cyan-400 uppercase mb-1 text-right">{lang === "vi" ? "Bạn (Nạn nhân)" : "You (Target)"}</div>
-                              {msg.text}
+                          <div key={msg.id} className="max-w-[85%] ml-auto text-right">
+                            <div className="text-[11px] text-[#A8A29E] mb-1 font-medium">
+                              {lang === "vi" ? "Bạn" : "You"}
                             </div>
-                            <div className="w-7 h-7 rounded-lg bg-cyan-950 border border-cyan-800 flex items-center justify-center text-cyan-400 shrink-0 text-xs font-bold">
-                              <User className="w-4 h-4" />
+                            <div className={`p-3.5 rounded-2xl rounded-tr-xs text-left leading-relaxed text-[13px] ${
+                              isMuted
+                                ? "bg-[#2A2A30] text-[#EDEAE4] border border-[#383840]"
+                                : "bg-[#1C1917] text-white"
+                            }`}>
+                              {msg.text}
                             </div>
                           </div>
                         );
@@ -1353,14 +1605,14 @@ export default function ScamShieldDashboard() {
                         return (
                           <div
                             key={msg.id}
-                            className={`p-2.5 rounded-xl text-xs font-medium border flex items-center gap-2 ${
+                            className={`p-3.5 rounded-xl text-xs leading-relaxed border ${
                               msg.evalStatus === "danger"
-                                ? "bg-red-950/80 border-red-700 text-red-300"
-                                : "bg-emerald-950/80 border-emerald-700 text-emerald-300"
+                                ? isMuted ? "bg-[#7F1D1D]/20 text-[#FCA5A5] border-[#7F1D1D]/50" : "bg-[#FEF2F2] text-[#991B1B] border-[#FEE2E2]"
+                                : isMuted ? "bg-[#064E3B]/20 text-[#6EE7B7] border-[#064E3B]/50" : "bg-[#F0FDF4] text-[#166534] border-[#DCFCE7]"
                             }`}
                           >
-                            <Zap className="w-4 h-4 shrink-0" />
-                            <span>{msg.text}</span>
+                            <span className="font-semibold">{lang === "vi" ? "Đánh giá: " : "Feedback: "}</span>
+                            {msg.text}
                           </div>
                         );
                       }
@@ -1368,18 +1620,24 @@ export default function ScamShieldDashboard() {
                     })}
                   </div>
 
-                  {/* Quick Responses */}
-                  <div className="space-y-1.5">
-                    <div className="text-[10px] uppercase font-bold text-slate-400">{lang === "vi" ? "Phản xạ nhanh (Bấm để thử nghiệm):" : "Quick Reflex Responses (Click to test):"}</div>
+                  {/* Quick responses */}
+                  <div className="space-y-2">
+                    <div className={`text-xs font-medium ${isMuted ? "text-[#A19E95]" : "text-[#57534E]"}`}>
+                      {lang === "vi" ? "Chọn nhanh phản hồi mẫu:" : "Quick responses:"}
+                    </div>
                     <div className="flex flex-wrap gap-2">
-                      {QUICK_ROLEPLAY_RESPONSES.map((qr, idx) => (
+                      {quickRoleplayResponses.map((qr, idx) => (
                         <button
                           key={idx}
                           onClick={() => handleSendRoleplay(qr.text, qr.isRisky)}
-                          className={`text-[11px] px-2.5 py-1.5 rounded-lg border text-left cursor-pointer transition active:scale-95 flex items-center gap-1.5 ${
+                          className={`text-xs px-3.5 py-2 rounded-lg border text-left cursor-pointer transition ${
                             qr.isRisky
-                              ? "bg-red-950/40 border-red-800/60 text-red-300 hover:bg-red-900/50"
-                              : "bg-slate-950 border-slate-800 text-slate-300 hover:border-cyan-500/50 hover:text-cyan-300"
+                              ? isMuted
+                                ? "bg-[#7F1D1D]/20 border-[#7F1D1D]/40 text-[#FCA5A5] hover:bg-[#7F1D1D]/30"
+                                : "bg-[#FEF2F2] border-[#FEE2E2] text-[#991B1B] hover:bg-[#FEE2E2]"
+                              : isMuted
+                              ? "bg-[#1A1A1D] border-[#383840] text-[#EDEAE4] hover:bg-[#2A2A30]"
+                              : "bg-[#FAF8F5] border-[#E7E2D9] text-[#1C1917] hover:bg-[#EAE6DD]"
                           }`}
                         >
                           {qr.label}
@@ -1388,7 +1646,7 @@ export default function ScamShieldDashboard() {
                     </div>
                   </div>
 
-                  {/* Custom Input */}
+                  {/* Input Form */}
                   <form
                     onSubmit={(e) => {
                       e.preventDefault();
@@ -1401,13 +1659,18 @@ export default function ScamShieldDashboard() {
                       value={roleplayInput}
                       onChange={(e) => setRoleplayInput(e.target.value)}
                       placeholder={t.roleplay.placeholder}
-                      className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2 text-xs text-slate-200 focus:outline-none focus:border-cyan-500 font-sans"
+                      className={`flex-1 border rounded-xl px-4 py-2.5 text-xs focus:outline-none transition ${
+                        isMuted
+                          ? "bg-[#1A1A1D] border-[#383840] text-[#EDEAE4] focus:border-[#EDEAE4]"
+                          : "bg-[#FAF8F5] border-[#D6D0C4] text-[#1C1917] focus:border-[#1C1917] focus:bg-white"
+                      }`}
                     />
                     <button
                       type="submit"
-                      className="px-4 py-2 bg-gradient-to-r from-cyan-600 to-indigo-600 font-bold text-xs rounded-xl shadow-lg flex items-center gap-1.5 cursor-pointer active:scale-95 text-white"
+                      className="px-5 py-2.5 bg-[#E5484D] hover:bg-[#D93D42] text-white text-xs font-medium rounded-xl flex items-center gap-1.5 cursor-pointer transition"
                     >
-                      <Send className="w-3.5 h-3.5" /> {t.roleplay.send}
+                      <Send className="w-3.5 h-3.5" />
+                      {t.roleplay.send}
                     </button>
                   </form>
                 </div>
@@ -1416,76 +1679,60 @@ export default function ScamShieldDashboard() {
           )}
         </div>
 
-        {/* Live Community Scam Feed */}
-        <div className="mt-12 bg-slate-900/50 border border-slate-800/80 rounded-2xl p-5 print:hidden backdrop-blur">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 border-b border-slate-800/80 pb-4">
-            <div className="flex items-center gap-3">
-              <div className="relative">
-                <div className="p-2.5 bg-red-950/60 border border-red-800/50 rounded-xl text-red-400">
-                  <Users className="w-5 h-5" />
-                </div>
-                <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
-                </span>
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h2 className="text-base font-bold text-slate-100">{t.community.title}</h2>
-                  <span className="text-[10px] uppercase tracking-wider font-mono font-bold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" /> Live Real-time
-                  </span>
-                </div>
-                <p className="text-xs text-slate-400">{t.community.subtitle}</p>
-              </div>
-            </div>
-            <div className="text-xs text-slate-400 font-mono flex items-center gap-2 bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800 self-start sm:self-auto">
-              <Flame className="w-3.5 h-3.5 text-amber-400 animate-bounce" /> {communityFeed.length} cases recorded
+        {/* ── RECENT ALERTS (No card container, sits directly on background with hairline dividers) ── */}
+        <section className="mt-20 print:hidden">
+          <div className={`mb-6 pb-3 border-b flex items-center justify-between ${
+            isMuted ? "border-[#2E2E34]" : "border-[#E7E2D9]"
+          }`}>
+            <div>
+              <h2 className="text-lg font-semibold tracking-tight">
+                {t.community.title}
+              </h2>
+              <p className={`text-[14px] mt-0.5 ${isMuted ? "text-[#A19E95]" : "text-[#57534E]"}`}>
+                {t.community.subtitle}
+              </p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+          <div className={`divide-y ${isMuted ? "divide-[#2E2E34]" : "divide-[#E7E2D9]"}`}>
             {communityFeed.map((item) => (
-              <div
+              <article
                 key={item.id}
                 onClick={() => handleSelectFeedItem(item)}
-                className="group relative bg-slate-950/80 border border-slate-800/90 hover:border-cyan-500/60 rounded-xl p-4 transition-all duration-200 cursor-pointer hover:shadow-lg hover:shadow-cyan-950/30 flex flex-col justify-between"
+                className={`py-5 cursor-pointer group flex items-start justify-between gap-6 px-2 rounded-lg transition ${
+                  isMuted ? "hover:bg-[#202024]/60" : "hover:bg-[#F5F2EB]/40"
+                }`}
               >
-                <div>
-                  <div className="flex items-center justify-between gap-2 mb-2">
-                    <div className="flex items-center gap-2 overflow-hidden">
-                      <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-800/50 shrink-0">
-                        {item.id}
-                      </span>
-                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-red-500/20 text-red-400 border border-red-500/30 shrink-0">
-                        {item.tag}
-                      </span>
-                    </div>
-                    <span className="text-[11px] text-slate-400 flex items-center gap-1 shrink-0 font-mono">
-                      <Clock className="w-3 h-3 text-slate-400" /> {item.timestamp}
+                <div className="space-y-1.5 max-w-3xl">
+                  <div className="flex items-center gap-3">
+                    <h3 className="text-[15px] font-semibold group-hover:text-[#E5484D] transition leading-snug">
+                      {item.title}
+                    </h3>
+                    {/* Clean plain text label with a subtle coral dot */}
+                    <span className={`inline-flex items-center gap-1.5 text-xs font-medium shrink-0 ${
+                      isMuted ? "text-[#A19E95]" : "text-[#57534E]"
+                    }`}>
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#E5484D] shrink-0" />
+                      {item.tag}
                     </span>
                   </div>
-
-                  <h3 className="text-xs font-bold text-slate-200 group-hover:text-cyan-300 transition line-clamp-1 mb-1">
-                    {item.title}
-                  </h3>
-                  <p className="text-[11px] text-slate-400 line-clamp-2 leading-relaxed mb-3">
+                  <p className={`text-[14px] line-clamp-2 leading-relaxed ${
+                    isMuted ? "text-[#A19E95]" : "text-[#57534E]"
+                  }`}>
                     {item.summary}
                   </p>
                 </div>
 
-                <div className="flex items-center justify-between pt-2.5 border-t border-slate-900 text-[11px]">
-                  <span className="text-slate-400 flex items-center gap-1">
-                    <Eye className="w-3.5 h-3.5 text-cyan-400/80" /> {item.views} views
-                  </span>
-                  <span className="text-cyan-400 font-bold group-hover:translate-x-0.5 transition flex items-center gap-1">
-                    Inspect Case <ArrowUpRight className="w-3.5 h-3.5" />
-                  </span>
+                <div className={`flex items-center gap-1.5 text-xs group-hover:text-[#E5484D] transition shrink-0 pt-1 ${
+                  isMuted ? "text-[#A19E95]" : "text-[#57534E]"
+                }`}>
+                  <span className="hidden sm:inline font-medium">{t.community.viewAnalysis}</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition" />
                 </div>
-              </div>
+              </article>
             ))}
           </div>
-        </div>
+        </section>
       </main>
     </div>
   );
