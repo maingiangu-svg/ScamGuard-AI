@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "run_id": "20261022T180106Z",
+    "run_id": "20261025T152344Z",
     "pipeline_fingerprint": "12a47e2f4ab627d19131d978fbcbf737dfab4b273497b10626a58ff45ce737bf",
     "sklearn_version": "1.9.1",
     "method": "Text LR + URL HistGB + logistic interaction stacking",
@@ -17,8 +17,19 @@
         "1": 22561
       }
     },
+    "url_data_audit": {
+      "raw_rows": 549346,
+      "candidate_rows": 502428,
+      "quarantined_rows": 5158,
+      "conflicting_groups": 1,
+      "conflicting_rows": 3,
+      "duplicates_removed": 41760,
+      "repaired_source_rows": 39
+    },
+    "data_quality_sha256": "e9b7a50f29253ac94986c5daa44927d2febcddbcdc63094bb39200b1ab5f93e6",
+    "training_code_sha256": "ff00851541fd88d1d52b4f4a4f692b0e6af39d4309c6889061077b90e9407db3",
     "text_training_samples": 59190,
-    "url_training_samples": 39983,
+    "url_training_samples": 40004,
     "paired_training_samples": 6363,
     "paired_holdout_samples": 2632,
     "url_conflicting_groups_removed": 1,
@@ -29,10 +40,10 @@
     },
     "probability_calibrated": false,
     "meta_coefficients": [
-      -4.347071867943548,
-      7.179562118102253,
-      -1.467973249098432,
-      2.134786019047353
+      -4.356823408172926,
+      7.2048203018331405,
+      -1.420142867551586,
+      2.051586920905185
     ],
     "source_sha256": {
       "smishing_combined.csv": "4dc1311965acb80b9b97536db5afdbe874a1e2175143d3b145e32caf9bb81a8d",
@@ -47,55 +58,55 @@
       "label_note": "Upstream smishing labels are assigned by keyword rules, not independent expert review.",
       "usage_note": "Upstream permits academic/research use. No broader commercial license asserted."
     },
-    "training_seconds": 62.23
+    "training_seconds": 49.65
   },
   "metrics": {
     "evaluation": "Untouched grouped holdouts; inner text OOF only on SMS training; external URL training excludes all SMS hostnames",
     "text_holdout": {
       "samples": 14799,
-      "accuracy": 0.9381039259409419,
-      "precision": 0.847536231884058,
-      "recall": 0.971859073786838,
-      "f1": 0.9054500412881916,
-      "roc_auc": 0.9892216229830827,
-      "log_loss": 0.1571079274920769
+      "accuracy": 0.9381714980741942,
+      "precision": 0.8481037151702786,
+      "recall": 0.9711943274983381,
+      "f1": 0.9054849705608925,
+      "roc_auc": 0.9892485721569407,
+      "log_loss": 0.15756151798402854
     },
     "url_holdout": {
-      "samples": 10017,
-      "accuracy": 0.9310172706399121,
-      "precision": 0.9479956663055255,
-      "recall": 0.746268656716418,
-      "f1": 0.8351228823669768,
-      "roc_auc": 0.9682222731123171,
-      "log_loss": 0.20170482383770777
+      "samples": 9996,
+      "accuracy": 0.9210684273709484,
+      "precision": 0.931673422119282,
+      "recall": 0.7057017543859649,
+      "f1": 0.803094584477165,
+      "roc_auc": 0.9626692200303767,
+      "log_loss": 0.2099043572202819
     },
     "paired_holdout": {
       "text_only": {
         "samples": 2632,
-        "accuracy": 0.8571428571428571,
-        "precision": 0.8536482496836778,
-        "recall": 0.985874330248417,
-        "f1": 0.9150090415913201,
-        "roc_auc": 0.9474348587979845,
-        "log_loss": 0.2824306396326844
+        "accuracy": 0.8560030395136778,
+        "precision": 0.852866779089376,
+        "recall": 0.9853872381880175,
+        "f1": 0.9143502824858757,
+        "roc_auc": 0.9475610484509377,
+        "log_loss": 0.2833861274402251
       },
       "url_only": {
         "samples": 2632,
-        "accuracy": 0.7070668693009119,
-        "precision": 0.7908348457350273,
-        "recall": 0.8490014612761811,
-        "f1": 0.8188865398167724,
-        "roc_auc": 0.5460137950528607,
-        "log_loss": 0.6014114789841488
+        "accuracy": 0.709726443768997,
+        "precision": 0.7917609778180172,
+        "recall": 0.8519240136385777,
+        "f1": 0.8207414359455655,
+        "roc_auc": 0.5355871646615131,
+        "log_loss": 0.6103069237054985
       },
       "max_fusion": {
         "samples": 2632,
-        "accuracy": 0.7925531914893617,
-        "precision": 0.791039011201236,
-        "recall": 0.997564539698003,
-        "f1": 0.8823782852218871,
-        "roc_auc": 0.9058040510243656,
-        "log_loss": 0.4354184235248597
+        "accuracy": 0.7921732522796353,
+        "precision": 0.7909582689335394,
+        "recall": 0.9970774476376035,
+        "f1": 0.8821374703727645,
+        "roc_auc": 0.9077839666792016,
+        "log_loss": 0.4374751837482434
       },
       "linear_meta": {
         "samples": 2632,
@@ -103,17 +114,17 @@
         "precision": 0.8924249215598387,
         "recall": 0.9698002922552362,
         "f1": 0.9295051353874884,
-        "roc_auc": 0.947502580578403,
-        "log_loss": 0.26716030448646183
+        "roc_auc": 0.9477015395978925,
+        "log_loss": 0.2675931353279144
       },
       "interaction_meta": {
         "samples": 2632,
-        "accuracy": 0.8867781155015197,
-        "precision": 0.8943820224719101,
+        "accuracy": 0.8860182370820668,
+        "precision": 0.8935788055680287,
         "recall": 0.9693132001948368,
-        "f1": 0.930341280972417,
-        "roc_auc": 0.9474748188547532,
-        "log_loss": 0.2651464277186008
+        "f1": 0.9299065420560748,
+        "roc_auc": 0.9477940786767247,
+        "log_loss": 0.26597677168525435
       }
     }
   }
