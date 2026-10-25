@@ -8,6 +8,7 @@ export interface MLClassification {
   model_ready: boolean;
   text_result?: { score: number; top_features: string[] } | null;
   url_result?: { score: number; top_features: string[]; urls?: {url: string; score: number}[] } | null;
+  url_review_required?: boolean;
   uncertainty?: number;
   action?: string;
   normalized_text?: string;
@@ -56,23 +57,30 @@ export function isMLAvailable(ml: MLClassification | null): ml is MLClassificati
 export function createAssessment(ml: MLClassification | null, hasUrl: boolean, language = 'vi'): AnalysisAssessment | null {
   if (!isMLAvailable(ml)) return null;
   const riskScore = ml.ml_risk_score;
-  const {riskLevel} = getRiskLevels(riskScore);
+  const urlReview = hasUrl && ml.url_review_required === true;
+  const scoreLevel = getRiskLevels(riskScore).riskLevel;
+  const riskLevel = scoreLevel === 'LOW' && urlReview ? 'MEDIUM' : scoreLevel;
   const low = riskLevel === 'LOW';
   const vi = language === 'vi';
   const signals = Array.isArray(ml.ml_top_signals)
     ? ml.ml_top_signals.filter((s): s is string => typeof s === 'string' && !!s.trim()) : [];
   return {
     riskScore, riskLevel,
-    scam_type: low ? 'No Scam Indicators Detected' : riskLevel === 'MEDIUM' ? 'Suspicious Content'
+    scam_type: urlReview ? 'URL Requires Independent Review'
+      : low ? 'Below Model Thresholds / Unverified' : riskLevel === 'MEDIUM' ? 'Suspicious Content'
       : hasUrl ? 'Suspected URL / Message Risk' : 'Suspected Smishing',
-    summary: vi
+    summary: urlReview
+      ? vi ? 'Nhánh URL vượt ngưỡng phát hiện riêng. Điểm chính vẫn là điểm SMS; cần xác minh liên kết trước khi thao tác.'
+        : 'The URL branch crossed its own detection threshold. The primary score remains the SMS score; verify the link before acting.'
+      : vi
       ? low ? 'Điểm mô hình dưới 30. Chưa phát hiện tín hiệu rõ ràng; kết quả không bảo đảm an toàn.'
         : riskLevel === 'MEDIUM' ? 'Nội dung nằm trong vùng nghi ngờ 30–79 điểm. Cần xác minh người gửi và yêu cầu qua kênh độc lập.'
         : 'Mô hình đánh giá rủi ro cao. Cần xác minh độc lập trước khi cung cấp thông tin hoặc chuyển tiền.'
       : low ? 'Model score below 30. No clear signals detected; this does not guarantee safety.'
         : riskLevel === 'MEDIUM' ? 'Model score is in the 30–79 review range. Verify the sender and request independently.'
         : 'The model indicates high risk. Verify independently before sharing credentials or transferring funds.',
-    reasons: low ? [] : signals.length
+    reasons: urlReview ? [vi ? 'Mô hình URL yêu cầu kiểm tra liên kết độc lập với nội dung tin nhắn.'
+      : 'The URL model requires link review independently of the message text.'] : low ? [] : signals.length
       ? signals.map(s => (vi ? 'Đặc trưng tăng điểm của mô hình: ' : 'Positive model feature: ') + s)
       : [(vi ? 'Điểm mô hình: ' : 'Model score: ') + riskScore + '/100.'],
     detectedPatterns: low ? [] : signals,

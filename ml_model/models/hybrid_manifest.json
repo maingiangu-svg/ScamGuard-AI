@@ -1,0 +1,33 @@
+{
+  "bundle_sha256": "dc24729718288428c593aa4afcdb883cdcde09b71b9b5e70fb98264ad5b0b01c",
+  "source_sha256": {
+    "sms": "a69b0afc4b2f3b6f997c86a8fd18488282ccb391a5040e8616129062f35099d2",
+    "url": "7c6a0da47fe331976f36f76798a581dcaed7440f884230bac7a74a10cba906c4"
+  },
+  "code_sha256": {
+    "preprocess.py": "9906e0438726035c0c2241c7571683a321a7085fd884df392fcee3136f93a9a7",
+    "modeling.py": "da61219b788d301b58ba25bd30c9f821cfcfe8c7354495f7d70d98afd4baa49b",
+    "round2_experiment.py": "240cf124ab6dc4f62960b425d831594e0718937a48382a4af13ef28fd3ea97e7",
+    "audit_vi_holdout.py": "a99afd751e5d207d9475fe848c98d1c37ca271e662aae265f6dca90e83f3cf73"
+  },
+  "code_hash_normalization": "CRLF to LF for Windows/Linux parity",
+  "training": {
+    "run_id": "hybrid-20261025",
+    "method": "Independent supervised SMS and URL branches; no learned fusion",
+    "text_training_samples": 3857,
+    "url_training_samples": 40004,
+    "source_human_sms_samples": 497,
+    "paired_training_samples": 0,
+    "synthetic_pairs": 0,
+    "probability_calibrated": false,
+    "target": "SMS project smishing scope; URL upstream good/bad scope",
+    "text_label_provenance": "mixed source-human, source and AI review; not entirely expert verified",
+    "url_label_provenance": "upstream good/bad source labels; not independently expert verified"
+  },
+  "fitted_rows": 0,
+  "test_evaluation_performed": false,
+  "threshold_provenance": {
+    "sms": "frozen validation-selected 0.65",
+    "url": "existing bundle holdout reference 0.50; not retuned"
+  }
+}

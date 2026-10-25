@@ -33,8 +33,8 @@ export async function POST(req: NextRequest) {
       {status: 503, headers: corsHeaders});
   }
   const {riskScore, riskLevel, reasons, detectedPatterns, summary, scam_type, urgent_actions} = assessment;
-  const {threatLevel} = getRiskLevels(riskScore);
-  const needsReview = riskScore >= 30;
+  const threatLevel = riskLevel === 'MEDIUM' ? 'MEDIUM' : getRiskLevels(riskScore).threatLevel;
+  const needsReview = riskLevel !== 'LOW';
   const domain = getDomain(ml.extracted_url || '');
   const brand = domain ? checkBrandDomain(domain) : null;
   // Domain annotations are separate context. They never bypass ML or modify its score.

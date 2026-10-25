@@ -20,7 +20,11 @@ export async function runMLClassifier(text: string, url: string): Promise<MLClas
   const root = process.cwd();
   const localPython = path.join(root, '.venv', process.platform === 'win32' ? 'Scripts/python.exe' : 'bin/python');
   const executable = process.env.PYTHON_EXECUTABLE || (existsSync(localPython) ? localPython : 'python3');
-  const inferenceScript = process.env.SCAMGUARD_INFERENCE_MODE === 'processed' ? 'predict_processed.py' : 'predict.py';
+  const scripts: Record<string, string> = {
+    hybrid: 'predict_hybrid.py', processed: 'predict_processed.py', legacy: 'predict.py',
+  };
+  const inferenceScript = scripts[process.env.SCAMGUARD_INFERENCE_MODE ?? 'hybrid'];
+  if (!inferenceScript) return null;
   return new Promise(resolve => {
     const python = spawn(executable, [path.join(root, 'ml_model', inferenceScript)], {
       cwd: root, timeout: 15000, windowsHide: true,

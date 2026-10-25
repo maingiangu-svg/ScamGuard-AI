@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 // Run against an isolated app started with SCAMGUARD_MODEL_PATH pointing to a
-// missing or invalid test artifact. Applies to the processed adapter by default;
+// missing or invalid test artifact. Applies to the hybrid adapter by default;
 // never rename or overwrite the real bundle.
 const origin = process.env.TEST_APP_URL ?? 'http://127.0.0.1:3102';
 

@@ -42,6 +42,21 @@ test('high scores retain a suspected rather than verified threat category', () =
   assert.equal(createAssessment(ml(84), true).scam_type, 'Suspected URL / Message Risk');
 });
 
+test('independent URL review stays visible without inflating the primary SMS score', () => {
+  const result = createAssessment(ml(10, {url_review_required: true}), true, 'en');
+  assert.equal(result.riskScore, 10);
+  assert.equal(result.riskLevel, 'MEDIUM');
+  assert.match(result.summary, /URL/i);
+  assert.ok(result.reasons.length > 0);
+  assert.ok(result.urgent_actions.length > 0);
+  assert.notEqual(result.scam_type, 'No Scam Indicators Detected');
+});
+
+test('URL review does not downgrade a high SMS score or invent a URL in text-only input', () => {
+  assert.equal(createAssessment(ml(95, {url_review_required: true}), true).riskLevel, 'HIGH');
+  assert.equal(createAssessment(ml(10, {url_review_required: true}), false).riskLevel, 'LOW');
+});
+
 for (const [score, riskLevel, threatLevel] of [
   [0, 'LOW', 'SAFE'], [20, 'LOW', 'SAFE'], [29, 'LOW', 'LOW'],
   [30, 'MEDIUM', 'MEDIUM'], [79, 'MEDIUM', 'MEDIUM'],

@@ -1,5 +1,10 @@
 # Web activation, 2026-10-25
 
+Historical activation record. The subsequent Git update selected the bundle
+adapter, and the user then authorized hybrid integration. The current default
+is documented in `hybrid-model-integration-2026-10-25.md`; the processed contract
+and test evidence below describe the earlier activation only.
+
 The user authorized switching the web to the fitted processed models. The default
 Python entry point is now `ml_model/predict_processed.py`, run ID
 `processed-20261025`. It loads the fit from

@@ -1,13 +1,23 @@
 # Local training and inference
 
-The web now defaults to `predict_processed.py`, loading the checksum-pinned
-`data/prepared/processed_agent_fit_2026-10-25/trained_agent_models.pkl`.
-It uses the frozen SMS and URL preprocessing, thresholds 0.65/0.22, and no
-fusion. Missing or incompatible artifacts fail closed. See
-`../docs/web-model-activation-2026-10-25.md` for the active contract and test files.
+The web defaults to `predict_hybrid.py`: processed SMS (3,857 training messages,
+threshold 0.65) plus bundle URL (40,004 training URLs, reference threshold 0.50).
+The checksum-pinned `models/hybrid_bundle.pkl` and `hybrid_manifest.json` ship
+with the app. SMS stays the primary score when text is present; URL positives
+independently require link review. Scores are not averaged or recalibrated.
+Missing or incompatible artifacts fail closed. See
+`../docs/hybrid-model-integration-2026-10-25.md` for routing, provenance and limits.
+
+`python ml_model/package_hybrid.py` repackages the selected existing heads from
+the local source artifacts, without fitting or evaluation. Preserve the
+manifest and bundle together. Set `SCAMGUARD_INFERENCE_MODE=legacy` to explicitly
+use `predict.py`, or `processed` for the previous local processed adapter (its
+research artifacts must exist locally). Unset the variable for hybrid mode.
+`SCAMGUARD_MODEL_PATH` overrides the selected adapter's artifact path; a missing
+or incompatible override causes HTTP 503 and never a silent fallback.
 
 The older fusion pipeline is `train_meta_fusion.py`; `train.py` delegates to it.
-Its original bundle remains available through `SCAMGUARD_INFERENCE_MODE=legacy`.
+Its bundle remains available through `SCAMGUARD_INFERENCE_MODE=legacy`.
 Descriptions below of isolated experiments preserving the app refer to their
 original execution, before the separately authorized web activation.
 

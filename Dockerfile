@@ -17,6 +17,8 @@ COPY --from=build /app/.next/static ./.next/static
 COPY --from=build /app/public ./public
 COPY ml_model/*.py ./ml_model/
 COPY ml_model/models/model_bundle.pkl ./ml_model/models/model_bundle.pkl
+COPY ml_model/models/hybrid_bundle.pkl ./ml_model/models/hybrid_bundle.pkl
+COPY ml_model/models/hybrid_manifest.json ./ml_model/models/hybrid_manifest.json
 ENV NODE_ENV=production HOSTNAME=0.0.0.0 PORT=8080 PYTHON_EXECUTABLE=python PYTHONUTF8=1 OMP_NUM_THREADS=1
 EXPOSE 8080
 CMD ["node", "server.js"]

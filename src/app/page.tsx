@@ -70,7 +70,10 @@ interface ForensicResult {
     model_prediction_label?: 0 | 1;
     decision_threshold?: number;
     decision_branch?: 'sms' | 'url';
-    training?: {run_id?: string; paired_training_samples?: number; text_training_samples?: number; target?: string};
+    url_review_required?: boolean;
+    text_result?: {threshold?: number; model_id?: string} | null;
+    url_result?: {threshold?: number; model_id?: string} | null;
+    training?: {run_id?: string; paired_training_samples?: number; text_training_samples?: number; url_training_samples?: number; target?: string};
   };
 }
 
@@ -1093,8 +1096,9 @@ export default function ScamShieldDashboard() {
               {/* ── VERDICT CARD ────────────────────────────────────────────────────── */}
               {(() => {
                 const s = result.risk_score;
-                const isScam = s >= 70;
-                const isSuspicious = s >= 40 && s < 70;
+                const urlReview = result.ml_classifier?.url_review_required === true;
+                const isScam = s >= 80;
+                const isSuspicious = !isScam && (s >= 30 || urlReview);
 
                 return (
                   <div className={`p-6 rounded-2xl border space-y-4 shadow-xs ${
@@ -1119,7 +1123,7 @@ export default function ScamShieldDashboard() {
                           <span className={`text-xl font-semibold tracking-tight ${
                             isScam ? "text-[#E5484D]" : isSuspicious ? "text-[#D97706]" : "text-[#059669]"
                           }`}>
-                            {s >= 80 ? t.verdict.scamDetected : s >= 30 ? t.verdict.suspicious : t.verdict.safe}
+                            {isScam ? t.verdict.scamDetected : isSuspicious ? t.verdict.suspicious : t.verdict.safe}
                           </span>
                         </div>
                         <div className={`text-sm ${isMuted ? "text-[#A19E95]" : "text-[#57534E]"}`}>
@@ -1133,7 +1137,10 @@ export default function ScamShieldDashboard() {
                           {s} <span className={`text-sm font-normal ${isMuted ? "text-[#71717A]" : "text-[#78716C]"}`}>/ 100</span>
                         </div>
                         <div className={`text-xs mt-0.5 ${isMuted ? "text-[#A19E95]" : "text-[#57534E]"}`}>
-                          {t.verdict.riskScore}
+                          {result.ml_classifier?.decision_branch === 'sms'
+                            ? (lang === 'vi' ? 'Điểm nội dung SMS' : 'SMS content score')
+                            : result.ml_classifier?.decision_branch === 'url'
+                              ? (lang === 'vi' ? 'Điểm URL' : 'URL score') : t.verdict.riskScore}
                         </div>
                       </div>
                     </div>
@@ -1147,7 +1154,7 @@ export default function ScamShieldDashboard() {
                         : isMuted ? "bg-[#064E3B]/20 text-[#6EE7B7] border-[#064E3B]/50" : "bg-[#F0FDF4] text-[#166534] border-[#DCFCE7]"
                     }`}>
                       <span className="font-semibold">{lang === "vi" ? "Khuyến nghị an toàn: " : "Safety advice: "}</span>
-                      {s >= 80 ? t.verdict.actionScam : s >= 30 ? t.verdict.actionSuspicious : t.verdict.actionSafe}
+                      {isScam ? t.verdict.actionScam : isSuspicious ? t.verdict.actionSuspicious : t.verdict.actionSafe}
                     </div>
                   </div>
                 );
@@ -1171,7 +1178,9 @@ export default function ScamShieldDashboard() {
                       <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono font-medium ${
                         isMuted ? "bg-[#27272A] text-[#A1A1AA]" : "bg-[#ECE7DE] text-[#57534E]"
                       }`}>
-                        {result.ml_classifier.training?.text_training_samples?.toLocaleString() ?? "—"} {lang === "vi" ? "tin nhắn dùng để học" : "training messages"}
+                        {result.ml_classifier.training?.text_training_samples?.toLocaleString() ?? "—"} SMS
+                        {result.ml_classifier.training?.url_training_samples != null
+                          ? ` · ${result.ml_classifier.training.url_training_samples.toLocaleString()} URL` : ''}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-xs">
@@ -1179,9 +1188,9 @@ export default function ScamShieldDashboard() {
                         {result.ml_classifier.inference_ms != null ? `${result.ml_classifier.inference_ms.toFixed(1)} ms Python` : "—"}
                       </span>
                       <span className={`px-2 py-0.5 rounded text-[11px] font-semibold ${
-                        result.ml_classifier.ml_risk_score >= 80
+                        result.ml_classifier.action === 'BLOCK'
                           ? "bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20"
-                          : result.ml_classifier.ml_risk_score >= 30
+                          : result.ml_classifier.action === 'REVIEW'
                           ? "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20"
                           : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20"
                       }`}>
@@ -1193,7 +1202,9 @@ export default function ScamShieldDashboard() {
                   {result.ml_classifier.model_prediction_label != null && result.ml_classifier.decision_threshold != null && (
                     <div className="rounded-xl border border-inherit p-3 text-sm space-y-1" aria-live="polite">
                       <p className="font-semibold">
-                        {lang === "vi" ? "Nhãn mô hình: " : "Model classification: "}
+                        {result.ml_classifier.decision_branch === 'sms'
+                          ? (lang === 'vi' ? 'Nhãn nhánh SMS: ' : 'SMS branch classification: ')
+                          : (lang === 'vi' ? 'Nhãn nhánh URL: ' : 'URL branch classification: ')}
                         {result.ml_classifier.model_prediction_label === 1
                           ? result.ml_classifier.decision_branch === "url"
                             ? (lang === "vi" ? "URL có dấu hiệu rủi ro" : "URL risk signals detected")
@@ -1210,6 +1221,15 @@ export default function ScamShieldDashboard() {
                     </div>
                   )}
 
+                  {result.ml_classifier.url_review_required && (
+                    <div role="status" className="rounded-xl border border-amber-500/50 bg-amber-500/10 p-3 text-sm space-y-1">
+                      <p className="font-semibold">{lang === 'vi' ? 'Liên kết cần được xác minh riêng' : 'The link needs independent verification'}</p>
+                      <p>{lang === 'vi'
+                        ? 'Nhánh URL vượt ngưỡng phát hiện. Điểm SMS thấp cũng không loại bỏ cảnh báo này. Chưa xác minh website trực tiếp.'
+                        : 'The URL branch crossed its detection threshold. A low SMS score does not clear this warning. The website has not been verified live.'}</p>
+                    </div>
+                  )}
+
                   {/* Dual-Branch Feature Telemetry (Text vs URL) */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
                     {/* Branch 1: Text Screening */}
@@ -1222,18 +1242,19 @@ export default function ScamShieldDashboard() {
                           <span>{lang === "vi" ? "Nhánh Nội Dung Text" : "Text Branch"} (p_text)</span>
                         </span>
                         <span className="font-mono font-semibold text-sm">
-                          {result.ml_classifier.text_score != null ? `${result.ml_classifier.text_score}%` : "N/A"}
+                          {result.ml_classifier.text_score != null ? `${result.ml_classifier.text_score}/100` : "N/A"}
                         </span>
                       </div>
                       <div className="w-full bg-black/10 dark:bg-white/10 h-1.5 rounded-full overflow-hidden">
                         <div
                           className={`h-full transition-all duration-500 ${
-                            (result.ml_classifier.text_score ?? 0) >= 50 ? "bg-red-500" : "bg-emerald-500"
+                            (result.ml_classifier.text_score ?? 0) >= 100 * (result.ml_classifier.text_result?.threshold ?? .5) ? "bg-red-500" : "bg-emerald-500"
                           }`}
                           style={{ width: `${Math.min(100, Math.max(0, result.ml_classifier.text_score ?? 0))}%` }}
                         />
                       </div>
                       <div className={`text-[11px] space-y-1 ${isMuted ? "text-[#A1A1AA]" : "text-[#78716C]"}`}>
+                        {result.ml_classifier.text_result?.model_id && <div>{result.ml_classifier.text_result.model_id}</div>}
                         <div className="truncate">
                           <span className="font-semibold">{lang === "vi" ? "Chuẩn hóa NFC:" : "Normalized text:"}</span>{" "}
                           <span className="font-mono">{result.ml_classifier.normalized_text || "(Trống)"}</span>
@@ -1260,18 +1281,19 @@ export default function ScamShieldDashboard() {
                           <span>{lang === "vi" ? "Nhánh Đường Dẫn URL" : "URL Branch"} (p_url)</span>
                         </span>
                         <span className="font-mono font-semibold text-sm">
-                          {result.ml_classifier.url_score != null ? `${result.ml_classifier.url_score}%` : "(Không có URL)"}
+                          {result.ml_classifier.url_score != null ? `${result.ml_classifier.url_score}/100` : (lang === 'vi' ? 'Không có URL' : 'No URL')}
                         </span>
                       </div>
                       <div className="w-full bg-black/10 dark:bg-white/10 h-1.5 rounded-full overflow-hidden">
                         <div
                           className={`h-full transition-all duration-500 ${
-                            (result.ml_classifier.url_score ?? 0) >= 50 ? "bg-red-500" : "bg-emerald-500"
+                            (result.ml_classifier.url_score ?? 0) >= 100 * (result.ml_classifier.url_result?.threshold ?? .5) ? "bg-red-500" : "bg-emerald-500"
                           }`}
                           style={{ width: `${Math.min(100, Math.max(0, result.ml_classifier.url_score ?? 0))}%` }}
                         />
                       </div>
                       <div className={`text-[11px] space-y-1 ${isMuted ? "text-[#A1A1AA]" : "text-[#78716C]"}`}>
+                        {result.ml_classifier.url_result?.model_id && <div>{result.ml_classifier.url_result.model_id}</div>}
                         <div className="truncate">
                           <span className="font-semibold">{lang === "vi" ? "URL trích xuất:" : "Extracted URL:"}</span>{" "}
                           <span className="font-mono">{result.ml_classifier.extracted_url || "(Không phát hiện)"}</span>
@@ -1300,7 +1322,9 @@ export default function ScamShieldDashboard() {
                       <span>Uncertainty U(x): {result.ml_classifier.uncertainty ?? "0.0"}</span>
                     </div>
                     <div className="p-2 rounded bg-black/5 dark:bg-black/30 text-[11px] leading-relaxed break-all font-semibold">
-                      {result.ml_classifier.meta_formula || (result.ml_classifier.mode === "processed_text"
+                      {result.ml_classifier.meta_formula || (result.ml_classifier.mode?.startsWith('hybrid_')
+                        ? (lang === 'vi' ? 'Hai nhánh học có giám sát độc lập: SMS và URL. Giữ nguyên từng điểm; URL có thể yêu cầu xác minh riêng.' : 'Independent supervised SMS and URL branches. Scores are preserved; URL review is separate.')
+                        : result.ml_classifier.mode === "processed_text"
                         ? (lang === "vi" ? "Nhãn SMS theo nội dung tin nhắn; điểm URL được hiển thị riêng." : "SMS classification uses message text; URL scores are shown separately.")
                         : result.ml_classifier.mode === "processed_url_only"
                           ? (lang === "vi" ? "Đánh giá riêng URL; nhãn nguồn bao gồm phishing và các dạng abuse khác." : "URL-only assessment; source labels cover phishing and other abuse.")

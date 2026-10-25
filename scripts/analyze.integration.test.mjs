@@ -16,8 +16,9 @@ async function analyze(body) {
   assert.equal(result.ml_classifier.model_ready, true);
   assert.equal(result.riskScore, result.ml_classifier.ml_risk_score);
   assert.equal(result.web_intelligence.verified_live, false);
-  assert.equal(result.ml_classifier.training.run_id, 'processed-20261025');
+  assert.equal(result.ml_classifier.training.run_id, 'hybrid-20261025');
   assert.equal(result.ml_classifier.training.text_training_samples, 3857);
+  assert.equal(result.ml_classifier.training.url_training_samples, 40004);
   assert.equal(result.ml_classifier.training.paired_training_samples, 0);
   return result;
 }
@@ -34,14 +35,14 @@ test('review scores and binary labels use distinct declared thresholds', async (
   assert.ok(result.riskScore >= 30 && result.riskScore < 80);
   assert.equal(result.riskLevel, 'MEDIUM');
   assert.equal(result.ml_classifier.action, 'REVIEW');
-  assert.equal(result.ml_classifier.mode, 'processed_text');
+  assert.equal(result.ml_classifier.mode, 'hybrid_text');
   assert.equal(result.ml_classifier.decision_threshold, 0.65);
   assert.equal(result.ml_classifier.model_prediction_label, Number(result.ml_classifier.text_result.score >= .65));
 });
 
 test('an official URL does not bypass SMS; no untrained fusion is applied', async () => {
   const result = await analyze({textInput:'Congratulations! You won a FREE prize. Send bank details now. https://www.google.com/'});
-  assert.equal(result.ml_classifier.mode, 'processed_text');
+  assert.equal(result.ml_classifier.mode, 'hybrid_text');
   assert.ok(result.ml_classifier.text_result);
   assert.ok(result.ml_classifier.url_result);
   assert.ok(result.ml_classifier.training.run_id);
@@ -52,10 +53,33 @@ test('an official URL does not bypass SMS; no untrained fusion is applied', asyn
 
 test('a URL-only request is scored by the URL estimator, with no forced whitelist score', async () => {
   const result = await analyze({url:'https://www.google.com/search?q=weather'});
-  assert.equal(result.ml_classifier.mode, 'processed_url_only');
+  assert.equal(result.ml_classifier.mode, 'hybrid_url_only');
   assert.equal(result.riskScore, Math.round(result.ml_classifier.url_result.score * 100));
-  assert.equal(result.ml_classifier.decision_threshold, 0.22);
-  assert.equal(result.ml_classifier.model_prediction_label, Number(result.ml_classifier.url_result.score >= .22));
+  assert.equal(result.ml_classifier.decision_threshold, 0.5);
+  assert.equal(result.ml_classifier.model_prediction_label, Number(result.ml_classifier.url_result.score >= .5));
+});
+
+test('reported suspicious link uses the bundle URL head and preserves its score', async () => {
+  const result = await analyze({textInput:'https://qi.lv/F0i'});
+  assert.equal(result.ml_classifier.text_result, null);
+  assert.equal(result.ml_classifier.url_result.model_id, '20261025T152344Z:url');
+  assert.equal(result.riskScore, 89);
+  assert.equal(result.riskLevel, 'HIGH');
+});
+
+test('a risky link independently requires review when the message is below the review band', async () => {
+  const result = await analyze({textInput:'Hey, are you free for lunch tomorrow?', url:'https://qi.lv/F0i'});
+  assert.equal(result.ml_classifier.text_result.model_id, 'processed-20261025:sms');
+  assert.ok(result.riskScore < 30);
+  assert.equal(result.riskScore, Math.round(result.ml_classifier.text_result.score * 100));
+  assert.equal(result.ml_classifier.model_prediction_label, 0);
+  assert.equal(result.ml_classifier.url_review_required, true);
+  assert.equal(result.ml_classifier.action, 'REVIEW');
+  assert.equal(result.riskLevel, 'MEDIUM');
+  assert.equal(result.threat_level, 'MEDIUM');
+  assert.ok(result.red_flags.length);
+  assert.match(result.summary, /URL/);
+  assert.equal(result.ml_classifier.meta_formula, null);
 });
 
 test('all embedded URLs are included in the returned branch scores', async () => {
