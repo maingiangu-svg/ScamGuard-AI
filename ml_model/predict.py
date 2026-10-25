@@ -1,215 +1,119 @@
-"""
-ScamShield Forensic AI — ML Prediction Module
-==============================================
-Loads trained .pkl models and runs fast inference using the
-5-stage Preprocessing Pipeline and Interaction Stacking Meta-Learner:
-  s_fused = sigma(beta_0 + beta_1 * p_text + beta_2 * p_url + beta_3 * (p_text * p_url))
-Used by Next.js API routes (/api/ml-classify and /api/analyze).
-"""
-
-import sys
+"""Local model inference. A missing or incompatible bundle never produces a verdict."""
 import json
+import os
 import pickle
 import re
-import math
-import os
-import warnings
+import sys
+import time
 from pathlib import Path
+
 import numpy as np
+import sklearn
 
-warnings.filterwarnings("ignore")
-
-ROOT = Path(__file__).parent.parent
-MODELS_DIR = ROOT / "ml_model" / "models"
-
-sys.path.append(str(ROOT / "ml_model"))
-try:
-    from preprocess import extract_raw_url, normalize_text, canonicalize_url, extract_13_features
-except ImportError:
-    # Fallback inline if import path differs
-    def extract_raw_url(text): return text, ""
-    def normalize_text(text): return text.lower().strip()
-    def canonicalize_url(url): return url.strip()
-    def extract_13_features(url): return [0.0] * 13
-
-_cache = {}
-
-def _load(name):
-    if name not in _cache:
-        path = MODELS_DIR / name
-        if not path.exists():
-            return None
-        with open(path, "rb") as f:
-            _cache[name] = pickle.load(f)
-    return _cache[name]
+from modeling import meta_features, pipeline_fingerprint
+from preprocess import canonicalize_url, extract_urls, normalize_text
 
 
-def classify_text(norm_text: str) -> dict:
-    tfidf = _load("tfidf_sms.pkl")
-    clf   = _load("sms_classifier.pkl")
-    if tfidf is None or clf is None:
-        return {"score": 0.5, "label": "unknown", "confidence": 0, "top_features": [], "model_ready": False}
+def load_bundle():
+    path = Path(os.environ.get("SCAMGUARD_MODEL_PATH", Path(__file__).parent / "models" / "model_bundle.pkl"))
+    with path.open("rb") as file:
+        bundle = pickle.load(file)
+    metadata = bundle["metadata"]
+    if metadata["pipeline_fingerprint"] != pipeline_fingerprint():
+        raise ValueError("Preprocessing/model version mismatch; retrain the bundle")
+    if metadata["sklearn_version"] != sklearn.__version__:
+        raise ValueError("Estimator runtime version mismatch")
+    for key in ("text_model", "url_model", "meta_model"):
+        if key not in bundle:
+            raise ValueError("Incomplete model bundle")
+    return bundle
 
-    vec = tfidf.transform([norm_text])
-    proba = clf.predict_proba(vec)[0]
-    score = float(proba[1])
-    label = "scam" if score >= 0.5 else "safe"
 
-    top_features = []
+def probability(model, rows):
+    values = np.asarray(model.predict_proba(rows), dtype=float)[:, 1]
+    if not np.isfinite(values).all() or ((values < 0) | (values > 1)).any():
+        raise ValueError("Invalid model probabilities")
+    return values
+
+
+def positive_text_signals(model, text):
+    if not hasattr(model, "named_steps"):
+        return []
+    vector = model.named_steps["tfidf"].transform([text])
+    names = model.named_steps["tfidf"].get_feature_names_out()
+    weights = model.named_steps["classifier"].coef_[0]
+    positive = [(float(vector[0, i]) * weights[i], str(names[i])) for i in vector.nonzero()[1] if weights[i] > 0]
+    return [name for _, name in sorted(positive, reverse=True)[:5]]
+
+
+def classify(text="", url=""):
+    started = time.perf_counter()
+    unavailable = {"model_ready": False, "ml_risk_score": None, "ml_label": "UNAVAILABLE",
+                   "ml_confidence": 0, "ml_top_signals": [], "action": "UNAVAILABLE"}
     try:
-        feature_names = tfidf.get_feature_names_out()
-        coefs = clf.coef_[0]
-        nz = vec.nonzero()[1]
-        top = sorted(nz, key=lambda i: abs(coefs[i]) * vec[0, i], reverse=True)[:5]
-        top_features = [str(feature_names[i]) for i in top]
-    except Exception:
-        pass
-
-    return {
-        "score": round(score, 4),
-        "label": label,
-        "confidence": round(max(score, 1 - score) * 100, 1),
-        "top_features": top_features,
-        "model_ready": True,
-    }
-
-
-def classify_url(canon_url: str) -> dict:
-    scaler = _load("scaler_url.pkl")
-    tfidf  = _load("tfidf_url.pkl")
-    clf    = _load("url_classifier.pkl")
-    if clf is None:
-        return {"score": 0.5, "label": "unknown", "confidence": 0, "top_features": [], "model_ready": False}
-
-    try:
-        f13 = np.array([extract_13_features(canon_url)], dtype=np.float32)
-        if scaler is not None:
-            f13_scaled = scaler.transform(f13)
+        if not isinstance(text, str) or not isinstance(url, str) or not (text.strip() or url.strip()):
+            raise ValueError("Text or URL is required")
+        masked, urls = extract_urls(text)
+        if url.strip():
+            urls = list(dict.fromkeys([canonicalize_url(url)] + urls))
+        if len(urls) > 20:
+            raise ValueError("Too many URLs")
+        normalized = normalize_text(masked)
+        has_text = bool(re.sub(r"<url>|[\W_]+", "", normalized))
+        bundle = load_bundle()
+        text_result = None
+        url_result = None
+        signals = []
+        if has_text:
+            pt = float(probability(bundle["text_model"], [normalized])[0])
+            signals = positive_text_signals(bundle["text_model"], normalized)
+            text_result = {"score": pt, "model_ready": True, "top_features": signals}
+        if urls:
+            scores = probability(bundle["url_model"], urls)
+            pu = float(scores.max())
+            url_result = {"score": pu, "model_ready": True, "top_features": [],
+                          "urls": [{"url": u, "score": float(p)} for u, p in zip(urls, scores)]}
+        if text_result is not None and url_result is not None:
+            fused = float(probability(bundle["meta_model"], meta_features([pt], [pu]))[0])
+            mode = "interaction_stacking"
+        elif text_result is not None:
+            fused, mode = pt, "text_only"
+        elif url_result is not None:
+            fused, mode = pu, "url_only"
         else:
-            f13_scaled = f13
-
-        if tfidf is not None:
-            f_char = tfidf.transform([canon_url]).toarray()
-            X_u = np.hstack([f13_scaled, f_char])
-        else:
-            X_u = f13_scaled
-
-        proba = clf.predict_proba(X_u)[0]
-        score = float(proba[1])
-    except Exception:
-        score = 0.5
-
-    label = "phishing" if score >= 0.5 else "safe"
-
-    # Top URL signals
-    signals = []
-    f = extract_13_features(canon_url)
-    labels_map = [
-        ("URL length", f[0], 75),
-        ("Suspicious keyword count", f[3], 1),
-        ("Suspicious TLD", f[4], 0.5),
-        ("Hyphen count", f[8], 2),
-        ("Subdomain depth", f[9], 2),
-        ("Has IP address", f[10], 0.5),
-        ("Brand spoofing flag", f[11], 0.5),
-        ("Domain entropy", f[12], 3.8),
-    ]
-    for name, val, threshold in labels_map:
-        if val >= threshold:
-            signals.append(f"{name}: {round(val, 2)}")
-
-    return {
-        "score": round(score, 4),
-        "label": label,
-        "confidence": round(max(score, 1 - score) * 100, 1),
-        "top_features": signals[:4],
-        "model_ready": True,
-    }
-
-
-def classify(text: str = "", url: str = "") -> dict:
-    raw_text = text or ""
-    explicit_url = url or ""
-
-    # Preprocessing & URL extraction
-    masked_txt, embedded_url = extract_raw_url(raw_text)
-    norm_txt = normalize_text(masked_txt)
-    target_url = canonicalize_url(explicit_url or embedded_url)
-
-    text_result = classify_text(norm_txt) if norm_txt.strip() else None
-    url_result  = classify_url(target_url)  if target_url.strip()  else None
-
-    meta_clf = _load("meta_learner.pkl")
-
-    if text_result and url_result and text_result["model_ready"] and url_result["model_ready"]:
-        p_t = text_result["score"]
-        p_u = url_result["score"]
-        if meta_clf is not None:
-            # Interaction Meta-Learner: [p_t, p_u, p_t * p_u]
-            X_meta = np.array([[p_t, p_u, p_t * p_u]], dtype=np.float32)
-            fused_score = float(meta_clf.predict_proba(X_meta)[0, 1])
-        else:
-            # Fallback formulation
-            fused_score = 1.0 / (1.0 + np.exp(-(-4.072 + 8.785 * p_t + 0.099 * p_u + 3.158 * p_t * p_u)))
-    elif text_result and text_result["model_ready"]:
-        fused_score = text_result["score"]
-    elif url_result and url_result["model_ready"]:
-        fused_score = url_result["score"]
-    else:
-        fused_score = 0.0
-
-    fused_score = round(float(fused_score), 4)
-    ml_risk_score = int(round(fused_score * 100))
-    uncertainty = round(1.0 - 2.0 * abs(fused_score - 0.5), 3)
-
-    if fused_score >= 0.80:
-        ml_label = "SCAM"
-        action = "BLOCK"
-    elif fused_score >= 0.30:
-        ml_label = "SUSPICIOUS"
-        action = "ESCALATE_VLM"
-    else:
-        ml_label = "SAFE"
-        action = "CLEAR"
-
-    all_features = []
-    if text_result:
-        all_features.extend(text_result.get("top_features", []))
-    if url_result:
-        all_features.extend(url_result.get("top_features", []))
-
-    return {
-        "ml_risk_score": ml_risk_score,
-        "ml_label": ml_label,
-        "action": action,
-        "uncertainty": uncertainty,
-        "ml_confidence": round(max(fused_score, 1 - fused_score) * 100, 1),
-        "ml_top_signals": list(dict.fromkeys(all_features))[:5],
-        "normalized_text": norm_txt,
-        "extracted_url": target_url,
-        "text_result": text_result,
-        "url_result": url_result,
-        "model_ready": (text_result or url_result) is not None,
-    }
+            raise ValueError("No supported input")
+        score = int(round(fused * 100))
+        label, action = ("SCAM", "BLOCK") if score >= 80 else (
+            ("SUSPICIOUS", "REVIEW") if score >= 30 else ("SAFE", "CLEAR"))
+        metadata = bundle.get("metadata", {})
+        coefficients = metadata.get("meta_coefficients")
+        formula = None
+        if coefficients and mode == "interaction_stacking":
+            b0, b1, b2, b3 = coefficients
+            formula = f"100 × σ({b0:.4f} + {b1:.4f}·p_text + {b2:.4f}·p_url + {b3:.4f}·p_text·p_url)"
+        return {
+            "model_ready": True, "ml_risk_score": score, "ml_label": label,
+            "ml_confidence": round(max(fused, 1 - fused) * 100, 1),
+            "ml_top_signals": signals, "action": action,
+            "uncertainty": round(1 - 2 * abs(fused - 0.5), 4),
+            "normalized_text": normalized, "extracted_url": urls[0] if urls else "",
+            "text_result": text_result, "url_result": url_result,
+            "inference_ms": round((time.perf_counter() - started) * 1000, 2),
+            "mode": mode, "meta_formula": formula,
+            "training": {key: metadata.get(key) for key in (
+                "run_id", "method", "target", "text_training_samples", "url_training_samples",
+                "paired_training_samples", "paired_holdout_samples", "synthetic_pairs",
+                "probability_calibrated")},
+        }
+    except (OSError, ValueError, KeyError, TypeError, AttributeError, EOFError, RuntimeError, pickle.UnpicklingError):
+        return {**unavailable, "error": "MODEL_UNAVAILABLE_OR_INCOMPATIBLE"}
 
 
 if __name__ == "__main__":
-    if not sys.stdin.isatty():
-        raw = sys.stdin.read().strip()
-        try:
-            payload = json.loads(raw)
-            text = payload.get("text", "")
-            url  = payload.get("url", "")
-        except json.JSONDecodeError:
-            text, url = raw, ""
-    elif len(sys.argv) > 1:
-        text = " ".join(sys.argv[1:])
-        url  = ""
-        if sys.argv[1].startswith("http"):
-            url, text = sys.argv[1], ""
-    else:
-        print(json.dumps({"error": "No input provided"}))
-        sys.exit(1)
-
-    result = classify(text=text, url=url)
+    try:
+        payload = json.loads(sys.stdin.read()) if not sys.stdin.isatty() else {"text": " ".join(sys.argv[1:])}
+        result = classify(payload.get("text", ""), payload.get("url", ""))
+    except (ValueError, TypeError, AttributeError):
+        result = {"model_ready": False, "ml_risk_score": None, "ml_label": "UNAVAILABLE",
+                  "ml_confidence": 0, "ml_top_signals": [], "error": "INVALID_INPUT"}
     print(json.dumps(result, ensure_ascii=False))

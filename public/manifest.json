@@ -1,7 +1,7 @@
 {
   "name": "ScamShield Forensic AI",
   "short_name": "ScamShield",
-  "description": "Giám định lừa đảo & thao túng tâm lý bằng Google Gemini",
+  "description": "Chấm điểm rủi ro tin nhắn và URL bằng mô hình ML local",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#060913",

@@ -1,0 +1,8 @@
+.git
+.venv
+.next
+node_modules
+.env*
+ml_model/data
+ml_model/models/*
+!ml_model/models/model_bundle.pkl

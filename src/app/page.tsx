@@ -4,11 +4,12 @@ import React, { useState, useRef, useEffect } from "react";
 import {
   ShieldAlert, UploadCloud, FileSearch, Check,
   Link2, Image as ImageIcon, ExternalLink, FileDown,
-  Printer, Share2, Copy, Send, RefreshCw, X, ArrowRight,
+  Printer, Share2, Copy, RefreshCw, X, ArrowRight,
   AlertCircle, Moon, Sun
 } from "lucide-react";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
+import Image from "next/image";
 import { translations, type Language } from "@/lib/i18n";
 
 interface ExternalEvidenceItem {
@@ -63,7 +64,13 @@ interface ForensicResult {
     action?: string | null;
     normalized_text?: string;
     extracted_url?: string;
-    meta_formula?: string;
+    meta_formula?: string | null;
+    inference_ms?: number;
+    mode?: string;
+    model_prediction_label?: 0 | 1;
+    decision_threshold?: number;
+    decision_branch?: 'sms' | 'url';
+    training?: {run_id?: string; paired_training_samples?: number; text_training_samples?: number; target?: string};
   };
 }
 
@@ -76,12 +83,6 @@ interface CommunityFeedItem {
   result: ForensicResult;
 }
 
-interface RoleplayMessage {
-  id: string;
-  sender: "scammer" | "user" | "eval";
-  text: string;
-  evalStatus?: "safe" | "danger";
-}
 
 // Multilingual Sample Cases
 const getSampleCases = (lang: Language) => [
@@ -467,32 +468,11 @@ const getMockCommunityFeed = (lang: Language): CommunityFeedItem[] => [
   }
 ];
 
-const getQuickRoleplayResponses = (lang: Language) => [
-  {
-    label: lang === "vi" ? "Gọi lại số hotline chính thức để xác minh" : "Call official hotline directly to verify",
-    text: lang === "vi"
-      ? "Tôi sẽ tự liên hệ lên hotline chính thức của ngân hàng để kiểm tra. Tôi không cung cấp thông tin qua tin nhắn hay link lạ."
-      : "I will contact the bank's official customer support line directly. I never share credentials over chat or external links.",
-    isRisky: false,
-  },
-  {
-    label: lang === "vi" ? "Từ chối và báo cáo số điện thoại" : "Decline and report the contact",
-    text: lang === "vi"
-      ? "Tôi không có nhu cầu. Đây là dấu hiệu lừa đảo và tôi sẽ báo cáo số điện thoại này đến cơ quan chức năng."
-      : "I am not interested. This is a fraudulent scheme and I am reporting this number immediately.",
-    isRisky: false,
-  },
-  {
-    label: lang === "vi" ? "Làm theo hướng dẫn: Gửi mã OTP hoặc bấm link" : "Trap: Provide OTP code or click the link",
-    text: lang === "vi"
-      ? "Vâng, để tôi đọc mã OTP vừa gửi về điện thoại cho bạn để xử lý giúp tôi luôn nhé!"
-      : "Sure, let me read you the OTP code I just received so you can unlock my account!",
-    isRisky: true,
-  },
-];
+
+const generateId = () => `scam-${crypto.randomUUID()}`;
 
 export default function ScamShieldDashboard() {
-  const [inputMode, setInputMode] = useState<"image" | "text">("image");
+  const [inputMode, setInputMode] = useState<"image" | "text">("text");
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [textInput, setTextInput] = useState("");
@@ -501,31 +481,25 @@ export default function ScamShieldDashboard() {
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [caseId, setCaseId] = useState("");
+  const [resultIsDemo, setResultIsDemo] = useState(false);
   const [activeTab, setActiveTab] = useState<"overview" | "psychology" | "family" | "roleplay">("overview");
   const [isDragging, setIsDragging] = useState(false);
 
   // Theme state: defaults to "muted" (warm graphite/obsidian - not white, not pure black)
   const [theme, setTheme] = useState<"muted" | "light">("muted");
 
-  // Roleplay state
-  const [roleplayInput, setRoleplayInput] = useState("");
-  const [roleplayMessages, setRoleplayMessages] = useState<RoleplayMessage[]>([]);
-  const [roleplayLoading, setRoleplayLoading] = useState(false);
   const [exportingPdf, setExportingPdf] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [lang, setLang] = useState<Language>("en");
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const savedLang = localStorage.getItem("scamshield-lang") as Language;
-      if (savedLang === "en" || savedLang === "vi") {
-        setLang(savedLang);
-      }
-      const savedTheme = localStorage.getItem("scamshield-theme") as "muted" | "light";
-      if (savedTheme === "muted" || savedTheme === "light") {
-        setTheme(savedTheme);
-      }
-    }
+    const timer = window.setTimeout(() => {
+      const savedLang = localStorage.getItem("scamshield-lang");
+      if (savedLang === "en" || savedLang === "vi") setLang(savedLang);
+      const savedTheme = localStorage.getItem("scamshield-theme");
+      if (savedTheme === "muted" || savedTheme === "light") setTheme(savedTheme);
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, []);
 
   const toggleLang = (newLang: Language) => {
@@ -546,15 +520,13 @@ export default function ScamShieldDashboard() {
   const t = translations[lang];
   const sampleCases = getSampleCases(lang);
   const communityFeed = getMockCommunityFeed(lang);
-  const quickRoleplayResponses = getQuickRoleplayResponses(lang);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const reportRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (typeof window !== "undefined" && !localStorage.getItem("scamshield-onboarded")) {
-      setShowOnboarding(true);
-    }
+    const timer = window.setTimeout(() => setShowOnboarding(!localStorage.getItem("scamshield-onboarded")), 0);
+    return () => window.clearTimeout(timer);
   }, []);
 
   // Global paste handler: Ctrl+V or Cmd+V anywhere to paste screenshot
@@ -572,8 +544,7 @@ export default function ScamShieldDashboard() {
         if (items[i].type.indexOf("image") !== -1) {
           const pastedFile = items[i].getAsFile();
           if (pastedFile) {
-            setInputMode("image");
-            handleFile(pastedFile);
+            setError("Local OCR unavailable. Please paste the text from the image.");
             e.preventDefault();
             break;
           }
@@ -590,28 +561,6 @@ export default function ScamShieldDashboard() {
     setShowOnboarding(false);
   };
 
-  const generateId = () => `scam-${Math.floor(1000 + Math.random() * 9000)}`;
-
-  const getInitialRoleplayMessages = (res: ForensicResult | null): RoleplayMessage[] => {
-    if (!res) return [];
-    let scammerOpening = lang === "vi"
-      ? "Thông báo khẩn từ hệ thống! Tài khoản của bạn vừa ghi nhận giao dịch bất thường. Bấm vào liên kết hoặc đọc mã xác thực trong 3 phút để không bị khóa thẻ!"
-      : "Urgent alert! An unauthorized transaction was detected on your account. Click the verification link or provide your OTP within 3 minutes to avoid card suspension!";
-
-    if (res.red_flags?.[0]?.evidence) {
-      scammerOpening = lang === "vi"
-        ? `"${res.red_flags[0].evidence}" — Bạn cần thao tác theo đúng hướng dẫn ngay bây giờ để được hỗ trợ!`
-        : `"${res.red_flags[0].evidence}" — You must follow our instructions immediately to resolve this matter!`;
-    }
-
-    return [
-      {
-        id: "msg-init",
-        sender: "scammer",
-        text: scammerOpening,
-      }
-    ];
-  };
 
   const handleFile = (selected: File) => {
     setFile(selected);
@@ -625,16 +574,16 @@ export default function ScamShieldDashboard() {
     setPreviewUrl(null);
     setTextInput("");
     setCaseId(generateId());
+    setResultIsDemo(true);
     setResult(sample.mockResult);
-    setRoleplayMessages(getInitialRoleplayMessages(sample.mockResult));
     setActiveTab("overview");
     window.scrollTo({ top: 380, behavior: "smooth" });
   };
 
   const handleSelectFeedItem = (item: CommunityFeedItem) => {
     setCaseId(item.id);
+    setResultIsDemo(true);
     setResult(item.result);
-    setRoleplayMessages(getInitialRoleplayMessages(item.result));
     setActiveTab("overview");
     window.scrollTo({ top: 380, behavior: "smooth" });
   };
@@ -656,82 +605,6 @@ export default function ScamShieldDashboard() {
       navigator.clipboard.writeText(shareText);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    }
-  };
-
-  const handleSendRoleplay = async (userText: string, isRiskyQuickChoice?: boolean) => {
-    if (!userText.trim() || !result || roleplayLoading) return;
-
-    const userMsg: RoleplayMessage = {
-      id: `u-${Date.now()}`,
-      sender: "user",
-      text: userText,
-    };
-
-    setRoleplayMessages((prev) => {
-      const base = prev.length > 0 ? prev : getInitialRoleplayMessages(result);
-      return [...base, userMsg];
-    });
-    setRoleplayInput("");
-    setRoleplayLoading(true);
-
-    try {
-      const history = (roleplayMessages.length > 0 ? roleplayMessages : getInitialRoleplayMessages(result))
-        .map((m) => ({ sender: m.sender, text: m.text }));
-
-      const res = await fetch("/api/roleplay", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          scamType: result.scam_type,
-          scamContext: result.executive_summary,
-          userMessage: userText,
-          history,
-          isRiskyQuickChoice,
-        }),
-      });
-
-      if (!res.ok) throw new Error((await res.json()).error || "Roleplay error");
-
-      const data = await res.json();
-
-      const evalMsg: RoleplayMessage = {
-        id: `e-${Date.now()}`,
-        sender: "eval",
-        text: data.eval_text,
-        evalStatus: data.eval_status,
-      };
-
-      const scammerReplyMsg: RoleplayMessage = {
-        id: `s-${Date.now()}`,
-        sender: "scammer",
-        text: data.scammer_reply,
-      };
-
-      setRoleplayMessages((prev) => [...prev, evalMsg, scammerReplyMsg]);
-    } catch {
-      const lower = userText.toLowerCase();
-      const isDangerous = isRiskyQuickChoice || lower.includes("otp") || lower.includes("mật khẩu") || lower.includes("chuyển") || lower.includes("password");
-      setRoleplayMessages((prev) => [
-        ...prev,
-        {
-          id: `e-${Date.now()}`,
-          sender: "eval",
-          text: isDangerous
-            ? (lang === "vi" ? "Rất nguy hiểm: Tuyệt đối không bao giờ cung cấp mã OTP, mật khẩu hay chuyển tiền theo yêu cầu của người lạ." : "Dangerous: Never share OTP codes, passwords, or send funds to unverified parties.")
-            : (lang === "vi" ? "Xử lý an toàn: Phản hồi bình tĩnh và chủ động xác minh qua kênh chính thống." : "Safe response: Staying calm and verifying through official channels."),
-          evalStatus: isDangerous ? "danger" : "safe",
-        },
-        {
-          id: `s-${Date.now()}`,
-          sender: "scammer",
-          text: isDangerous
-            ? (lang === "vi" ? "Kẻ lừa đảo đã đạt được mục đích chiếm đoạt thông tin. Đây là bài học để bạn cảnh giác hơn ngoài đời thực." : "The scammer succeeded in capturing credentials. Use this simulation to stay alert.")
-            : (lang === "vi" ? "Kẻ lừa đảo thấy bạn cảnh giác và đã chủ động ngắt cuộc gọi để tìm nạn nhân khác." : "The scammer realized you were cautious and abandoned the attempt."),
-        },
-      ]);
-    } finally {
-      setRoleplayLoading(false);
     }
   };
 
@@ -780,27 +653,22 @@ export default function ScamShieldDashboard() {
         const errData = await res.json().catch(() => ({}));
         let rawErr = errData.error || (lang === "vi" ? "Không thể hoàn thành kiểm tra" : "Forensic analysis failed");
         if (typeof rawErr === "object") rawErr = JSON.stringify(rawErr);
-        if (typeof rawErr === "string" && (rawErr.includes("API key not valid") || rawErr.includes("INVALID_ARGUMENT"))) {
-          rawErr = lang === "vi"
-            ? "Chưa cấu hình GEMINI_API_KEY hợp lệ trong môi trường chạy."
-            : "GEMINI_API_KEY is missing or invalid in your environment.";
-        }
+
         throw new Error(rawErr);
       }
       const analysisData: ForensicResult = await res.json();
       const newId = generateId();
       setCaseId(newId);
+      setResultIsDemo(false);
       setResult(analysisData);
-      setRoleplayMessages(getInitialRoleplayMessages(analysisData));
-      setActiveTab("overview");
-    } catch (err: any) {
-      setError(err.message);
+        setActiveTab("overview");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Analysis failed");
     } finally {
       setLoading(false);
     }
   };
 
-  const activeRoleplayList = roleplayMessages.length > 0 ? roleplayMessages : getInitialRoleplayMessages(result);
   const canAnalyze = (inputMode === "image" && !!file) || (inputMode === "text" && !!textInput.trim());
 
   return (
@@ -990,7 +858,7 @@ export default function ScamShieldDashboard() {
                 {/* Simple Underline Tab Bar */}
                 <div className={`flex border-b gap-6 mb-5 ${isMuted ? "border-[#2E2E34]" : "border-[#E7E2D9]"}`}>
                   <button
-                    onClick={() => { setInputMode("image"); setResult(null); }}
+                    disabled title={lang === "vi" ? "Chưa có OCR local. Hãy dán văn bản." : "Local OCR unavailable. Paste text instead."}
                     className={`pb-3 text-sm transition cursor-pointer flex items-center gap-2 ${
                       inputMode === "image"
                         ? `border-b-2 border-[#E5484D] font-semibold ${isMuted ? "text-[#EDEAE4]" : "text-[#1C1917]"}`
@@ -998,7 +866,7 @@ export default function ScamShieldDashboard() {
                     }`}
                   >
                     <ImageIcon className="w-4 h-4" />
-                    {t.input.tabImage}
+                    {t.input.tabImage} ({lang === "vi" ? "chưa hỗ trợ" : "unavailable"})
                   </button>
                   <button
                     onClick={() => { setInputMode("text"); setResult(null); }}
@@ -1021,7 +889,7 @@ export default function ScamShieldDashboard() {
                     onDrop={(e) => {
                       e.preventDefault();
                       setIsDragging(false);
-                      e.dataTransfer.files[0] && handleFile(e.dataTransfer.files[0]);
+                      if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
                     }}
                     onClick={() => fileInputRef.current?.click()}
                     className={`flex-1 min-h-[250px] border rounded-xl p-8 text-center cursor-pointer flex flex-col items-center justify-center transition ${
@@ -1042,7 +910,7 @@ export default function ScamShieldDashboard() {
 
                     {previewUrl ? (
                       <div className={`relative max-h-60 overflow-hidden rounded-lg border ${isMuted ? "border-[#2E2E34]" : "border-[#E7E2D9]"}`}>
-                        <img src={previewUrl} alt="Preview" className="max-h-60 object-contain" />
+                        <Image unoptimized width={640} height={360} src={previewUrl} alt="Preview" className="max-h-60 object-contain" />
                         {loading && (
                           <div className={`absolute inset-0 backdrop-blur-xs flex items-center justify-center ${isMuted ? "bg-[#161618]/80" : "bg-white/80"}`}>
                             <RefreshCw className="w-6 h-6 text-[#E5484D] animate-spin" />
@@ -1181,6 +1049,10 @@ export default function ScamShieldDashboard() {
           {/* ── RESULT REPORT DISPLAY ───────────────────────────────────────────── */}
           {result && (
             <div ref={reportRef} className="lg:col-span-7 space-y-6 print:w-full print:col-span-12">
+              {resultIsDemo && <p role="status" className="p-3 border rounded text-sm">
+                {lang === "vi" ? "Ví dụ minh họa có điểm và nội dung dựng sẵn, không phải kết quả chạy mô hình."
+                  : "Illustrative example with preset scores and content, not a model prediction."}
+              </p>}
               {/* Report Header Bar */}
               <div className={`flex items-center justify-between p-4 border rounded-xl shadow-xs print:hidden flex-wrap gap-2 ${
                 isMuted
@@ -1247,7 +1119,7 @@ export default function ScamShieldDashboard() {
                           <span className={`text-xl font-semibold tracking-tight ${
                             isScam ? "text-[#E5484D]" : isSuspicious ? "text-[#D97706]" : "text-[#059669]"
                           }`}>
-                            {s >= 80 ? t.verdict.scamDetected : s >= 60 ? t.verdict.highRisk : s >= 31 ? t.verdict.suspicious : t.verdict.safe}
+                            {s >= 80 ? t.verdict.scamDetected : s >= 30 ? t.verdict.suspicious : t.verdict.safe}
                           </span>
                         </div>
                         <div className={`text-sm ${isMuted ? "text-[#A19E95]" : "text-[#57534E]"}`}>
@@ -1275,7 +1147,7 @@ export default function ScamShieldDashboard() {
                         : isMuted ? "bg-[#064E3B]/20 text-[#6EE7B7] border-[#064E3B]/50" : "bg-[#F0FDF4] text-[#166534] border-[#DCFCE7]"
                     }`}>
                       <span className="font-semibold">{lang === "vi" ? "Khuyến nghị an toàn: " : "Safety advice: "}</span>
-                      {s >= 80 ? t.verdict.actionScam : s >= 60 ? t.verdict.actionHigh : s >= 31 ? t.verdict.actionSuspicious : t.verdict.actionSafe}
+                      {s >= 80 ? t.verdict.actionScam : s >= 30 ? t.verdict.actionSuspicious : t.verdict.actionSafe}
                     </div>
                   </div>
                 );
@@ -1299,12 +1171,12 @@ export default function ScamShieldDashboard() {
                       <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono font-medium ${
                         isMuted ? "bg-[#27272A] text-[#A1A1AA]" : "bg-[#ECE7DE] text-[#57534E]"
                       }`}>
-                        {lang === "vi" ? "11,065 Mẫu Chuẩn Hóa • 5-Fold CV" : "11,065 Normalized Samples • 5-Fold CV"}
+                        {result.ml_classifier.training?.text_training_samples?.toLocaleString() ?? "—"} {lang === "vi" ? "tin nhắn dùng để học" : "training messages"}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-xs">
                       <span className="font-mono text-emerald-600 dark:text-emerald-400 font-semibold">
-                        &lt; 4ms CPU
+                        {result.ml_classifier.inference_ms != null ? `${result.ml_classifier.inference_ms.toFixed(1)} ms Python` : "—"}
                       </span>
                       <span className={`px-2 py-0.5 rounded text-[11px] font-semibold ${
                         result.ml_classifier.ml_risk_score >= 80
@@ -1317,6 +1189,26 @@ export default function ScamShieldDashboard() {
                       </span>
                     </div>
                   </div>
+
+                  {result.ml_classifier.model_prediction_label != null && result.ml_classifier.decision_threshold != null && (
+                    <div className="rounded-xl border border-inherit p-3 text-sm space-y-1" aria-live="polite">
+                      <p className="font-semibold">
+                        {lang === "vi" ? "Nhãn mô hình: " : "Model classification: "}
+                        {result.ml_classifier.model_prediction_label === 1
+                          ? result.ml_classifier.decision_branch === "url"
+                            ? (lang === "vi" ? "URL có dấu hiệu rủi ro" : "URL risk signals detected")
+                            : (lang === "vi" ? "Có dấu hiệu smishing" : "Smishing signals detected")
+                          : (lang === "vi" ? "Chưa vượt ngưỡng phát hiện" : "Below the detection threshold")}
+                      </p>
+                      <p className="text-xs opacity-75">
+                        {lang === "vi" ? "Ngưỡng phân loại đã chọn: " : "Selected classification threshold: "}
+                        {result.ml_classifier.decision_threshold.toFixed(2)}.
+                        {lang === "vi"
+                          ? " Nhãn này dùng để đối chiếu tập test; mức cảnh báo theo điểm vẫn dùng các mốc 30/80."
+                          : " Compare this label with test answers; score-based alerts still use the 30/80 policy."}
+                      </p>
+                    </div>
+                  )}
 
                   {/* Dual-Branch Feature Telemetry (Text vs URL) */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
@@ -1343,7 +1235,7 @@ export default function ScamShieldDashboard() {
                       </div>
                       <div className={`text-[11px] space-y-1 ${isMuted ? "text-[#A1A1AA]" : "text-[#78716C]"}`}>
                         <div className="truncate">
-                          <span className="font-semibold">{lang === "vi" ? "Chuẩn hóa NFKD:" : "Normalized text:"}</span>{" "}
+                          <span className="font-semibold">{lang === "vi" ? "Chuẩn hóa NFC:" : "Normalized text:"}</span>{" "}
                           <span className="font-mono">{result.ml_classifier.normalized_text || "(Trống)"}</span>
                         </div>
                         {result.ml_classifier.text_tokens && result.ml_classifier.text_tokens.length > 0 && (
@@ -1402,16 +1294,22 @@ export default function ScamShieldDashboard() {
                     isMuted ? "bg-[#1E1E22] border-[#2E2E34] text-[#E4E4E7]" : "bg-[#F7F4EE] border-[#E2DDD3] text-[#292524]"
                   }`}>
                     <div className="flex items-center justify-between text-[11px] font-sans font-medium text-[#78716C] dark:text-[#A1A1AA]">
-                      <span>{lang === "vi" ? "Công thức toán học gộp tri thức (Stacking Meta-Learner):" : "Stacking Meta-Learner Formulation:"}</span>
+                      <span>{result.ml_classifier.meta_formula
+                        ? (lang === "vi" ? "Công thức gộp mô hình:" : "Model combination:")
+                        : (lang === "vi" ? "Cách đánh giá:" : "Assessment method:")}</span>
                       <span>Uncertainty U(x): {result.ml_classifier.uncertainty ?? "0.0"}</span>
                     </div>
                     <div className="p-2 rounded bg-black/5 dark:bg-black/30 text-[11px] leading-relaxed break-all font-semibold">
-                      s_fused = 100 · σ(-4.470 + 5.243·p_text + 4.628·p_url + 1.714·(p_text·p_url))
+                      {result.ml_classifier.meta_formula || (result.ml_classifier.mode === "processed_text"
+                        ? (lang === "vi" ? "Nhãn SMS theo nội dung tin nhắn; điểm URL được hiển thị riêng." : "SMS classification uses message text; URL scores are shown separately.")
+                        : result.ml_classifier.mode === "processed_url_only"
+                          ? (lang === "vi" ? "Đánh giá riêng URL; nhãn nguồn bao gồm phishing và các dạng abuse khác." : "URL-only assessment; source labels cover phishing and other abuse.")
+                          : result.ml_classifier.mode || "Single trained branch")}
                     </div>
                     <div className="text-[11px] font-sans text-[#78716C] dark:text-[#A1A1AA] pt-0.5 leading-normal">
                       {lang === "vi"
-                        ? "Hệ số tương tác β₃ = +1.714 kích hoạt hiệu ứng hiệp đồng đa phương thức (Synergistic Compounding) khi cả Text và Link cùng mang dấu hiệu bất thường, giải quyết triệt để lỗi báo nhầm của Max-Fusion."
-                        : "Interaction coefficient β₃ = +1.714 compounds joint risk when both text and URL exhibit anomalies, resolving max-fusion false positive inflation."}
+                        ? `Phiên model: ${result.ml_classifier.training?.run_id ?? "—"}. Điểm mô hình chưa được hiệu chỉnh xác suất; cần kiểm chứng độc lập.`
+                        : `Model run: ${result.ml_classifier.training?.run_id ?? "—"}. Scores are not calibrated probabilities; verify independently.`}
                     </div>
                   </div>
                 </div>
@@ -1434,11 +1332,12 @@ export default function ScamShieldDashboard() {
                     <span className={`text-xs font-medium ${
                       result.web_intelligence.domain_match === "mismatch"
                         ? "text-[#E5484D]"
-                        : "text-[#10B981]"
+                        : result.web_intelligence.domain_match === "match" ? "text-[#10B981]" : "text-[#A19E95]"
                     }`}>
                       {result.web_intelligence.domain_match === "mismatch"
                         ? t.webIntel.fraudulentDomain
-                        : t.webIntel.legitimateDomain}
+                        : result.web_intelligence.domain_match === "match"
+                        ? t.webIntel.legitimateDomain : t.webIntel.unverifiedMatch}
                     </span>
                   </div>
 
@@ -1499,6 +1398,7 @@ export default function ScamShieldDashboard() {
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
+                    disabled={tab === "roleplay"} title={tab === "roleplay" ? "Local dialogue model unavailable" : undefined}
                     className={`pb-3 text-xs tracking-tight transition cursor-pointer whitespace-nowrap ${
                       activeTab === tab
                         ? `border-b-2 border-[#E5484D] font-semibold ${isMuted ? "text-[#EDEAE4]" : "text-[#1C1917]"}`
@@ -1666,136 +1566,10 @@ export default function ScamShieldDashboard() {
 
               {/* Tab 4: Roleplay Practice */}
               {activeTab === "roleplay" && (
-                <div className={`p-6 border rounded-2xl space-y-4 shadow-xs ${
-                  isMuted ? "bg-[#202024] border-[#2E2E34]" : "bg-white border-[#E7E2D9]"
-                }`}>
-                  <div className={`flex justify-between items-center border-b pb-3 ${
-                    isMuted ? "border-[#2E2E34]" : "border-[#E7E2D9]"
-                  }`}>
-                    <div>
-                      <div className="text-sm font-semibold">{t.roleplay.title}</div>
-                      <p className={`text-xs ${isMuted ? "text-[#A19E95]" : "text-[#57534E]"}`}>{t.roleplay.subtitle}</p>
-                    </div>
-                    <button
-                      onClick={() => setRoleplayMessages(getInitialRoleplayMessages(result))}
-                      className={`text-xs flex items-center gap-1 cursor-pointer ${
-                        isMuted ? "text-[#A19E95] hover:text-[#EDEAE4]" : "text-[#57534E] hover:text-[#1C1917]"
-                      }`}
-                    >
-                      <RefreshCw className="w-3 h-3" /> {t.roleplay.resetChat}
-                    </button>
-                  </div>
-
-                  {/* Clean Messaging Interface */}
-                  <div className={`p-5 rounded-xl border space-y-3.5 max-h-80 overflow-y-auto text-xs ${
-                    isMuted ? "bg-[#1A1A1D] border-[#2E2E34]" : "bg-[#FAF8F5] border-[#E7E2D9]"
-                  }`}>
-                    {activeRoleplayList.map((msg) => {
-                      if (msg.sender === "scammer") {
-                        return (
-                          <div key={msg.id} className="max-w-[85%]">
-                            <div className="text-[11px] text-[#A8A29E] mb-1 font-medium">
-                              {lang === "vi" ? "Kẻ lừa đảo" : "Scammer"}
-                            </div>
-                            <div className={`p-3.5 rounded-2xl rounded-tl-xs border leading-relaxed text-[13px] ${
-                              isMuted
-                                ? "bg-[#7F1D1D]/20 text-[#FCA5A5] border-[#7F1D1D]/50"
-                                : "bg-[#FEF2F2] border-[#FEE2E2] text-[#991B1B]"
-                            }`}>
-                              {msg.text}
-                            </div>
-                          </div>
-                        );
-                      }
-                      if (msg.sender === "user") {
-                        return (
-                          <div key={msg.id} className="max-w-[85%] ml-auto text-right">
-                            <div className="text-[11px] text-[#A8A29E] mb-1 font-medium">
-                              {lang === "vi" ? "Bạn" : "You"}
-                            </div>
-                            <div className={`p-3.5 rounded-2xl rounded-tr-xs text-left leading-relaxed text-[13px] ${
-                              isMuted
-                                ? "bg-[#2A2A30] text-[#EDEAE4] border border-[#383840]"
-                                : "bg-[#1C1917] text-white"
-                            }`}>
-                              {msg.text}
-                            </div>
-                          </div>
-                        );
-                      }
-                      if (msg.sender === "eval") {
-                        return (
-                          <div
-                            key={msg.id}
-                            className={`p-3.5 rounded-xl text-xs leading-relaxed border ${
-                              msg.evalStatus === "danger"
-                                ? isMuted ? "bg-[#7F1D1D]/20 text-[#FCA5A5] border-[#7F1D1D]/50" : "bg-[#FEF2F2] text-[#991B1B] border-[#FEE2E2]"
-                                : isMuted ? "bg-[#064E3B]/20 text-[#6EE7B7] border-[#064E3B]/50" : "bg-[#F0FDF4] text-[#166534] border-[#DCFCE7]"
-                            }`}
-                          >
-                            <span className="font-semibold">{lang === "vi" ? "Đánh giá: " : "Feedback: "}</span>
-                            {msg.text}
-                          </div>
-                        );
-                      }
-                      return null;
-                    })}
-                  </div>
-
-                  {/* Quick responses */}
-                  <div className="space-y-2">
-                    <div className={`text-xs font-medium ${isMuted ? "text-[#A19E95]" : "text-[#57534E]"}`}>
-                      {lang === "vi" ? "Chọn nhanh phản hồi mẫu:" : "Quick responses:"}
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {quickRoleplayResponses.map((qr, idx) => (
-                        <button
-                          key={idx}
-                          onClick={() => handleSendRoleplay(qr.text, qr.isRisky)}
-                          className={`text-xs px-3.5 py-2 rounded-lg border text-left cursor-pointer transition ${
-                            qr.isRisky
-                              ? isMuted
-                                ? "bg-[#7F1D1D]/20 border-[#7F1D1D]/40 text-[#FCA5A5] hover:bg-[#7F1D1D]/30"
-                                : "bg-[#FEF2F2] border-[#FEE2E2] text-[#991B1B] hover:bg-[#FEE2E2]"
-                              : isMuted
-                              ? "bg-[#1A1A1D] border-[#383840] text-[#EDEAE4] hover:bg-[#2A2A30]"
-                              : "bg-[#FAF8F5] border-[#E7E2D9] text-[#1C1917] hover:bg-[#EAE6DD]"
-                          }`}
-                        >
-                          {qr.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Input Form */}
-                  <form
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      handleSendRoleplay(roleplayInput);
-                    }}
-                    className="flex gap-2"
-                  >
-                    <input
-                      type="text"
-                      value={roleplayInput}
-                      onChange={(e) => setRoleplayInput(e.target.value)}
-                      placeholder={t.roleplay.placeholder}
-                      className={`flex-1 border rounded-xl px-4 py-2.5 text-xs focus:outline-none transition ${
-                        isMuted
-                          ? "bg-[#1A1A1D] border-[#383840] text-[#EDEAE4] focus:border-[#EDEAE4]"
-                          : "bg-[#FAF8F5] border-[#D6D0C4] text-[#1C1917] focus:border-[#1C1917] focus:bg-white"
-                      }`}
-                    />
-                    <button
-                      type="submit"
-                      className="px-5 py-2.5 bg-[#E5484D] hover:bg-[#D93D42] text-white text-xs font-medium rounded-xl flex items-center gap-1.5 cursor-pointer transition"
-                    >
-                      <Send className="w-3.5 h-3.5" />
-                      {t.roleplay.send}
-                    </button>
-                  </form>
-                </div>
+                <p role="status" className="p-5 text-sm">
+                  {lang === "vi" ? "Chưa có mô hình local được huấn luyện để đánh giá hội thoại. Chức năng này hiện chưa khả dụng."
+                    : "No locally trained dialogue evaluation model is installed. This feature is unavailable."}
+                </p>
               )}
             </div>
           )}

@@ -1,0 +1,9 @@
+{
+  "repository": "https://github.com/shaghayegh-hp/Smishing_Dataset",
+  "commit": "3bf9983df4b187ee9b54a671e4b5bc5f0d48b3fc",
+  "source_url": "https://raw.githubusercontent.com/shaghayegh-hp/Smishing_Dataset/3bf9983df4b187ee9b54a671e4b5bc5f0d48b3fc/Combined-Labeled-Dataset.csv",
+  "local_file": "smishing_combined.csv",
+  "sha256": "4dc1311965acb80b9b97536db5afdbe874a1e2175143d3b145e32caf9bb81a8d",
+  "label_note": "Upstream smishing labels are assigned by keyword rules, not independent expert review.",
+  "usage_note": "Upstream permits academic/research use. No broader commercial license asserted."
+}

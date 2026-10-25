@@ -1,0 +1,120 @@
+{
+  "metadata": {
+    "run_id": "20261022T180106Z",
+    "pipeline_fingerprint": "12a47e2f4ab627d19131d978fbcbf737dfab4b273497b10626a58ff45ce737bf",
+    "sklearn_version": "1.9.1",
+    "method": "Text LR + URL HistGB + logistic interaction stacking",
+    "target": "smishing (upstream keyword-derived labels, not expert ground truth)",
+    "synthetic_pairs": 0,
+    "data_audit": {
+      "raw_rows": 84863,
+      "clean_rows": 73989,
+      "conflicting_groups_removed": 45,
+      "duplicates_removed": 10703,
+      "paired_records": 8995,
+      "labels": {
+        "0": 51428,
+        "1": 22561
+      }
+    },
+    "text_training_samples": 59190,
+    "url_training_samples": 39983,
+    "paired_training_samples": 6363,
+    "paired_holdout_samples": 2632,
+    "url_conflicting_groups_removed": 1,
+    "thresholds": {
+      "review": 30,
+      "high": 80,
+      "selection": "Fixed review policy, not claimed optimal or calibrated"
+    },
+    "probability_calibrated": false,
+    "meta_coefficients": [
+      -4.347071867943548,
+      7.179562118102253,
+      -1.467973249098432,
+      2.134786019047353
+    ],
+    "source_sha256": {
+      "smishing_combined.csv": "4dc1311965acb80b9b97536db5afdbe874a1e2175143d3b145e32caf9bb81a8d",
+      "phishing_site_urls.csv": "b1a7c26b354632c80817e10af154c4e5007f9480fb43a8ac2730491500fa2780"
+    },
+    "source": {
+      "repository": "https://github.com/shaghayegh-hp/Smishing_Dataset",
+      "commit": "3bf9983df4b187ee9b54a671e4b5bc5f0d48b3fc",
+      "source_url": "https://raw.githubusercontent.com/shaghayegh-hp/Smishing_Dataset/3bf9983df4b187ee9b54a671e4b5bc5f0d48b3fc/Combined-Labeled-Dataset.csv",
+      "local_file": "smishing_combined.csv",
+      "sha256": "4dc1311965acb80b9b97536db5afdbe874a1e2175143d3b145e32caf9bb81a8d",
+      "label_note": "Upstream smishing labels are assigned by keyword rules, not independent expert review.",
+      "usage_note": "Upstream permits academic/research use. No broader commercial license asserted."
+    },
+    "training_seconds": 62.23
+  },
+  "metrics": {
+    "evaluation": "Untouched grouped holdouts; inner text OOF only on SMS training; external URL training excludes all SMS hostnames",
+    "text_holdout": {
+      "samples": 14799,
+      "accuracy": 0.9381039259409419,
+      "precision": 0.847536231884058,
+      "recall": 0.971859073786838,
+      "f1": 0.9054500412881916,
+      "roc_auc": 0.9892216229830827,
+      "log_loss": 0.1571079274920769
+    },
+    "url_holdout": {
+      "samples": 10017,
+      "accuracy": 0.9310172706399121,
+      "precision": 0.9479956663055255,
+      "recall": 0.746268656716418,
+      "f1": 0.8351228823669768,
+      "roc_auc": 0.9682222731123171,
+      "log_loss": 0.20170482383770777
+    },
+    "paired_holdout": {
+      "text_only": {
+        "samples": 2632,
+        "accuracy": 0.8571428571428571,
+        "precision": 0.8536482496836778,
+        "recall": 0.985874330248417,
+        "f1": 0.9150090415913201,
+        "roc_auc": 0.9474348587979845,
+        "log_loss": 0.2824306396326844
+      },
+      "url_only": {
+        "samples": 2632,
+        "accuracy": 0.7070668693009119,
+        "precision": 0.7908348457350273,
+        "recall": 0.8490014612761811,
+        "f1": 0.8188865398167724,
+        "roc_auc": 0.5460137950528607,
+        "log_loss": 0.6014114789841488
+      },
+      "max_fusion": {
+        "samples": 2632,
+        "accuracy": 0.7925531914893617,
+        "precision": 0.791039011201236,
+        "recall": 0.997564539698003,
+        "f1": 0.8823782852218871,
+        "roc_auc": 0.9058040510243656,
+        "log_loss": 0.4354184235248597
+      },
+      "linear_meta": {
+        "samples": 2632,
+        "accuracy": 0.8852583586626139,
+        "precision": 0.8924249215598387,
+        "recall": 0.9698002922552362,
+        "f1": 0.9295051353874884,
+        "roc_auc": 0.947502580578403,
+        "log_loss": 0.26716030448646183
+      },
+      "interaction_meta": {
+        "samples": 2632,
+        "accuracy": 0.8867781155015197,
+        "precision": 0.8943820224719101,
+        "recall": 0.9693132001948368,
+        "f1": 0.930341280972417,
+        "roc_auc": 0.9474748188547532,
+        "log_loss": 0.2651464277186008
+      }
+    }
+  }
+}
