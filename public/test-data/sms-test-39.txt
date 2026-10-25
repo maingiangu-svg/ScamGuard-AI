@@ -1,0 +1,246 @@
+﻿SMS TEST — 39 tin giữ riêng, KHÔNG dùng để học.
+Mở http://127.0.0.1:3000, dán từng tin và bấm Kiểm tra nội dung.
+Đối chiếu nhãn ở phần Nhãn mô hình (ngưỡng 0,65), không dùng riêng mốc cảnh báo 80 điểm để tính nhãn.
+Nhãn nguồn do tác giả SmishX gán thủ công; 25 mẫu nhãn 1 cùng một nhóm gần trùng, nên đây là test nhỏ.
+Không dùng 12 ví dụ tự soạn làm kết quả đánh giá paper.
+
+SMISHX-0019
+
+Dear Customer, registration for Google Pay has started for ICICI Bank. If it was not you, report to your bank. Do not share card details/OTP/CVV with anyone.
+
+
+------------------------------------------------
+
+SMISHX-0028
+
+Welcome to Chase | Zelle(R).
+Reply HELP for help
+
+Message & data rates may apply
+Message frequency varies by account
+
+
+------------------------------------------------
+
+SMISHX-0031
+
+Walmart: Great Value Low Sodium Ve... is arriving soon. We'll leave the order at your door. Reply HELP for info; STOP to opt out
+
+
+------------------------------------------------
+
+SMISHX-0041
+
+Mint Mobile: It’s never too early to lock in more savings. Like right now. You're currently on a 3-Month, Unlimited plan but can save $120/yr on a 12-month plan. Get your early renew on: https://m.mintmobile.com/plan Reply STOP to opt out of promotional offers.
+
+
+------------------------------------------------
+
+SMISHX-0042
+
+It's the last month of your Mint 3 Month Unlimited plan. How time flies. Log into your account at my.mintmobile.com or use our app to renew your plan.
+
+
+------------------------------------------------
+
+SMISHX-0043
+
+Your Mint 3-Month, Unlimited plan expires in 2 days. Log into your account at my.mintmobile.com or via our app to make a payment and keep your Mint service going.
+
+
+------------------------------------------------
+
+SMISHX-0044
+
+Your Amazon Web Services (AWS) verification code is: 8250
+
+
+------------------------------------------------
+
+SMISHX-0610
+LEMON NADE You have a new notification: https://iaqwqtii.com/6hTbr Reply STOP to optout
+
+------------------------------------------------
+
+SMISHX-0617
+ / "WFAlert-ID#0641" / We now need to confirm some of your information:
+ https://qi.lv/F0i
+ Thank You
+
+------------------------------------------------
+
+SMISHX-0631
+OkWow: Confirm here for daily prize offers https://here.okwow.com/z4pahq Up to 1 msg/day. Msg&data rates may apply Reply STOP to Unsubscribe
+
+------------------------------------------------
+
+SMISHX-0639
+
+ [emailÂ protected] / U-S-P-S ID 75275 / We could not find the correct info provided for your item: https://qi.lv/DyW
+ 
+
+------------------------------------------------
+
+SMISHX-0676
+[emailÂ protected] / T.D.Alerts / TDBank: To Review Recent Activity Please Log In: https://qi.lv/bhssbK889?32
+
+------------------------------------------------
+
+SMISHX-0685
+ / Secure message from TD / Use the bleow url to regarding your account, (https://qi.lv/p5R)
+ 
+
+------------------------------------------------
+
+SMISHX-0687
+[emailÂ protected] / U-S-P-S ID 88160 / Your item will not be shipped. https://qi.lv/Bsj
+
+------------------------------------------------
+
+SMISHX-0710
+ / Secure message from TD / Use the bleow url to regarding your account, (https://qi.lv/L96)
+ 
+
+------------------------------------------------
+
+SMISHX-0753
+ska6.cz / U-S-P-S ID 67162 / We could not find the correct info provided for your item: https://qi.lv/tft
+
+------------------------------------------------
+
+SMISHX-0755
+tsleep.com / U-S-P-S ID 52127 / Your item was not found. https://qi.lv/xFj
+
+------------------------------------------------
+
+SMISHX-0783
+s8[emailÂ protected] / TD-Alerts / TDBank: To Review Recent Activity Please Log In: https://qi.lv/hV
+
+------------------------------------------------
+
+SMISHX-0786
+[emailÂ protected] / U-S-P-S ID 67162 / We could not find the correct info provided for your item: https://qi.lv/tft
+
+------------------------------------------------
+
+SMISHX-0818
+
+ MTB Alert : New ACH Added. visit http://qi.lv/TMZ to remove or proceed
+ 
+
+------------------------------------------------
+
+SMISHX-0844
+
+ [emailÂ protected] / U-S-P-S ID 42222 / Your item was not found. https://qi.lv/k6z
+ 
+
+------------------------------------------------
+
+SMISHX-0854
+44456@abana.it / U-S-P-S ID 11191 / We could not find the correct info provided for your item: https://qi.lv/Wyn
+
+------------------------------------------------
+
+SMISHX-0856
+Probate Weekly is Starting now! https://eztxt.net/O90l7b or join at https://zoom.us/j/97054422923 https://eztxt.net/OVLZat STOP to end 
+
+------------------------------------------------
+
+SMISHX-0861
+[emailÂ protected] / (Mobile and OnIine Banking) / Unlook your account, use the blew link, https://qi.lv/Ksq
+ 
+
+------------------------------------------------
+
+SMISHX-0890
+This is CJ with POR. Please take a moment to complete this survey about politics in San Diego: https://www.surveymonkey.com/r/F8VLMMV?UID=BM6SZE "STOP"2end 
+
+------------------------------------------------
+
+SMISHX-0912
+ / TD / We now need to confirm some of your information:
+ https://qi.lv/anos
+ Thank You
+
+------------------------------------------------
+
+SMISHX-0920
+Track your order every step of the way in the Shop app: https://qvay.app.link/e/VVhoag801tb Reply STOP to unsubscribe Track your order every step of the way in the Shop app: https://shop.app/download Reply STOP to unsubscribe Track your order every step of the way in the Shop app: https://shop.app/download Reply STOP to unsubscribe
+
+------------------------------------------------
+
+SMISHX-0927
+[emailÂ protected] / U-S-P-S ID 43077 / We could not find the correct info provided for your item: https://qi.lv/mwg
+
+------------------------------------------------
+
+SMISHX-0956
+
+ MTB Alert : New ACH payment added. visit http://qi.lv/TMZ to remove or proceed
+ 
+
+------------------------------------------------
+
+SMISHX-1040
+[emailÂ protected] / no subject / We could not find the correct info provided for your item: https://qi.lv/A5=
+ Y
+
+------------------------------------------------
+
+SMISHX-1048
+ep.com / U-S-P-S ID 52127 / Your item was not found. https://qi.lv/xFj
+
+------------------------------------------------
+
+SMISHX-1105
+[emailÂ protected] / Secure message from TD / Use the bleow url to regarding your account, (https://qi.lv/L96)
+ 
+
+------------------------------------------------
+
+SMISHX-1113
+ / U-S-P-S ID 75275 / We could not find the correct info provided for your item: https://qi.lv/DyW
+
+------------------------------------------------
+
+SMISHX-1116
+ / no subject / We could not find the correct info provided for your item: https://qi.lv/A5=
+ Y
+
+------------------------------------------------
+
+SMISHX-1145
+[emailÂ protected] / no subject / Your item was not found. https://qi.lv/PQZ
+
+------------------------------------------------
+
+SMISHX-1147
+
+ [emailÂ protected] / "WFAlert-ID#0641" / We now need to confirm some of your information:
+ https://qi.lv/F0i
+ Thank You
+ 
+
+------------------------------------------------
+
+SMISHX-1154
+Online  Transport  wants  to  speak  w/  you  about  a  driving  position!  Click  here  https://eztxt.net/a59Cvr  to  complete  a  full  application  or  call  866-543-1235  for  more  info.  STOP  to  end
+
+------------------------------------------------
+
+SMISHX-1188
+ / New.login-IP :127.206.155.1 / We now need to confirm some of your information:
+ https://qi.lv/I6K
+ Thank You
+
+------------------------------------------------
+
+SMISHX-1194
+
+ Hornady Transportation is interested in talking w/ you! Please fill out a
+ complete application by clicking https://eztxt.net/q2OmUv or call
+ 800-441-4271 for more info. STOP to end
+  
+
+------------------------------------------------

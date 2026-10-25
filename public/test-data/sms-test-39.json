@@ -1,0 +1,314 @@
+[
+  {
+    "case_id": "SMISHX-0019",
+    "language": "en",
+    "text": "\r\nDear Customer, registration for Google Pay has started for ICICI Bank. If it was not you, report to your bank. Do not share card details/OTP/CVV with anyone.\r\n",
+    "label": 0,
+    "label_provenance": "published_two_researcher_manual_relabeling_with_disagreement_resolution",
+    "usage": "held_out_from_training_do_not_train"
+  },
+  {
+    "case_id": "SMISHX-0028",
+    "language": "en",
+    "text": "\r\nWelcome to Chase | Zelle(R).\r\nReply HELP for help\r\n\r\nMessage & data rates may apply\r\nMessage frequency varies by account\r\n",
+    "label": 0,
+    "label_provenance": "published_two_researcher_manual_relabeling_with_disagreement_resolution",
+    "usage": "held_out_from_training_do_not_train"
+  },
+  {
+    "case_id": "SMISHX-0031",
+    "language": "en",
+    "text": "\r\nWalmart: Great Value Low Sodium Ve... is arriving soon. We'll leave the order at your door. Reply HELP for info; STOP to opt out\r\n",
+    "label": 0,
+    "label_provenance": "published_two_researcher_manual_relabeling_with_disagreement_resolution",
+    "usage": "held_out_from_training_do_not_train"
+  },
+  {
+    "case_id": "SMISHX-0041",
+    "language": "en",
+    "text": "\r\nMint Mobile: It\u2019s never too early to lock in more savings. Like right now. You're currently on a 3-Month, Unlimited plan but can save $120/yr on a 12-month plan. Get your early renew on: https://m.mintmobile.com/plan Reply STOP to opt out of promotional offers.\r\n",
+    "label": 0,
+    "label_provenance": "published_two_researcher_manual_relabeling_with_disagreement_resolution",
+    "usage": "held_out_from_training_do_not_train"
+  },
+  {
+    "case_id": "SMISHX-0042",
+    "language": "en",
+    "text": "\r\nIt's the last month of your Mint 3 Month Unlimited plan. How time flies. Log into your account at my.mintmobile.com or use our app to renew your plan.\r\n",
+    "label": 0,
+    "label_provenance": "published_two_researcher_manual_relabeling_with_disagreement_resolution",
+    "usage": "held_out_from_training_do_not_train"
+  },
+  {
+    "case_id": "SMISHX-0043",
+    "language": "en",
+    "text": "\r\nYour Mint 3-Month, Unlimited plan expires in 2 days. Log into your account at my.mintmobile.com or via our app to make a payment and keep your Mint service going.\r\n",
+    "label": 0,
+    "label_provenance": "published_two_researcher_manual_relabeling_with_disagreement_resolution",
+    "usage": "held_out_from_training_do_not_train"
+  },
+  {
+    "case_id": "SMISHX-0044",
+    "language": "en",
+    "text": "\r\nYour Amazon Web Services (AWS) verification code is: 8250\r\n",
+    "label": 0,
+    "label_provenance": "published_two_researcher_manual_relabeling_with_disagreement_resolution",
+    "usage": "held_out_from_training_do_not_train"
+  },
+  {
+    "case_id": "SMISHX-0610",
+    "language": "en",
+    "text": "LEMON NADE You have a new notification: https://iaqwqtii.com/6hTbr Reply STOP to optout",
+    "label": 0,
+    "label_provenance": "published_two_researcher_manual_relabeling_with_disagreement_resolution",
+    "usage": "held_out_from_training_do_not_train"
+  },
+  {
+    "case_id": "SMISHX-0617",
+    "language": "en",
+    "text": " / \"WFAlert-ID#0641\" / We now need to confirm some of your information:\r\n https://qi.lv/F0i\r\n Thank You",
+    "label": 1,
+    "label_provenance": "published_two_researcher_manual_relabeling_with_disagreement_resolution",
+    "usage": "held_out_from_training_do_not_train"
+  },
+  {
+    "case_id": "SMISHX-0631",
+    "language": "en",
+    "text": "OkWow: Confirm here for daily prize offers https://here.okwow.com/z4pahq Up to 1 msg/day. Msg&data rates may apply Reply STOP to Unsubscribe",
+    "label": 0,
+    "label_provenance": "published_two_researcher_manual_relabeling_with_disagreement_resolution",
+    "usage": "held_out_from_training_do_not_train"
+  },
+  {
+    "case_id": "SMISHX-0639",
+    "language": "en",
+    "text": "\r\n [email\u00c2\u00a0protected] / U-S-P-S ID 75275 / We could not find the correct info provided for your item: https://qi.lv/DyW\r\n ",
+    "label": 1,
+    "label_provenance": "published_two_researcher_manual_relabeling_with_disagreement_resolution",
+    "usage": "held_out_from_training_do_not_train"
+  },
+  {
+    "case_id": "SMISHX-0676",
+    "language": "en",
+    "text": "[email\u00c2\u00a0protected] / T.D.Alerts / TDBank: To Review Recent Activity Please Log In: https://qi.lv/bhssbK889?32",
+    "label": 1,
+    "label_provenance": "published_two_researcher_manual_relabeling_with_disagreement_resolution",
+    "usage": "held_out_from_training_do_not_train"
+  },
+  {
+    "case_id": "SMISHX-0685",
+    "language": "en",
+    "text": " / Secure message from TD / Use the bleow url to regarding your account, (https://qi.lv/p5R)\r\n ",
+    "label": 1,
+    "label_provenance": "published_two_researcher_manual_relabeling_with_disagreement_resolution",
+    "usage": "held_out_from_training_do_not_train"
+  },
+  {
+    "case_id": "SMISHX-0687",
+    "language": "en",
+    "text": "[email\u00c2\u00a0protected] / U-S-P-S ID 88160 / Your item will not be shipped. https://qi.lv/Bsj",
+    "label": 1,
+    "label_provenance": "published_two_researcher_manual_relabeling_with_disagreement_resolution",
+    "usage": "held_out_from_training_do_not_train"
+  },
+  {
+    "case_id": "SMISHX-0710",
+    "language": "en",
+    "text": " / Secure message from TD / Use the bleow url to regarding your account, (https://qi.lv/L96)\r\n ",
+    "label": 1,
+    "label_provenance": "published_two_researcher_manual_relabeling_with_disagreement_resolution",
+    "usage": "held_out_from_training_do_not_train"
+  },
+  {
+    "case_id": "SMISHX-0753",
+    "language": "en",
+    "text": "ska6.cz / U-S-P-S ID 67162 / We could not find the correct info provided for your item: https://qi.lv/tft",
+    "label": 1,
+    "label_provenance": "published_two_researcher_manual_relabeling_with_disagreement_resolution",
+    "usage": "held_out_from_training_do_not_train"
+  },
+  {
+    "case_id": "SMISHX-0755",
+    "language": "en",
+    "text": "tsleep.com / U-S-P-S ID 52127 / Your item was not found. https://qi.lv/xFj",
+    "label": 1,
+    "label_provenance": "published_two_researcher_manual_relabeling_with_disagreement_resolution",
+    "usage": "held_out_from_training_do_not_train"
+  },
+  {
+    "case_id": "SMISHX-0783",
+    "language": "en",
+    "text": "s8[email\u00c2\u00a0protected] / TD-Alerts / TDBank: To Review Recent Activity Please Log In: https://qi.lv/hV",
+    "label": 1,
+    "label_provenance": "published_two_researcher_manual_relabeling_with_disagreement_resolution",
+    "usage": "held_out_from_training_do_not_train"
+  },
+  {
+    "case_id": "SMISHX-0786",
+    "language": "en",
+    "text": "[email\u00c2\u00a0protected] / U-S-P-S ID 67162 / We could not find the correct info provided for your item: https://qi.lv/tft",
+    "label": 1,
+    "label_provenance": "published_two_researcher_manual_relabeling_with_disagreement_resolution",
+    "usage": "held_out_from_training_do_not_train"
+  },
+  {
+    "case_id": "SMISHX-0818",
+    "language": "en",
+    "text": "\r\n MTB Alert : New ACH Added. visit http://qi.lv/TMZ to remove or proceed\r\n ",
+    "label": 1,
+    "label_provenance": "published_two_researcher_manual_relabeling_with_disagreement_resolution",
+    "usage": "held_out_from_training_do_not_train"
+  },
+  {
+    "case_id": "SMISHX-0844",
+    "language": "en",
+    "text": "\r\n [email\u00c2\u00a0protected] / U-S-P-S ID 42222 / Your item was not found. https://qi.lv/k6z\r\n ",
+    "label": 1,
+    "label_provenance": "published_two_researcher_manual_relabeling_with_disagreement_resolution",
+    "usage": "held_out_from_training_do_not_train"
+  },
+  {
+    "case_id": "SMISHX-0854",
+    "language": "en",
+    "text": "44456@abana.it / U-S-P-S ID 11191 / We could not find the correct info provided for your item: https://qi.lv/Wyn",
+    "label": 1,
+    "label_provenance": "published_two_researcher_manual_relabeling_with_disagreement_resolution",
+    "usage": "held_out_from_training_do_not_train"
+  },
+  {
+    "case_id": "SMISHX-0856",
+    "language": "en",
+    "text": "Probate Weekly is Starting now! https://eztxt.net/O90l7b or join at https://zoom.us/j/97054422923 https://eztxt.net/OVLZat STOP to end ",
+    "label": 0,
+    "label_provenance": "published_two_researcher_manual_relabeling_with_disagreement_resolution",
+    "usage": "held_out_from_training_do_not_train"
+  },
+  {
+    "case_id": "SMISHX-0861",
+    "language": "en",
+    "text": "[email\u00c2\u00a0protected] / (Mobile and OnIine Banking) / Unlook your account, use the blew link, https://qi.lv/Ksq\r\n ",
+    "label": 1,
+    "label_provenance": "published_two_researcher_manual_relabeling_with_disagreement_resolution",
+    "usage": "held_out_from_training_do_not_train"
+  },
+  {
+    "case_id": "SMISHX-0890",
+    "language": "en",
+    "text": "This is CJ with POR. Please take a moment to complete this survey about politics in San Diego: https://www.surveymonkey.com/r/F8VLMMV?UID=BM6SZE \"STOP\"2end ",
+    "label": 0,
+    "label_provenance": "published_two_researcher_manual_relabeling_with_disagreement_resolution",
+    "usage": "held_out_from_training_do_not_train"
+  },
+  {
+    "case_id": "SMISHX-0912",
+    "language": "en",
+    "text": " / TD / We now need to confirm some of your information:\r\n https://qi.lv/anos\r\n Thank You",
+    "label": 1,
+    "label_provenance": "published_two_researcher_manual_relabeling_with_disagreement_resolution",
+    "usage": "held_out_from_training_do_not_train"
+  },
+  {
+    "case_id": "SMISHX-0920",
+    "language": "en",
+    "text": "Track your order every step of the way in the Shop app: https://qvay.app.link/e/VVhoag801tb Reply STOP to unsubscribe Track your order every step of the way in the Shop app: https://shop.app/download Reply STOP to unsubscribe Track your order every step of the way in the Shop app: https://shop.app/download Reply STOP to unsubscribe",
+    "label": 0,
+    "label_provenance": "published_two_researcher_manual_relabeling_with_disagreement_resolution",
+    "usage": "held_out_from_training_do_not_train"
+  },
+  {
+    "case_id": "SMISHX-0927",
+    "language": "en",
+    "text": "[email\u00c2\u00a0protected] / U-S-P-S ID 43077 / We could not find the correct info provided for your item: https://qi.lv/mwg",
+    "label": 1,
+    "label_provenance": "published_two_researcher_manual_relabeling_with_disagreement_resolution",
+    "usage": "held_out_from_training_do_not_train"
+  },
+  {
+    "case_id": "SMISHX-0956",
+    "language": "en",
+    "text": "\r\n MTB Alert : New ACH payment added. visit http://qi.lv/TMZ to remove or proceed\r\n ",
+    "label": 1,
+    "label_provenance": "published_two_researcher_manual_relabeling_with_disagreement_resolution",
+    "usage": "held_out_from_training_do_not_train"
+  },
+  {
+    "case_id": "SMISHX-1040",
+    "language": "en",
+    "text": "[email\u00c2\u00a0protected] / no subject / We could not find the correct info provided for your item: https://qi.lv/A5=\r\n Y",
+    "label": 1,
+    "label_provenance": "published_two_researcher_manual_relabeling_with_disagreement_resolution",
+    "usage": "held_out_from_training_do_not_train"
+  },
+  {
+    "case_id": "SMISHX-1048",
+    "language": "en",
+    "text": "ep.com / U-S-P-S ID 52127 / Your item was not found. https://qi.lv/xFj",
+    "label": 1,
+    "label_provenance": "published_two_researcher_manual_relabeling_with_disagreement_resolution",
+    "usage": "held_out_from_training_do_not_train"
+  },
+  {
+    "case_id": "SMISHX-1105",
+    "language": "en",
+    "text": "[email\u00c2\u00a0protected] / Secure message from TD / Use the bleow url to regarding your account, (https://qi.lv/L96)\r\n ",
+    "label": 1,
+    "label_provenance": "published_two_researcher_manual_relabeling_with_disagreement_resolution",
+    "usage": "held_out_from_training_do_not_train"
+  },
+  {
+    "case_id": "SMISHX-1113",
+    "language": "en",
+    "text": " / U-S-P-S ID 75275 / We could not find the correct info provided for your item: https://qi.lv/DyW",
+    "label": 1,
+    "label_provenance": "published_two_researcher_manual_relabeling_with_disagreement_resolution",
+    "usage": "held_out_from_training_do_not_train"
+  },
+  {
+    "case_id": "SMISHX-1116",
+    "language": "en",
+    "text": " / no subject / We could not find the correct info provided for your item: https://qi.lv/A5=\r\n Y",
+    "label": 1,
+    "label_provenance": "published_two_researcher_manual_relabeling_with_disagreement_resolution",
+    "usage": "held_out_from_training_do_not_train"
+  },
+  {
+    "case_id": "SMISHX-1145",
+    "language": "en",
+    "text": "[email\u00c2\u00a0protected] / no subject / Your item was not found. https://qi.lv/PQZ",
+    "label": 1,
+    "label_provenance": "published_two_researcher_manual_relabeling_with_disagreement_resolution",
+    "usage": "held_out_from_training_do_not_train"
+  },
+  {
+    "case_id": "SMISHX-1147",
+    "language": "en",
+    "text": "\r\n [email\u00c2\u00a0protected] / \"WFAlert-ID#0641\" / We now need to confirm some of your information:\r\n https://qi.lv/F0i\r\n Thank You\r\n ",
+    "label": 1,
+    "label_provenance": "published_two_researcher_manual_relabeling_with_disagreement_resolution",
+    "usage": "held_out_from_training_do_not_train"
+  },
+  {
+    "case_id": "SMISHX-1154",
+    "language": "en",
+    "text": "Online  Transport  wants  to  speak  w/  you  about  a  driving  position!  Click  here  https://eztxt.net/a59Cvr  to  complete  a  full  application  or  call  866-543-1235  for  more  info.  STOP  to  end",
+    "label": 0,
+    "label_provenance": "published_two_researcher_manual_relabeling_with_disagreement_resolution",
+    "usage": "held_out_from_training_do_not_train"
+  },
+  {
+    "case_id": "SMISHX-1188",
+    "language": "en",
+    "text": " / New.login-IP :127.206.155.1 / We now need to confirm some of your information:\r\n https://qi.lv/I6K\r\n Thank You",
+    "label": 1,
+    "label_provenance": "published_two_researcher_manual_relabeling_with_disagreement_resolution",
+    "usage": "held_out_from_training_do_not_train"
+  },
+  {
+    "case_id": "SMISHX-1194",
+    "language": "en",
+    "text": "\r\n Hornady Transportation is interested in talking w/ you! Please fill out a\r\n complete application by clicking https://eztxt.net/q2OmUv or call\r\n 800-441-4271 for more info. STOP to end\r\n  ",
+    "label": 0,
+    "label_provenance": "published_two_researcher_manual_relabeling_with_disagreement_resolution",
+    "usage": "held_out_from_training_do_not_train"
+  }
+]
