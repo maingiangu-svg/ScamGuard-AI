@@ -13,7 +13,7 @@ from round2_experiment import text_input
 
 ROOT = Path(__file__).resolve().parent
 AUDIT = ROOT / 'data/prepared/integrity_audit_2026-10-26-final'
-OUTPUT = ROOT / 'data/prepared/repaired_training_2026-10-26-final'
+OUTPUT = ROOT / 'data/prepared/repaired_training_2026-10-26-icann'
 
 
 def content_key(row):
@@ -23,6 +23,7 @@ def content_key(row):
 
 def group_keys(row):
     keys = ['domain:' + root for root in row['roots'] if root]
+    keys += ['icann_domain:' + root for root in row.get('icann_roots', []) if root]
     for field in ('template', 'source_group', 'campaign_id'):
         if row.get(field):
             keys.append(field + ':' + row[field])
@@ -57,7 +58,7 @@ def require_isolation(rows, edges=(), require_campaigns=False, require_expert=Fa
             'registered_domain_isolation': 'PASS', 'content_group_isolation': 'PASS',
             'overlap_counts_by_pair': {a + '/' + b: {kind: len({key for key, partitions in roles.items()
                                                               if key.startswith(kind + ':') and {a, b} <= partitions})
-                                                    for kind in ('domain', 'sms', 'url', 'template', 'source_group', 'campaign_id')}
+                                                    for kind in ('domain', 'icann_domain', 'sms', 'url', 'template', 'source_group', 'campaign_id')}
                                        for a, b in (('train', 'validation'), ('train', 'test'), ('validation', 'test'))},
             'campaign_independence_proven': bool(campaigns), 'all_labels_expert_verified': bool(experts)}
 
@@ -144,7 +145,9 @@ def prepare(output=OUTPUT):
         if sha(path) != expected:
             raise ValueError('Pinned input mismatch: ' + str(path))
     verify_sources()
-    domain = RegisteredDomains((REF / 'public_suffix_list.dat').read_text(encoding='utf-8'))
+    psl = (REF / 'public_suffix_list.dat').read_text(encoding='utf-8')
+    domain = RegisteredDomains(psl)
+    icann = RegisteredDomains(psl.split('// ===BEGIN PRIVATE DOMAINS===')[0])
     tables = source_tables()
     with (ROOT / 'data/phishing_site_urls.csv').open(encoding='utf-8-sig', newline='') as stream:
         originals = list(csv.DictReader(stream))
@@ -160,6 +163,7 @@ def prepare(output=OUTPUT):
         content = row.get('raw_text', row.get('url'))
         row['hosts'], row['ambiguous_host_candidates'] = audit_domain_hosts(content, domain)
         row['roots'] = sorted({domain(h) for h in row['hosts']})
+        row['icann_roots'] = sorted({icann(h) for h in row['hosts']})
         row['expert_verified'] = False
         if row['cohort'] == 'processed_sms':
             row['source_trace'] = check_sms_trace(row, tables)
@@ -225,12 +229,16 @@ def verify(output=OUTPUT, require_campaigns=False, require_expert=False):
         if sha(ROOT / name.replace('\\', '/')) != expected:
             raise ValueError('Pinned input checksum mismatch: ' + name)
     rows = read_jsonl(output / 'all_rows.jsonl')
-    domain = RegisteredDomains((REF / 'public_suffix_list.dat').read_text(encoding='utf-8'))
+    psl = (REF / 'public_suffix_list.dat').read_text(encoding='utf-8')
+    domain = RegisteredDomains(psl)
+    icann = RegisteredDomains(psl.split('// ===BEGIN PRIVATE DOMAINS===')[0])
     for row in rows:
         content = row.get('raw_text', row.get('url'))
         hosts, ambiguous = audit_domain_hosts(content, domain)
         if row['roots'] != sorted({domain(h) for h in hosts}) or row['ambiguous_host_candidates'] != ambiguous:
             raise ValueError('Domain evidence does not match raw content')
+        if row['icann_roots'] != sorted({icann(h) for h in hosts}):
+            raise ValueError('ICANN owner domain evidence does not match raw content')
         if row['cohort'] == 'processed_sms' and (row['model_input'] != text_input(content) or row['template'] != template_signature(content)):
             raise ValueError('SMS grouping evidence does not match raw content')
     edges = json.loads((output / 'similarity_edges.json').read_text(encoding='utf-8'))

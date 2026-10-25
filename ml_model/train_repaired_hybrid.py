@@ -16,7 +16,7 @@ from modeling import url_model
 from repair_training_data import OUTPUT, ROOT, read_jsonl, sha, verify, write_json, write_jsonl
 from round2_experiment import training_model, text_input
 
-RUN_ID = 'hybrid-isolated-20261026'
+RUN_ID = 'hybrid-isolated-20261026-icann'
 
 
 def fit(directory):
@@ -48,7 +48,8 @@ def fit(directory):
                 'target': 'SMS project smishing scope; URL upstream good/bad scope',
                 'text_label_provenance': 'Mixed source-human, inherited source, AI review and user scope decisions; not all expert verified',
                 'url_label_provenance': 'Inherited source good/bad labels; not independently expert verified',
-                'registered_domain_isolation': True, 'campaign_independence_proven': False,
+                'registered_domain_isolation': True, 'icann_owner_domain_isolation': True,
+                'campaign_independence_proven': False,
                 'all_labels_expert_verified': False, 'known_label_conflicts_fitted': 0,
                 'heldout_or_quarantined_rows_fitted': 0, 'hyperparameters_retuned': False,
                 'training_manifest_sha256': sha(directory / 'frozen.json')}

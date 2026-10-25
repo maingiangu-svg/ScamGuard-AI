@@ -14,6 +14,13 @@ def row(case, partition='train', roots=(), label=0, **extra):
 
 
 class RepairTrainingDataTests(unittest.TestCase):
+    def test_private_hosting_tenants_also_respect_icann_owner_domain(self):
+        a = row('tenant-a', roots=['a.blogspot.com'])
+        b = row('tenant-b', 'test', ['b.blogspot.com'])
+        a['icann_roots'] = b['icann_roots'] = ['blogspot.com']
+        result, _ = repair_rows([a, b])
+        self.assertEqual([r['partition'] for r in result], ['quarantine', 'test'])
+
     def test_transitive_domain_bridge_is_removed_from_train_across_branches(self):
         rows = [row('a', roots=['one.com', 'two.com']), row('b', roots=['two.com']),
                 row('test', 'test', ['one.com']), row('safe', roots=['other.com'])]

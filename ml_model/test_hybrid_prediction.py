@@ -110,17 +110,48 @@ class HybridPredictionTests(unittest.TestCase):
             with self.subTest(args=str(args)[:80]):
                 self.assertFalse(live.classify(**args)["model_ready"])
 
-    def test_packaged_heads_preserve_source_scores_on_smoke_inputs(self):
+    def test_historical_packager_preserves_source_scores_without_replacing_active_model(self):
+        import pickle
+        import package_hybrid
+        from predict import probability
         from predict import classify as bundle_classify
         from predict_processed import classify as processed_classify
 
         text = "Hey, are you free for lunch tomorrow?"
         url = "https://qi.lv/F0i"
-        sms, urls = live.classify(text=text), live.classify(url=url)
-        self.assertTrue(sms["model_ready"])
-        self.assertTrue(urls["model_ready"])
-        self.assertEqual(sms["text_result"]["score"], processed_classify(text=text)["text_result"]["score"])
-        self.assertEqual(urls["url_result"]["score"], bundle_classify(url=url)["url_result"]["score"])
+        with tempfile.TemporaryDirectory(dir=live.ROOT / 'models') as directory:
+            output = Path(directory) / 'historical.pkl'
+            with patch.object(package_hybrid, 'OUTPUT', output):
+                package_hybrid.package()
+            models = pickle.loads(output.read_bytes())
+        self.assertEqual(float(probability(models['sms']['model'], [text_input(text)])[0]),
+                         processed_classify(text=text)["text_result"]["score"])
+        self.assertEqual(float(probability(models['url']['model'], [url])[0]),
+                         bundle_classify(url=url)["url_result"]["score"])
+
+    def test_active_repaired_weights_are_bound_to_training_manifests(self):
+        manifest = json.loads(live.MANIFEST.read_text(encoding='utf-8'))
+        models = live.load_bundle()
+        self.assertEqual(models['training'], manifest['training'])
+        self.assertEqual(models['training']['run_id'], 'hybrid-isolated-20261026-icann')
+        self.assertEqual(models['training']['text_training_samples'], 3800)
+        self.assertEqual(models['training']['url_training_samples'], 32777)
+        self.assertEqual(models['training']['heldout_or_quarantined_rows_fitted'], 0)
+        self.assertTrue(models['training']['registered_domain_isolation'])
+        self.assertTrue(models['training']['icann_owner_domain_isolation'])
+        self.assertFalse(models['training']['campaign_independence_proven'])
+        self.assertFalse(models['training']['all_labels_expert_verified'])
+        for branch in ('sms', 'url'):
+            self.assertIn(branch + '_train.jsonl', manifest['dataset_files_sha256'])
+            self.assertEqual(manifest['source_sha256'][branch + '_train'],
+                             manifest['dataset_files_sha256'][branch + '_train.jsonl'])
+
+    def test_historical_packager_cannot_overwrite_the_repaired_default(self):
+        import package_hybrid
+        with patch.object(package_hybrid, 'load_processed_bundle') as loader:
+            with self.assertRaisesRegex(ValueError, 'repaired'):
+                package_hybrid.package()
+            loader.assert_not_called()
 
     def test_helper_checksums_allow_checkout_line_endings_but_reject_code_changes(self):
         manifest = json.loads(live.MANIFEST.read_text(encoding="utf-8"))
@@ -130,7 +161,7 @@ class HybridPredictionTests(unittest.TestCase):
                 source = (live.ROOT / name).read_bytes().replace(b'\r\n', b'\n')
                 (root / name).write_bytes(source.replace(b'\n', b'\r\n'))
             with patch.object(live, "ROOT", root):
-                self.assertEqual(live.load_bundle()["training"]["run_id"], "hybrid-20261025")
+                self.assertEqual(live.load_bundle()["training"], manifest['training'])
                 (root / "preprocess.py").write_bytes(b"changed code")
                 with patch.object(live.pickle, "loads") as unpickle:
                     with self.assertRaisesRegex(ValueError, "preprocessing checksum"):

@@ -1,4 +1,4 @@
-"""Processed SMS + bundle URL; independent supervised decisions, no score fusion."""
+"""Independent supervised SMS and URL heads; manifest-bound weights, no score fusion."""
 import hashlib
 import json
 import os

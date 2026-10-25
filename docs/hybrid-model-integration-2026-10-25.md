@@ -1,5 +1,9 @@
 # Hybrid SMS and URL integration — 2026-10-25
 
+The default fitted artifact was superseded by the supervised refit described in
+[data repair, 2026-10-26](data-repair-2026-10-26.md). The routing contract below
+still applies; the old source scores and sample counts describe the historical fit.
+
 ## Contract
 
 Use the frozen processed SMS estimator (3,857 training messages, threshold

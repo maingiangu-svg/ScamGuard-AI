@@ -18,6 +18,7 @@ def fixture(directory):
             content = f'training sample {i} message' if role == 'train' else f'heldoutsentinel unique {i}'
             rows.append({'case_id': f'{branch}-{i}', 'cohort': cohort, 'partition': role,
                          'roots': [] if branch == 'sms' else [f'{branch}{i}.com'],
+                         'icann_roots': [] if branch == 'sms' else [f'{branch}{i}.com'],
                          'ambiguous_host_candidates': [],
                          'template': template_signature(content) if branch == 'sms' else '',
                          'model_input': content, 'source_group': '', 'label': i % 2,

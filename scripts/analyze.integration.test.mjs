@@ -1,5 +1,8 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+import { readFileSync } from 'node:fs';
+
+const manifest = JSON.parse(readFileSync(new URL('../ml_model/models/hybrid_manifest.json', import.meta.url), 'utf8'));
 
 const origin = process.env.TEST_APP_URL ?? 'http://127.0.0.1:3000';
 let requestId = 0;
@@ -16,9 +19,11 @@ async function analyze(body) {
   assert.equal(result.ml_classifier.model_ready, true);
   assert.equal(result.riskScore, result.ml_classifier.ml_risk_score);
   assert.equal(result.web_intelligence.verified_live, false);
-  assert.equal(result.ml_classifier.training.run_id, 'hybrid-20261025');
-  assert.equal(result.ml_classifier.training.text_training_samples, 3857);
-  assert.equal(result.ml_classifier.training.url_training_samples, 40004);
+  assert.equal(result.ml_classifier.training.run_id, manifest.training.run_id);
+  assert.equal(result.ml_classifier.training.text_training_samples, manifest.training.text_training_samples);
+  assert.equal(result.ml_classifier.training.url_training_samples, manifest.training.url_training_samples);
+  assert.equal(result.ml_classifier.training.registered_domain_isolation, true);
+  assert.equal(result.ml_classifier.training.campaign_independence_proven, false);
   assert.equal(result.ml_classifier.training.paired_training_samples, 0);
   return result;
 }
@@ -59,17 +64,18 @@ test('a URL-only request is scored by the URL estimator, with no forced whitelis
   assert.equal(result.ml_classifier.model_prediction_label, Number(result.ml_classifier.url_result.score >= .5));
 });
 
-test('reported suspicious link uses the bundle URL head and preserves its score', async () => {
+test('reported suspicious link uses the repaired URL head with the declared alert policy', async () => {
   const result = await analyze({textInput:'https://qi.lv/F0i'});
   assert.equal(result.ml_classifier.text_result, null);
-  assert.equal(result.ml_classifier.url_result.model_id, '20261025T152344Z:url');
-  assert.equal(result.riskScore, 89);
+  assert.equal(result.ml_classifier.url_result.model_id, manifest.training.run_id + ':url');
+  assert.equal(result.riskScore, Math.round(result.ml_classifier.url_result.score * 100));
+  assert.ok(result.riskScore >= 80);
   assert.equal(result.riskLevel, 'HIGH');
 });
 
 test('a risky link independently requires review when the message is below the review band', async () => {
   const result = await analyze({textInput:'Hey, are you free for lunch tomorrow?', url:'https://qi.lv/F0i'});
-  assert.equal(result.ml_classifier.text_result.model_id, 'processed-20261025:sms');
+  assert.equal(result.ml_classifier.text_result.model_id, manifest.training.run_id + ':sms');
   assert.ok(result.riskScore < 30);
   assert.equal(result.riskScore, Math.round(result.ml_classifier.text_result.score * 100));
   assert.equal(result.ml_classifier.model_prediction_label, 0);

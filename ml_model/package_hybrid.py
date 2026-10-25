@@ -14,6 +14,11 @@ URL_SHA256 = "7c6a0da47fe331976f36f76798a581dcaed7440f884230bac7a74a10cba906c4"
 
 
 def package():
+    active_manifest = ROOT / 'models/hybrid_manifest.json'
+    if OUTPUT == ROOT / 'models/hybrid_bundle.pkl' and active_manifest.exists():
+        active = json.loads(active_manifest.read_text(encoding='utf-8'))
+        if active['training']['run_id'].startswith('hybrid-isolated-'):
+            raise ValueError('Refusing to overwrite the repaired model with historical fitted heads')
     sources = {"sms": (SMS_SOURCE, EXPECTED_SHA256), "url": (URL_SOURCE, URL_SHA256)}
     for source, expected in sources.values():
         if hashlib.sha256(source.read_bytes()).hexdigest() != expected:

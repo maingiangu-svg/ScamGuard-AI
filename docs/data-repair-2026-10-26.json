@@ -1,0 +1,391 @@
+{
+  "date": "2026-10-26",
+  "operation": "applied_quarantine_and_group_isolation",
+  "before": {
+    "processed_sms": {
+      "train": 3857,
+      "validation": 962,
+      "test": 39
+    },
+    "bundle_url": {
+      "test": 9996,
+      "train": 40004
+    }
+  },
+  "after": {
+    "sms": {
+      "train": {
+        "rows": 3800,
+        "labels": {
+          "0": 3616,
+          "1": 184
+        },
+        "label_provenance": {
+          "upstream_ham_or_non_smishing_spam": 2971,
+          "published_two_researcher_manual_relabeling_with_disagreement_resolution": 484,
+          "ai_semantic_review": 343,
+          "user_scope_decision": 2
+        }
+      },
+      "validation": {
+        "rows": 945,
+        "labels": {
+          "1": 49,
+          "0": 896
+        },
+        "label_provenance": {
+          "ai_semantic_review": 94,
+          "upstream_ham_or_non_smishing_spam": 822,
+          "published_two_researcher_manual_relabeling_with_disagreement_resolution": 29
+        }
+      },
+      "test": {
+        "rows": 38,
+        "labels": {
+          "0": 14,
+          "1": 24
+        },
+        "label_provenance": {
+          "published_two_researcher_manual_relabeling_with_disagreement_resolution": 38
+        }
+      },
+      "quarantine": {
+        "rows": 75,
+        "labels": {
+          "0": 65,
+          "1": 10
+        },
+        "label_provenance": {
+          "published_two_researcher_manual_relabeling_with_disagreement_resolution": 15,
+          "ai_semantic_review": 11,
+          "upstream_ham_or_non_smishing_spam": 49
+        }
+      }
+    },
+    "url": {
+      "train": {
+        "rows": 32777,
+        "labels": {
+          "0": 24974,
+          "1": 7803
+        },
+        "label_provenance": {
+          "inherited_url_source_not_expert_verified": 32777
+        }
+      },
+      "validation": {
+        "rows": 0,
+        "labels": {},
+        "label_provenance": {}
+      },
+      "test": {
+        "rows": 9935,
+        "labels": {
+          "1": 2230,
+          "0": 7705
+        },
+        "label_provenance": {
+          "inherited_url_source_not_expert_verified": 9935
+        }
+      },
+      "quarantine": {
+        "rows": 7288,
+        "labels": {
+          "0": 5912,
+          "1": 1376
+        },
+        "label_provenance": {
+          "inherited_url_source_not_expert_verified": 7288
+        }
+      }
+    }
+  },
+  "quarantine_reasons": {
+    "ambiguous_domain_mention": 235,
+    "reference_label_conflict": 14,
+    "connected_group_reserved_for_validation": 3,
+    "connected_group_reserved_for_test": 7046,
+    "malformed_or_ambiguous_url": 176
+  },
+  "proof": {
+    "cross_partition_keys": [],
+    "cross_partition_similarity_edges": 0,
+    "registered_domain_isolation": "PASS",
+    "content_group_isolation": "PASS",
+    "overlap_counts_by_pair": {
+      "train/validation": {
+        "domain": 0,
+        "icann_domain": 0,
+        "sms": 0,
+        "url": 0,
+        "template": 0,
+        "source_group": 0,
+        "campaign_id": 0
+      },
+      "train/test": {
+        "domain": 0,
+        "icann_domain": 0,
+        "sms": 0,
+        "url": 0,
+        "template": 0,
+        "source_group": 0,
+        "campaign_id": 0
+      },
+      "validation/test": {
+        "domain": 0,
+        "icann_domain": 0,
+        "sms": 0,
+        "url": 0,
+        "template": 0,
+        "source_group": 0,
+        "campaign_id": 0
+      }
+    },
+    "campaign_independence_proven": false,
+    "all_labels_expert_verified": false,
+    "similarity_threshold": 0.8,
+    "similarity_edges_checked": 539,
+    "label_changes": 0,
+    "new_expert_labels": 0,
+    "known_reference_conflicts_retained": 0,
+    "holdout_promoted_to_training": 0,
+    "campaign_limit": "Missing verified campaign IDs/actor/destination/timestamps; content groups are proxies only.",
+    "evaluation_status": "Reused historical holdouts; not a new untouched benchmark."
+  },
+  "psl_sha256": "0232f4df0831911356e8ee1f4d5c3b6b12c0ed3f6bd66b0f81c8ab5d3d49e9ca",
+  "protocol": {
+    "sms": {
+      "variant": "word_char",
+      "threshold": 0.65,
+      "weights": "vi=3, source-human=2, other=1"
+    },
+    "url": {
+      "estimator": "modeling.url_model",
+      "threshold": 0.5
+    },
+    "hyperparameter_or_threshold_selection": false,
+    "fit_on_train_only": true
+  },
+  "active_model_sha256": "9a49b7278cfb1b9da00f8ebc6970653a9de3320f3037db3ee190109926d1bd3a",
+  "evaluation": {
+    "run_id": "hybrid-isolated-20261026-icann",
+    "bundle_sha256": "9a49b7278cfb1b9da00f8ebc6970653a9de3320f3037db3ee190109926d1bd3a",
+    "proof": {
+      "cross_partition_keys": [],
+      "cross_partition_similarity_edges": 0,
+      "registered_domain_isolation": "PASS",
+      "content_group_isolation": "PASS",
+      "overlap_counts_by_pair": {
+        "train/validation": {
+          "domain": 0,
+          "icann_domain": 0,
+          "sms": 0,
+          "url": 0,
+          "template": 0,
+          "source_group": 0,
+          "campaign_id": 0
+        },
+        "train/test": {
+          "domain": 0,
+          "icann_domain": 0,
+          "sms": 0,
+          "url": 0,
+          "template": 0,
+          "source_group": 0,
+          "campaign_id": 0
+        },
+        "validation/test": {
+          "domain": 0,
+          "icann_domain": 0,
+          "sms": 0,
+          "url": 0,
+          "template": 0,
+          "source_group": 0,
+          "campaign_id": 0
+        }
+      },
+      "campaign_independence_proven": false,
+      "all_labels_expert_verified": false
+    },
+    "holdouts_reused_from_prior_experiments": true,
+    "new_independent_benchmark": false,
+    "all_labels_expert_verified": false,
+    "metrics": {
+      "sms_validation": {
+        "rows": 945,
+        "threshold": 0.65,
+        "labels": {
+          "1": 49,
+          "0": 896
+        },
+        "confusion_matrix_tn_fp_fn_tp": [
+          890,
+          6,
+          3,
+          46
+        ],
+        "precision": 0.8846153846153846,
+        "recall": 0.9387755102040817,
+        "f1": 0.9108910891089109,
+        "by_label_provenance": {
+          "ai_semantic_review": {
+            "rows": 94,
+            "threshold": 0.65,
+            "labels": {
+              "1": 31,
+              "0": 63
+            },
+            "confusion_matrix_tn_fp_fn_tp": [
+              60,
+              3,
+              3,
+              28
+            ],
+            "precision": 0.9032258064516129,
+            "recall": 0.9032258064516129,
+            "f1": 0.9032258064516129
+          },
+          "published_two_researcher_manual_relabeling_with_disagreement_resolution": {
+            "rows": 29,
+            "threshold": 0.65,
+            "labels": {
+              "0": 11,
+              "1": 18
+            },
+            "confusion_matrix_tn_fp_fn_tp": [
+              11,
+              0,
+              0,
+              18
+            ],
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0
+          },
+          "upstream_ham_or_non_smishing_spam": {
+            "rows": 822,
+            "threshold": 0.65,
+            "labels": {
+              "0": 822
+            },
+            "confusion_matrix_tn_fp_fn_tp": [
+              819,
+              3,
+              0,
+              0
+            ],
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0
+          }
+        },
+        "distinct_repair_groups": 860
+      },
+      "sms_test": {
+        "rows": 38,
+        "threshold": 0.65,
+        "labels": {
+          "0": 14,
+          "1": 24
+        },
+        "confusion_matrix_tn_fp_fn_tp": [
+          12,
+          2,
+          1,
+          23
+        ],
+        "precision": 0.92,
+        "recall": 0.9583333333333334,
+        "f1": 0.9387755102040817,
+        "by_label_provenance": {
+          "published_two_researcher_manual_relabeling_with_disagreement_resolution": {
+            "rows": 38,
+            "threshold": 0.65,
+            "labels": {
+              "0": 14,
+              "1": 24
+            },
+            "confusion_matrix_tn_fp_fn_tp": [
+              12,
+              2,
+              1,
+              23
+            ],
+            "precision": 0.92,
+            "recall": 0.9583333333333334,
+            "f1": 0.9387755102040817
+          }
+        },
+        "distinct_repair_groups": 11
+      },
+      "url_test": {
+        "rows": 9935,
+        "threshold": 0.5,
+        "labels": {
+          "1": 2230,
+          "0": 7705
+        },
+        "confusion_matrix_tn_fp_fn_tp": [
+          7570,
+          135,
+          616,
+          1614
+        ],
+        "precision": 0.9228130360205832,
+        "recall": 0.7237668161434978,
+        "f1": 0.8112591103292285,
+        "by_label_provenance": {
+          "inherited_url_source_not_expert_verified": {
+            "rows": 9935,
+            "threshold": 0.5,
+            "labels": {
+              "1": 2230,
+              "0": 7705
+            },
+            "confusion_matrix_tn_fp_fn_tp": [
+              7570,
+              135,
+              616,
+              1614
+            ],
+            "precision": 0.9228130360205832,
+            "recall": 0.7237668161434978,
+            "f1": 0.8112591103292285
+          }
+        },
+        "distinct_repair_groups": 5345
+      }
+    }
+  },
+  "training_frozen_sha256": "9c5cdc3c5aa0e20f191efae731b4f485c13eb8e7c9df93c33dfb5c9f72a7e747",
+  "download_archive_sha256": "c4ccd089299b397149615c4c2775d7442bb4ead7e0a6659906ab590ce96e565a",
+  "verification": {
+    "python_tests_passed": 79,
+    "assessment_tests_passed": 16,
+    "api_tests_passed": 10,
+    "missing_model_api_tests_passed": 2,
+    "lint_passed": true,
+    "strict_campaign_gate_exit": 2,
+    "strict_expert_label_gate_exit": 2,
+    "archive_offline_check_passed": true,
+    "archive_http_status": 200,
+    "archive_download_sha256_matches": true,
+    "mutations": {
+      "in_memory_mutations": {
+        "missing_domain_unions": {
+          "detected": true,
+          "failures": 1,
+          "errors": 5
+        },
+        "missing_reference_quarantine": {
+          "detected": true,
+          "failures": 1,
+          "errors": 0
+        }
+      },
+      "source_unchanged": true
+    },
+    "build_passed": true,
+    "standalone_model_sha256_matches": true
+  }
+}
