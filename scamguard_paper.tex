@@ -12,32 +12,22 @@
 \usepackage{booktabs}
 \usepackage{multirow}
 \usepackage{url}
-\usepackage{balance}
-
-\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
-    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 
 \begin{document}
 
 \title{ScamGuard: A Reproducible Local Dual-Branch Screening Framework with Interaction Stacking Meta-Fusion for Smishing and Phishing Defense}
 
-% ─── Author Information ───────────────────────────────────────────────────────
-\author{
-    \IEEEauthorblockN{Thanh Duong Nguyen\IEEEauthorrefmark{1}, Bao Duy Le\IEEEauthorrefmark{1}, Van Chien Tran\IEEEauthorrefmark{1}}
-    \IEEEauthorblockA{\IEEEauthorrefmark{1}\textit{Faculty of Information Technology \& Cybersecurity Research Group}}
-    \IEEEauthorblockA{\textit{Target Conference: International Conference on Applied Artificial Intelligence (ICAI 2026)}}
-    \IEEEauthorblockA{Corresponding Author Email: duong.research.contact@gmail.com}
-}
+% ─── Author Information (IEEEtran Single-Block Compliant) ─────────────────────
+\author{\IEEEauthorblockN{Thanh Duong Nguyen, Bao Duy Le, Van Chien Tran}
+\IEEEauthorblockA{\textit{Faculty of Information Technology \& Cybersecurity Research Group}\\
+\textit{Target Conference: International Conference on Applied Artificial Intelligence (ICAI 2026)}\\
+Email: duong.research.contact@gmail.com}}
 
 \maketitle
 
-% ─── Abstract ─────────────────────────────────────────────────────────────────
+% ─── Abstract (Single Contiguous Paragraph for IEEEtran) ───────────────────────
 \begin{abstract}
-Mobile short message service phishing (smishing) and fraudulent hyperlink redirection represent a rapidly escalating threat to consumer digital privacy, personal credentials, and banking security. While contemporary cloud-hosted Large Language Models (LLMs) demonstrate impressive semantic reasoning, deploying monolithic foundation models for real-time mobile traffic inspection introduces prohibitive per-request latency, recurring operational API expenditure, and severe privacy exposure. In this work, we present \textbf{ScamGuard}, a fully local, reproducible screening baseline engineered for high-throughput edge inspection without reliance on external cloud inference. 
-
-ScamGuard decouples incoming message inspection into two specialized processing branches: (1) a natural language text discriminator pairing sublinear word-level Term Frequency-Inverse Document Frequency (TF-IDF) n-gram representations with class-balanced Logistic Regression, and (2) a static hyperlink discriminator integrating 13 lexical, structural, and information-theoretic domain features with character-level subword TF-IDF representations powered by Histogram-Based Gradient Boosted Decision Trees (HistGradientBoosting). To effectively reconcile textual social engineering narratives with embedded hyperlink reputation without generating synthetic pair artifacts, we formalize a logistic meta-learner incorporating an explicit second-order interaction cross-product. 
-
-We train and rigorously benchmark ScamGuard across large-scale international English smishing corpora (including Mendeley SMS Phishing and the USENIX SOUPS SmishX dataset) alongside a 549,346-record global phishing URL repository, enforcing strict zero-leakage grouped holdouts based on Public Suffix List (PSL) registrable domains and normalized text hashing. On an untouched test holdout of 14,799 SMS messages, the text branch achieves an Accuracy of \textbf{93.82\%}, an F1-score of \textbf{0.9055}, and a ROC-AUC of \textbf{0.9892}. On a disjoint 9,996-sample external URL holdout, the hyperlink branch achieves an Accuracy of \textbf{92.11\%}, an F1-score of \textbf{0.8031}, and a ROC-AUC of \textbf{0.9627}. On 2,632 real paired messages containing live URLs, the interaction stacking meta-learner attains an F1-score of \textbf{0.9299}, outperforming single-branch baselines and conventional heuristic max-fusion while operating entirely on local CPU hardware with sub-50 millisecond inference latency.
+Mobile short message service phishing (smishing) and fraudulent hyperlink redirection represent a rapidly escalating threat to consumer digital privacy, personal credentials, and banking security. While contemporary cloud-hosted Large Language Models (LLMs) demonstrate impressive semantic reasoning, deploying monolithic foundation models for real-time mobile traffic inspection introduces prohibitive per-request latency, recurring operational API expenditure, and severe privacy exposure. In this work, we present \textbf{ScamGuard}, a fully local, reproducible screening baseline engineered for high-throughput edge inspection without reliance on external cloud inference. ScamGuard decouples incoming message inspection into two specialized processing branches: (1) a natural language text discriminator pairing sublinear word-level Term Frequency-Inverse Document Frequency (TF-IDF) n-gram representations with class-balanced Logistic Regression, and (2) a static hyperlink discriminator integrating 13 lexical, structural, and information-theoretic domain features with character-level subword TF-IDF representations powered by Histogram-Based Gradient Boosted Decision Trees (HistGradientBoosting). To effectively reconcile textual social engineering narratives with embedded hyperlink reputation without generating synthetic pair artifacts, we formalize a logistic meta-learner incorporating an explicit second-order interaction cross-product. We train and rigorously benchmark ScamGuard across large-scale international English smishing corpora (including Mendeley SMS Phishing and the USENIX SOUPS SmishX dataset) alongside a 549,346-record global phishing URL repository, enforcing strict zero-leakage grouped holdouts based on Public Suffix List (PSL) registrable domains and normalized text hashing. On an untouched test holdout of 14,799 SMS messages, the text branch achieves an Accuracy of \textbf{93.82\%}, an F1-score of \textbf{0.9055}, and a ROC-AUC of \textbf{0.9892}. On a disjoint 9,996-sample external URL holdout, the hyperlink branch achieves an Accuracy of \textbf{92.11\%}, an F1-score of \textbf{0.8031}, and a ROC-AUC of \textbf{0.9627}. On 2,632 real paired messages containing live URLs, the interaction stacking meta-learner attains an F1-score of \textbf{0.9299}, outperforming single-branch baselines and conventional heuristic max-fusion while operating entirely on local CPU hardware with sub-50 millisecond inference latency.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -46,7 +36,7 @@ Smishing Detection, Phishing URL Screening, Interaction Stacking, Gradient Boost
 
 % ─── Section 1: Introduction ──────────────────────────────────────────────────
 \section{Introduction}
-Social engineering scams delivered via Short Message Service (SMS), collectively designated as \emph{smishing}, and deceptive hyperlink redirection constitute the predominant entry vector for unauthorized financial transfers, credential harvesting, and identity theft globally \cite{apwg2025}. According to industry surveillance reports, losses resulting from mobile telecommunication impersonation fraud exceeded billions of dollars globally in 2024 alone \cite{apwg2025}. Threat syndicates leverage sophisticated psychological exploitation techniques—most notably manufactured urgency, banking suspension alerts, parcel delivery failures, and lottery notifications—to coerce victims into clicking embedded links leading to deceptive landing portals.
+Social engineering scams delivered via Short Message Service (SMS), collectively designated as \emph{smishing}, and deceptive hyperlink redirection constitute the predominant entry vector for unauthorized financial transfers, credential harvesting, and identity theft globally \cite{apwg2025}. According to industry surveillance reports, losses resulting from mobile telecommunication impersonation fraud exceeded billions of dollars globally in 2024 alone \cite{apwg2025}. Threat syndicates leverage sophisticated psychological exploitation techniques---most notably manufactured urgency, banking suspension alerts, parcel delivery failures, and lottery notifications---to coerce victims into clicking embedded links leading to deceptive landing portals.
 
 Recently, the computer security research community has explored Large Language Models (LLMs) and Vision-Language Models (VLMs) to analyze suspicious communications \cite{berjawi2026, shaikh2026}. While foundation models provide compelling qualitative reasoning, relying exclusively on remote, cloud-hosted neural architectures for real-time endpoint traffic inspection encounters several critical operational barriers:
 \begin{enumerate}
@@ -55,7 +45,7 @@ Recently, the computer security research community has explored Large Language M
     \item \textbf{Data Contamination and Synthetic Leakage:} A concerning proportion of existing academic smishing literature relies on randomly split evaluation partitions, where identical scam templates or shared domain hostnames span across both training and test subsets, artificially inflating reported empirical performance. Furthermore, many multimodal baselines construct synthetic text-URL pairs, introducing unnatural artifacts that fail to reflect real-world campaign distributions.
 \end{enumerate}
 
-To address these challenges, we introduce \textbf{ScamGuard}, an edge-oriented, fully offline screening framework designed for rapid, reproducible mobile scam triage. ScamGuard adopts an asymmetric dual-branch topology: a word-level linear classifier modeling social engineering linguistic cues, and a gradient-boosted decision tree pipeline modeling URL structural topology and character distributions. base branch probabilities are unified through a second-order logistic stacking meta-learner trained strictly on real paired messages.
+To address these challenges, we introduce \textbf{ScamGuard}, an edge-oriented, fully offline screening framework designed for rapid, reproducible mobile scam triage. ScamGuard adopts an asymmetric dual-branch topology: a word-level linear classifier modeling social engineering linguistic cues, and a gradient-boosted decision tree pipeline modeling URL structural topology and character distributions. Base branch probabilities are unified through a second-order logistic stacking meta-learner trained strictly on real paired messages.
 
 \textbf{Core Contributions:}
 \begin{itemize}
@@ -75,7 +65,7 @@ Hyperlink security analysis generally branches into dynamic content rendering (e
 
 % ─── Section 3: System Architecture and Methodology ───────────────────────────
 \section{System Architecture and Methodology}
-The ScamGuard processing pipeline operates across three interconnected stages: (1) Deterministic Preprocessing and Entity Canonicalization, (2) Specialized Dual-Branch Feature Extraction, and (3) Interaction Stacking Meta-Fusion. Fig.~\ref{fig:architecture} illustrates the structural flow.
+The ScamGuard processing pipeline operates across three interconnected stages: (1) Deterministic Preprocessing and Entity Canonicalization, (2) Specialized Dual-Branch Feature Extraction, and (3) Interaction Stacking Meta-Fusion.
 
 \subsection{Deterministic Preprocessing and Entity Canonicalization}
 To guarantee identical representations across training and local runtime inference, raw input strings undergo a deterministic 5-stage transformation pipeline:
