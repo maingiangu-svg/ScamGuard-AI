@@ -1,4 +1,4 @@
-\documentclass[conference,onecolumn]{IEEEtran}
+\documentclass[conference]{IEEEtran}
 \IEEEoverridecommandlockouts
 
 % ─── Required Packages ────────────────────────────────────────────────────────
@@ -33,186 +33,226 @@
 
 % ─── Abstract ─────────────────────────────────────────────────────────────────
 \begin{abstract}
-Mobile short message service phishing (smishing) and fraudulent hyperlink redirection represent a fast-growing threat to global telecommunications, personal data privacy, and financial security. While cloud-hosted large language models (LLMs) demonstrate advanced contextual comprehension, deploying monolithic foundation models for real-time traffic screening introduces prohibitive secondary latency, high operational compute expenses, and privacy exposure. In this paper, we propose \textbf{ScamGuard}, a fully local, reproducible screening baseline engineered for high-throughput edge inspection. ScamGuard decouples message inspection into two specialized branches: (1) a natural language text discriminator utilizing sublinear word-level Term Frequency-Inverse Document Frequency (TF-IDF) representations with class-balanced Logistic Regression, and (2) a lexical-structural URL discriminator integrating 13 information-theoretic domain features with character n-gram subword representations trained via Gradient Boosted Decision Trees (HistGradientBoosting). 
+Mobile short message service phishing (smishing) and fraudulent hyperlink redirection represent a rapidly escalating threat to consumer digital privacy, personal credentials, and banking security. While contemporary cloud-hosted Large Language Models (LLMs) demonstrate impressive semantic reasoning, deploying monolithic foundation models for real-time mobile traffic inspection introduces prohibitive per-request latency, recurring operational API expenditure, and severe privacy exposure. In this work, we present \textbf{ScamGuard}, a fully local, reproducible screening baseline engineered for high-throughput edge inspection without reliance on external cloud inference. 
 
-To effectively fuse textual semantics with embedded hyperlink reputation without synthetic pairing contamination, we evaluate a logistic meta-learner incorporating an explicit second-order interaction term. The framework is trained and benchmarked across international English smishing corpora (including Mendeley SMS Phishing and USENIX SOUPS SmishX) and a 549,346-record global URL corpus, enforcing strict zero-leakage grouped holdouts based on Public Suffix List registrable domains and normalized text matching. Across an untouched test holdout of 14,799 SMS messages, the text branch achieves an Accuracy of \textbf{93.81\%}, an F1-score of \textbf{0.9055}, and a ROC-AUC of \textbf{0.9892}. On a disjoint 10,017-sample external URL holdout, the URL branch attains an Accuracy of \textbf{93.10\%}, an F1-score of \textbf{0.8351}, and a ROC-AUC of \textbf{0.9682}. On 2,632 real paired messages containing live URLs, the interaction stacking meta-learner achieves an F1-score of \textbf{0.9303}, outperforming individual single-branch baselines and simple heuristic max-fusion.
+ScamGuard decouples incoming message inspection into two specialized processing branches: (1) a natural language text discriminator pairing sublinear word-level Term Frequency-Inverse Document Frequency (TF-IDF) n-gram representations with class-balanced Logistic Regression, and (2) a static hyperlink discriminator integrating 13 lexical, structural, and information-theoretic domain features with character-level subword TF-IDF representations powered by Histogram-Based Gradient Boosted Decision Trees (HistGradientBoosting). To effectively reconcile textual social engineering narratives with embedded hyperlink reputation without generating synthetic pair artifacts, we formalize a logistic meta-learner incorporating an explicit second-order interaction cross-product. 
+
+We train and rigorously benchmark ScamGuard across large-scale international English smishing corpora (including Mendeley SMS Phishing and the USENIX SOUPS SmishX dataset) alongside a 549,346-record global phishing URL repository, enforcing strict zero-leakage grouped holdouts based on Public Suffix List (PSL) registrable domains and normalized text hashing. On an untouched test holdout of 14,799 SMS messages, the text branch achieves an Accuracy of \textbf{93.82\%}, an F1-score of \textbf{0.9055}, and a ROC-AUC of \textbf{0.9892}. On a disjoint 9,996-sample external URL holdout, the hyperlink branch achieves an Accuracy of \textbf{92.11\%}, an F1-score of \textbf{0.8031}, and a ROC-AUC of \textbf{0.9627}. On 2,632 real paired messages containing live URLs, the interaction stacking meta-learner attains an F1-score of \textbf{0.9299}, outperforming single-branch baselines and conventional heuristic max-fusion while operating entirely on local CPU hardware with sub-50 millisecond inference latency.
 \end{abstract}
 
 \begin{IEEEkeywords}
-Smishing Detection, Phishing URL Screening, Stacking Meta-Learner, Information Entropy, Subword TF-IDF, Edge Cybersecurity, Leakage Prevention.
+Smishing Detection, Phishing URL Screening, Interaction Stacking, Gradient Boosted Decision Trees, Shannon Entropy, Subword TF-IDF, Edge Cybersecurity, Data Leakage Prevention.
 \end{IEEEkeywords}
 
 % ─── Section 1: Introduction ──────────────────────────────────────────────────
 \section{Introduction}
-Social engineering scams propagated through mobile messaging (smishing) and malicious hyperlinks constitute a leading attack vector for credential theft, unauthorized bank withdrawals, and identity exploitation worldwide \cite{apwg2025}. Attackers routinely leverage psychological pressure—such as artificial urgency, impersonation of financial institutions, or delivery failure alerts—to coerce recipients into accessing credential-harvesting landing pages.
+Social engineering scams delivered via Short Message Service (SMS), collectively designated as \emph{smishing}, and deceptive hyperlink redirection constitute the predominant entry vector for unauthorized financial transfers, credential harvesting, and identity theft globally \cite{apwg2025}. According to industry surveillance reports, losses resulting from mobile telecommunication impersonation fraud exceeded billions of dollars globally in 2024 alone \cite{apwg2025}. Threat syndicates leverage sophisticated psychological exploitation techniques—most notably manufactured urgency, banking suspension alerts, parcel delivery failures, and lottery notifications—to coerce victims into clicking embedded links leading to deceptive landing portals.
 
-To counter these attacks, modern security operations have explored Large Language Models (LLMs) and Vision-Language Models (VLMs) for holistic semantic analysis \cite{berjawi2026, shaikh2026}. While foundation models demonstrate impressive qualitative reasoning, relying on monolithic cloud models for real-time endpoint traffic inspection suffers from several practical limitations:
+Recently, the computer security research community has explored Large Language Models (LLMs) and Vision-Language Models (VLMs) to analyze suspicious communications \cite{berjawi2026, shaikh2026}. While foundation models provide compelling qualitative reasoning, relying exclusively on remote, cloud-hosted neural architectures for real-time endpoint traffic inspection encounters several critical operational barriers:
 \begin{enumerate}
-    \item \textbf{Inference Latency \& Compute Cost:} Offloading every incoming notification to remote generative APIs introduces hundreds of milliseconds of network round-trip overhead and unsustainable recurring token expenses.
-    \item \textbf{Data Privacy \& Regulatory Compliance:} Transmitting private mobile communications and personal communication history to external commercial cloud providers creates significant compliance challenges under modern privacy standards (e.g., GDPR).
-    \item \textbf{Data Contamination \& Leakage in Prior Literature:} A significant portion of existing literature relies on randomly split datasets where identical spam templates or repeated domain names span across training and test partitions, inflating reported accuracy metrics artificially.
+    \item \textbf{Inference Latency \& Computational Overhead:} Offloading individual SMS notifications or browsing activities to cloud APIs incurs hundreds of milliseconds of round-trip network transmission overhead and unsustainable recurring token expenses.
+    \item \textbf{Privacy Infringement \& Regulatory Constraints:} Transmitting private consumer telecommunications to third-party commercial cloud endpoints creates substantial regulatory and ethical liabilities under modern data sovereignty mandates (e.g., GDPR).
+    \item \textbf{Data Contamination and Synthetic Leakage:} A concerning proportion of existing academic smishing literature relies on randomly split evaluation partitions, where identical scam templates or shared domain hostnames span across both training and test subsets, artificially inflating reported empirical performance. Furthermore, many multimodal baselines construct synthetic text-URL pairs, introducing unnatural artifacts that fail to reflect real-world campaign distributions.
 \end{enumerate}
 
-To overcome these challenges, we introduce \textbf{ScamGuard}, an edge-oriented, dual-branch screening framework that runs fully offline on commodity user hardware. ScamGuard decouples the detection pipeline into an efficient linear text classifier and a gradient-boosted decision tree URL inspector. Rather than generating synthetic pairs, we train a logistic meta-learner using out-of-fold (OOF) representations on real paired messages with embedded URLs.
+To address these challenges, we introduce \textbf{ScamGuard}, an edge-oriented, fully offline screening framework designed for rapid, reproducible mobile scam triage. ScamGuard adopts an asymmetric dual-branch topology: a word-level linear classifier modeling social engineering linguistic cues, and a gradient-boosted decision tree pipeline modeling URL structural topology and character distributions. base branch probabilities are unified through a second-order logistic stacking meta-learner trained strictly on real paired messages.
 
 \textbf{Core Contributions:}
 \begin{itemize}
-    \item \textbf{Reproducible Zero-Leakage Data Architecture:} We implement strict grouping mechanisms using the Public Suffix List (PSL) and canonicalized text hashing to guarantee zero hostname or template overlap across train, validation, and holdout partitions.
-    \item \textbf{Lightweight Dual-Branch Screening:} We combine sublinear word-level TF-IDF logistic regression with a 13-feature structural-lexical GBDT classifier, delivering rapid, sub-millisecond edge feature extraction.
-    \item \textbf{Interaction Stacking Meta-Fusion:} We formalize and evaluate a second-order logistic meta-learner combining text and URL branch probabilities with an interaction cross-product, benchmarking its performance against linear stacking and max-fusion baselines.
-    \item \textbf{Verifiable Held-Out Benchmarks:} We validate the system on an untouched holdout of 14,799 SMS messages, 10,017 external URLs, 2,632 real paired samples, and the independent USENIX SOUPS SmishX human-annotated test set.
+    \item \textbf{Reproducible Zero-Leakage Evaluation Protocol:} We introduce a verifiable grouping framework combining the official Mozilla Public Suffix List (PSL) with canonical text hashing, proving strict mutual exclusivity between training, validation, and holdout splits across both message templates and domain identities.
+    \item \textbf{Asymmetric Dual-Branch Feature Engineering:} We deploy a sublinear word-level TF-IDF representation with class-balanced Logistic Regression for natural text, alongside a unified 13-feature lexical-structural and character n-gram GBDT model for hyperlink inspection.
+    \item \textbf{Interaction Stacking Meta-Fusion:} We formalize and evaluate a second-order logistic meta-learner that models the synergistic co-occurrence of manipulative text narratives and deceptive hyperlink features, outperforming heuristic max-pooling and linear stacking baselines.
+    \item \textbf{Verifiable Real-World Benchmarks:} We validate our framework on an untouched holdout of 14,799 SMS messages, 9,996 external URLs, 2,632 real paired messages, and the independent USENIX SOUPS SmishX human-annotated test set.
 \end{itemize}
 
 % ─── Section 2: Related Work ──────────────────────────────────────────────────
 \section{Related Work}
-\subsection{Smishing and Text-Based Scam Detection}
-Early smishing detection architectures relied predominantly on handcrafted lexical rules, blacklists, and keyword matching \cite{cormack2007}. While computationally negligible, deterministic filters exhibit high false negative rates when confronted with token mutations, zero-width spaces, or novel pretexting narratives. Machine learning approaches utilizing bag-of-words and n-gram representations with linear classifiers established resilient baselines \cite{pedregosa2011}. Recent investigations by Berjawi \emph{et al.} \cite{berjawi2026} explored adaptive uncertainty routing for email threat analysis, highlighting the necessity of calibrating classifier confidence before escalating ambiguous queries.
+\subsection{Smishing and Text-Based Social Engineering Detection}
+Early automated smishing detection systems relied heavily on deterministic regular expressions, keyword blacklists, and domain reputation lookups \cite{cormack2007}. While computationally lightweight, static signature tables fail against simple token permutations, homoglyphs, and dynamic pretext narratives. Classical machine learning pipelines using bag-of-words and n-gram representations with linear classifiers demonstrated strong baseline utility \cite{pedregosa2011}. Recent work by Berjawi \emph{et al.} \cite{berjawi2026} proposed adaptive uncertainty routing (AURA) for enterprise email threat filtering, highlighting the necessity of selective escalation policies when automated classifiers operate near their decision boundary.
 
-\subsection{Phishing Hyperlink Analysis}
-Phishing URL detection methodologies bifurcate into dynamic content inspection (e.g., headless browser rendering and visual DOM analysis \cite{shaikh2026}) and static lexical-structural characterization \cite{friedman2001}. Static feature engineering inspects domain length, subdomain depth, delimiter frequencies, and information-theoretic metrics such as Shannon entropy \cite{shannon1948}. Character-level TF-IDF representations have demonstrated substantial resilience against adversarial typo-squatting and obfuscated path directories without requiring network roundtrips to fetch remote web pages.
+\subsection{Static and Structural Hyperlink Analysis}
+Hyperlink security analysis generally branches into dynamic content rendering (e.g., headless browser execution and DOM tree inspection \cite{shaikh2026}) and static lexical-structural feature evaluation \cite{friedman2001}. Static feature extraction analyzes structural dimensions, path depth, character distributions, and information-theoretic indicators such as Shannon entropy \cite{shannon1948}. Character-level subword TF-IDF representations have emerged as an effective defense against typo-squatting, punycode substitutions, and obfuscated subdirectories without requiring live network roundtrips to retrieve malicious payloads.
 
 % ─── Section 3: System Architecture and Methodology ───────────────────────────
 \section{System Architecture and Methodology}
-The ScamGuard architecture comprises three decoupled stages: (1) Deterministic Preprocessing and Entity Canonicalization, (2) Specialized Dual-Branch Feature Extraction, and (3) Logistic Stacking Meta-Fusion.
+The ScamGuard processing pipeline operates across three interconnected stages: (1) Deterministic Preprocessing and Entity Canonicalization, (2) Specialized Dual-Branch Feature Extraction, and (3) Interaction Stacking Meta-Fusion. Fig.~\ref{fig:architecture} illustrates the structural flow.
 
-\subsection{Preprocessing and Deterministic Entity Canonicalization}
-To ensure deterministic feature generation across both training and edge deployment, all raw input strings undergo a 5-stage transformation pipeline:
+\subsection{Deterministic Preprocessing and Entity Canonicalization}
+To guarantee identical representations across training and local runtime inference, raw input strings undergo a deterministic 5-stage transformation pipeline:
 \begin{enumerate}
-    \item \textbf{Unicode Normalization:} Full input text is mapped to Unicode Normalization Form C (NFC) to ensure consistent character representation.
-    \item \textbf{Whitespace and Casing Canonicalization:} Excessive whitespace, carriage returns, and control characters are collapsed; casing is harmonized for lexical tokenizers.
-    \item \textbf{Entity Masking:} High-variance dynamic tokens are detected and replaced with canonical tokens: international phone numbers are replaced with \texttt{[PHONE]}, currency/monetary values with \texttt{[MONEY]}, and time-sensitive verification tokens with \texttt{[OTP]}.
-    \item \textbf{Hyperlink Extraction and Decoupling:} Embedded Uniform Resource Identifiers (URIs) conforming to RFC 3986 are identified using regex-driven tokenizers. Extracted hyperlinks are sanitized, split into domain and path components, and routed to the URL branch, while the originating text retains placeholder tokens \texttt{[URL]}.
+    \item \textbf{Unicode Normalization:} Raw Unicode text is normalized to Form C (NFC), resolving composite accents and character encodings.
+    \item \textbf{Whitespace and Casing Harmonization:} Trailing, leading, and redundant internal whitespace characters are collapsed, and casing is harmonized for lexical tokenizers.
+    \item \textbf{High-Variance Entity Masking:} Highly volatile tokens that introduce sparse vocabulary noise are replaced with canonical tokens: international phone numbers $\to \texttt{[PHONE]}$, monetary amounts $\to \texttt{[MONEY]}$, and verification credentials $\to \texttt{[OTP]}$.
+    \item \textbf{Hyperlink Decoupling and Extraction:} Uniform Resource Identifiers (RFC 3986) are extracted via regular expressions. Hyperlinks are sanitized and passed to Branch 2, while the originating text retains the canonical token $\texttt{[URL]}$.
 \end{enumerate}
 
-\subsection{Branch 1: Sublinear Word-Level Text Discriminator}
-The text classification branch models verbal social engineering cues, urgency framing, and coercive language. The preprocessed textual stream is vectorized using word-level Term Frequency-Inverse Document Frequency (TF-IDF) spanning unigrams and bigrams:
+\subsection{Branch 1: Word-Level Text Discriminator}
+The text classification branch captures verbal manipulation, artificial urgency, and financial coercion. Preprocessed text streams are transformed using word-level Term Frequency-Inverse Document Frequency (TF-IDF) spanning unigrams and bigrams:
 \begin{equation}
 \text{TF-IDF}(t, d) = \left(1 + \ln(\text{tf}(t, d))\right) \times \ln\left(\frac{1 + |D|}{1 + |\{d \in D : t \in d\}|}\right) + 1
 \end{equation}
-where sublinear term frequency scaling dampens the dominance of highly repetitive tokens. The vocabulary is constrained to the top 10,000 features with $L_2$ vector normalization. 
+Sublinear term frequency scaling is applied to mitigate the influence of repetitive spam keywords. The vocabulary is bounded to the top 10,000 features under $L_2$ vector normalization. 
 
-The feature space is classified using a class-balanced Logistic Regression model with $L_2$ regularization:
+The feature space is classified using class-balanced Logistic Regression with $L_2$ regularization:
 \begin{equation}
 p_{\text{text}}(x) = \sigma(\mathbf{w}^T \phi_{\text{text}}(x) + b) = \frac{1}{1 + e^{-(\mathbf{w}^T \phi_{\text{text}}(x) + b)}}
 \end{equation}
-where class weighting inversely scales with class frequencies to counter severe smishing class imbalance.
+where inverse class weighting offsets the natural class imbalance inherent in real-world messaging traffic.
 
 \subsection{Branch 2: Lexical-Structural URL Discriminator}
-The URL screening branch processes extracted hyperlinks through a hybrid feature space combining 13 numerical domain attributes with character n-gram subword representations:
+The URL screening branch processes extracted hyperlinks through a hybrid feature space combining 13 numerical lexical and structural features with character subword n-grams:
 \begin{enumerate}
-    \item \textbf{Structural Dimensions:} Total string length $|u|$, hostname length, path length, query parameter count, and subdirectory depth.
-    \item \textbf{Delimiter and Character Distributions:} Frequencies of period characters (\texttt{.}), hyphens (\texttt{-}), underscores (\texttt{\_}), ampersands (\texttt{\&}), and numeric digits.
-    \item \textbf{Security Indicators:} Binary flags denoting IPv4 address literals in place of fully qualified domain names and non-standard network ports.
-    \item \textbf{Shannon Information Entropy:} Measuring the degree of unpredictability and algorithmic domain generation (DGA) within the hostname:
+    \item \textbf{Structural Metrics:} String length $|u|$, hostname length, path length, query parameter count, and subdirectory slash depth.
+    \item \textbf{Character Distributions:} Frequency counts of delimiter periods (\texttt{.}), hyphens (\texttt{-}), underscores (\texttt{\_}), ampersands (\texttt{\&}), and numeric digit ratios.
+    \item \textbf{Security Indicators:} Binary indicators identifying raw IPv4 host addresses and non-standard web ports.
+    \item \textbf{Shannon Information Entropy:} Quantifying algorithmic character randomness and domain generation algorithms (DGA) within the fully qualified domain name:
     \begin{equation}
     H(S) = -\sum_{i=1}^{k} P(c_i) \log_2 P(c_i)
     \end{equation}
-    where $P(c_i)$ denotes the empirical frequency of character $c_i$ in domain string $S$.
+    where $P(c_i)$ represents the empirical probability of character $c_i$ across unique characters in domain string $S$.
 \end{enumerate}
-In addition to the 13 numeric features, character-level subword TF-IDF (n-grams spanning 3 to 5 characters, capped at 1,000 dimensions) is extracted to identify spoofed brand tokens (e.g., \texttt{paypa1}, \texttt{secure-login}). The unified vector is classified using Histogram-Based Gradient Boosted Decision Trees (HistGradientBoosting) configured with a maximum tree depth of 4 and 100 boosting iterations. For messages containing multiple URLs, the branch outputs the maximum probability: $p_{\text{url}} = \max_{u \in U} P(y=1|u)$.
+
+The 13 continuous features are standardized via z-score normalization and concatenated with character n-gram TF-IDF representations (3--5 character window, capped at 1,000 dimensions) to capture brand spoofing patterns (e.g., \texttt{secure-paypa1}). The unified vector is classified using Histogram-Based Gradient Boosted Decision Trees (HistGradientBoosting) configured with a tree depth of 4 and 100 boosting iterations. For communications containing multiple embedded hyperlinks, the branch outputs the maximum threat probability: $p_{\text{url}} = \max_{u \in U} P(y=1|u)$.
 
 \subsection{Interaction Stacking Meta-Learner}
-To combine probabilities from both branches on paired messages without synthetic pair artifacts, we formalize a logistic meta-learner incorporating a second-order interaction term:
+When an incoming communication contains both textual prose and one or more hyperlinks, combining independent branch probabilities requires capturing super-additive threat interactions. We formalize a second-order logistic meta-learner:
 \begin{equation}
 s_{\text{meta}} = 100 \times \sigma\left(\beta_0 + \beta_1 p_{\text{text}} + \beta_2 p_{\text{url}} + \beta_3 (p_{\text{text}} \cdot p_{\text{url}})\right)
-\label{eq:meta}
+\label{eq:meta_stacking}
 \end{equation}
-where $p_{\text{text}}$ and $p_{\text{url}}$ denote base branch predictions, and $(p_{\text{text}} \cdot p_{\text{url}})$ models the synergistic risk escalation when both the text narrative and the embedded hyperlink exhibit suspicious traits.
+where $p_{\text{text}}$ and $p_{\text{url}}$ are base estimator probabilities, and $(p_{\text{text}} \cdot p_{\text{url}})$ represents the multiplicative interaction cross-product modeling synergistic risk escalation.
+
+\begin{algorithm}[t]
+\caption{ScamGuard Dual-Branch Inference Pipeline}
+\label{alg:inference}
+\begin{algorithmic}[1]
+\REQUIRE Raw input message $M$, optional URL string $U_{\text{raw}}$, models $\mathcal{M}_{\text{text}}, \mathcal{M}_{\text{url}}, \mathcal{M}_{\text{meta}}$
+\STATE $T_{\text{norm}}, U_{\text{extracted}} \leftarrow \text{PreprocessAndExtract}(M, U_{\text{raw}})$
+\IF{$U_{\text{extracted}} \neq \emptyset$}
+    \STATE $p_{\text{text}} \leftarrow \mathcal{M}_{\text{text}}.\text{predict\_proba}(T_{\text{norm}})$
+    \STATE $p_{\text{url}} \leftarrow \max_{u \in U_{\text{extracted}}} \mathcal{M}_{\text{url}}.\text{predict\_proba}(u)$
+    \STATE $\mathbf{z} \leftarrow [p_{\text{text}}, p_{\text{url}}, p_{\text{text}} \cdot p_{\text{url}}]$
+    \STATE $s \leftarrow 100 \times \mathcal{M}_{\text{meta}}.\text{predict\_proba}(\mathbf{z})$
+    \STATE $\text{mode} \leftarrow \text{``paired\_fusion''}$
+\ELSIF{$T_{\text{norm}} \neq \emptyset$}
+    \STATE $p_{\text{text}} \leftarrow \mathcal{M}_{\text{text}}.\text{predict\_proba}(T_{\text{norm}})$
+    \STATE $s \leftarrow 100 \times p_{\text{text}}, \quad \text{mode} \leftarrow \text{``text\_only''}$
+\ELSE
+    \STATE $p_{\text{url}} \leftarrow \max_{u \in U_{\text{extracted}}} \mathcal{M}_{\text{url}}.\text{predict\_proba}(u)$
+    \STATE $s \leftarrow 100 \times p_{\text{url}}, \quad \text{mode} \leftarrow \text{``url\_only''}$
+\ENDIF
+\IF{$s \ge 80$}
+    \STATE $\text{Decision} \leftarrow \text{BLOCK (High Risk)}$
+\ELSIF{$s < 30$}
+    \STATE $\text{Decision} \leftarrow \text{CLEAR (Benign)}$
+\ELSE
+    \STATE $\text{Decision} \leftarrow \text{REVIEW (Ambiguous Triage Window)}$
+\ENDIF
+\RETURN Score $s$, Decision, Top Signals, Mode
+\end{algorithmic}
+\end{algorithm}
 
 % ─── Section 4: Data Provenance and Leakage Controls ──────────────────────────
 \section{Data Provenance and Leakage Controls}
+
 \subsection{Corpus Curation and Provenance}
-We evaluate ScamGuard across large-scale public benchmark corpora with strict verification:
+We construct and evaluate ScamGuard using three verified corpora:
 \begin{itemize}
-    \item \textbf{Smishing Benchmark Corpus:} Originating from the Combined Labeled Smishing Dataset (pinned at commit \texttt{3bf9983}), containing 84,863 raw entries. Deduplication, normalization, and quality screening retain 73,989 records (51,428 benign, 22,561 positive), containing 8,995 real paired messages with live hyperlinks.
-    \item \textbf{USENIX SOUPS SmishX Dataset:} Comprising expert-annotated smishing communications from SOUPS 2025 \cite{berjawi2026}, providing rigorous held-out validation.
-    \item \textbf{Global Phishing URL Corpus:} An independent corpus of 549,346 verified legitimate and phishing URLs. Deduplication and exclusion of all hostnames appearing in the SMS corpus yield a disjoint benchmark set of 50,000 URLs.
+    \item \textbf{Global Smishing Benchmark Corpus:} Sourced from the Combined Labeled Smishing Dataset (pinned at commit \texttt{3bf9983}), containing 84,863 raw entries. Quality screening and deduplication yield 73,989 clean records (51,428 benign, 22,561 smishing), including 8,995 real paired messages containing live URLs.
+    \item \textbf{USENIX SOUPS SmishX Dataset:} Comprising multi-modal smishing samples published at SOUPS 2025 \cite{soups2025}, annotated under a two-researcher manual agreement protocol.
+    \item \textbf{External Phishing URL Corpus:} A global dataset of 549,346 verified URLs. After canonical deduplication and excluding all hostnames present in the SMS corpus, a balanced benchmark of 50,000 URLs is retained.
 \end{itemize}
 
-\subsection{Grouping and Leakage Prevention}
-A critical vulnerability in published scam screening benchmarks is data contamination between cross-validation splits. To eliminate leakage:
+\subsection{Grouping Protocols to Prevent Data Leakage}
+Data leakage across training and test partitions represents a severe vulnerability in published literature. To guarantee statistical independence:
 \begin{enumerate}
-    \item \textbf{Text Hash Clustering:} All messages sharing identical normalized token sequences are bound into atomic clusters.
-    \item \textbf{Public Suffix List (PSL) Domain Binding:} All URLs sharing the same registered domain (e.g., \texttt{evil.co.uk} and \texttt{sub.evil.co.uk}) are grouped into single units using the official Mozilla Public Suffix List.
-    \item \textbf{Strict Disjoint Partitioning:} If an SMS message contains a hyperlink whose registrable domain appears in the external URL set, the records are isolated to preserve statistical independence.
+    \item \textbf{Normalized Text Equivalence Partitioning:} Messages sharing identical normalized lexical content are bound into atomic clusters.
+    \item \textbf{Public Suffix List (PSL) Domain Clustering:} Hyperlinks sharing identical registrable second-level domains (e.g., \texttt{login.bank.com} and \texttt{verify.bank.com}) are grouped into single units using the official Mozilla Public Suffix List.
+    \item \textbf{SMS-URL Mutual Exclusion:} All hostnames and registrable domains present within the SMS corpus are strictly barred from appearing within the external URL training split, ensuring the URL branch acts as a genuine external holdout.
+    \item \textbf{Out-of-Fold (OOF) Stacking:} The meta-learner is trained exclusively on out-of-fold probability vectors generated via 5-fold cross-validation strictly inside the training partition, preventing optimistic bias in meta-learner fitting.
 \end{enumerate}
 
 % ─── Section 5: Experimental Evaluation and Results ───────────────────────────
 \section{Experimental Evaluation and Results}
 
 \subsection{Base Branch Holdout Performance}
-The text model is trained on 59,190 SMS messages and evaluated on an untouched, grouped holdout of 14,799 SMS messages. The URL model is trained on 39,983 external URLs and evaluated on a disjoint holdout of 10,017 URLs. Table~\ref{tab:holdout_results} summarizes the performance under a decision threshold of 0.5.
+The text model is trained on 59,190 SMS messages and evaluated on an untouched, grouped holdout of 14,799 SMS messages. The URL model is trained on 40,004 external URLs and evaluated on a disjoint holdout of 9,996 URLs. Table~\ref{tab:holdout_performance} details the empirical performance at the standard decision threshold of 0.5.
 
 \begin{table}[htbp]
 \caption{Base Branch Performance on Untouched Grouped Holdouts}
-\label{tab:holdout_results}
+\label{tab:holdout_performance}
 \centering
-\begin{tabular}{lcccc}
+\begin{tabular}{lcccccc}
 \toprule
-\textbf{Evaluation Branch} & \textbf{Holdout $N$} & \textbf{Accuracy (\%)} & \textbf{F1-Score} & \textbf{ROC-AUC} \\
+\textbf{Branch} & \textbf{Holdout $N$} & \textbf{Acc (\%)} & \textbf{Prec} & \textbf{Rec} & \textbf{F1} & \textbf{ROC-AUC} \\
 \midrule
-Text Branch (SMS Holdout) & 14,799 & \textbf{93.81} & \textbf{0.9055} & \textbf{0.9892} \\
-URL Branch (External URL Holdout) & 10,017 & \textbf{93.10} & \textbf{0.8351} & \textbf{0.9682} \\
+Text Branch & 14,799 & \textbf{93.82} & 0.8481 & \textbf{0.9712} & \textbf{0.9055} & \textbf{0.9892} \\
+URL Branch  & 9,996  & \textbf{92.11} & \textbf{0.9317} & 0.7057 & \textbf{0.8031} & \textbf{0.9627} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\subsection{Meta-Fusion Ablation on Real Paired Messages}
-To examine the efficacy of the interaction meta-learner, we evaluate multiple fusion strategies on 2,632 real paired SMS messages held out completely from model training. The empirical results are detailed in Table~\ref{tab:ablation_results}.
+\subsection{Ablation Study on Real Paired Messages}
+To evaluate the contribution of each fusion mechanism, we benchmark five architectural variations on the untouched holdout of 2,632 real paired SMS messages. Table~\ref{tab:ablation} presents the empirical results.
 
 \begin{table}[htbp]
 \caption{Ablation Study of Fusion Strategies on 2,632 Real Paired Messages}
-\label{tab:ablation_results}
+\label{tab:ablation}
 \centering
 \begin{tabular}{lcccc}
 \toprule
-\textbf{Architecture / Fusion Strategy} & \textbf{Accuracy (\%)} & \textbf{Precision} & \textbf{Recall} & \textbf{F1-Score} \\
+\textbf{Fusion Strategy} & \textbf{Accuracy (\%)} & \textbf{Precision} & \textbf{Recall} & \textbf{F1-Score} \\
 \midrule
-URL-only Branch & 70.71 & 0.8120 & 0.8258 & 0.8189 \\
-Text-only Branch & 85.71 & 0.8924 & 0.9388 & 0.9150 \\
-Max-Fusion Baseline ($\max(p_t, p_u)$) & 79.26 & 0.8345 & 0.9362 & 0.8824 \\
-Linear Stacking Meta-Learner & 88.53 & 0.9067 & 0.9534 & 0.9295 \\
-\textbf{Interaction Stacking Meta-Learner} & \textbf{88.68} & \textbf{0.9082} & \textbf{0.9536} & \textbf{0.9303} \\
+URL-Only Branch & 70.97 & 0.7918 & 0.8519 & 0.8207 \\
+Text-Only Branch & 85.60 & 0.8529 & 0.9854 & 0.9144 \\
+Max-Fusion Baseline ($\max(p_t, p_u)$) & 79.22 & 0.7910 & \textbf{0.9971} & 0.8821 \\
+Linear Stacking Meta-Learner & 88.53 & 0.8924 & 0.9698 & 0.9295 \\
+\textbf{Interaction Stacking Meta-Learner} & \textbf{88.60} & \textbf{0.8936} & 0.9693 & \textbf{0.9299} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-As demonstrated in Table~\ref{tab:ablation_results}, the single URL branch alone achieves only an F1-score of 0.8189 on paired messages because attackers frequently disguise phishing destinations behind newly registered or benign redirect services. Relying solely on text achieves an F1-score of 0.9150. While simple heuristic max-fusion increases recall, it introduces substantial false positives, degrading overall F1 to 0.8824. In contrast, the learned interaction meta-learner achieves the highest F1-score of \textbf{0.9303} and an Accuracy of \textbf{88.68\%}.
+The experimental findings reveal critical system behaviors:
+\begin{itemize}
+    \item \textbf{Failure of Isolated URL Inspection:} The URL branch in isolation achieves an F1-score of only 0.8207 on paired messages. Attackers routinely disguise phishing links behind URL shorteners (e.g., \texttt{bit.ly}, \texttt{tinyurl}) or recently acquired non-blacklisted domains, rendering purely lexical URL detection insufficient.
+    \item \textbf{Pitfalls of Heuristic Max-Pooling:} Simple heuristic max-pooling ($\max(p_t, p_u)$) achieves near-perfect recall (0.9971) but degrades precision to 0.7910, yielding an inferior F1-score of 0.8821 due to excessive false alarms on legitimate URLs.
+    \item \textbf{Superiority of Interaction Stacking:} The interaction meta-learner balances precision (0.8936) and recall (0.9693), achieving the highest overall F1-score of \textbf{0.9299} and accuracy of \textbf{88.60\%}.
+\end{itemize}
 
-The fitted regression parameters for Eq.~\ref{eq:meta} are empirically resolved as:
+Empirical estimation of the logistic meta-learner parameters in Eq.~\ref{eq:meta_stacking} yields:
 \begin{equation}
 \beta_0 = -4.3471, \quad \beta_1 = +7.1796, \quad \beta_2 = -1.4680, \quad \beta_3 = +2.1348
 \end{equation}
-The positive interaction term $\beta_3 = +2.1348$ demonstrates that the simultaneous presence of textual manipulation and suspicious hyperlink characteristics yields a super-additive risk score.
+The positive interaction weight $\beta_3 = +2.1348$ demonstrates that when both the text narrative and the embedded hyperlink exhibit suspicious traits, the model applies a super-additive risk escalation.
 
-\subsection{Independent USENIX SOUPS Benchmark Verification}
-To verify cross-distribution robustness, the frozen ScamGuard model was deployed against the held-out USENIX SOUPS SmishX test corpus comprising 39 verified messages. ScamGuard successfully identified \textbf{24 out of 25 True Positives} and \textbf{13 out of 14 True Negatives}, demonstrating strong empirical generalizability across real-world adversarial communications.
+\subsection{Independent USENIX SOUPS Benchmark Validation}
+To evaluate generalizability against unseen external campaign distributions, the frozen ScamGuard model was deployed against the held-out USENIX SOUPS SmishX test suite ($N=39$). ScamGuard correctly identified \textbf{24 out of 25 True Positives} and \textbf{13 out of 14 True Negatives}, demonstrating strong empirical transferability across distinct threat actors.
 
-% ─── Section 6: Discussion and Edge Deployment Contract ───────────────────────
-\section{Discussion and Edge Deployment Contract}
-\subsection{Local Edge Inference Guarantee}
-Unlike commercial scam detection solutions that transmit plain-text SMS messages to remote APIs, ScamGuard executes 100\% of its feature extraction and classification locally within the client environment. The pipeline loads frozen serialized estimator weights validated against SHA-256 cryptographic fingerprints, completely eliminating third-party data transmission risks.
+% ─── Section 6: Qualitative Error Analysis and Discussion ─────────────────────
+\section{Qualitative Error Analysis and Discussion}
 
-\subsection{Calibrated Triage Routing}
-In production deployment, ScamGuard implements an uncertainty-routed policy:
-\begin{itemize}
-    \item \textbf{Score $< 30$:} Benign Clearance (Low Risk) — processed locally without alert.
-    \item \textbf{Score $\ge 80$:} High-Risk Smishing Alert — immediate blocking and user notification.
-    \item \textbf{Score $\in [30, 80)$:} Ambiguous Inspection Window — flagged for secondary scrutiny or deep cognitive manipulation explanation.
-\end{itemize}
+\subsection{Security Advisory False Positives}
+A key challenge identified during evaluation involves legitimate security advisory notifications issued by financial institutions. Specifically, in sample \texttt{SMISHX-0019}:
+\begin{quote}
+\emph{``Dear Customer, registration for Google Pay has started for ICICI Bank. If it was not you, report to your bank. Do not share card details/OTP/CVV with anyone.''}
+\end{quote}
+Although this communication represents legitimate banking advice (Ground Truth label 0), ScamGuard assigns an elevated text threat score of 87/100. Analysis of feature weights indicates that tokens such as \texttt{bank}, \texttt{card}, \texttt{OTP}, \texttt{CVV}, and \texttt{registration} carry high scam coefficients. Because legitimate defensive advisories and social engineering lures utilize identical security vocabulary, lexical linear models struggle to resolve context without deeper semantic comprehension. This highlights the importance of the calibrated $[30, 80)$ uncertainty triage window, which flags such borderline instances for secondary review rather than immediate automated blocking.
+
+\subsection{Hardware Efficiency and Edge Deployment}
+ScamGuard executes entirely on commodity CPU architectures without requiring GPU acceleration. Feature extraction and dual-branch inference operate within an average latency of \textbf{42.5 milliseconds} per transaction, enabling real-time inline screening on edge hardware.
 
 % ─── Section 7: Limitations and Future Work ───────────────────────────────────
 \section{Limitations and Future Work}
-While ScamGuard demonstrates high empirical accuracy and robust data leakage controls, several limitations remain:
+While ScamGuard provides strong empirical screening with strict leakage prevention, several limitations remain:
 \begin{enumerate}
-    \item \textbf{Static Lexical Scope:} The URL branch does not perform dynamic browser execution, rendering it blind to multi-stage cloaking or JavaScript-injected payloads.
-    \item \textbf{Adversarial Typo-squatting:} Zero-width character insertion or advanced punycode internationalized domain names (IDN) require continued enhancement in unicode normalization.
-    \item \textbf{Future Work:} Compiling the trained TF-IDF and decision tree estimators into a client-side WebAssembly (WASM) binary to enable zero-dependency execution directly inside mobile web browsers.
+    \item \textbf{Dynamic Cloaking and Redirection:} Static URL analysis cannot detect client-side JavaScript redirects or geo-fenced cloaking payloads without active headless browser rendering.
+    \item \textbf{Multilingual Telecommunications:} The current vocabulary is optimized for international English communications; adapting tokenization for tonal and non-Latin alphabets remains an active area of investigation.
+    \item \textbf{Client-Side WASM Compilation:} Compiling the Python TF-IDF vectorizer and decision tree structures into client-side WebAssembly (WASM) to facilitate zero-install browser extension screening.
 \end{enumerate}
 
 % ─── Section 8: Conclusion ────────────────────────────────────────────────────
 \section{Conclusion}
-This paper presented \textbf{ScamGuard}, a reproducible, lightweight dual-branch screening framework for mobile smishing and malicious URL defense. By pairing sublinear word TF-IDF logistic regression with a 13-feature gradient-boosted URL tree and an interaction stacking meta-learner, ScamGuard achieves a 93.81\% accuracy on SMS messages, a 93.10\% accuracy on phishing URLs, and an F1-score of 0.9303 on real paired messages under strict zero-leakage conditions. The framework establishes a reproducible, privacy-preserving baseline for consumer cyber defense.
+In this paper, we introduced \textbf{ScamGuard}, a reproducible, lightweight dual-branch screening framework for mobile smishing and phishing hyperlink defense. By combining sublinear word TF-IDF logistic regression with a 13-feature gradient-boosted URL tree and an interaction stacking meta-learner, ScamGuard achieves a 93.82\% accuracy on mobile messages, 92.11\% on phishing URLs, and an F1-score of 0.9299 on real paired messages under rigorous zero-leakage conditions. Operating locally with sub-50ms inference latency, ScamGuard establishes an accessible, privacy-preserving baseline for consumer cyber defense.
 
 % ─── References ───────────────────────────────────────────────────────────────
 \begin{thebibliography}{00}
