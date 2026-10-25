@@ -7,7 +7,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     (tab.url.startsWith("http://") || tab.url.startsWith("https://")) &&
     !tab.url.startsWith("http://localhost:3000")
   ) {
-    chrome.tabs.sendMessage(tabId, { action: "ANALYZE_PAGE", url: tab.url, title: tab.title }).catch((err) => {
+    chrome.tabs.sendMessage(tabId, { action: "ANALYZE_PAGE", url: tab.url, title: tab.title }).catch(() => {
       // Content script may not be ready or injected yet; silently handle
     });
   }

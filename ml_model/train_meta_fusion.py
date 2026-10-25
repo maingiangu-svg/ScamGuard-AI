@@ -1,302 +1,192 @@
-"""
-ScamShield Forensic AI — Stacking Meta-Learner Training Pipeline
-================================================================
-Implements:
-  1. Base Model 1: Sublinear TF-IDF + Balanced Logistic Regression (Text Branch)
-  2. Base Model 2: 13-D Information-Theoretic Features (StandardScaler) + Char n-grams + GBDT (URL Branch)
-  3. Stacking Meta-Learner with Interaction Term:
-       s_fused = sigma(beta_0 + beta_1 * p_text + beta_2 * p_url + beta_3 * p_text * p_url)
-  4. 5-Fold Stratified Cross-Validation (Out-Of-Fold, leak-free within each fold)
-  5. Multi-modal threat representation: Paired SMS corpus augmented with spear-phishing & legitimate URL sharing
-  6. Comprehensive Ablation:
-       - Text-only
-       - URL-only
-       - Max-Fusion Baseline: max(p_text, p_url)
-       - Linear Meta-Learner: sigma(beta_0 + beta_1 * p_text + beta_2 * p_url)
-       - Proposed Interaction Meta-Learner: sigma(beta_0 + beta_1 * p_text + beta_2 * p_url + beta_3 * p_text * p_url)
-  7. Exports production artifacts (.pkl) and empirical metrics (metrics_meta.json)
-"""
+"""Reproducible local training. Real embedded links only; no synthetic pairing.
 
-import os
-import sys
+An untouched SMS holdout evaluates fusion. Text OOF is generated only inside
+SMS training. The URL estimator is trained on a separate URL corpus, excluding
+ALL hostnames in the SMS corpus, so its scores on SMS are externally held out.
+"""
+import hashlib
 import json
-import time
+import os
 import pickle
-import warnings
+import time
+from datetime import datetime, timezone
 from pathlib import Path
+from urllib.parse import urlsplit
+
 import numpy as np
 import pandas as pd
+import sklearn
 from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import HistGradientBoostingClassifier
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import StratifiedKFold
-from sklearn.metrics import (
-    accuracy_score, precision_score, recall_score, f1_score, roc_auc_score, log_loss
-)
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score, log_loss
+from sklearn.model_selection import StratifiedGroupKFold, train_test_split
 
-warnings.filterwarnings("ignore")
+from modeling import text_model, url_model, meta_features, pipeline_fingerprint, url_scores
+from preprocess import DATA_DIR, clean_messages
+from data_quality import REFERENCE_PATH, UCI_URL, UCI_SHA256, prepare_urls, read_spam_reference
 
-ROOT = Path(__file__).parent.parent
-DATA_DIR = ROOT / "ml_model" / "data"
-MODELS_DIR = ROOT / "ml_model" / "models"
-MODELS_DIR.mkdir(parents=True, exist_ok=True)
-
-sys.path.append(str(ROOT / "ml_model"))
-from preprocess import extract_13_features, canonicalize_url, normalize_text
+MODELS_DIR = Path(__file__).resolve().parent / "models"
 
 
-def compute_metrics(y_true, y_prob, threshold=0.5):
-    y_pred = (y_prob >= threshold).astype(int)
+def message_groups(frame):
+    """Connected components prevent shared text or any shared hostname crossing folds."""
+    parent = list(range(len(frame)))
+    seen = {}
+    def find(i):
+        while parent[i] != i:
+            parent[i] = parent[parent[i]]
+            i = parent[i]
+        return i
+    for i, row in enumerate(frame.itertuples()):
+        keys = ["text:" + row.normalized_text]
+        keys += ["host:" + urlsplit(u).hostname for u in json.loads(row.urls_json)]
+        for key in keys:
+            if key in seen:
+                parent[find(i)] = find(seen[key])
+            else:
+                seen[key] = i
+    return np.array([find(i) for i in range(len(frame))])
+
+
+def holdout_split(y, groups):
+    train, test = next(StratifiedGroupKFold(5, shuffle=True, random_state=42).split(y, y, groups))
+    if len(np.unique(y[train])) != 2 or len(np.unique(y[test])) != 2:
+        raise ValueError("Both classes are required in grouped train and holdout")
+    return train, test
+
+
+def compute_metrics(y, probabilities):
+    probabilities = np.asarray(probabilities, dtype=float)
+    pred = probabilities >= 0.5
     return {
-        "accuracy": float(accuracy_score(y_true, y_pred)),
-        "precision": float(precision_score(y_true, y_pred, zero_division=0)),
-        "recall": float(recall_score(y_true, y_pred, zero_division=0)),
-        "f1": float(f1_score(y_true, y_pred, zero_division=0)),
-        "roc_auc": float(roc_auc_score(y_true, y_prob)),
-        "log_loss": float(log_loss(y_true, y_prob))
+        "samples": len(y), "accuracy": float(accuracy_score(y, pred)),
+        "precision": float(precision_score(y, pred, zero_division=0)),
+        "recall": float(recall_score(y, pred, zero_division=0)),
+        "f1": float(f1_score(y, pred, zero_division=0)),
+        "roc_auc": float(roc_auc_score(y, probabilities)) if len(np.unique(y)) == 2 else None,
+        "log_loss": float(log_loss(y, probabilities, labels=[0, 1])),
     }
+
+
+def clean_urls(path, excluded_hosts):
+    raw = pd.read_csv(path, dtype=str, keep_default_na=False)[["URL", "Label"]]
+    if not raw.Label.str.strip().str.lower().isin(["good", "bad"]).all():
+        raise ValueError("Unknown URL labels; refusing to map them to benign")
+    cleaned, _, audit = prepare_urls(raw)
+    cleaned = cleaned[~cleaned.host.isin(excluded_hosts)].reset_index(drop=True)
+    cleaned.attrs['data_quality_audit'] = audit
+    return cleaned, audit['conflicting_groups']
 
 
 def main():
-    print("=" * 75)
-    print("⚡ ScamGuard — Stacking Meta-Learner Training & 5-Fold CV")
-    print("   Evaluating: Text, URL, Max-Fusion, Linear Meta, Interaction Meta")
-    print("=" * 75)
+    started = time.perf_counter()
+    MODELS_DIR.mkdir(exist_ok=True)
+    sms_path = DATA_DIR / "smishing_combined.csv"
+    if sms_path.exists():
+        raw = pd.read_csv(sms_path).rename(columns={"message": "raw_text", "smishing label": "label"})
+        target = "smishing (upstream keyword-derived labels, not expert ground truth)"
+        source_manifest = DATA_DIR / "smishing_source.json"
+        source_metadata = json.loads(source_manifest.read_text(encoding="utf-8-sig")) if source_manifest.exists() else None
+    else:
+        sms_path = REFERENCE_PATH
+        raw = read_spam_reference(sms_path)
+        target = "UCI SMS spam/ham proxy; not validated smishing ground truth"
+        source_metadata = {"source_url": UCI_URL, "sha256": UCI_SHA256,
+                           "label_note": "Original UCI spam/ham labels; not expert-verified smishing labels.",
+                           "license": "CC BY 4.0"}
+    sms, audit = clean_messages(raw)
+    sms.to_csv(DATA_DIR / "smishing_preprocessed.csv", index=False)
+    texts = sms.normalized_text.to_numpy()
+    y = sms.label.to_numpy()
+    links = [json.loads(u) for u in sms.urls_json]
+    groups = message_groups(sms)
+    train, test = holdout_split(y, groups)
+    print(f"SMS clean={len(sms)}, train={len(train)}, holdout={len(test)}, paired={int(sms.has_url.sum())}", flush=True)
 
-    preprocessed_path = DATA_DIR / "smishing_preprocessed.csv"
-    phishing_urls_path = DATA_DIR / "phishing_site_urls.csv"
-    if not preprocessed_path.exists():
-        raise FileNotFoundError(f"Missing {preprocessed_path}. Run preprocess.py first.")
+    # No URL from an SMS hostname can occur in the external URL training corpus.
+    sms_hosts = {urlsplit(u).hostname for row in links for u in row}
+    url_path = DATA_DIR / "phishing_site_urls.csv"
+    urls, conflicts = clean_urls(url_path, sms_hosts)
+    url_data_audit = urls.attrs['data_quality_audit']
+    if len(urls) > 50000:
+        _, indices = train_test_split(np.arange(len(urls)), test_size=50000,
+                                     stratify=urls.label, random_state=42)
+        urls = urls.iloc[indices].reset_index(drop=True)
+    urls.to_csv(DATA_DIR / 'urls_preprocessed.csv', index=False)
+    uy = urls.label.to_numpy()
+    utrain, utest = holdout_split(uy, urls.host.to_numpy())
+    print(f"URL selected={len(urls)}, train={len(utrain)}, holdout={len(utest)}; fitting...", flush=True)
+    model_url = url_model().fit(urls.url.iloc[utrain].to_numpy(), uy[utrain])
+    url_metrics = compute_metrics(uy[utest], model_url.predict_proba(urls.url.iloc[utest].to_numpy())[:, 1])
+    sms_url_scores = url_scores(model_url, links)
 
-    print(f"\n📂 Loading normalized smishing corpus: {preprocessed_path.name}...")
-    df_smish = pd.read_csv(preprocessed_path)
-    paired_orig = df_smish[df_smish["has_url"] == 1].copy()
-    print(f"   Original paired multi-modal records: {len(paired_orig):,}")
-
-    # Build augmented dataset for robust multi-modal threat modeling
-    print("\n🛡️  Building robust multi-modal benchmark (including spear-phishing threat simulation)...")
-    ham_texts = df_smish[(df_smish["has_url"] == 0) & (df_smish["label"] == 0)]["normalized_text"].dropna().sample(3000, random_state=42).tolist()
-
-    aug_rows = []
-    if phishing_urls_path.exists():
-        print(f"   Loading external URL benchmarks from {phishing_urls_path.name}...")
-        df_urls = pd.read_csv(phishing_urls_path)
-        bad_urls = df_urls[df_urls["Label"] == "bad"]["URL"].dropna().sample(1500, random_state=42).tolist()
-        good_urls = df_urls[df_urls["Label"] == "good"]["URL"].dropna().sample(1500, random_state=42).tolist()
-
-        # Spear-phishing pairs: benign carrier message + malicious phishing URL
-        for i in range(1500):
-            aug_rows.append({
-                "normalized_text": ham_texts[i] + " <url>",
-                "extracted_url": canonicalize_url(bad_urls[i]),
-                "label": 1
-            })
-        # Legitimate sharing pairs: benign carrier message + legitimate URL
-        for i in range(1500):
-            aug_rows.append({
-                "normalized_text": ham_texts[1500 + i] + " <url>",
-                "extracted_url": canonicalize_url(good_urls[i]),
-                "label": 0
-            })
-
-    df_paired = pd.concat([paired_orig[["normalized_text", "extracted_url", "label"]], pd.DataFrame(aug_rows)], ignore_index=True)
-    df_paired = df_paired.sample(frac=1.0, random_state=42).reset_index(drop=True)
-
-    n_paired = len(df_paired)
-    n_scam = int((df_paired["label"] == 1).sum())
-    n_ham = int((df_paired["label"] == 0).sum())
-    print(f"   Total evaluation corpus size: {n_paired:,} paired records")
-    print(f"     • Malicious (Class 1): {n_scam:,} ({n_scam/n_paired*100:.1f}%)")
-    print(f"     • Benign (Class 0):    {n_ham:,} ({n_ham/n_paired*100:.1f}%)")
-
-    # Pre-extract 13-D handcrafted structural & lexical features for URLs
-    print("\n🔍 Pre-computing 13-D handcrafted indicators for paired URLs...")
-    t0 = time.time()
-    feats_13_list = [extract_13_features(u) for u in df_paired["extracted_url"]]
-    X_url_13 = np.array(feats_13_list, dtype=np.float32)
-    print(f"   Extracted 13-D indicators for {n_paired:,} URLs in {time.time() - t0:.2f}s")
-
-    texts = df_paired["normalized_text"].fillna("").values
-    urls = df_paired["extracted_url"].fillna("").values
-    y = df_paired["label"].values.astype(int)
-
-    # Setup 5-Fold Stratified Cross-Validation
-    skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
-
-    oof_p_text = np.zeros(n_paired, dtype=np.float32)
-    oof_p_url = np.zeros(n_paired, dtype=np.float32)
-
-    fold_metrics_text = []
-    fold_metrics_url = []
-
-    print("\n🚀 Commencing 5-Fold Stratified Cross-Validation (Leak-Free Protocol)...")
-    for fold, (train_idx, val_idx) in enumerate(skf.split(texts, y), 1):
-        t_fold = time.time()
-        print(f"\n--- [Fold {fold}/5] (Train: {len(train_idx):,}, Val: {len(val_idx):,}) ---")
-
-        # ── 1. Text Pipeline (Fit strictly on Train Fold) ──────────────────
-        vec_text = TfidfVectorizer(max_features=10000, ngram_range=(1, 2), sublinear_tf=True)
-        X_tr_text = vec_text.fit_transform(texts[train_idx])
-        X_val_text = vec_text.transform(texts[val_idx])
-
-        clf_text = LogisticRegression(C=1.0, class_weight="balanced", max_iter=1000, random_state=42)
-        clf_text.fit(X_tr_text, y[train_idx])
-
-        p_text_val = clf_text.predict_proba(X_val_text)[:, 1]
-        oof_p_text[val_idx] = p_text_val
-        m_text = compute_metrics(y[val_idx], p_text_val)
-        fold_metrics_text.append(m_text)
-        print(f"   [Text Branch] Acc: {m_text['accuracy']*100:.2f}% | F1: {m_text['f1']*100:.2f}% | AUC: {m_text['roc_auc']:.4f}")
-
-        # ── 2. URL Pipeline (Fit strictly on Train Fold) ───────────────────
-        scaler_url = StandardScaler()
-        X_tr_13_scaled = scaler_url.fit_transform(X_url_13[train_idx])
-        X_val_13_scaled = scaler_url.transform(X_url_13[val_idx])
-
-        vec_url_char = TfidfVectorizer(analyzer="char_wb", ngram_range=(3, 5), max_features=1000)
-        X_tr_char = vec_url_char.fit_transform(urls[train_idx]).toarray()
-        X_val_char = vec_url_char.transform(urls[val_idx]).toarray()
-
-        X_tr_url = np.hstack([X_tr_13_scaled, X_tr_char])
-        X_val_url = np.hstack([X_val_13_scaled, X_val_char])
-
-        clf_url = HistGradientBoostingClassifier(
-            max_depth=4, max_iter=100, learning_rate=0.1, class_weight="balanced", random_state=42
-        )
-        clf_url.fit(X_tr_url, y[train_idx])
-
-        p_url_val = clf_url.predict_proba(X_val_url)[:, 1]
-        oof_p_url[val_idx] = p_url_val
-        m_url = compute_metrics(y[val_idx], p_url_val)
-        fold_metrics_url.append(m_url)
-        print(f"   [URL Branch ] Acc: {m_url['accuracy']*100:.2f}% | F1: {m_url['f1']*100:.2f}% | AUC: {m_url['roc_auc']:.4f} (Fold elapsed: {time.time() - t_fold:.1f}s)")
-
-    print("\n" + "=" * 75)
-    print("📊 Evaluating Fusion Architectures on Out-Of-Fold (OOF) Predictions")
-    print("=" * 75)
-
-    # 1. Base Text Model Only
-    m_base_text = compute_metrics(y, oof_p_text)
-
-    # 2. Base URL Model Only
-    m_base_url = compute_metrics(y, oof_p_url)
-
-    # 3. Max Fusion Baseline: s = max(p_text, p_url)
-    p_max_fusion = np.maximum(oof_p_text, oof_p_url)
-    m_max_fusion = compute_metrics(y, p_max_fusion)
-
-    # 4. Linear Meta-Learner (K-Fold cross-val on OOF features [p_text, p_url])
-    oof_p_linear = np.zeros(n_paired, dtype=np.float32)
-    X_meta_linear = np.column_stack([oof_p_text, oof_p_url])
-
-    for tr_i, val_i in skf.split(X_meta_linear, y):
-        meta_lin = LogisticRegression(C=1.0, random_state=42)
-        meta_lin.fit(X_meta_linear[tr_i], y[tr_i])
-        oof_p_linear[val_i] = meta_lin.predict_proba(X_meta_linear[val_i])[:, 1]
-    m_linear_meta = compute_metrics(y, oof_p_linear)
-
-    # 5. Proposed Interaction Meta-Learner: [p_text, p_url, p_text * p_url]
-    interaction_term = oof_p_text * oof_p_url
-    X_meta_interaction = np.column_stack([oof_p_text, oof_p_url, interaction_term])
-
-    oof_p_interaction = np.zeros(n_paired, dtype=np.float32)
-    for tr_i, val_i in skf.split(X_meta_interaction, y):
-        meta_inter = LogisticRegression(C=1.0, random_state=42)
-        meta_inter.fit(X_meta_interaction[tr_i], y[tr_i])
-        oof_p_interaction[val_i] = meta_inter.predict_proba(X_meta_interaction[val_i])[:, 1]
-    m_interaction_meta = compute_metrics(y, oof_p_interaction)
-
-    # Fit final meta-learners on all OOF pairs to inspect global coefficients
-    final_linear_meta = LogisticRegression(C=1.0, random_state=42).fit(X_meta_linear, y)
-    final_inter_meta = LogisticRegression(C=1.0, random_state=42).fit(X_meta_interaction, y)
-
-    b0_lin = float(final_linear_meta.intercept_[0])
-    b1_lin = float(final_linear_meta.coef_[0][0])
-    b2_lin = float(final_linear_meta.coef_[0][1])
-
-    b0_int = float(final_inter_meta.intercept_[0])
-    b1_int = float(final_inter_meta.coef_[0][0])
-    b2_int = float(final_inter_meta.coef_[0][1])
-    b3_int = float(final_inter_meta.coef_[0][2])
-
-    print("\n📈 Learned Meta-Learner Formulations:")
-    print(f"   • Linear Meta-Learner:")
-    print(f"       s_fused = sigma({b0_lin:.3f} + {b1_lin:.3f}*p_text + {b2_lin:.3f}*p_url)")
-    print(f"   • Proposed Interaction Meta-Learner (ScamGuard):")
-    print(f"       s_fused = sigma({b0_int:.3f} + {b1_int:.3f}*p_text + {b2_int:.3f}*p_url + {b3_int:.3f}*(p_text*p_url))")
-
-    print("\n📋 Comparative Performance Summary Table:")
-    print("-" * 80)
-    print(f"{'Method / Configuration':<36} | {'Accuracy':<8} | {'Precision':<9} | {'Recall':<7} | {'F1-Score':<8} | {'ROC-AUC':<7}")
-    print("-" * 80)
-    print(f"{'Base Model 1 (Text-only)':<36} | {m_base_text['accuracy']*100:6.2f}% | {m_base_text['precision']*100:7.2f}% | {m_base_text['recall']*100:6.2f}% | {m_base_text['f1']*100:7.2f}% | {m_base_text['roc_auc']:7.4f}")
-    print(f"{'Base Model 2 (URL-only)':<36} | {m_base_url['accuracy']*100:6.2f}% | {m_base_url['precision']*100:7.2f}% | {m_base_url['recall']*100:6.2f}% | {m_base_url['f1']*100:7.2f}% | {m_base_url['roc_auc']:7.4f}")
-    print(f"{'Max Fusion Baseline (Heuristic)':<36} | {m_max_fusion['accuracy']*100:6.2f}% | {m_max_fusion['precision']*100:7.2f}% | {m_max_fusion['recall']*100:6.2f}% | {m_max_fusion['f1']*100:7.2f}% | {m_max_fusion['roc_auc']:7.4f}")
-    print(f"{'Linear Meta-Learner (No Interact)':<36} | {m_linear_meta['accuracy']*100:6.2f}% | {m_linear_meta['precision']*100:7.2f}% | {m_linear_meta['recall']*100:6.2f}% | {m_linear_meta['f1']*100:7.2f}% | {m_linear_meta['roc_auc']:7.4f}")
-    print(f"{'ScamGuard (Interaction Meta-Learner)':<36} | {m_interaction_meta['accuracy']*100:6.2f}% | {m_interaction_meta['precision']*100:7.2f}% | {m_interaction_meta['recall']*100:6.2f}% | {m_interaction_meta['f1']*100:7.2f}% | {m_interaction_meta['roc_auc']:7.4f}")
-    print("-" * 80)
-
-    # ── Full Training on Complete Corpus for Production Deployment ──────────────
-    print("\n💾 Training Final Production Models on Complete Dataset...")
-    vec_text_full = TfidfVectorizer(max_features=10000, ngram_range=(1, 2), sublinear_tf=True)
-    X_text_full = vec_text_full.fit_transform(texts)
-    clf_text_full = LogisticRegression(C=1.0, class_weight="balanced", max_iter=1000, random_state=42)
-    clf_text_full.fit(X_text_full, y)
-
-    scaler_url_full = StandardScaler()
-    X_13_scaled_full = scaler_url_full.fit_transform(X_url_13)
-
-    vec_url_char_full = TfidfVectorizer(analyzer="char_wb", ngram_range=(3, 5), max_features=1000)
-    X_char_full = vec_url_char_full.fit_transform(urls).toarray()
-
-    X_url_full = np.hstack([X_13_scaled_full, X_char_full])
-    clf_url_full = HistGradientBoostingClassifier(
-        max_depth=4, max_iter=100, learning_rate=0.1, class_weight="balanced", random_state=42
-    )
-    clf_url_full.fit(X_url_full, y)
-
-    artifacts = {
-        "sms_classifier.pkl": clf_text_full,
-        "tfidf_sms.pkl": vec_text_full,
-        "url_classifier.pkl": clf_url_full,
-        "tfidf_url.pkl": vec_url_char_full,
-        "scaler_url.pkl": scaler_url_full,
-        "meta_learner.pkl": final_inter_meta
-    }
-
-    for fname, obj in artifacts.items():
-        with open(MODELS_DIR / fname, "wb") as f:
-            pickle.dump(obj, f)
-        print(f"   Saved {fname} ({os.path.getsize(MODELS_DIR / fname) / 1024:.1f} KB)")
-
-    # Save comprehensive metrics JSON
-    metrics_summary = {
-        "evaluation_dataset": {
-            "total_paired_records": int(n_paired),
-            "smishing_count": int(n_scam),
-            "benign_count": int(n_ham),
-            "cv_folds": 5
+    # Inner OOF never sees any outer-holdout labels, text or vocabulary.
+    oof_text = np.zeros(len(train))
+    folds = StratifiedGroupKFold(5, shuffle=True, random_state=42)
+    for fold, (fit_i, val_i) in enumerate(folds.split(texts[train], y[train], groups[train]), 1):
+        fold_model = text_model().fit(texts[train[fit_i]], y[train[fit_i]])
+        oof_text[val_i] = fold_model.predict_proba(texts[train[val_i]])[:, 1]
+        print(f"Text OOF fold {fold}/5 complete", flush=True)
+    model_text = text_model().fit(texts[train], y[train])
+    test_text = model_text.predict_proba(texts[test])[:, 1]
+    paired_train = sms.has_url.iloc[train].to_numpy().astype(bool)
+    paired_test = sms.has_url.iloc[test].to_numpy().astype(bool)
+    if len(np.unique(y[train][paired_train])) != 2:
+        raise ValueError("Insufficient real paired SMS from both classes to train fusion")
+    linear = LogisticRegression(C=1, max_iter=1000, random_state=42).fit(
+        meta_features(oof_text[paired_train], sms_url_scores[train][paired_train], False),
+        y[train][paired_train])
+    meta = LogisticRegression(C=1, max_iter=1000, random_state=42).fit(
+        meta_features(oof_text[paired_train], sms_url_scores[train][paired_train]),
+        y[train][paired_train])
+    pt = test_text[paired_test]
+    pu = sms_url_scores[test][paired_test]
+    py = y[test][paired_test]
+    metrics = {
+        "evaluation": "Untouched grouped holdouts; inner text OOF only on SMS training; external URL training excludes all SMS hostnames",
+        "text_holdout": compute_metrics(y[test], test_text),
+        "url_holdout": url_metrics,
+        "paired_holdout": {
+            "text_only": compute_metrics(py, pt), "url_only": compute_metrics(py, pu),
+            "max_fusion": compute_metrics(py, np.maximum(pt, pu)),
+            "linear_meta": compute_metrics(py, linear.predict_proba(meta_features(pt, pu, False))[:, 1]),
+            "interaction_meta": compute_metrics(py, meta.predict_proba(meta_features(pt, pu))[:, 1]),
         },
-        "base_text": m_base_text,
-        "base_url": m_base_url,
-        "max_fusion": m_max_fusion,
-        "linear_meta": m_linear_meta,
-        "interaction_meta": m_interaction_meta,
-        "meta_weights": {
-            "linear": {"beta_0": b0_lin, "beta_1": b1_lin, "beta_2": b2_lin},
-            "interaction": {"beta_0": b0_int, "beta_1": b1_int, "beta_2": b2_int, "beta_3": b3_int}
-        },
-        "fold_metrics": {
-            "text": fold_metrics_text,
-            "url": fold_metrics_url
-        }
     }
-
-    with open(MODELS_DIR / "metrics_meta.json", "w") as f:
-        json.dump(metrics_summary, f, indent=2)
-    print(f"\n✅ All metrics saved to: {MODELS_DIR / 'metrics_meta.json'}")
-    print("=" * 75)
+    metadata = {
+        "run_id": datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ"),
+        "pipeline_fingerprint": pipeline_fingerprint(), "sklearn_version": sklearn.__version__,
+        "method": "Text LR + URL HistGB + logistic interaction stacking",
+        "target": target, "synthetic_pairs": 0, "data_audit": audit,
+        "url_data_audit": url_data_audit,
+        "data_quality_sha256": hashlib.sha256((Path(__file__).parent / 'data_quality.py').read_bytes()).hexdigest(),
+        "training_code_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+        "text_training_samples": len(train), "url_training_samples": len(utrain),
+        "paired_training_samples": int(paired_train.sum()),
+        "paired_holdout_samples": int(paired_test.sum()), "url_conflicting_groups_removed": conflicts,
+        "thresholds": {"review": 30, "high": 80, "selection": "Fixed review policy, not claimed optimal or calibrated"},
+        "probability_calibrated": False,
+        "meta_coefficients": [float(meta.intercept_[0])] + meta.coef_[0].tolist(),
+        "source_sha256": {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in [sms_path, url_path]},
+        "source": source_metadata,
+        "training_seconds": round(time.perf_counter() - started, 2),
+    }
+    # Keep held-out rows OUT of deployed models so reported validation stays attributable.
+    bundle = {"metadata": metadata, "text_model": model_text, "url_model": model_url, "meta_model": meta}
+    temporary = MODELS_DIR / "model_bundle.tmp"
+    with temporary.open("wb") as file:
+        pickle.dump(bundle, file, protocol=pickle.HIGHEST_PROTOCOL)
+    os.replace(temporary, MODELS_DIR / "model_bundle.pkl")
+    (MODELS_DIR / "training_report.json").write_text(json.dumps({"metadata": metadata, "metrics": metrics}, indent=2), encoding="utf-8")
+    split_ids = {
+        "sms_train": train.tolist(), "sms_holdout": test.tolist(),
+        "url_train": utrain.tolist(), "url_holdout": utest.tolist(),
+        "sms_group_disjoint": not bool(set(groups[train]) & set(groups[test])),
+        "url_hostname_disjoint": not bool(set(urls.host.iloc[utrain]) & set(urls.host.iloc[utest])),
+        "sms_url_hostname_disjoint": not bool(sms_hosts & set(urls.host.iloc[utrain])),
+    }
+    (MODELS_DIR / "split_ids.json").write_text(json.dumps(split_ids), encoding="utf-8")
+    print(json.dumps(metrics, indent=2), flush=True)
+    print(f"Saved complete model bundle, run {metadata['run_id']}", flush=True)
 
 
 if __name__ == "__main__":

@@ -1,361 +1,65 @@
-import { NextRequest, NextResponse } from "next/server";
-import { GoogleGenAI, Type, Schema } from "@google/genai";
-import { enrichWebIntelligence, extractUrls, checkBrandDomain, getDomain } from "@/lib/url-verify";
-import { getClientIp, rateLimit } from "@/lib/rate-limit";
-import { createAssessment, getRiskLevels, isMLAvailable } from "@/lib/analysis-assessment";
-import type { AnalysisAssessment, MLClassification } from "@/lib/analysis-assessment";
-import { spawn } from "child_process";
-import path from "path";
+import { NextRequest, NextResponse } from 'next/server';
+import { getClientIp, rateLimit } from '@/lib/rate-limit';
+import { createAssessment, getRiskLevels } from '@/lib/analysis-assessment';
+import { parseInput, runMLClassifier } from '@/lib/ml-inference';
+import { checkBrandDomain, getDomain } from '@/lib/url-verify';
 
-// ─── ML Pre-Classifier (Python subprocess) ───────────────────────────────────
-async function runMLClassifier(text: string, url: string): Promise<MLClassification | null> {
-  return new Promise((resolve) => {
-    const scriptPath = path.join(process.cwd(), "ml_model", "predict.py");
-    const payload = JSON.stringify({ text: text.slice(0, 2000), url });
-    const python = spawn("python3", [scriptPath], { cwd: process.cwd(), timeout: 8000 });
-    let out = "";
-    let errOut = "";
-    python.stdin.write(payload);
-    python.stdin.end();
-    python.stdout.on("data", (d: Buffer) => { out += d.toString(); });
-    python.stderr.on("data", (d: Buffer) => { errOut += d.toString(); });
-    python.on("close", (code: number) => {
-      if (code !== 0 || !out.trim()) { resolve(null); return; }
-      try { resolve(JSON.parse(out.trim())); }
-      catch { resolve(null); }
-    });
-    python.on("error", () => resolve(null));
-  });
-}
+export const runtime = 'nodejs';
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
 };
-
-const FORENSIC_SCHEMA: Schema = {
-  type: Type.OBJECT,
-  properties: {
-    riskScore: { type: Type.INTEGER },
-    riskLevel: { type: Type.STRING, enum: ["LOW", "MEDIUM", "HIGH"] },
-    reasons: { type: Type.ARRAY, items: { type: Type.STRING } },
-    detectedPatterns: { type: Type.ARRAY, items: { type: Type.STRING } },
-    summary: { type: Type.STRING },
-    scam_type: { type: Type.STRING },
-    urgent_actions: { type: Type.ARRAY, items: { type: Type.STRING } },
-  },
-  required: ["riskScore", "riskLevel", "reasons", "detectedPatterns", "summary"],
-};
-
-function checkWhitelist(urlStr: string): { isWhitelisted: boolean; domain: string | null; brand: string | null } {
-  if (!urlStr) return { isWhitelisted: false, domain: null, brand: null };
-  try {
-    let hostname = "";
-    if (urlStr.startsWith("http://") || urlStr.startsWith("https://")) {
-      hostname = new URL(urlStr).hostname.toLowerCase().replace(/^www\./, "");
-    } else {
-      hostname = urlStr.toLowerCase().split("/")[0].replace(/^www\./, "").split(":")[0];
-    }
-
-    if (hostname.endsWith(".edu.vn") || hostname.endsWith(".gov.vn") || hostname.endsWith(".gov") || hostname.endsWith(".edu")) {
-      return { isWhitelisted: true, domain: hostname, brand: "Official Government / Academic Entity" };
-    }
-
-    const whitelistDomains: Record<string, string> = {
-      "google.com": "Google",
-      "google.com.vn": "Google Vietnam",
-      "facebook.com": "Facebook",
-      "fb.com": "Facebook",
-      "zalo.me": "Zalo",
-      "zalo.vn": "Zalo",
-      "youtube.com": "YouTube",
-      "github.com": "GitHub",
-      "microsoft.com": "Microsoft",
-      "apple.com": "Apple",
-      "vietcombank.com.vn": "Vietcombank",
-      "vcbdigibank.com.vn": "Vietcombank",
-      "shopee.vn": "Shopee",
-      "t.me": "Telegram Official",
-      "telegram.org": "Telegram Official",
-      "vneid.gov.vn": "VNeID Official Public Portal",
-      "chongluadao.vn": "ChongLuaDao Security Portal",
-      "khonggianmang.vn": "National Cyber Security Center (NCSC)"
-    };
-
-    for (const [domain, brandName] of Object.entries(whitelistDomains)) {
-      if (hostname === domain || hostname.endsWith(`.${domain}`)) {
-        return { isWhitelisted: true, domain: hostname, brand: brandName };
-      }
-    }
-  } catch {}
-  return { isWhitelisted: false, domain: null, brand: null };
-}
-
-function buildStructuredResponse(
-  riskScore: number,
-  reasons: string[],
-  detectedPatterns: string[],
-  summary: string,
-  scamType?: string,
-  urgentActions?: string[],
-  webIntel?: any
-): any {
-  const { riskLevel, threatLevel } = getRiskLevels(riskScore);
-  const scamDetected = riskLevel === "HIGH";
-  const needsReview = riskLevel !== "LOW";
-
-  return {
-    riskScore,
-    riskLevel,
-    reasons: reasons.length ? reasons : ["No critical security risks or fraudulent patterns identified."],
-    detectedPatterns,
-    summary,
-    scam_detected: scamDetected,
-    risk_score: riskScore,
-    threat_level: threatLevel,
-    scam_type: scamType || (needsReview ? "Suspicious Content" : "No Scam Indicators Detected"),
-    executive_summary: summary,
-    web_intelligence: webIntel || {
-      detected: false,
-      url: null,
-      domain: null,
-      brand_detected: null,
-      domain_match: "unknown",
-      website_status: "unknown",
-      suspicious_indicators: detectedPatterns,
-      external_evidence: [],
-      confidence: 0,
-      verified_live: false,
-    },
-    red_flags: needsReview ? reasons.map((r) => ({
-      evidence: r,
-      official_fact: "Tín hiệu dựa trên nội dung được cung cấp; chưa được xác minh bằng nguồn độc lập.",
-      explanation: r,
-    })) : [],
-    psychological_tricks: [],
-    next_move_prediction: needsReview ? "Chưa đủ dữ liệu để dự đoán hành vi tiếp theo." : "None",
-    urgent_actions: urgentActions || (needsReview ? [
-      "Verify requests independently before sharing information or transferring money.",
-    ] : []),
-    family_alert_card: {
-      headline: scamDetected ? `${threatLevel} RISK ALERT` : needsReview ? "SUSPICIOUS CONTENT — VERIFY FIRST" : "NO CLEAR SCAM INDICATORS",
-      key_warning: needsReview ? "Verify requests before sharing credentials or transferring money." : "No clear scam indicators detected. This does not guarantee safety.",
-      shareable_text: needsReview ? "⚠️ Verify suspicious content independently before acting." : "No clear scam indicators detected in the provided content; continue to verify unusual requests.",
-    },
-  };
-}
 
 export async function OPTIONS() {
-  return new NextResponse(null, {
-    status: 200,
-    headers: corsHeaders,
-  });
+  return new NextResponse(null, {status: 200, headers: corsHeaders});
 }
 
 export async function POST(req: NextRequest) {
-  try {
-    const ip = getClientIp(req);
-    const { ok } = rateLimit(ip);
-    if (!ok) {
-      return NextResponse.json(
-        { error: "Too many requests. Please try again after 1 minute." },
-        { status: 429, headers: corsHeaders }
-      );
-    }
-
-    const contentType = req.headers.get("content-type") || "";
-    let url = "";
-    let title = "";
-    let bodyText = "";
-    let sourceText = "";
-    let isImage = false;
-    let imageBuffer: Buffer | null = null;
-    let imageMimeType = "";
-
-    let language = "en";
-
-    if (contentType.includes("multipart/form-data")) {
-      const formData = await req.formData();
-      const image = formData.get("image") as File;
-      language = (formData.get("language") as string) || "en";
-      if (!image) {
-        return NextResponse.json({ error: "No image file provided" }, { status: 400, headers: corsHeaders });
-      }
-      imageBuffer = Buffer.from(await image.arrayBuffer());
-      imageMimeType = image.type;
-      isImage = true;
-      sourceText = "[image analysis]";
-    } else {
-      const body = await req.json().catch(() => ({}));
-      url = body.url || "";
-      title = body.title || "";
-      bodyText = body.bodyText || body.textInput || "";
-      language = body.language || "en";
-
-      if (!url && !title && !bodyText) {
-        return NextResponse.json({ error: "Request payload is empty" }, { status: 400, headers: corsHeaders });
-      }
-
-      sourceText = bodyText || url || title;
-    }
-
-    // 1. Whitelist Domain Check (.edu, .gov, Google, Facebook, etc.)
-    const targetUrlForWhitelist = url || extractUrls(sourceText)[0] || "";
-    const { isWhitelisted, domain: wlDomain, brand: wlBrand } = checkWhitelist(targetUrlForWhitelist);
-
-    if (isWhitelisted && wlDomain) {
-      const whitelistResult = buildStructuredResponse(
-        0,
-        [`Domain ${wlDomain} is on the official verified whitelist.`],
-        [],
-        `Verified legitimate website belonging to ${wlBrand || wlDomain}.`,
-        "Legitimate Website (Whitelisted)",
-        ["Safe to continue browsing."],
-        {
-          detected: true,
-          url: targetUrlForWhitelist,
-          domain: wlDomain,
-          brand_detected: wlBrand,
-          domain_match: "match",
-          website_status: "accessible",
-          suspicious_indicators: [],
-          external_evidence: [{ title: `Official website of ${wlBrand}`, source_url: `https://${wlDomain}` }],
-          confidence: 100,
-          verified_live: true,
-        }
-      );
-      return NextResponse.json(whitelistResult, { headers: corsHeaders });
-    }
-
-    // 2. Run Local Multi-Modal ML Classifier (Trained on Normalized Data via Stacking Meta-Learner)
-    const mlResult = isImage ? null : await runMLClassifier(sourceText, targetUrlForWhitelist);
-    const localScore = isMLAvailable(mlResult) ? mlResult.ml_risk_score : null;
-
-    // Uncertainty-Gated Escalation Policy (Algorithm 1 in ScamGuard Paper):
-    // - score < 30 (BENIGN): Deterministic local clearance. DO NOT call Gemini (0 API calls, <4ms Edge response).
-    // - score >= 80 (MALICIOUS): Deterministic local block by trained ML model.
-    // - 30 <= score < 80 (UNCERTAINTY): Ambiguous cognitive heuristics.
-    // Note: The authentic riskScore is ALWAYS 100% computed by our trained ML model, NEVER overridden by Gemini.
-    const apiKey = process.env.GEMINI_API_KEY;
-    let geminiParsed: Partial<AnalysisAssessment> | null = null;
-
-    // Check if Gemini is enabled and should be escalated to (for images or cognitive deconstruction in uncertainty range)
-    const disableGemini = process.env.DISABLE_GEMINI === "true";
-    const shouldEscalateToGemini = !disableGemini && (isImage || (localScore !== null && localScore >= 30 && localScore < 80));
-
-    if (shouldEscalateToGemini && apiKey && apiKey.trim() !== "" && apiKey !== "your_gemini_api_key_here") {
-      try {
-        const ai = new GoogleGenAI({ apiKey });
-        let contents: any[] = [];
-
-        if (isImage && imageBuffer) {
-          contents = [
-            { inlineData: { mimeType: imageMimeType, data: imageBuffer.toString("base64") } },
-            { text: "Perform digital forensic analysis on this image to evaluate scam, phishing, or financial fraud indicators." },
-          ];
-        } else {
-          contents = [
-            {
-              text: `Analyze fraud, phishing, and scam risk for the following target content:
-URL: ${url || "No URL provided"}
-Title: ${title || "No title provided"}
-Body/Content: ${bodyText || "No detailed text provided"}
-(Note: Local Edge ML model has already determined the baseline risk score as ${localScore}/100. Deconstruct psychological urgency and deception tactics).`,
-            },
-          ];
-        }
-
-        const isVi = language === "vi";
-        const response = await ai.models.generateContent({
-          model: "gemini-2.5-flash",
-          contents,
-          config: {
-            systemInstruction: `You are ScamShield Forensic AI - An advanced multimodal cyber deception and fraud intelligence engine.
-Evaluate fraud and phishing risk based on the provided URL, Title, and Content data.
-
-Anti-Hallucination & Structured Output Rules:
-1. riskLevel must be strictly one of: "LOW", "MEDIUM", "HIGH".
-2. riskScore must be an integer between 0 and 100 (aligned with local model prediction).
-3. reasons is an array of specific anomalies, red flags, or fraudulent indicators discovered (written in ${isVi ? "Vietnamese" : "English"}).
-4. detectedPatterns is an array describing identified threat patterns (written in ${isVi ? "Vietnamese" : "English"}).
-5. summary is a concise ${isVi ? "Vietnamese" : "English"} forensic summary.
-6. If evidence is ambiguous or insufficient, default riskLevel to "LOW".`,
-            responseMimeType: "application/json",
-            responseSchema: FORENSIC_SCHEMA,
-          },
-        });
-
-        if (response.text) {
-          geminiParsed = JSON.parse(response.text);
-        }
-      } catch (geminiError: any) {
-        console.warn("Gemini API call skipped/failed, relying 100% on the local ML model:", geminiError?.message || geminiError);
-      }
-    }
-    const assessment = createAssessment(geminiParsed, mlResult, !!targetUrlForWhitelist);
-    if (!assessment) {
-      return NextResponse.json(
-        { error: isImage
-          ? "Chưa thể phân tích ảnh lúc này. Hãy nhập nội dung văn bản hoặc thử lại sau."
-          : "Dịch vụ phân tích chưa sẵn sàng. Vui lòng thử lại sau." },
-        { status: 503, headers: corsHeaders }
-      );
-    }
-    const { riskScore, reasons, detectedPatterns, summary, scam_type: scamType, urgent_actions: urgentActions } = assessment;
-
-    let finalResponse: any = buildStructuredResponse(
-      riskScore,
-      reasons,
-      detectedPatterns,
-      summary,
-      scamType,
-      urgentActions
-    );
-
-    // Attach ML metadata and full forensic telemetry to response for UI display
-    if (mlResult) {
-      finalResponse.ml_classifier = {
-        ml_risk_score  : mlResult.ml_risk_score,
-        ml_label       : mlResult.ml_label,
-        ml_confidence  : mlResult.ml_confidence,
-        ml_top_signals : mlResult.ml_top_signals,
-        model_ready    : isMLAvailable(mlResult),
-        text_score     : mlResult.text_result?.score != null ? Math.round(mlResult.text_result.score * 100) : null,
-        url_score      : mlResult.url_result?.score != null ? Math.round(mlResult.url_result.score * 100) : null,
-        text_tokens    : mlResult.text_result?.top_features || [],
-        url_signals    : mlResult.url_result?.top_features || [],
-        uncertainty    : mlResult.uncertainty ?? null,
-        action         : mlResult.action ?? null,
-        normalized_text: mlResult.normalized_text ?? "",
-        extracted_url  : mlResult.extracted_url ?? "",
-        meta_formula   : "s_fused = 100 × σ(-4.470 + 5.243·p_text + 4.628·p_url + 1.714·(p_text·p_url))",
-      };
-    }
-
-    const textForVerify = [targetUrlForWhitelist, summary, ...reasons].filter(Boolean).join(" ");
-    if (textForVerify && (finalResponse.web_intelligence?.detected || extractUrls(textForVerify).length > 0)) {
-      finalResponse.web_intelligence = await enrichWebIntelligence(finalResponse.web_intelligence, textForVerify);
-      if (finalResponse.web_intelligence?.domain_match === "mismatch" && finalResponse.riskScore < 85) {
-        const mismatchReason = "Tên miền không khớp với thương hiệu được nhận diện; cần kiểm chứng độc lập.";
-        finalResponse = {
-          ...finalResponse,
-          ...buildStructuredResponse(
-            Math.min(99, finalResponse.riskScore + 10),
-            [...reasons, mismatchReason],
-            [...detectedPatterns, "Brand domain mismatch"],
-            `${summary} ${mismatchReason}`,
-            "Domain / Brand Mismatch",
-            urgentActions,
-            finalResponse.web_intelligence,
-          ),
-        };
-      }
-    }
-
-    return NextResponse.json(finalResponse, { headers: corsHeaders });
-  } catch (error: unknown) {
-    const message = error instanceof Error ? error.message : "AI Processing Error";
-    return NextResponse.json({ error: message }, { status: 500, headers: corsHeaders });
+  if (!rateLimit(getClientIp(req)).ok) {
+    return NextResponse.json({error: 'Too many requests. Please try again later.'}, {status: 429, headers: corsHeaders});
   }
+  if (!req.headers.get('content-type')?.includes('application/json')) {
+    return NextResponse.json({error: 'Chỉ hỗ trợ văn bản và URL. Ảnh cần OCR local, hiện chưa có trong mô hình.'},
+      {status: 415, headers: corsHeaders});
+  }
+  const input = parseInput(await req.json().catch(() => null));
+  if (!input) return NextResponse.json({error: 'Provide text (up to 20,000 characters) or an HTTP URL.'}, {status: 400, headers: corsHeaders});
+  const ml = await runMLClassifier(input.text, input.url);
+  const assessment = createAssessment(ml, !!ml?.url_result, input.language);
+  if (!assessment || !ml) {
+    return NextResponse.json({error: 'Mô hình local chưa sẵn sàng hoặc không tương thích. Cần train bộ model hiện tại.'},
+      {status: 503, headers: corsHeaders});
+  }
+  const {riskScore, riskLevel, reasons, detectedPatterns, summary, scam_type, urgent_actions} = assessment;
+  const {threatLevel} = getRiskLevels(riskScore);
+  const needsReview = riskScore >= 30;
+  const domain = getDomain(ml.extracted_url || '');
+  const brand = domain ? checkBrandDomain(domain) : null;
+  // Domain annotations are separate context. They never bypass ML or modify its score.
+  return NextResponse.json({
+    ...assessment, risk_score: riskScore, scam_detected: riskScore >= 80, threat_level: threatLevel,
+    executive_summary: summary, scam_type, urgent_actions,
+    web_intelligence: {
+      detected: !!domain, url: ml.extracted_url || null, domain,
+      brand_detected: brand?.brand ?? null, domain_match: brand?.match ?? 'unknown',
+      website_status: 'unknown', verified_live: false, confidence: 0,
+      suspicious_indicators: [], external_evidence: [],
+    },
+    red_flags: needsReview ? reasons.map(evidence => ({
+      evidence, official_fact: 'Model-derived signal; not independently verified.', explanation: evidence,
+    })) : [],
+    psychological_tricks: [], next_move_prediction: 'Not evaluated by this classifier.',
+    family_alert_card: {
+      headline: riskLevel === 'HIGH' ? 'HIGH MODEL RISK' : needsReview ? 'VERIFY BEFORE ACTING' : 'NO CLEAR MODEL SIGNALS',
+      key_warning: summary, shareable_text: summary,
+    },
+    detectedPatterns,
+    ml_classifier: {
+      ...ml, text_score: ml.text_result ? Math.round(ml.text_result.score * 100) : null,
+      url_score: ml.url_result ? Math.round(ml.url_result.score * 100) : null,
+      text_tokens: ml.text_result?.top_features ?? [], url_signals: ml.url_result?.top_features ?? [],
+    },
+  }, {headers: corsHeaders});
 }

@@ -1,60 +1,244 @@
-# Local ML training on Windows
+# Local training and inference
 
-Run these commands from the project root:
+The web now defaults to `predict_processed.py`, loading the checksum-pinned
+`data/prepared/processed_agent_fit_2026-10-25/trained_agent_models.pkl`.
+It uses the frozen SMS and URL preprocessing, thresholds 0.65/0.22, and no
+fusion. Missing or incompatible artifacts fail closed. See
+`../docs/web-model-activation-2026-10-25.md` for the active contract and test files.
 
-```powershell
-python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r ml_model\requirements.txt
-npm.cmd ci
+The older fusion pipeline is `train_meta_fusion.py`; `train.py` delegates to it.
+Its original bundle remains available through `SCAMGUARD_INFERENCE_MODE=legacy`.
+Descriptions below of isolated experiments preserving the app refer to their
+original execution, before the separately authorized web activation.
 
-$env:PYTHONUTF8 = '1'
-$env:OMP_NUM_THREADS = '1'
-$env:OPENBLAS_NUM_THREADS = '1'
-.\.venv\Scripts\python.exe -u ml_model\train.py
-.\.venv\Scripts\python.exe -m unittest discover -s ml_model -v
+## Repairing and reviewing existing data
 
-.\scripts\start-local.ps1
-```
+Run `python ml_model/prepare_data.py` before reviewing the old datasets. This
+does not retrain models or overwrite the source CSV files. It writes traceable
+candidate datasets, quarantine queues, a 200-message stratified label-review
+sample and `data/prepared/XEM_DU_LIEU_SAU_SUA.md` with actual before/after examples.
+Generated files remain local and Git-ignored.
 
-The training script reads `data/spam.csv` and `data/phishing_site_urls.csv`.
-It uses all 5,572 SMS messages and a reproducible sample of 50,000 URLs from
-549,346 downloaded rows, matching the existing URL training limit.
-Both classifiers use stratified 5-fold validation. TF-IDF is fitted within
-each training fold, and all three metrics are computed from the same fits.
-The final classifiers are fitted on their complete selected training sets.
-Reported scores describe these datasets; they are not a guarantee for new
-messages, Vietnamese content, or newly created phishing sites.
+After the Vietnamese AI review exists, run the additional holdout audit:
 
-Model files and evaluation metrics are saved in `ml_model/models/`.
-The datasets, generated models, and `.venv/` are ignored by Git.
+    .\.venv\Scripts\python.exe ml_model\audit_vi_holdout.py
 
-Open http://localhost:3000 after starting the app. `start-local.ps1` puts
-the virtual environment on PATH and supplies the `python3` executable name
-expected by the existing API. Test the trained model independently of Gemini:
+It separates unresolved labels and compares all reviewed messages with the old
+SMS corpus, restored UCI messages and the provider's training split. It groups
+masked templates, shared hostnames and character-ngram cosine matches >=0.90.
+Outputs are in `data/prepared/review_2026-10-25/holdout_audit/`; start with
+`KET_QUA_TACH_VA_NHOM.md`. Reference overlap blocks the entire connected group.
+Groups containing unresolved or conflicting labels also remain outside the
+reserved holdout candidates. Original labels, review decisions and model files
+remain unchanged. Similarity flags do not automatically change any label.
+This is a conservative lexical audit, not proof of campaign independence.
+Provider test records remain reserved for evaluation: no training partition is
+created, and AI review does not promote any row to expert-verified ground truth.
 
-```powershell
-Invoke-RestMethod -Method Post -Uri 'http://localhost:3000/api/ml-classify' `
-  -ContentType 'application/json' -Body '{"text":"FREE prize! Claim now!"}'
-```
+For the separately authorized exploratory AI-label training run:
 
-Gemini analysis and roleplay require `GEMINI_API_KEY` in `.env.local`.
-The local `/api/ml-classify` endpoint does not require that key.
+    .\.venv\Scripts\python.exe ml_model\run_review_experiment.py --allow-ai-labels
 
-## Analysis result checks
+The explicit flag permits reviewed AI labels only in this isolated experiment;
+it does not change the original automatic-training restrictions. The script
+requires the fixed training-review sample and authored notes in the review
+directory's `experiment/` folder. It uses the existing text estimator, freezes a
+more conservative 0.80 similarity screen before fitting, and writes the model,
+per-message predictions, error cases and `KET_QUA_THU_NGHIEM.md` into that folder.
+It never places provider test records in training or replaces deployed bundles.
+Metrics are agreement with AI proposals, not verified real-world accuracy;
+review the false alarms under the app's 30/80 policy as well as binary metrics.
+The separate 30-message human annotation sample remains pending until actual
+user/independent labels are recorded. Preserve `human_verification.json` answers
+and never overwrite an existing annotation sample when rerunning preparation.
 
-When Gemini is unavailable, `/api/analyze` uses the available ML score directly.
-It blends scores only when both Gemini and ML return valid predictions. With no
-available prediction, it returns HTTP 503 instead of a fabricated threat report.
-The local classifiers cannot analyze image pixels; images require Gemini.
+The next isolated study is `round2_experiment.py`, with separate `prepare`,
+`select`, and `test` phases, each requiring `--allow-ai-labels`. Its authored
+notes and outputs are under `data/prepared/review_2026-10-25/round2/`; start with
+`KET_QUA_TOAN_BO.md`. The completed study reviewed 500 additional Vietnamese
+messages, fitted 458 reviewed messages, selected on 66 validation messages and
+evaluated 70 new test messages once. Model and threshold checksums are frozen
+before test annotation and prediction; completed selection/test phases reject
+reruns. The earlier 288-message diagnostic set is not used for this selection.
 
-Risk levels follow the existing API contract: 0–40 LOW, 41–70 MEDIUM, 71–100 HIGH.
-The dashboard adds detail: 0–20 SAFE, 21–40 LOW, 41–70 MEDIUM, 71–90 HIGH,
-91–100 CRITICAL. Benign input has no generated phishing evidence or claims of
-live verification. Warning colors follow the displayed threat level.
+Audit grouping now recognizes explicit URLs wrapped in dataset brackets such
+as `[http://example.com]`, so wrappers cannot hide a shared hostname. Original
+text and production inference preprocessing remain unchanged. Group conflicts
+found after the initial sample selection block affected records rather than
+moving seen examples to a new partition. The training guard also rejects any
+record explicitly marked validation, test or `do_not_train`, even if it came
+from a provider file originally named `train.csv`.
 
-Run these checks with the app running locally and no Gemini key configured:
+Two account-rental messages were assigned project label 1 by the user after
+selection was frozen. They are recorded in the latest reviewed dataset and a
+separate decision file, not retrofitted into the model's 458-row fit manifest.
+The final study still lacks a complete independently human-verified test set;
+public evidence supporting two annotations does not imply expert verification.
 
-```powershell
-node --test scripts/analysis-assessment.test.mjs scripts/analyze.integration.test.mjs
-npm.cmd run build
-```
+The fallback source is now the original UCI SMS Spam Collection archive at
+`data/reference/uci_sms_spam_collection.zip`, with pinned SHA-256
+`1587ea43e58e82b14ff1f5425c88e17f8496bfcdb67a583dbff9eefaf9963ce3`.
+Obtain it from https://archive.ics.uci.edu/static/public/228/sms+spam+collection.zip
+if absent. The UCI dataset is attributed to Almeida and Hidalgo, DOI
+10.24432/C5CC84, CC BY 4.0. Its complete original messages replace the malformed
+local `spam.csv` as the fallback; spam/ham is still a proxy, not verified smishing.
+
+Training uses the shared dataset URL repairs: refang explicit hxxp/hxxps and
+host [.] representations, encode literal spaces in paths, then quarantine
+invalid/ambiguous URLs and conflicting labels before deduplication. No URL is
+fetched. Inference preprocessing remains unchanged; deployed bundles are not
+replaced by data preparation. Repair-code hashes and URL audit counts are saved
+in reports from future training runs.
+Whitespace in queries/fragments, embedded malware/HTTP annotations, redactions,
+and quotes in hostnames are quarantined rather than interpreted as URL content.
+
+Missing auxiliary spam labels stay missing. Smishing labels are not copied into
+the spam column. A repair to text/URL formatting never promotes inherited or
+keyword-derived labels to expert verification. Review proposals remain pending
+until their evidence and reviewer are recorded. The review sample is for a label
+audit and is not an independent evaluation set. Do not report an error rate before
+completing human review, or retrain/deploy as a verified improvement without a
+separate reliable evaluation set.
+
+From the project root on Windows:
+
+    python -m venv .venv
+    .\.venv\Scripts\python.exe -m pip install -r ml_model\requirements.txt
+    .\.venv\Scripts\python.exe ml_model\download_data.py
+    $env:OMP_NUM_THREADS = '2'
+    $env:OPENBLAS_NUM_THREADS = '1'
+    .\.venv\Scripts\python.exe -u ml_model\train.py
+    .\.venv\Scripts\python.exe -m unittest discover -s ml_model -v
+    .\.venv\Scripts\python.exe ml_model\verify_internal.py
+
+Place phishing_site_urls.csv (columns URL,Label; good/bad) in ml_model/data first.
+The existing copy contains 549,346 rows. Its SHA-256 is saved in training_report.json.
+
+Training validates binary labels, canonicalizes URLs, masks entities, preserves
+Vietnamese NFC words, quarantines conflicting normalized records and removes
+duplicates. All URLs in a message are extracted; a group connects identical
+normalized text and any shared hostname.
+
+An untouched grouped SMS holdout is split before fitting. Inner 5-fold grouped
+text OOF is restricted to the SMS training partition. The URL estimator is trained
+on a separate URL corpus with every SMS hostname excluded, and has its own grouped
+holdout. No synthetic text–URL pairs are generated. The meta-learner is fitted
+only on real paired SMS in SMS training. Deployed models retain the test exclusions.
+
+The Combined Labeled Smishing Dataset assigns its smishing labels using keyword
+rules. These are weak labels, not expert-verified ground truth. See
+data/smishing_source.json and data/smishing_source_README.md for provenance and
+research-use terms. An SMS label does not independently establish its URL's label.
+
+Outputs:
+
+- models/model_bundle.pkl: the complete fitted pipelines and meta-learner.
+- models/training_report.json: data hashes, run ID, fitted coefficients and holdout metrics.
+- models/split_ids.json: reproducible split indices and isolation checks.
+
+The bundle includes a hash of preprocessing/model definitions and the sklearn
+version. Missing, corrupted or incompatible bundles return unavailable, never a
+safe score. Rerun training after changing preprocessing or estimator definitions.
+Never load pickle artifacts from an untrusted source.
+
+Inference is fully local for every score, including 30–79. The policy is <30 low,
+30–79 review, >=80 high risk. These thresholds are fixed review policy, not claimed
+optimal thresholds or calibrated probabilities. URL annotations cannot alter scores.
+Images and dialogue evaluation are unavailable until suitable local models exist.
+
+    npm.cmd ci --ignore-scripts
+    .\scripts\start-local.ps1
+
+With the app running:
+
+    node --test scripts/analysis-assessment.test.mjs scripts/analyze.integration.test.mjs
+    npm.cmd run lint
+    npm.cmd run build
+
+The API starts Python per request. Its latency includes imports and model loading.
+The dashboard reports measured Python inference time; it does not claim <4ms endpoint latency.
+
+## External supervised training, 2026-10-25
+
+The isolated experiment in `external_training.py` and `external_experiment.py`
+has completed using Mendeley SMS Phishing Dataset v1 (5,971 original messages)
+and PhishVN dataset version 4 / release v3.1.0 (53,116 original URLs). It also
+retains eligible previously reviewed training messages. Original labels,
+source checksums, review provenance, ambiguous records and group exclusions
+are exported separately. No keyword rule creates a new smishing label.
+
+See `../docs/external-data-training-2026-10-25.md` for sources, counts, actual
+holdout results and limitations. The complete local artifacts are in
+`data/prepared/external_training_2026-10-25/`: `final_report.json`,
+`verification_report.json`, `selection_frozen.json`, `research_bundle.pkl`,
+and CSV/JSONL train, validation, test, quarantine and prediction exports.
+These generated datasets and model artifacts are intentionally gitignored.
+
+Source SMS labels do not imply expert verification. An AI semantic review
+covered 240 source messages; unresolved cases and the remaining 438 unreviewed
+source-smishing messages are quarantined. PhishVN training positives are
+gold-tier feed-listed abuse, a broader target than credential phishing.
+Bronze records and silver positives are quarantined. Labels inferred from
+scenario keywords are never training targets or features. URL inference uses
+recomputed lexical features and collapses HTTP/HTTPS to one scheme to remove
+the documented collection artifact.
+
+Groups use the pinned Public Suffix List, text templates and character
+similarity. Every domain represented by the published 200-case human audit is
+reserved from both training corpora. Its 81 evidence-supported phishing versus
+legitimate cases form a separate human-label URL evaluation. This is an
+authors' published audit, not an independent verification by this project and
+not a claim of verified expert qualifications. The source-labeled URL test,
+AI/source-labeled SMS test and reused Vietnamese diagnostic are reported
+separately. Fusion uses actual SMS links and grouped out-of-fold text scores;
+validation selected the text model for SMS decisions.
+
+Once all pinned source files and review annotations are present, the experiment
+stages are:
+
+    .\.venv\Scripts\python.exe ml_model\external_experiment.py prepare --allow-ai-labels
+    .\.venv\Scripts\python.exe ml_model\external_experiment.py select --allow-ai-labels
+    .\.venv\Scripts\python.exe ml_model\external_experiment.py test --allow-ai-labels
+
+Selection and test have already completed in this checkout. They reject reruns
+to prevent tuning against the same test. Frozen checksums cover inputs, code and
+the research bundle. A changed experiment needs a separate output directory
+and a new evaluation plan; do not erase the freeze to retest.
+
+To try the fitted candidate without changing the app:
+
+    .\.venv\Scripts\python.exe ml_model\external_experiment.py predict --allow-ai-labels --text "Me oi con can chuyen tien gap, dung goi con"
+
+This bundle is explicitly incompatible with the production inference contract.
+The app's models are preserved. The URL and Vietnamese false-positive results
+do not support promoting this candidate to production. Scores are model outputs,
+not calibrated real-world probabilities. MIMICS-3500 contributed zero records:
+no official public data file with verified provenance and reuse terms was found.
+
+Access-route correction, 2026-10-25: the user identified the official GVIS page
+at https://gvis.unileon.es/datasets-mimics-3500/. It provides MIMICS-3500 upon
+email request to gvis@unileon.es, from an institutional account; students must
+have their supervisor submit the request. Include institution, project summary
+and research objectives. The page states no response deadline or specific reuse
+license. No request has been sent and no MIMICS records have been acquired.
+The original frozen training reports remain unchanged; see the updated access
+section in `../docs/external-data-training-2026-10-25.md`.
+
+## SmishX English SMS expansion
+
+`smishx_training.py` completes an isolated follow-up to the frozen external
+experiment, without editing its code or outputs. It screens the multilingual
+SmishX source against English language and project label scope, retains the
+authors' manual label provenance, blocks old holdout groups, merges consistent
+duplicates and fits a new SMS text model. Ambiguous scope or label conflicts
+are quarantined rather than converted into new AI training labels. IMC's
+AI-labeled messages and MIMICS-3500 are not fitted.
+
+Artifacts are in `data/prepared/smishx_training_2026-10-25/`.
+See `../docs/smishx-training-2026-10-25.md` for corrected language counts,
+train/validation/test usage, results and regressions on reused diagnostics.
+The new 39-message English holdout is small; historical tests are diagnostics.
+The original app bundle is preserved. The later web activation uses the selected
+model through a dedicated adapter. Completed selection and test stages reject reruns.
+
+    .\.venv\Scripts\python.exe ml_model\smishx_training.py predict --allow-mixed-labels --text "Hello, can we meet at 3 tomorrow?"

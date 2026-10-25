@@ -84,7 +84,7 @@
       const level = data.riskLevel ?? data.threat_level ?? "";
       const scamDetected = data.scam_detected ?? false;
 
-      const isHighRisk = level === "HIGH" || level === "CRITICAL" || score > 70 || scamDetected === true;
+      const isHighRisk = level === "HIGH" || level === "CRITICAL" || score >= 80 || scamDetected === true;
 
       if (isHighRisk) {
         const warningText = data.executive_summary
@@ -110,7 +110,7 @@
     window.addEventListener("DOMContentLoaded", analyzeCurrentPage);
   }
 
-  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  chrome.runtime.onMessage.addListener((message) => {
     if (message && (message.action === "ANALYZE_PAGE" || message.action === "CHECK_PAGE")) {
       analyzeCurrentPage();
     }

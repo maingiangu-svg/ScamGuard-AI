@@ -7,8 +7,8 @@ PROJECT_ID="${GCP_PROJECT_ID:-YOUR_GCP_PROJECT_ID}"
 REGION="${GCP_REGION:-asia-southeast1}"
 SERVICE="scamshield-forensic"
 
-if [ -z "${GEMINI_API_KEY:-}" ]; then
-  echo "❌ Thiếu GEMINI_API_KEY. Chạy: export GEMINI_API_KEY=your_key"
+if [ ! -f "ml_model/models/model_bundle.pkl" ]; then
+  echo "Train ml_model/train.py before deployment; the complete local model bundle is required."
   exit 1
 fi
 
@@ -21,7 +21,7 @@ gcloud run deploy "$SERVICE" \
   --region "$REGION" \
   --platform managed \
   --allow-unauthenticated \
-  --set-env-vars "GEMINI_API_KEY=${GEMINI_API_KEY},RATE_LIMIT_PER_MINUTE=15" \
+  --set-env-vars "PYTHON_EXECUTABLE=python,RATE_LIMIT_PER_MINUTE=15" \
   --memory 512Mi \
   --cpu 1 \
   --min-instances 0 \

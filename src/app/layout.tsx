@@ -1,22 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "ScamShield Forensic AI — Multimodal Deception & Scam Intelligence",
   description:
-    "AI-powered digital forensic analysis and cognitive deception decoding for fraud prevention, engineered with Google Gemini 2.5 Flash.",
-  keywords: ["cyber forensic", "scam detection", "phishing intelligence", "Gemini 2.5 Flash", "fraud prevention", "AI security"],
+    "Local text and URL risk screening using independently trained machine learning models.",
+  keywords: ["smishing", "scam detection", "phishing", "local machine learning", "fraud prevention"],
   authors: [{ name: "ScamShield Research Team" }],
   manifest: "/manifest.json",
   openGraph: {
@@ -38,7 +27,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className="h-full antialiased"
     >
       <body className="min-h-full flex flex-col">{children}</body>
     </html>

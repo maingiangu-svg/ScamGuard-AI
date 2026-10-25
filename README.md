@@ -1,130 +1,64 @@
-# ScamShield Forensic AI
+# ScamGuard AI
 
-> **Multimodal Cyber Forensics & Cognitive Deception Intelligence Platform**  
-> Powered by **Google Gemini 2.5 Flash** for automated fraud detection, evidence benchmarking, and adversarial simulation.
+Local machine learning screening for suspicious messages and URLs.
 
----
+The default web model is `processed-20261025`: word/character TF-IDF + Logistic
+Regression for SMS, and lexical/character features + HistGradientBoosting for
+URLs. SMS decisions use the text model; embedded URLs are scored separately.
+No fusion model was trained for this fit.
+The app makes no external AI calls and does not fetch submitted URLs.
 
-## Abstract & Overview
+The score is a model estimate, not proof of fraud or a calibrated probability.
+Policy: <30 low risk, 30–79 review, >=80 high risk. Domain annotations never
+bypass the classifier or modify its score. Missing/incompatible models return
+HTTP 503 rather than an invented safe verdict.
 
-Online social engineering and multimodal cyber deception—including SMS brand spoofing, crypto wallet drainers, deepfake impersonation, and fake government portal malware—present critical threats to digital safety. 
+## Setup
 
-**ScamShield Forensic AI** provides an end-to-end cyber-forensic pipeline that analyzes suspicious screenshots, text messages, and web URLs. Combining multimodal LLM reasoning (Gemini 2.5 Flash) with deterministic live web intelligence and brand verification, the system extracts concrete violation evidence, decodes psychological manipulation tactics, benchmarks suspect claims against verified ground truths, and provides an interactive defense reflex training environment.
+See [local training instructions](ml_model/README.md). From this directory:
 
----
+    npm.cmd ci --ignore-scripts
+    python -m venv .venv
+    .\.venv\Scripts\python.exe -m pip install -r ml_model\requirements.txt
+    .\.venv\Scripts\python.exe ml_model\download_data.py
 
-## Key Features
+Place phishing_site_urls.csv in ml_model/data, then:
 
-1. **Multimodal Forensic Scanner**
-   - Ingests image screenshots (OCR + visual artifact analysis) or raw text/links.
-   - Computes deterministic risk scores (0–100) and severity threat tiers (`SAFE`, `LOW`, `MEDIUM`, `HIGH`, `CRITICAL`).
+    .\scripts\start-local.ps1
 
-2. **Web Intelligence & Live Verification**
-   - Active URL extraction and HTTP live probe verification.
-   - Domain matching engine benchmarking claimed brand identities against authoritative registries.
-   - High-risk TLD detection (`.vip`, `.top`, `.xyz`, etc.).
+Open http://localhost:3000. No external model API key is needed.
+Pickled model files and raw datasets are not downloaded by git pull.
+This checkout uses the fitted bundle in
+`ml_model/data/prepared/processed_agent_fit_2026-10-25/`. `train.py` trains the
+older fusion pipeline, not this selected model. See
+[activation and real test data](docs/web-model-activation-2026-10-25.md).
 
-3. **Ground Truth Evidence Comparator**
-   - Structural 3-tier comparative cards juxtaposing:
-     - 🔴 **[Detected in Data]**: Specific suspicious indicators discovered in the input.
-     - 🟢 **[Official Benchmark]**: Authoritative baseline or legal regulations with verified source links.
-     - 💡 **Analysis**: Technical rationale explaining why the disparity indicates fraudulent intent.
+## Evidence and limits
 
-4. **Cognitive & Psychological Deception Decoder**
-   - Unmasks psychological triggers (e.g., urgency coercion, artificial scarcity, FOMO, sunk cost entrapment).
-   - Identifies targeted human emotions and predictive adversarial next moves.
+[Current fit report](ml_model/data/prepared/processed_agent_fit_2026-10-25/training_report.json)
+records the 3,857 training SMS and 9,123 training URLs. Labels have mixed
+provenance: source human annotations, source labels and reviewed AI labels;
+they are not all expert-verified. Keyword-derived smishing labels were excluded.
+The SMS threshold is 0.65; the URL threshold is 0.22. These binary decisions are
+shown separately from the 30/80 alert policy. Scores are not calibrated.
 
-5. **Adversarial Roleplay Reflex Lab**
-   - Conversational simulation powered by Gemini 2.5 Flash.
-   - Users practice defensive responses against dynamic scammer personas based on the scanned case.
-   - Real-time reflexive evaluation (`Safe Defensive Response` vs `Critical Defense Failure`).
+The downloadable English test contains 39 held-out SmishX messages. Its 25
+positive messages share one similarity group, so it cannot establish
+generalization to new scam campaigns. Vietnamese results remain diagnostics.
+The older fusion bundle and its historical reports are preserved; set
+`SCAMGUARD_INFERENCE_MODE=legacy` before starting to explicitly select it.
 
-6. **Instant Cross-Platform Warning Cards & PDF Export**
-   - 1-click formatted family warning dispatch via Telegram, messaging intents, or native Web Share API.
-   - Comprehensive high-resolution PDF forensic report generator for investigative documentation.
+Image analysis and roleplay are unavailable because no local OCR/dialogue model
+has been trained. Sample scenarios are clearly labelled educational illustrations.
+They are not live model evaluations. The extension warns only at the >=80 policy.
 
-7. **Manifest V3 Chrome Extension**
-   - Real-time active tab inspection injecting high-contrast warning overlays when navigating to malicious domains.
+## Checks
 
----
+    .\.venv\Scripts\python.exe -m unittest discover -s ml_model -v
+    node --test scripts/analysis-assessment.test.mjs
+    node --test scripts/analyze.integration.test.mjs
+    npm.cmd run lint
+    npm.cmd run build
 
-## System Architecture
-
-```mermaid
-graph TD
-    A[Client: Next.js Dashboard / Chrome Extension] -->|HTTP POST| B[API Gateway / Route Handlers]
-    B --> C{Whitelist Filter}
-    C -->|Whitelisted Domain| D[Instant Safe Response]
-    C -->|Non-Whitelisted| E[Multimodal Forensic Engine]
-    E --> F[Google Gemini 2.5 Flash API]
-    E --> G[URL Live Probe & Brand Registry]
-    F --> H[Structured Schema Enforcement]
-    G --> H
-    H --> I[Forensic Report & Interactive Labs]
-```
-
----
-
-## Tech Stack
-
-| Layer | Technology |
-|---|---|
-| **Frontend Framework** | Next.js 16 (App Router), React 19, Tailwind CSS 4 |
-| **Icons & Visuals** | Lucide React, HTML5 Canvas, jsPDF |
-| **AI / Multimodal Reasoning** | Google Gemini 2.5 Flash (`@google/genai` SDK) |
-| **Extension** | Google Chrome Extension Manifest V3 |
-| **Deployment & Container** | Docker, Google Cloud Run |
-
----
-
-## Local Development & Setup
-
-### Prerequisites
-- Node.js 20+
-- Google Gemini API Key from [Google AI Studio](https://aistudio.google.com/apikey)
-
-### Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/maingiangu-svg/ScamGuard-AI.git
-cd ScamGuard-AI/scamshield-forensic
-
-# Install dependencies
-npm install
-
-# Configure environment variables
-cp .env.example .env.local
-# Set your GEMINI_API_KEY in .env.local
-
-# Launch development server
-npm run dev
-```
-
-Navigate to `http://localhost:3000` in your web browser.
-
----
-
-## Chrome Extension Setup
-
-1. Open Google Chrome and navigate to `chrome://extensions`.
-2. Toggle on **Developer mode** in the top-right corner.
-3. Click **Load unpacked** and select the `extension/` directory.
-4. The extension will automatically monitor active navigation and cross-reference against the local ScamShield API at `http://localhost:3000/api/analyze`.
-
----
-
-## Cloud Deployment (Google Cloud Run)
-
-```bash
-export GCP_PROJECT_ID="your-gcp-project-id"
-export GEMINI_API_KEY="your-gemini-api-key"
-chmod +x scripts/deploy-cloud-run.sh
-./scripts/deploy-cloud-run.sh
-```
-
----
-
-## License
-
-This project is licensed under the MIT License.
+Integration tests require the local app. Python startup is included in request
+latency; the application makes no sub-4ms end-to-end performance claim.
