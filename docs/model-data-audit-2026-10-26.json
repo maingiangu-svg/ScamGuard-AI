@@ -1,0 +1,226 @@
+{
+  "date": "2026-10-26",
+  "operation": "read_only_label_and_partition_audit",
+  "active_model": "hybrid-20261025",
+  "source_bundle_run": "20261025T152344Z",
+  "no_fit_no_relabel_no_test_prediction": true,
+  "protected_inputs_unchanged": true,
+  "audit_code_sha256": "382c92b7c4bc68d19295c46f30766672a0153f3b98340adbec6cc74df2d7a201",
+  "input_sha256": {
+    "data\\smishing_combined.csv": "4dc1311965acb80b9b97536db5afdbe874a1e2175143d3b145e32caf9bb81a8d",
+    "data\\phishing_site_urls.csv": "b1a7c26b354632c80817e10af154c4e5007f9480fb43a8ac2730491500fa2780",
+    "models\\model_bundle.pkl": "7c6a0da47fe331976f36f76798a581dcaed7440f884230bac7a74a10cba906c4",
+    "models\\hybrid_bundle.pkl": "dc24729718288428c593aa4afcdb883cdcde09b71b9b5e70fb98264ad5b0b01c",
+    "data\\prepared\\smishx_training_2026-10-25\\historical_sms_diagnostic.jsonl": "e4536604f2aa6ab12b12669e653198f004aeecc4785213b2e681387f7865b3e6",
+    "data\\prepared\\smishx_training_2026-10-25\\historical_vi_diagnostic.jsonl": "5aa19c347c03da553527b4ca871c3ffda0cb2daf558bbb680195d234783b8557",
+    "data\\prepared\\smishx_training_2026-10-25\\quarantine.jsonl": "56760738a33506eef691c80135dc7273366e259c4d6bc84098459d7fd6ce751d",
+    "data\\prepared\\smishx_training_2026-10-25\\smishx_english_scope_eligible.jsonl": "de5fc29fbd434fabf194638c0991464027f4f8a1ecbc709a8b7606b6a1e08ab0",
+    "data\\prepared\\smishx_training_2026-10-25\\smishx_source_screened.jsonl": "8686b1493e236e9018b1a99cd00dc7b4ef58ea8082260d7c656f7565c6085132",
+    "data\\prepared\\smishx_training_2026-10-25\\test.jsonl": "a084349a886f7d0f61df67299d0d8347050b7b6c135fa04c8d1fcab47a2616e9",
+    "data\\prepared\\smishx_training_2026-10-25\\train.jsonl": "3cbe3fd715579f067c94a8bfcaaa5cfa710dd8bc4001a3c4c2e14b868fba3bab",
+    "data\\prepared\\smishx_training_2026-10-25\\validation.jsonl": "3df5e061bf9cc728676adf2facf736e18bd31e9be06120456c56380769d3d2de",
+    "data\\prepared\\smishx_training_2026-10-25\\validation_predictions.jsonl": "1edc9f07a5cf278c12e0a8463d98fa3b58a315c233437e735078526095a51d91",
+    "data\\prepared\\smishx_training_2026-10-25\\source_scope_review_notes.json": "0e4490ce294b09201efe9eacc167ce0b061313f246ab33d5a9b00b2d5a3ddb44",
+    "data\\prepared\\smishx_training_2026-10-25\\training_protocol.json": "6e5f3d7b81e4cf67029c987e1d98875f50c1d63f0301c9d9140ce6e5e3cca7fb",
+    "data\\prepared\\smishx_training_2026-10-25\\protected_snapshot.json": "c7afe0f506d7b9df130bb789f20e30583bc6de745fc6a7dff6d2901a48c504b5",
+    "data\\prepared\\smishx_training_2026-10-25\\preparation_report.json": "212dfbca00300e0d01d696bcca706ed80a0a72f88ce4c2339173f374f23356a2",
+    "data\\prepared\\smishx_training_2026-10-25\\research_model.pkl": "bc62bea5b1e41d513745fa63884dc808311d3a76b4429ab2ab67aeb795abde98",
+    "data\\reference\\english_sms_2026-10-25\\smishx\\data\\dataset.csv": "8d65e373b17477c34e8f1c619e6f59d249e8fca21276cabdd03a55d11a469285",
+    "data\\prepared\\external_training_2026-10-25\\url_train.jsonl": "c1dc5744c29f42c46278d384dd070fc445c60a0b1eec315e88d1b5ff0581fee3",
+    "data\\prepared\\external_training_2026-10-25\\url_validation.jsonl": "715209d3143132ce5d4c7acd50f8297573c3856c8ddde94339e07cc5ce838786",
+    "data\\prepared\\external_training_2026-10-25\\url_test.jsonl": "2a53d5b35751f3fa899ee33ea6dd177ee779f624783d4752c3f9c0523b0c1209",
+    "data\\prepared\\external_training_2026-10-25\\url_human_audit_all_200.jsonl": "fc627598e9efa73cc965e3e0dd628b7b2aa5a173c87e48f7899fd644da05951c",
+    "models\\sms_classifier.pkl": "e15b22919e853af60869847b286182b2721b32135af4a66c913bcd5c651f0679",
+    "models\\tfidf_sms.pkl": "630de5862180187790754ec28a1f6a9cc1311ce36bebbd210ddd486bb446067b",
+    "models\\tfidf_url.pkl": "ae0348cbe3d5991511db4615077a63463eed2d3f4a619ba5fffa3a89065495e1",
+    "models\\url_classifier.pkl": "96a6a6cce31d0040503515417e167fe2654d5fa683cb15ca669ef58ea59fdc25",
+    "data\\reference\\external_2026-10-25\\public_suffix_list.dat": "0232f4df0831911356e8ee1f4d5c3b6b12c0ed3f6bd66b0f81c8ab5d3d49e9ca"
+  },
+  "runtime": {
+    "sklearn": "1.9.1",
+    "numpy": "2.5.4",
+    "pandas": "3.0.6"
+  },
+  "partition_reconstruction": {
+    "method": "same pinned source bytes, normalized training code hash, runtime and deterministic sampling/splitting; no fitting",
+    "matches_reported_counts": true,
+    "old_split_ids_match": {
+      "sms_train": true,
+      "sms_holdout": true,
+      "url_train": false,
+      "url_holdout": false
+    },
+    "old_split_counts": {
+      "sms_train": 59190,
+      "sms_holdout": 14799,
+      "url_train": 39983,
+      "url_holdout": 10017
+    },
+    "reconstructed_counts": {
+      "sms_train": 59190,
+      "sms_holdout": 14799,
+      "url_train": 40004,
+      "url_holdout": 9996
+    },
+    "original_split_export_bound_to_active_artifact": false
+  },
+  "cohorts": {
+    "bundle_sms": {
+      "rows": 73989,
+      "partitions": {
+        "train": 59190,
+        "test": 14799
+      },
+      "provenance": {
+        "weak_keyword_derived": 73989
+      },
+      "source_trace": {
+        "inherited_from_checksum_pinned_source": 73989
+      },
+      "reference_status": {
+        "no_published_reference_match": 73415,
+        "source_scope_conflict_pending_review": 27,
+        "agrees_with_published_reference": 547
+      },
+      "reference_relationship": {
+        "no_reference_match": 73415,
+        "different_annotation_source_same_public_message": 574
+      },
+      "training_reference_conflicts": 21,
+      "url_format_issues_by_partition": {},
+      "other_url_source_conflicts": 0
+    },
+    "bundle_url": {
+      "rows": 50000,
+      "partitions": {
+        "test": 9996,
+        "train": 40004
+      },
+      "provenance": {
+        "inherited_url_source_not_expert_verified": 50000
+      },
+      "source_trace": {
+        "inherited_from_checksum_pinned_source": 50000
+      },
+      "reference_status": {
+        "no_published_reference_match": 50000
+      },
+      "reference_relationship": {
+        "no_reference_match": 50000
+      },
+      "training_reference_conflicts": 0,
+      "url_format_issues_by_partition": {
+        "train": 141,
+        "test": 35
+      },
+      "other_url_source_conflicts": 0
+    },
+    "processed_sms": {
+      "rows": 4858,
+      "partitions": {
+        "train": 3857,
+        "validation": 962,
+        "test": 39
+      },
+      "provenance": {
+        "upstream_ham_or_non_smishing_spam": 3842,
+        "published_two_researcher_manual_relabeling_with_disagreement_resolution": 566,
+        "ai_semantic_review": 448,
+        "user_scope_decision": 2
+      },
+      "source_trace": {
+        "matches_recorded_source_and_review": 4858
+      },
+      "reference_status": {
+        "no_published_reference_match": 4203,
+        "agrees_with_published_reference": 641,
+        "source_scope_conflict_pending_review": 14
+      },
+      "reference_relationship": {
+        "no_reference_match": 4203,
+        "same_annotation_source": 566,
+        "different_annotation_source_same_public_message": 89
+      },
+      "training_reference_conflicts": 10,
+      "url_format_issues_by_partition": {},
+      "other_url_source_conflicts": 0
+    },
+    "processed_url": {
+      "rows": 15576,
+      "partitions": {
+        "train": 9123,
+        "validation": 3826,
+        "test": 2627
+      },
+      "provenance": {
+        "upstream_source_status_and_registry_not_expert_verified": 15576
+      },
+      "source_trace": {
+        "inherited_from_checksum_pinned_source": 15576
+      },
+      "reference_status": {
+        "no_published_reference_match": 15576
+      },
+      "reference_relationship": {
+        "no_reference_match": 15576
+      },
+      "training_reference_conflicts": 0,
+      "url_format_issues_by_partition": {},
+      "other_url_source_conflicts": 0
+    }
+  },
+  "overlap_summary": {
+    "bundle_sms:hostname:train/test": 21,
+    "bundle_sms:registered_domain:train/test": 49,
+    "bundle_sms:sms_template_proxy:train/test": 315,
+    "bundle_url:registered_domain:train/test": 519,
+    "processed_sms:registered_domain:validation/test": 1
+  },
+  "extraction": {
+    "method": "Union of frozen model URL extraction and PSL-validated path-bearing bare/defanged URL indicators",
+    "ambiguous_bare_mentions": {
+      "bundle_sms": 1044,
+      "bundle_url": 0,
+      "processed_sms": 50,
+      "processed_url": 0
+    },
+    "limit": "Sentence fragments such as Smallie.is are not silently treated as verified domains. Ambiguous mentions remain a separate review queue."
+  },
+  "future_plan": {
+    "counts": {
+      "no_detected_group_overlap": 38576,
+      "training_component_touches_holdout": 5285,
+      "reserved_holdout": 10995,
+      "validation_component_touches_test": 2
+    },
+    "remaining_train_holdout_registered_domain_overlap": 0,
+    "remaining_train_holdout_exact_template_overlap": 0,
+    "remaining_validation_test_registered_domain_overlap": 0,
+    "remaining_validation_test_exact_template_overlap": 0,
+    "applied_to_existing_models": false
+  },
+  "campaign_proof": {
+    "status": "not_proven",
+    "ground_truth_campaign_ids_available": false,
+    "method": "exact SMS templates, identical model inputs, PSL domains and connected-component exclusion plan",
+    "limit": "Shared templates/platform domains are proxies, not independently established campaign identities. No archived destination/actor/timestamp coverage for every row."
+  },
+  "label_proof": {
+    "all_labels_independently_verified": false,
+    "expert_annotations_created": 0,
+    "limit": "Source SmishX rows match their original annotation source, not an independent re-annotation. Cross-source agreement on the same public message is also not new expert verification. Disagreements may reflect spam/smishing definitions or collection-time changes. No labels are automatically overwritten."
+  },
+  "zero_leakage_certificate": "FAIL",
+  "overall": "FAIL_domain_isolation_and_unresolved_labels",
+  "source_sms_cleaning_audit": {
+    "raw_rows": 84863,
+    "clean_rows": 73989,
+    "conflicting_groups_removed": 45,
+    "duplicates_removed": 10703,
+    "paired_records": 8995,
+    "labels": {
+      "0": 51428,
+      "1": 22561
+    }
+  }
+}
