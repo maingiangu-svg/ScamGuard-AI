@@ -1,0 +1,11 @@
+{
+  "image": "scamguard-completion:final",
+  "status": "PASS",
+  "user": "10001:10001",
+  "inferenceMs": 3497,
+  "smsInferenceMs": 1779,
+  "healthcheckExit": "",
+  "packageInstallerRemoved": true,
+  "unusedOsToolsRemoved": true,
+  "sourceCalibratedEstimates": "PASS"
+}

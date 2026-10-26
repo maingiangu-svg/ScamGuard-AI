@@ -1,0 +1,42 @@
+{
+  "status": "PASS",
+  "network": [
+    {
+      "url": "http://localhost:3105/test"
+    }
+  ],
+  "automaticPermissionPromptTested": false,
+  "extensionId": "lamffehgecaabedhleppfmgjcagamlih",
+  "manualResult": "91/100 — HIGH. The model indicates high risk. Verify independently before sharing credentials or transferring funds.",
+  "manualMode": "PASS",
+  "automaticPermissionGuard": "PASS",
+  "automaticFixture": {
+    "productionManifestSha256": "311344f135da2b958b5af9293110e00dc9655d951176b9b8c23be083ea8fdc6e",
+    "difference": "Optional http/https host permissions pregranted in fixture manifest; source scripts unchanged"
+  },
+  "automaticAlreadyOpenPage": "PASS",
+  "actualBadge": "91",
+  "automaticRequests": [
+    {
+      "url": "http://localhost:3105/test"
+    },
+    {
+      "url": "http://localhost:3105/test"
+    },
+    {
+      "url": "https://www.youtube.com/watch"
+    },
+    {
+      "url": "https://www.youtube.com/watch"
+    }
+  ],
+  "externalOriginAutomatic": {
+    "status": "PASS",
+    "badge": "14",
+    "pageFixture": "HTTPS YouTube origin intercepted with owned HTML; no real YouTube content or browser profile used"
+  },
+  "missingReceiverRecovery": "PASS",
+  "nativeRuntimeReloadTested": false,
+  "automaticModeAfterConsent": "PASS",
+  "disableAutomatic": "PASS"
+}

@@ -2,14 +2,17 @@
 
 Local machine learning screening for suspicious messages and URLs.
 
-The default web model is `hybrid-isolated-20261026-icann`: word/character TF-IDF + Logistic
+The default web model is `group-calibrated-20261026`: word/character TF-IDF + Logistic
 Regression for SMS, and lexical/character features + HistGradientBoosting for
 URLs. SMS decisions use the text model; embedded URLs are scored separately.
-Both heads were refitted after quarantining known label conflicts and isolating
-connected domains and message groups. No fusion model was trained for this fit.
+Both heads were refitted after quarantining unresolved review groups and isolating
+connected domains and message groups. Train-only nested group folds fit separate
+sigmoid estimates for source labels. No fusion model was trained for this fit.
 The app makes no external AI calls and does not fetch submitted URLs.
 
-The score is a model estimate, not proof of fraud or a calibrated probability.
+The 0–100 alert score is not proof of fraud or a calibrated probability.
+A separate calibrated estimate is conditional on the source labels; it is not
+an expert-verified real-world probability that a message or website is fraudulent.
 Policy: <30 low risk, 30–79 review, >=80 high risk. Domain annotations never
 bypass the classifier or modify its score. Missing/incompatible models return
 HTTP 503 rather than an invented safe verdict.
@@ -35,12 +38,17 @@ commands are documented in [data repair and evidence](docs/data-repair-2026-10-2
 
 ## Evidence and limits
 
-[Current repair report](docs/data-repair-2026-10-26.json) records 3,800 training
-SMS and 32,777 training URLs. Labels retain source human, inherited source,
+[Current completion report](docs/completion-results-2026-10-26.md) records 3,786 training
+SMS and 31,299 training URLs, after excluding groups containing 807 unresolved
+review candidates. The [parent repair report](docs/data-repair-2026-10-26.json)
+records the prior 3,800/32,777 fit. Labels retain source human, inherited source,
 AI review and user-decision provenance; they are not all expert verified.
 Known reference conflicts are quarantined, without inventing corrected labels.
 The SMS threshold is 0.65; the URL threshold is 0.50. These binary decisions are
-shown separately from the 30/80 alert policy. Scores are not calibrated.
+shown separately from the 30/80 alert policy and the new source-label estimate.
+Calibration improved train-only out-of-group Brier/log loss for both heads;
+on the reused historical URL test, Brier slightly worsened (0.05906 to 0.05972).
+No new independent Vietnamese benchmark or expert labels were created.
 
 The repaired historical test contains 38 SmishX messages and 9,935 source-labeled
 URLs. The 24 positive SMS share one source similarity group. Both ICANN owner
@@ -54,7 +62,8 @@ Historical modes do not inherit the repaired bundle's split-isolation evidence.
 
 Image analysis and roleplay are unavailable because no local OCR/dialogue model
 has been trained. Sample scenarios are clearly labelled educational illustrations.
-They are not live model evaluations. The extension warns only at the >=80 policy.
+They are not live model evaluations. Extension 1.1.2 displays a score badge after
+successful checks at any score; its warning banner still uses the >=80 policy.
 
 ## Checks
 

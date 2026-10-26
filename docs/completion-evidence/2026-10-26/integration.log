@@ -1,0 +1,103 @@
+✔ ordinary text is evaluated locally with no invented threat evidence (2689.3604ms)
+✔ review scores and binary labels use distinct declared thresholds (2287.9677ms)
+✔ an official URL does not bypass SMS; no untrained fusion is applied (2297.4884ms)
+✔ a URL-only request is scored by the URL estimator, with no forced whitelist score (2292.4691ms)
+✔ spaces and line breaks before the reported URL never activate the SMS branch (14447.7249ms)
+✔ the complete sunwin.org.vc domain is scored identically through both endpoints and input fields (13532.9338ms)
+✔ reported Facebook and Google URLs preserve model scores without a contradictory alert (17036.1388ms)
+✔ reported suspicious link uses the repaired URL head with the declared alert policy (2475.3775ms)
+✔ a risky link independently requires review when the message is below the review band (2606.6677ms)
+✔ all embedded URLs are included in the returned branch scores (2547.67ms)
+✔ both endpoints reject malformed and excessive input (109.527ms)
+✔ incomplete URL inputs return a useful validation error without a risk score (23839.9113ms)
+✔ image analysis is explicitly unsupported without a local OCR model (14.4875ms)
+✔ roleplay does not substitute keyword heuristics or an external model (15.091ms)
+✔ both inference routes reject unsupported, malformed, and oversized bodies (86.4143ms)
+✔ shared inference admission rejects excess work across both endpoints (6192.9392ms)
+✔ both endpoints reject foreign origins without wildcard CORS and disable caching (48.8203ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 92669.5912
+✔ /api/analyze returns unavailable without a fabricated risk score (2380.8627ms)
+✔ /api/ml-classify returns unavailable without a fabricated risk score (2320.8612ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4776.4492
+PASS: shared quota cannot be bypassed by rotating forwarding headers.
+{
+  "browser": "156.0.4314.42",
+  "origin": "http://127.0.0.1:3101",
+  "errors": [],
+  "failedRequests": [],
+  "externalRequests": [],
+  "widths": [
+    {
+      "width": 320,
+      "viewport": 320,
+      "content": 320
+    },
+    {
+      "width": 390,
+      "viewport": 390,
+      "content": 390
+    },
+    {
+      "width": 768,
+      "viewport": 768,
+      "content": 768
+    },
+    {
+      "width": 1024,
+      "viewport": 1024,
+      "content": 1024
+    },
+    {
+      "width": 1440,
+      "viewport": 1440,
+      "content": 1440
+    }
+  ],
+  "headers": {
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-type": "text/html; charset=utf-8",
+    "date": "Mon, 26 Oct 2026 14:56:44 GMT",
+    "keep-alive": "timeout=5",
+    "permissions-policy": "camera=(), microphone=(), geolocation=()",
+    "referrer-policy": "no-referrer",
+    "transfer-encoding": "chunked",
+    "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "DENY",
+    "cache-control": "private, no-store",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'nonce-YTMzOTgyNDEtNzM1Ni00YjA2LWI2ODUtNGZiNGU5OTY1MWM1' 'strict-dynamic'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'"
+  },
+  "viewport": "width=device-width, initial-scale=1",
+  "pdf": {
+    "status": "PASS",
+    "bytes": 100595,
+    "file": "browser-sample-report.pdf",
+    "language": "vi"
+  },
+  "apiDurationMs": 3038,
+  "model": {
+    "mode": "hybrid_text",
+    "riskScore": 2,
+    "riskLevel": "LOW",
+    "sourceCalibratedEstimate": 0.0003431492703382458
+  },
+  "languageToggle": "PASS",
+  "htmlLanguageAfterVietnameseToggle": "vi",
+  "preferencePersistence": "PASS",
+  "status": "PASS"
+}

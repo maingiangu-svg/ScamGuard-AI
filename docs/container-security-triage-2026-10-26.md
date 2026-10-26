@@ -1,9 +1,37 @@
 # Triage image Docker — 26/10/2026
 
+## Kết quả mới nhất: runtime Distroless
+
+Image `scamguard-completion:final`, ID
+`sha256:e24341d01486e14aafca029bcb7dc1c2ba334790344b4302a69baa8387bd880f`,
+được Trivy 0.76.1 quét lại lúc 21:58 UTC+7: **0 High, 0 Critical**.
+Runtime dùng `gcr.io/distroless/cc-debian13:nonroot` khóa theo digest trong
+Dockerfile. Các công cụ OS không dùng bởi dịch vụ được loại khỏi image cuối;
+không sửa mức severity, miễn trừ advisory hoặc giấu package inventory.
+
+Scanner vẫn nhận diện 19 package OS, gồm đủ năm thư viện Python bổ sung
+libbz2, libdb5.3, libffi, liblzma, libsqlite3. Script staging giữ control record
+dpkg và copyright; gate yêu cầu inventory OS, Node và Python hợp lệ. Một báo
+cáo trống hoặc thiếu các thư viện cần thiết không được coi là kết quả sạch.
+
+Smoke test image cuối PASS: URL và SMS chạy model mới có hiệu chuẩn, UID10001,
+root filesystem chỉ đọc, không có pip đang hoạt động hoặc các executable
+shell/mount/nsenter/perl/infocmp/systemd-homed/apt/dpkg được kiểm tra.
+Runtime này phục vụ các script suy luận cố định; không phải môi trường Python
+đa dụng đầy đủ mọi thư viện hệ thống tùy chọn. CI đã thêm gate image High/Critical
+sau smoke, nhưng CI của thay đổi mới còn chờ công khai nhánh được phê duyệt.
+
+Bằng chứng: [scan](completion-evidence/2026-10-26/container-scan.json),
+[smoke](completion-evidence/2026-10-26/container-smoke.json).
+Kết quả chỉ có giá trị theo database scanner tại thời điểm quét; cần rebuild
+và quét lại trước release. Những bảng bên dưới ghi lại **lịch sử image cũ**.
+
+## Lịch sử trước chuyển runtime
+
 Trivy 0.76.1, scanner vuln, severity HIGH/CRITICAL, không ignore-unfixed hoặc
 miễn trừ CVE. Kết quả quét source/dependency trong audit trước không bao gồm
 toàn bộ package hệ điều hành của image. CI hiện gate npm/pip dependency và
-Docker smoke; **chưa gate các cảnh báo OS liệt kê dưới đây**.
+Docker smoke; ở snapshot cũ **chưa gate các cảnh báo OS liệt kê dưới đây**.
 
 | Image local đã scan | OS | Bản ghi package–advisory | Advisory duy nhất | Critical | Có FixedVersion |
 | --- | --- | ---: | ---: | ---: | ---: |

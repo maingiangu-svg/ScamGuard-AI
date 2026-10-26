@@ -1,0 +1,71 @@
+
+> scamshield-forensic@0.1.0 test
+> node --test scripts/analysis-assessment.test.mjs scripts/request-body.test.mjs scripts/api-policy.test.mjs scripts/extension.test.mjs scripts/image-security.test.mjs
+
+(node:10964) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///<workspace>/src/lib/analysis-assessment.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\<workspace>\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ a low score has no threat evidence or absolute safety claim (1.8169ms)
+✔ URL results below their detection threshold do not become suspicious at 30 points (1.0385ms)
+✔ URL positives and high risk still require action, independently of SMS (0.2307ms)
+✔ every valid ML score is preserved without a whitelist or external blend (0.1387ms)
+✔ missing, invalid and failed predictions produce no assessment (0.0975ms)
+✔ the entire review interval is described as uncertain (0.1954ms)
+✔ high scores retain a suspected rather than verified threat category (0.0852ms)
+✔ independent URL review stays visible without inflating the primary SMS score (0.1198ms)
+✔ URL review does not downgrade a high SMS score or invent a URL in text-only input (0.0862ms)
+✔ consistent thresholds at score 0 (0.2019ms)
+✔ consistent thresholds at score 20 (0.0612ms)
+✔ consistent thresholds at score 29 (0.0847ms)
+✔ consistent thresholds at score 30 (0.0385ms)
+✔ consistent thresholds at score 79 (0.0323ms)
+✔ consistent thresholds at score 80 (0.0427ms)
+✔ consistent thresholds at score 90 (0.0381ms)
+✔ consistent thresholds at score 91 (0.0757ms)
+✔ consistent thresholds at score 100 (0.0597ms)
+(node:33652) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///<workspace>/src/lib/rate-limit.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\<workspace>\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ forwarding headers are ignored unless proxy hops are explicitly trusted (19.9003ms)
+✔ bounded buckets reject new identities without evicting an exhausted identity (0.2337ms)
+✔ origin policy accepts same-origin and explicit allowlist, rejecting lookalikes (0.9484ms)
+✔ API responses disable caching and never grant wildcard CORS (0.5757ms)
+✔ page screening uses URL-only input and excludes title, credentials, query and fragment (7.7854ms)
+✔ a hostname beginning with the localhost exclusion still gets checked (1.8728ms)
+✔ the actual local app and non-web protocols are excluded (2.8989ms)
+✔ low-risk and unavailable responses never create a high-risk banner (1.268ms)
+✔ automatic rechecks of the same URL are deduplicated; manual refresh still runs (0.9249ms)
+✔ a late result for the previous URL cannot display a warning on the new page (0.6743ms)
+✔ worker accepts only a minimized URL matching its browser-provided sender (1.4689ms)
+✔ automatic mode is opt-in and pages cannot change user settings (0.809ms)
+✔ a delayed enable cannot overwrite a later manual-mode choice (1.0424ms)
+✔ enabling automatic mode checks the already-open active page without a manual click (0.9548ms)
+✔ restoring an already-enabled extension checks the current page without toggling the radio (0.926ms)
+✔ opening automatic popup with no result repairs missing injection (0.912ms)
+✔ overlapping automatic requests initialize a page only once (2.1606ms)
+✔ a completed low-score scan is visible in the extension badge (0.9639ms)
+✔ query/fragment-only navigation preserves a result for the same minimized URL (0.8845ms)
+✔ blocks high findings even without an upstream fixed version (1.069ms)
+✔ counts advisory identities separately from affected packages (0.2046ms)
+✔ missing scan evidence cannot become a clean verdict (1.635ms)
+✔ rejects incomplete native and language package inventories (0.3267ms)
+✔ the previous runtime image fails the new unsuppressed gate (4.2455ms)
+(node:25924) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///<workspace>/src/lib/request-body.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\<workspace>\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ valid JSON including Vietnamese is parsed without changing input (18.3667ms)
+✔ both unsupported media types and malformed JSON fail before inference (0.7924ms)
+✔ declared excessive size is refused without reading the stream (0.8336ms)
+✔ chunked oversized ignored fields cannot bypass the byte cap (1.94ms)
+✔ the cap counts UTF-8 bytes rather than JavaScript characters (1.0191ms)
+ℹ tests 47
+ℹ suites 0
+ℹ pass 47
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 207.4023

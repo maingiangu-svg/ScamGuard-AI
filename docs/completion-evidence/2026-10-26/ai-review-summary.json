@@ -1,0 +1,10 @@
+{
+  "cases": 811,
+  "sms_content_reviewed": 14,
+  "url_evidence_audited": 797,
+  "ai_label_proposals": 4,
+  "unresolved": 807,
+  "expert_labels_created": 0,
+  "automatic_dataset_changes": 0,
+  "benchmark_ready": false
+}
