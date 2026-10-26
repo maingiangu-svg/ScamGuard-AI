@@ -1,0 +1,48 @@
+
+> scamshield-forensic@0.1.0 test
+> node --test scripts/analysis-assessment.test.mjs scripts/request-body.test.mjs scripts/extension.test.mjs
+
+(node:42796) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/PV/OneDrive/Documents/ChatGPT/ScamGuard-AI/src/lib/analysis-assessment.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\PV\OneDrive\Documents\ChatGPT\ScamGuard-AI\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ a low score has no threat evidence or absolute safety claim (0.9745ms)
+✔ URL results below their detection threshold do not become suspicious at 30 points (0.5688ms)
+✔ URL positives and high risk still require action, independently of SMS (0.17ms)
+✔ every valid ML score is preserved without a whitelist or external blend (0.1093ms)
+✔ missing, invalid and failed predictions produce no assessment (0.0863ms)
+✔ the entire review interval is described as uncertain (0.1635ms)
+✔ high scores retain a suspected rather than verified threat category (0.0664ms)
+✔ independent URL review stays visible without inflating the primary SMS score (0.1086ms)
+✔ URL review does not downgrade a high SMS score or invent a URL in text-only input (0.0721ms)
+✔ consistent thresholds at score 0 (0.2143ms)
+✔ consistent thresholds at score 20 (0.0503ms)
+✔ consistent thresholds at score 29 (0.0548ms)
+✔ consistent thresholds at score 30 (0.0347ms)
+✔ consistent thresholds at score 79 (0.0298ms)
+✔ consistent thresholds at score 80 (0.044ms)
+✔ consistent thresholds at score 90 (0.0305ms)
+✔ consistent thresholds at score 91 (0.0384ms)
+✔ consistent thresholds at score 100 (0.0611ms)
+✔ page screening uses URL-only input and excludes title, credentials, query and fragment (3.154ms)
+✔ a hostname beginning with the localhost exclusion still gets checked (1.3467ms)
+✔ the actual local app and non-web protocols are excluded (2.5998ms)
+✔ low-risk and unavailable responses never create a high-risk banner (1.1541ms)
+✔ the background excludes only the real localhost origin (0.5715ms)
+(node:48944) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/PV/OneDrive/Documents/ChatGPT/ScamGuard-AI/src/lib/request-body.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\PV\OneDrive\Documents\ChatGPT\ScamGuard-AI\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ valid JSON including Vietnamese is parsed without changing input (14.8157ms)
+✔ both unsupported media types and malformed JSON fail before inference (0.4818ms)
+✔ declared excessive size is refused without reading the stream (0.2042ms)
+✔ chunked oversized ignored fields cannot bypass the byte cap (0.6712ms)
+✔ the cap counts UTF-8 bytes rather than JavaScript characters (0.7029ms)
+ℹ tests 28
+ℹ suites 0
+ℹ pass 28
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 119.3704

@@ -19,6 +19,9 @@ export interface MLClassification {
   decision_threshold?: number;
   decision_branch?: 'sms' | 'url';
   inference_ms?: number;
+  calibrated_probability?: number | null;
+  calibration_status?: 'source_label_calibrated' | 'unavailable';
+  calibrated_probability_expert_verified?: boolean;
   meta_formula?: string | null;
   training?: {
     run_id?: string; method?: string; target?: string;

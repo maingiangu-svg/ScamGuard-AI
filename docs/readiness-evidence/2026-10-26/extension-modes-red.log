@@ -1,0 +1,44 @@
+✔ page screening uses URL-only input and excludes title, credentials, query and fragment (2.8979ms)
+✔ a hostname beginning with the localhost exclusion still gets checked (1.1154ms)
+✔ the actual local app and non-web protocols are excluded (2.4015ms)
+✔ low-risk and unavailable responses never create a high-risk banner (1.2907ms)
+✖ worker accepts only a minimized URL matching its browser-provided sender (0.6905ms)
+✖ automatic mode is opt-in and pages cannot change user settings (0.4047ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 4
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 65.4258
+
+✖ failing tests:
+
+test at scripts\extension.test.mjs:76:1
+✖ worker accepts only a minimized URL matching its browser-provided sender (0.6905ms)
+  TypeError: listener is not a function
+      at file:///C:/Users/PV/OneDrive/Documents/ChatGPT/ScamGuard-AI/scripts/extension.test.mjs:72:60
+      at new Promise (<anonymous>)
+      at Object.send (file:///C:/Users/PV/OneDrive/Documents/ChatGPT/ScamGuard-AI/scripts/extension.test.mjs:72:37)
+      at TestContext.<anonymous> (file:///C:/Users/PV/OneDrive/Documents/ChatGPT/ScamGuard-AI/scripts/extension.test.mjs:79:22)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7)
+
+test at scripts\extension.test.mjs:86:1
+✖ automatic mode is opt-in and pages cannot change user settings (0.4047ms)
+  TypeError: listener is not a function
+      at file:///C:/Users/PV/OneDrive/Documents/ChatGPT/ScamGuard-AI/scripts/extension.test.mjs:72:60
+      at new Promise (<anonymous>)
+      at Object.send (file:///C:/Users/PV/OneDrive/Documents/ChatGPT/ScamGuard-AI/scripts/extension.test.mjs:72:37)
+      at TestContext.<anonymous> (file:///C:/Users/PV/OneDrive/Documents/ChatGPT/ScamGuard-AI/scripts/extension.test.mjs:89:26)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7)

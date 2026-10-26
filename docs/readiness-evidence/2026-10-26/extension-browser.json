@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "network": [
+    {
+      "url": "http://localhost:3105/test"
+    }
+  ],
+  "automaticPermissionPromptTested": false,
+  "extensionId": "lamffehgecaabedhleppfmgjcagamlih",
+  "manualResult": "85/100 — HIGH. The model indicates high risk. Verify independently before sharing credentials or transferring funds.",
+  "manualMode": "PASS",
+  "automaticPermissionGuard": "PASS",
+  "automaticFixture": {
+    "productionManifestSha256": "c9fa93d5798f685373f503be7b92c4dc19efea29293cc8ec1201c852dd89a448",
+    "difference": "Optional http/https host permissions pregranted in fixture manifest; source scripts unchanged"
+  },
+  "automaticRequests": [
+    {
+      "url": "http://localhost:3105/test"
+    }
+  ],
+  "automaticModeAfterConsent": "PASS",
+  "disableAutomatic": "PASS"
+}

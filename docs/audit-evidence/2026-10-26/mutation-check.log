@@ -1,0 +1,17 @@
+test_heldout_quarantined_and_missing_provenance_rows_are_rejected (test_label_audit.LabelAuditTests.test_heldout_quarantined_and_missing_provenance_rows_are_rejected) ... 
+  test_heldout_quarantined_and_missing_provenance_rows_are_rejected (test_label_audit.LabelAuditTests.test_heldout_quarantined_and_missing_provenance_rows_are_rejected) (changes={'do_not_train': True}) ... FAIL
+
+======================================================================
+FAIL: test_heldout_quarantined_and_missing_provenance_rows_are_rejected (test_label_audit.LabelAuditTests.test_heldout_quarantined_and_missing_provenance_rows_are_rejected) (changes={'do_not_train': True})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\PV\OneDrive\Documents\ChatGPT\ScamGuard-AI\ml_model\test_label_audit.py", line 22, in test_heldout_quarantined_and_missing_provenance_rows_are_rejected
+    with self.subTest(changes=changes), self.assertRaises(ValueError):
+                                        ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 1 test in 0.012s
+
+FAILED (failures=1)
+PASS: removing the do_not_train guard was caught. Production source was not modified.

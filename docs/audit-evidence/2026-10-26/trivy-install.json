@@ -1,0 +1,7 @@
+{
+  "version": "v0.76.1",
+  "sha256": "1051f49cb22d5284f43425f72aad9cda63ca12ceb92e7caa06903490c82dc9bf",
+  "source": "https://github.com/aquasecurity/trivy/releases/download/v0.76.1/trivy_0.76.1_windows-64bit.zip",
+  "github_digest_verified": true,
+  "release_checksum_verified": true
+}

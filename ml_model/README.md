@@ -1,10 +1,14 @@
 # Local training and inference
 
-The web defaults to `predict_hybrid.py`: repaired SMS (3,800 training messages,
-threshold 0.65) plus repaired URL (32,777 training URLs, reference threshold 0.50).
+The web defaults to `predict_hybrid.py`: `group-calibrated-20261026`, SMS (3,786
+training messages, threshold 0.65) plus URL (31,299 training URLs, threshold 0.50).
 The checksum-pinned `models/hybrid_bundle.pkl` and `hybrid_manifest.json` ship
 with the app. SMS stays the primary score when text is present; URL positives
-independently require link review. Scores are not averaged or recalibrated.
+independently require link review. Alert scores are not averaged or recalibrated.
+The separate `calibrated_probability` estimates source label 1 using train-only
+nested group sigmoid calibration; it is not an expert-verified fraud probability.
+See [current results and reproducibility](../docs/completion-results-2026-10-26.md)
+for the review quarantine, training protocol, commands, and diagnostic limits.
 Missing or incompatible artifacts fail closed. See
 `../docs/hybrid-model-integration-2026-10-25.md` for routing, provenance and limits.
 

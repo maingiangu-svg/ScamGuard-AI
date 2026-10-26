@@ -1,7 +1,11 @@
 // content.js - ScamGuard AI Threat Detector Content Script
 
 (function () {
-  let isAnalyzing = false;
+  const version = chrome.runtime.getManifest().version;
+  if (window.__scamguardInstalled?.version === version) return;
+  window.__scamguardInstalled = {version};
+  let inFlight = null;
+  let lastURL = '', lastResult = null;
 
   function injectWarningBanner(messageText) {
     if (document.getElementById("scamguard-alert-banner")) {
@@ -37,48 +41,38 @@
     }
   }
 
-  async function analyzeCurrentPage() {
-    if (isAnalyzing) return;
+  function currentPageURL() {
+    let page;
+    try { page = new URL(window.location.href); } catch { return null; }
+    if (!["http:", "https:"].includes(page.protocol) || page.origin === "http://localhost:3000") return null;
+    // Only the page URL is classified. Titles are not SMS, and URL credentials,
+    // query tokens and fragments must not be collected by automatic screening.
+    page.username = page.password = page.search = page.hash = "";
+    return page.href;
+  }
 
-    const currentUrl = window.location.href;
-    const currentTitle = document.title;
-
-    if (
-      !currentUrl ||
-      currentUrl.startsWith("http://localhost:3000") ||
-      currentUrl.startsWith("chrome://") ||
-      currentUrl.startsWith("chrome-extension://") ||
-      currentUrl.startsWith("about:")
-    ) {
-      return;
-    }
-
-    isAnalyzing = true;
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000);
-
-    try {
-      const response = await fetch("http://localhost:3000/api/analyze", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          url: currentUrl,
-          title: currentTitle,
-          textInput: `URL: ${currentUrl}\nTitle: ${currentTitle}`,
-        }),
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        console.warn("[ScamGuard AI Extension] API request returned status:", response.status);
-        return;
+  function analyzeCurrentPage(force = false) {
+    const url = currentPageURL();
+    if (!url) return Promise.resolve();
+    if (inFlight?.url === url) return inFlight.promise;
+    if (!force && lastURL === url && lastResult) return Promise.resolve(lastResult);
+    if (lastURL !== url) document.getElementById('scamguard-alert-banner')?.remove();
+    const task = {url};
+    task.promise = performAnalysis(url).then(data => {
+      if (data && !data.error && currentPageURL() === url && Number.isFinite(data.riskScore ?? data.risk_score)) {
+        lastURL = url; lastResult = data;
       }
+      return data;
+    }).finally(() => {if (inFlight === task) inFlight = null;});
+    inFlight = task;
+    return task.promise;
+  }
 
-      const data = await response.json();
+  async function performAnalysis(url) {
+    try {
+      const data = await chrome.runtime.sendMessage({action: 'ANALYZE_URL', url});
+      if (data.error) return data;
+      if (currentPageURL() !== url) return data;
 
       const score = data.riskScore ?? data.risk_score ?? 0;
       const level = data.riskLevel ?? data.threat_level ?? "";
@@ -92,27 +86,24 @@
           : "🔴 WARNING: This website poses a high risk of scam or phishing!";
         injectWarningBanner(warningText);
       }
+      return data;
     } catch (err) {
-      clearTimeout(timeoutId);
-      if (err.name === "AbortError") {
-        console.warn("[ScamGuard AI Extension] Network request timed out after 5 seconds.");
-      } else {
-        console.warn("[ScamGuard AI Extension] Unable to reach API at http://localhost:3000/api/analyze:", err.message);
-      }
-    } finally {
-      isAnalyzing = false;
+      return {error: err.message};
     }
   }
 
-  if (document.readyState === "complete" || document.readyState === "interactive") {
-    analyzeCurrentPage();
-  } else {
-    window.addEventListener("DOMContentLoaded", analyzeCurrentPage);
+  async function automaticCheck() {
+    const {automatic = false} = await chrome.storage.local.get('automatic');
+    if (automatic) return analyzeCurrentPage();
   }
-
-  chrome.runtime.onMessage.addListener((message) => {
-    if (message && (message.action === "ANALYZE_PAGE" || message.action === "CHECK_PAGE")) {
-      analyzeCurrentPage();
+  automaticCheck();
+  const listener = (message, sender, respond) => {
+    if (message?.action === 'PING') {respond({version}); return false;}
+    if (message?.action === 'CHECK_PAGE' || message?.action === 'AUTO_PAGE') {
+      (message.action === 'CHECK_PAGE' ? analyzeCurrentPage(true) : automaticCheck()).then(respond);
+      return true;
     }
-  });
+  };
+  chrome.runtime.onMessage.addListener(listener);
+  window.__scamguardInstalled.cleanup = () => chrome.runtime.onMessage.removeListener(listener);
 })();

@@ -1,0 +1,54 @@
+✖ both inference routes reject unsupported, malformed, and oversized bodies (1961.6205ms)
+✖ shared inference admission rejects excess work across both endpoints (1894.5864ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3910.9003
+
+✖ failing tests:
+
+test at scripts\api-security.integration.test.mjs:10:1
+✖ both inference routes reject unsupported, malformed, and oversized bodies (1961.6205ms)
+  AssertionError [ERR_ASSERTION]: /api/analyze
+  
+  200 !== 413
+  
+      at TestContext.<anonymous> (file:///C:/Users/PV/OneDrive/Documents/ChatGPT/ScamGuard-AI/scripts/api-security.integration.test.mjs:17:14)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 200,
+    expected: 413,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts\api-security.integration.test.mjs:26:1
+✖ shared inference admission rejects excess work across both endpoints (1894.5864ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    [
+      200,
+      200,
+  +   200
+  -   503
+    ]
+  
+      at TestContext.<anonymous> (file:///C:/Users/PV/OneDrive/Documents/ChatGPT/ScamGuard-AI/scripts/api-security.integration.test.mjs:29:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [ 200, 200, 200 ],
+    expected: [ 200, 200, 503 ],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

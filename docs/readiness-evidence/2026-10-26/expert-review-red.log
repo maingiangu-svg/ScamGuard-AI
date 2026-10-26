@@ -1,0 +1,21 @@
+test_expert_review (unittest.loader._FailedTest.test_expert_review) ... ERROR
+
+======================================================================
+ERROR: test_expert_review (unittest.loader._FailedTest.test_expert_review)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_expert_review
+Traceback (most recent call last):
+  File "C:\Users\PV\AppData\Local\Programs\Python\Python314\Lib\unittest\loader.py", line 426, in _find_test_path
+    module = self._get_module_from_name(name)
+  File "C:\Users\PV\AppData\Local\Programs\Python\Python314\Lib\unittest\loader.py", line 367, in _get_module_from_name
+    __import__(name)
+    ~~~~~~~~~~^^^^^^
+  File "C:\Users\PV\OneDrive\Documents\ChatGPT\ScamGuard-AI\ml_model\test_expert_review.py", line 6, in <module>
+    from expert_review import create_package, inspect_reviews
+ModuleNotFoundError: No module named 'expert_review'
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+FAILED (errors=1)

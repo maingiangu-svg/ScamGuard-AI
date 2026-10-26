@@ -1,0 +1,14 @@
+
+> scamshield-forensic@0.1.0 test:unavailable
+> node --test scripts/model-unavailable.integration.test.mjs
+
+✔ /api/analyze returns unavailable without a fabricated risk score (2390.0496ms)
+✔ /api/ml-classify returns unavailable without a fabricated risk score (2360.7152ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4826.4644

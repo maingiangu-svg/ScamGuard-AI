@@ -1,0 +1,23 @@
+(node:36972) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/PV/OneDrive/Documents/ChatGPT/ScamGuard-AI/src/lib/rate-limit.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\PV\OneDrive\Documents\ChatGPT\ScamGuard-AI\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ forwarding headers are ignored unless proxy hops are explicitly trusted (15.1485ms)
+✔ bounded buckets reject new identities without evicting an exhausted identity (0.1883ms)
+✔ origin policy accepts same-origin and explicit allowlist, rejecting lookalikes (0.6941ms)
+✔ API responses disable caching and never grant wildcard CORS (0.2447ms)
+✔ page screening uses URL-only input and excludes title, credentials, query and fragment (3.2076ms)
+✔ a hostname beginning with the localhost exclusion still gets checked (1.6861ms)
+✔ the actual local app and non-web protocols are excluded (1.6363ms)
+✔ low-risk and unavailable responses never create a high-risk banner (0.9979ms)
+✔ worker accepts only a minimized URL matching its browser-provided sender (0.9372ms)
+✔ automatic mode is opt-in and pages cannot change user settings (0.5431ms)
+✔ a delayed enable cannot overwrite a later manual-mode choice (0.8405ms)
+ℹ tests 11
+ℹ suites 0
+ℹ pass 11
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 117.7455

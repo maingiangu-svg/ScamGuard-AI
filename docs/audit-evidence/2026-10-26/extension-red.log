@@ -1,0 +1,94 @@
+✖ page screening uses URL-only input and excludes title, credentials, query and fragment (3.8516ms)
+✖ a hostname beginning with the localhost exclusion still gets checked (1.1617ms)
+✖ the actual local app and non-web protocols are excluded (2.6574ms)
+✔ low-risk and unavailable responses never create a high-risk banner (1.2103ms)
+✖ the background excludes only the real localhost origin (0.5584ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 1
+ℹ fail 4
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 71.5075
+
+✖ failing tests:
+
+test at scripts\extension.test.mjs:30:1
+✖ page screening uses URL-only input and excludes title, credentials, query and fragment (3.8516ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+    {
+  +   textInput: 'URL: https://user:password@evil.example/login?token=private#private\n' +
+  +     'Title: Welcome — private title',
+  +   title: 'Welcome — private title',
+  +   url: 'https://user:password@evil.example/login?token=private#private'
+  -   url: 'https://evil.example/login'
+    }
+  
+      at TestContext.<anonymous> (file:///C:/Users/PV/OneDrive/Documents/ChatGPT/ScamGuard-AI/scripts/extension.test.mjs:33:10)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: { url: 'https://user:password@evil.example/login?token=private#private', title: 'Welcome — private title', textInput: 'URL: https://user:password@evil.example/login?token=private#private\nTitle: Welcome — private title' },
+    expected: { url: 'https://evil.example/login' },
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at scripts\extension.test.mjs:37:1
+✖ a hostname beginning with the localhost exclusion still gets checked (1.1617ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///C:/Users/PV/OneDrive/Documents/ChatGPT/ScamGuard-AI/scripts/extension.test.mjs:38:10)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts\extension.test.mjs:42:1
+✖ the actual local app and non-web protocols are excluded (2.6574ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file:///C:/Users/PV/OneDrive/Documents/ChatGPT/ScamGuard-AI/scripts/extension.test.mjs:44:12)
+      at async Test.run (node:internal/test_runner/test:1404:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at scripts\extension.test.mjs:54:1
+✖ the background excludes only the real localhost origin (0.5584ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///C:/Users/PV/OneDrive/Documents/ChatGPT/ScamGuard-AI/scripts/extension.test.mjs:63:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1397:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:969:18)
+      at Test.postRun (node:internal/test_runner/test:1537:19)
+      at Test.run (node:internal/test_runner/test:1462:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:969:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

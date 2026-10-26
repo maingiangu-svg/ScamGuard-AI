@@ -1,0 +1,6 @@
+{
+  "tag_name": "v16.4.3",
+  "published_at": "2026-10-23T13:32:31Z",
+  "html_url": "https://github.com/vercel/next.js/releases/tag/v16.4.3",
+  "body": "> [!NOTE]\r\n> This release is backporting bug fixes. It does **not** include all pending features/changes on canary.\r\n\r\n### Core Changes\r\n\r\n- v16.4.2\r\n- [lts-active] Fix extensionless Google font URLs in both bundlers (#100277)\r\n- [lts-active] Don't load the app-page runtime in proxy.ts (#100423)\r\n- [lts-active] Revert \"Turbopack: loader change invalidation (#95732)\" (#100438)\r\n- [lts-active][cd] Gate release bot credentials behind GitHub environments (#100123)\r\n- [lts-active] test: Pin react-virtualized (#100545)\r\n- [lts-active][cd] Move release un-draft to a follow-up job in bot-autonomous (#100572)\r\n- [lts-active] Keep OpenTelemetry request traces together (#100349, #100294, #100324, #100350, #100552, #100583) (#100542)\r\n- [lts-active] Avoid loading standalone React in server bootstrap (#100610)\r\n\r\n### Credits\r\n\r\nHuge thanks to @mischnic, @lukesandberg, @acdlite, @eps1lon, and @sokra for helping!\r\n"
+}

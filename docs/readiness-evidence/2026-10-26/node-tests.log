@@ -1,0 +1,58 @@
+
+> scamshield-forensic@0.1.0 test
+> node --test scripts/analysis-assessment.test.mjs scripts/request-body.test.mjs scripts/api-policy.test.mjs scripts/extension.test.mjs
+
+(node:44512) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/PV/OneDrive/Documents/ChatGPT/ScamGuard-AI/src/lib/analysis-assessment.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\PV\OneDrive\Documents\ChatGPT\ScamGuard-AI\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ a low score has no threat evidence or absolute safety claim (1.213ms)
+✔ URL results below their detection threshold do not become suspicious at 30 points (0.3255ms)
+✔ URL positives and high risk still require action, independently of SMS (1.0116ms)
+✔ every valid ML score is preserved without a whitelist or external blend (0.1475ms)
+✔ missing, invalid and failed predictions produce no assessment (0.1163ms)
+✔ the entire review interval is described as uncertain (0.202ms)
+✔ high scores retain a suspected rather than verified threat category (0.0778ms)
+✔ independent URL review stays visible without inflating the primary SMS score (0.1166ms)
+✔ URL review does not downgrade a high SMS score or invent a URL in text-only input (0.078ms)
+✔ consistent thresholds at score 0 (0.1837ms)
+✔ consistent thresholds at score 20 (0.0493ms)
+✔ consistent thresholds at score 29 (0.1133ms)
+✔ consistent thresholds at score 30 (0.0287ms)
+✔ consistent thresholds at score 79 (0.0232ms)
+✔ consistent thresholds at score 80 (0.0411ms)
+✔ consistent thresholds at score 90 (0.0377ms)
+✔ consistent thresholds at score 91 (0.0519ms)
+✔ consistent thresholds at score 100 (0.0395ms)
+(node:9096) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/PV/OneDrive/Documents/ChatGPT/ScamGuard-AI/src/lib/rate-limit.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\PV\OneDrive\Documents\ChatGPT\ScamGuard-AI\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ forwarding headers are ignored unless proxy hops are explicitly trusted (16.0879ms)
+✔ bounded buckets reject new identities without evicting an exhausted identity (0.1993ms)
+✔ origin policy accepts same-origin and explicit allowlist, rejecting lookalikes (0.7437ms)
+✔ API responses disable caching and never grant wildcard CORS (0.235ms)
+✔ page screening uses URL-only input and excludes title, credentials, query and fragment (3.2561ms)
+✔ a hostname beginning with the localhost exclusion still gets checked (1.9059ms)
+✔ the actual local app and non-web protocols are excluded (1.8294ms)
+✔ low-risk and unavailable responses never create a high-risk banner (1.2442ms)
+✔ worker accepts only a minimized URL matching its browser-provided sender (0.9869ms)
+✔ automatic mode is opt-in and pages cannot change user settings (0.5649ms)
+✔ a delayed enable cannot overwrite a later manual-mode choice (1.0278ms)
+(node:46724) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/PV/OneDrive/Documents/ChatGPT/ScamGuard-AI/src/lib/request-body.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\PV\OneDrive\Documents\ChatGPT\ScamGuard-AI\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ valid JSON including Vietnamese is parsed without changing input (15.1649ms)
+✔ both unsupported media types and malformed JSON fail before inference (0.5162ms)
+✔ declared excessive size is refused without reading the stream (0.2268ms)
+✔ chunked oversized ignored fields cannot bypass the byte cap (0.7383ms)
+✔ the cap counts UTF-8 bytes rather than JavaScript characters (0.7332ms)
+ℹ tests 34
+ℹ suites 0
+ℹ pass 34
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 126.623

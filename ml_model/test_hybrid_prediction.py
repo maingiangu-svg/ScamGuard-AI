@@ -29,6 +29,23 @@ def bundle(text="hello", sms_score=.1, urls=None):
 
 
 class HybridPredictionTests(unittest.TestCase):
+    def test_source_calibrated_estimate_is_separate_from_raw_alert_score(self):
+        models = bundle('hello', .1)
+        models['sms']['probability_model'] = Estimator({text_input('hello'): .2})
+        with patch.object(live, 'load_bundle', return_value=models):
+            result = live.classify(text='hello')
+        self.assertEqual(result['ml_risk_score'], 10)
+        self.assertEqual(result['model_prediction_label'], 0)
+        self.assertAlmostEqual(result['calibrated_probability'], .2)
+        self.assertEqual(result['calibration_status'], 'source_label_calibrated')
+        self.assertFalse(result['calibrated_probability_expert_verified'])
+
+    def test_uncalibrated_artifact_never_invents_a_calibrated_estimate(self):
+        with patch.object(live, 'load_bundle', return_value=bundle('hello', .1)):
+            result = live.classify(text='hello')
+        self.assertIsNone(result['calibrated_probability'])
+        self.assertEqual(result['calibration_status'], 'unavailable')
+
     def test_incomplete_url_only_input_is_invalid_before_either_model_runs(self):
         for raw in ["https://", "http://", " HTTPS:// \n", "https:", "https:/",
                     "https://?query=1", "https://.", "www.", "(https://)"]:
@@ -195,16 +212,31 @@ class HybridPredictionTests(unittest.TestCase):
         from predict import probability
         from predict import classify as bundle_classify
         from predict_processed import classify as processed_classify
+        import hashlib
 
         text = "Hey, are you free for lunch tomorrow?"
         url = "https://qi.lv/F0i"
         with tempfile.TemporaryDirectory(dir=live.ROOT / 'models') as directory:
             output = Path(directory) / 'historical.pkl'
-            with patch.object(package_hybrid, 'OUTPUT', output):
+            sms_source = Path(directory) / 'source-sms.pkl'
+            sms_fixture = {'sklearn_version': live.sklearn.__version__,
+                           'sms': {'model': Estimator({text_input(text): .23}), 'threshold': .65}}
+            sms_source.write_bytes(pickle.dumps(sms_fixture))
+            checksum = hashlib.sha256(sms_source.read_bytes()).hexdigest()
+            with patch.object(package_hybrid, 'OUTPUT', output), \
+                 patch.object(package_hybrid, 'SMS_SOURCE', sms_source), \
+                 patch.object(package_hybrid, 'EXPECTED_SHA256', checksum), \
+                 patch.object(package_hybrid, 'load_processed_bundle', return_value=sms_fixture) as sms_loader, \
+                 patch('predict_processed.load_processed_bundle', return_value=sms_fixture):
                 package_hybrid.package()
+                expected_sms = processed_classify(text=text)['text_result']['score']
+                sms_source.write_bytes(b'corrupted source')
+                with self.assertRaisesRegex(ValueError, 'checksum'):
+                    package_hybrid.package()
+                self.assertEqual(sms_loader.call_count, 1)
             models = pickle.loads(output.read_bytes())
         self.assertEqual(float(probability(models['sms']['model'], [text_input(text)])[0]),
-                         processed_classify(text=text)["text_result"]["score"])
+                         expected_sms)
         self.assertEqual(float(probability(models['url']['model'], [url])[0]),
                          bundle_classify(url=url)["url_result"]["score"])
 
@@ -212,18 +244,23 @@ class HybridPredictionTests(unittest.TestCase):
         manifest = json.loads(live.MANIFEST.read_text(encoding='utf-8'))
         models = live.load_bundle()
         self.assertEqual(models['training'], manifest['training'])
-        self.assertEqual(models['training']['run_id'], 'hybrid-isolated-20261026-icann')
-        self.assertEqual(models['training']['text_training_samples'], 3800)
-        self.assertEqual(models['training']['url_training_samples'], 32777)
+        self.assertEqual(models['training']['run_id'], 'group-calibrated-20261026')
+        self.assertEqual(models['training']['text_training_samples'], 3786)
+        self.assertEqual(models['training']['url_training_samples'], 31299)
+        self.assertTrue(manifest['calibration_gate_pass'])
+        self.assertEqual(manifest['parent_artifact']['bundle_sha256'],
+                         '9a49b7278cfb1b9da00f8ebc6970653a9de3320f3037db3ee190109926d1bd3a')
+        self.assertTrue(models['training']['calibrated_estimate_available'])
+        self.assertFalse(models['training']['probability_calibrated'])
         self.assertEqual(models['training']['heldout_or_quarantined_rows_fitted'], 0)
         self.assertTrue(models['training']['registered_domain_isolation'])
         self.assertTrue(models['training']['icann_owner_domain_isolation'])
         self.assertFalse(models['training']['campaign_independence_proven'])
         self.assertFalse(models['training']['all_labels_expert_verified'])
         for branch in ('sms', 'url'):
-            self.assertIn(branch + '_train.jsonl', manifest['dataset_files_sha256'])
+            self.assertIn(branch + '_fit_rows.jsonl', manifest['dataset_files_sha256'])
             self.assertEqual(manifest['source_sha256'][branch + '_train'],
-                             manifest['dataset_files_sha256'][branch + '_train.jsonl'])
+                             manifest['dataset_files_sha256'][branch + '_fit_rows.jsonl'])
 
     def test_historical_packager_cannot_overwrite_the_repaired_default(self):
         import package_hybrid

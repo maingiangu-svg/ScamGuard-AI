@@ -1,8 +1,8 @@
 {
-  "bundle_sha256": "9a49b7278cfb1b9da00f8ebc6970653a9de3320f3037db3ee190109926d1bd3a",
+  "bundle_sha256": "6a0fd38b35570bff4b0ae56dd52a07747a6670d3dc2eceda304e1f10898314d0",
   "source_sha256": {
-    "sms_train": "01d0dffc995d3c12973864513a8004f9649226a730a4dba35d98f693d9f8ee23",
-    "url_train": "84e989da4d920c72fd19a5d52f16b899ad810a6b8303109124eb1b6fd5d66a15"
+    "sms_train": "14ba54a040b08b7b3793eeeb44dd97a794e43c87e7b3e4f34425a98269f7b006",
+    "url_train": "8acad6b8b39ec61aefd665c60ae12f72fbbb3c8d04fe2df0e12c1e9b3cfd3ce4"
   },
   "code_sha256": {
     "preprocess.py": "9906e0438726035c0c2241c7571683a321a7085fd884df392fcee3136f93a9a7",
@@ -12,10 +12,10 @@
   },
   "code_hash_normalization": "CRLF to LF for Windows/Linux parity",
   "training": {
-    "run_id": "hybrid-isolated-20261026-icann",
-    "method": "Independent supervised SMS and URL heads refitted after label quarantine and connected group isolation",
-    "text_training_samples": 3800,
-    "url_training_samples": 32777,
+    "run_id": "group-calibrated-20261026",
+    "method": "Supervised source-label heads with train-only nested-group sigmoid calibration",
+    "text_training_samples": 3786,
+    "url_training_samples": 31299,
     "paired_training_samples": 0,
     "synthetic_pairs": 0,
     "probability_calibrated": false,
@@ -29,28 +29,60 @@
     "known_label_conflicts_fitted": 0,
     "heldout_or_quarantined_rows_fitted": 0,
     "hyperparameters_retuned": false,
-    "training_manifest_sha256": "9c5cdc3c5aa0e20f191efae731b4f485c13eb8e7c9df93c33dfb5c9f72a7e747"
+    "training_manifest_sha256": "b7ed99fee87ace0ca04d4955dfa23216fd83589c2d11c5ee32a70bfa0b5755a6",
+    "calibrated_estimate_available": true,
+    "calibrated_estimate_scope": "source-label estimate; not expert-verified population fraud probability",
+    "label_provenance_counts": {
+      "sms": {
+        "upstream_ham_or_non_smishing_spam": 2966,
+        "published_two_researcher_manual_relabeling_with_disagreement_resolution": 483,
+        "ai_semantic_review": 334,
+        "user_scope_decision": 2,
+        "user_decision": 1
+      },
+      "url": {
+        "inherited_url_source_not_expert_verified": 31299
+      }
+    },
+    "human_user_decisions": 1,
+    "review_unknown_cases_excluded": 807
   },
-  "fitted_rows": 36577,
-  "test_evaluation_performed": true,
-  "fit_code_sha256": "7b8c7e1c278ac2f1b0c3180d43f399b597d801fac68ccbf59377de6268c63e7f",
-  "fit_seconds": 10.752,
+  "fitted_rows": 35085,
+  "test_evaluation_performed": false,
+  "fit_code_sha256": "ba705641d1e48e24028b23791b63a085b2b1848767b615bfeaaae30a9d4acebe",
+  "fit_seconds": 194.129,
   "dataset_files_sha256": {
-    "all_rows.jsonl": "c7a8d5b54a47400d48d07c232e9a1728753160f8d9edf57159e7e60297d77b6c",
-    "repair_report.json": "a5a67a41510a9e0c55fa49b694935f45e16d0304381e97765f4b34df7b9ba657",
-    "similarity_edges.json": "d483c50229d8f4dc02ce27fcefd283fc536d5ee882a0e444f0462f74e0075856",
-    "sms_quarantine.jsonl": "80a38002d47fecbc9c11054c3e9db74998b325747274efdaaec699bed9482399",
-    "sms_test.jsonl": "324ca8514e89ef9d7aea71c20631ad1f5236f9b12dbf22d3d7fe2cea617f7e0a",
-    "sms_train.jsonl": "01d0dffc995d3c12973864513a8004f9649226a730a4dba35d98f693d9f8ee23",
-    "sms_validation.jsonl": "83ec880f035911abeb3b53595363ff8ebbbf1c55646da213eaa5cf07ea9d4c49",
-    "url_quarantine.jsonl": "0ac1373443c02fac1afff89ac748aebf5246101274987b1db90268d97f2b0e8a",
-    "url_test.jsonl": "c01b3adb3d1ebcb407d929fd8c1907f2183b95c3fc8dde8cdfabe1eb9b0dd030",
-    "url_train.jsonl": "84e989da4d920c72fd19a5d52f16b899ad810a6b8303109124eb1b6fd5d66a15",
-    "url_validation.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    "fit_rows.jsonl": "b7ed99fee87ace0ca04d4955dfa23216fd83589c2d11c5ee32a70bfa0b5755a6",
+    "sms_fit_rows.jsonl": "14ba54a040b08b7b3793eeeb44dd97a794e43c87e7b3e4f34425a98269f7b006",
+    "url_fit_rows.jsonl": "8acad6b8b39ec61aefd665c60ae12f72fbbb3c8d04fe2df0e12c1e9b3cfd3ce4",
+    "protocol.json": "f0aa0b94a0ddbd2a494ee08f3edee5f39b0a83f97a3a7eb7162083b749518299"
   },
   "threshold_provenance": {
     "sms": "Existing fixed 0.65; inherited historical validation choice, not reselected",
     "url": "Existing fixed 0.50; no threshold selection"
   },
-  "evaluation_sha256": "52d2da7f68004e8c0837e8eebf6559ee43a59fd19bb5dfc2085ec5d1aab12581"
+  "parent_artifact": {
+    "bundle_sha256": "9a49b7278cfb1b9da00f8ebc6970653a9de3320f3037db3ee190109926d1bd3a",
+    "source_sha256": {
+      "sms_train": "01d0dffc995d3c12973864513a8004f9649226a730a4dba35d98f693d9f8ee23",
+      "url_train": "84e989da4d920c72fd19a5d52f16b899ad810a6b8303109124eb1b6fd5d66a15"
+    },
+    "dataset_files_sha256": {
+      "all_rows.jsonl": "c7a8d5b54a47400d48d07c232e9a1728753160f8d9edf57159e7e60297d77b6c",
+      "repair_report.json": "a5a67a41510a9e0c55fa49b694935f45e16d0304381e97765f4b34df7b9ba657",
+      "similarity_edges.json": "d483c50229d8f4dc02ce27fcefd283fc536d5ee882a0e444f0462f74e0075856",
+      "sms_quarantine.jsonl": "80a38002d47fecbc9c11054c3e9db74998b325747274efdaaec699bed9482399",
+      "sms_test.jsonl": "324ca8514e89ef9d7aea71c20631ad1f5236f9b12dbf22d3d7fe2cea617f7e0a",
+      "sms_train.jsonl": "01d0dffc995d3c12973864513a8004f9649226a730a4dba35d98f693d9f8ee23",
+      "sms_validation.jsonl": "83ec880f035911abeb3b53595363ff8ebbbf1c55646da213eaa5cf07ea9d4c49",
+      "url_quarantine.jsonl": "0ac1373443c02fac1afff89ac748aebf5246101274987b1db90268d97f2b0e8a",
+      "url_test.jsonl": "c01b3adb3d1ebcb407d929fd8c1907f2183b95c3fc8dde8cdfabe1eb9b0dd030",
+      "url_train.jsonl": "84e989da4d920c72fd19a5d52f16b899ad810a6b8303109124eb1b6fd5d66a15",
+      "url_validation.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "evaluation_sha256": "52d2da7f68004e8c0837e8eebf6559ee43a59fd19bb5dfc2085ec5d1aab12581"
+  },
+  "calibration_protocol_sha256": "f0aa0b94a0ddbd2a494ee08f3edee5f39b0a83f97a3a7eb7162083b749518299",
+  "calibration_report_sha256": "c1c54564d5ff6ffb2b93f80fc33618c868dddc276dfe4ee4cb8ab8b800dad232",
+  "calibration_gate_pass": true
 }

@@ -1,0 +1,14 @@
+✔ page screening uses URL-only input and excludes title, credentials, query and fragment (3.0191ms)
+✔ a hostname beginning with the localhost exclusion still gets checked (1.1091ms)
+✔ the actual local app and non-web protocols are excluded (2.2318ms)
+✔ low-risk and unavailable responses never create a high-risk banner (1.1041ms)
+✔ worker accepts only a minimized URL matching its browser-provided sender (0.9228ms)
+✔ automatic mode is opt-in and pages cannot change user settings (0.5308ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 66.4412

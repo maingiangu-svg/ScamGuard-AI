@@ -1,0 +1,175 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.44kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.14-slim-trixie
+#2 ...
+
+#3 [internal] load metadata for docker.io/library/node:22-bookworm-slim
+#3 DONE 1.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.14-slim-trixie
+#2 DONE 1.0s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 290B done
+#4 DONE 0.0s
+
+#5 [build 1/6] FROM docker.io/library/node:22-bookworm-slim@sha256:de170b39439eb0e5a3444ad7d60b015614a381e10fecae2e30ec9e735122f38d
+#5 resolve docker.io/library/node:22-bookworm-slim@sha256:de170b39439eb0e5a3444ad7d60b015614a381e10fecae2e30ec9e735122f38d 0.0s done
+#5 DONE 0.0s
+
+#6 [runtime  1/14] FROM docker.io/library/python:3.14-slim-trixie@sha256:35caba83af2fe6da9a5d922f9b0156f21d1246a48278c58a08bd253303ba42e8
+#6 resolve docker.io/library/python:3.14-slim-trixie@sha256:35caba83af2fe6da9a5d922f9b0156f21d1246a48278c58a08bd253303ba42e8 0.0s done
+#6 DONE 0.0s
+
+#7 [internal] load build context
+#7 transferring context: 17.56kB done
+#7 DONE 0.0s
+
+#8 [build 2/6] WORKDIR /app
+#8 CACHED
+
+#9 [build 3/6] COPY package.json package-lock.json ./
+#9 CACHED
+
+#10 [build 4/6] RUN npm ci --ignore-scripts
+#10 CACHED
+
+#11 [build 5/6] COPY . .
+#11 DONE 0.2s
+
+#12 [build 6/6] RUN npm run build
+#12 0.189 
+#12 0.189 > scamshield-forensic@0.1.0 build
+#12 0.189 > next build --webpack
+#12 0.189 
+#12 0.381 ▲ Next.js 16.4.3 (webpack)
+#12 0.398 ✓ Running next.config.ts took 17ms
+#12 0.404 
+#12 0.419   Creating an optimized production build ...
+#12 5.592 ✓ Compiled successfully in 4.0s
+#12 5.593   Running TypeScript ...
+#12 6.749   Finished TypeScript in 1156ms ...
+#12 6.750   Collecting page data using 9 workers ...
+#12 7.610   Generating static pages using 9 workers (0/8) ...
+#12 7.886   Generating static pages using 9 workers (2/8) 
+#12 7.886   Generating static pages using 9 workers (4/8) 
+#12 7.886   Generating static pages using 9 workers (6/8) 
+#12 7.886 ✓ Generating static pages using 9 workers (8/8) in 276ms
+#12 7.937   Finalizing page optimization ...
+#12 7.937   Collecting build traces ...
+#12 16.99 
+#12 16.99 Route (app)
+#12 16.99 ┌ ƒ /
+#12 16.99 ├ ƒ /_not-found
+#12 16.99 ├ ƒ /api/analyze
+#12 16.99 ├ ƒ /api/health
+#12 16.99 ├ ƒ /api/ml-classify
+#12 16.99 └ ƒ /api/roleplay
+#12 16.99 
+#12 16.99 
+#12 16.99 ƒ Proxy (Middleware)
+#12 16.99 
+#12 16.99 ƒ  (Dynamic)  server-rendered on demand
+#12 16.99 
+#12 DONE 17.0s
+
+#13 [runtime  3/14] RUN apt-get update && apt-get install -y --no-install-recommends libstdc++6 && rm -rf /var/lib/apt/lists/*
+#13 CACHED
+
+#14 [runtime  4/14] COPY --from=build /usr/local/bin/node /usr/local/bin/node
+#14 CACHED
+
+#15 [runtime  2/14] WORKDIR /app
+#15 CACHED
+
+#16 [runtime  5/14] COPY ml_model/requirements.txt ./ml_model/requirements.txt
+#16 CACHED
+
+#17 [runtime  6/14] RUN pip install --no-cache-dir -r ml_model/requirements.txt && pip check && python -m pip uninstall --yes pip
+#17 1.324 Collecting scikit-learn==1.9.1 (from -r ml_model/requirements.txt (line 1))
+#17 1.473   Downloading scikit_learn-1.9.1-cp314-cp314-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (9.3 kB)
+#17 1.612 Collecting pandas==3.0.6 (from -r ml_model/requirements.txt (line 2))
+#17 1.655   Downloading pandas-3.0.6-cp314-cp314-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl.metadata (79 kB)
+#17 1.861 Collecting numpy==2.5.4 (from -r ml_model/requirements.txt (line 3))
+#17 1.905   Downloading numpy-2.5.4-cp314-cp314-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (6.6 kB)
+#17 2.012 Collecting scipy>=1.10.0 (from scikit-learn==1.9.1->-r ml_model/requirements.txt (line 1))
+#17 2.056   Downloading scipy-1.18.1-cp314-cp314-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl.metadata (62 kB)
+#17 2.118 Collecting joblib>=1.4.0 (from scikit-learn==1.9.1->-r ml_model/requirements.txt (line 1))
+#17 2.169   Downloading joblib-1.6.0-py3-none-any.whl.metadata (6.5 kB)
+#17 2.226 Collecting narwhals>=2.0.1 (from scikit-learn==1.9.1->-r ml_model/requirements.txt (line 1))
+#17 2.273   Downloading narwhals-2.27.1-py3-none-any.whl.metadata (15 kB)
+#17 2.320 Collecting threadpoolctl>=3.5.0 (from scikit-learn==1.9.1->-r ml_model/requirements.txt (line 1))
+#17 2.365   Downloading threadpoolctl-3.7.0-py3-none-any.whl.metadata (24 kB)
+#17 2.420 Collecting python-dateutil>=2.8.2 (from pandas==3.0.6->-r ml_model/requirements.txt (line 2))
+#17 2.468   Downloading python_dateutil-3.0.0-py2.py3-none-any.whl.metadata (8.2 kB)
+#17 2.517 Collecting cloudpickle>=3.0 (from joblib>=1.4.0->scikit-learn==1.9.1->-r ml_model/requirements.txt (line 1))
+#17 2.563   Downloading cloudpickle-3.1.2-py3-none-any.whl.metadata (7.1 kB)
+#17 2.612 Collecting six>=1.6 (from python-dateutil>=2.8.2->pandas==3.0.6->-r ml_model/requirements.txt (line 2))
+#17 2.654   Downloading six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+#17 2.702 Collecting tzdata (from python-dateutil>=2.8.2->pandas==3.0.6->-r ml_model/requirements.txt (line 2))
+#17 2.745   Downloading tzdata-2026.5-py2.py3-none-any.whl.metadata (1.4 kB)
+#17 2.792 Downloading scikit_learn-1.9.1-cp314-cp314-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (9.2 MB)
+#17 3.628    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9.2/9.2 MB 11.5 MB/s  0:00:00
+#17 3.676 Downloading pandas-3.0.6-cp314-cp314-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl (10.8 MB)
+#17 4.982    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 9.0 MB/s  0:00:01
+#17 5.027 Downloading numpy-2.5.4-cp314-cp314-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (16.7 MB)
+#17 6.449    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 16.7/16.7 MB 11.8 MB/s  0:00:01
+#17 6.491 Downloading joblib-1.6.0-py3-none-any.whl (306 kB)
+#17 6.559 Downloading cloudpickle-3.1.2-py3-none-any.whl (22 kB)
+#17 6.606 Downloading narwhals-2.27.1-py3-none-any.whl (483 kB)
+#17 6.685 Downloading python_dateutil-3.0.0-py2.py3-none-any.whl (94 kB)
+#17 6.738 Downloading scipy-1.18.1-cp314-cp314-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl (35.3 MB)
+#17 9.783    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 35.3/35.3 MB 11.6 MB/s  0:00:03
+#17 9.825 Downloading six-1.17.0-py2.py3-none-any.whl (11 kB)
+#17 9.870 Downloading threadpoolctl-3.7.0-py3-none-any.whl (26 kB)
+#17 9.916 Downloading tzdata-2026.5-py2.py3-none-any.whl (347 kB)
+#17 10.07 Installing collected packages: tzdata, threadpoolctl, six, numpy, narwhals, cloudpickle, scipy, python-dateutil, joblib, scikit-learn, pandas
+#17 17.99 
+#17 17.99 Successfully installed cloudpickle-3.1.2 joblib-1.6.0 narwhals-2.27.1 numpy-2.5.4 pandas-3.0.6 python-dateutil-3.0.0 scikit-learn-1.9.1 scipy-1.18.1 six-1.17.0 threadpoolctl-3.7.0 tzdata-2026.5
+#17 17.99 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+#17 18.18 No broken requirements found.
+#17 18.34 Found existing installation: pip 26.2.2
+#17 18.36 Uninstalling pip-26.2.2:
+#17 18.42   Successfully uninstalled pip-26.2.2
+#17 18.42 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+#17 DONE 18.5s
+
+#18 [runtime  7/14] COPY --from=build /app/.next/standalone ./
+#18 DONE 0.2s
+
+#19 [runtime  8/14] COPY --from=build /app/.next/static ./.next/static
+#19 DONE 0.0s
+
+#20 [runtime  9/14] COPY --from=build /app/public ./public
+#20 DONE 0.1s
+
+#21 [runtime 10/14] COPY ml_model/*.py ./ml_model/
+#21 DONE 0.0s
+
+#22 [runtime 11/14] COPY ml_model/models/model_bundle.pkl ./ml_model/models/model_bundle.pkl
+#22 DONE 0.0s
+
+#23 [runtime 12/14] COPY ml_model/models/hybrid_bundle.pkl ./ml_model/models/hybrid_bundle.pkl
+#23 DONE 0.0s
+
+#24 [runtime 13/14] COPY ml_model/models/hybrid_manifest.json ./ml_model/models/hybrid_manifest.json
+#24 DONE 0.0s
+
+#25 [runtime 14/14] RUN chown -R 10001:10001 /app/.next
+#25 DONE 0.3s
+
+#26 exporting to image
+#26 exporting layers
+#26 exporting layers 6.4s done
+#26 exporting manifest sha256:7f711017f3dfa27ab8d4dc26d56ab90db3489f63ade3a76c022d55a8f647bdb9 done
+#26 exporting config sha256:ae7633d496555525a5f0153f3cc8886b79d4691f24b8683841d988135076efed done
+#26 exporting attestation manifest sha256:ce7e3645ae469f5b325346e72b7076b1c6dde67ada45ab26bd8e65498c0700db done
+#26 exporting manifest list sha256:a920ceb66d0b2c2bd998108b77d1f3d8e905b6c56a74569b352677e6c131386c 0.0s done
+#26 naming to docker.io/library/scamguard-readiness:20261026 done
+#26 unpacking to docker.io/library/scamguard-readiness:20261026
+#26 unpacking to docker.io/library/scamguard-readiness:20261026 1.5s done
+#26 DONE 7.9s

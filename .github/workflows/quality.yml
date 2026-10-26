@@ -1,0 +1,81 @@
+name: Quality and container verification
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: quality-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      NEXT_TELEMETRY_DISABLED: '1'
+      PYTHONUTF8: '1'
+      OMP_NUM_THREADS: '1'
+      AUDIT_OUTPUT: .local-runtime/ci-evidence
+      AUDIT_NODE_TOOLS: .local-runtime/audit/node-tools
+      PLAYWRIGHT_BROWSERS_PATH: .local-runtime/browsers
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          cache: npm
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.14'
+      - name: Install locked dependencies without lifecycle scripts
+        run: |
+          npm ci --ignore-scripts
+          python -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip==26.2.2
+          .venv/bin/python -m pip install --only-binary=:all: -r ml_model/requirements-audit.txt
+          mkdir -p ml_model/data/prepared .local-runtime/audit/node-tools
+          cp tools/audit/package*.json .local-runtime/audit/node-tools/
+          npm ci --prefix .local-runtime/audit/node-tools --ignore-scripts
+          node .local-runtime/audit/node-tools/node_modules/playwright/cli.js install --with-deps chromium
+          node --input-type=module -e 'import fs from "node:fs"; import {chromium} from "./.local-runtime/audit/node-tools/node_modules/playwright/index.mjs"; fs.appendFileSync(process.env.GITHUB_ENV,"AUDIT_BROWSER_PATH="+chromium.executablePath()+"\n")'
+      - name: Lint and unit tests
+        run: |
+          npm run lint
+          npm test
+          .venv/bin/python -m unittest discover -s ml_model -v
+          npm run test:inference
+      - name: Build and typecheck
+        run: |
+          npm run build
+          npm run check:types
+      - name: API, quota, browser and installed-extension verification
+        env:
+          TEST_EXTENSION: '1'
+        run: node scripts/ci-integration.mjs
+      - name: Dependency security gates
+        run: |
+          npm audit --audit-level=high
+          .venv/bin/python -m pip_audit -r ml_model/requirements.txt --strict
+          .venv/bin/python scripts/verify-export-pdf.py .local-runtime/ci-evidence/browser-sample-report.pdf
+      - name: Install checksum-pinned image scanner
+        run: |
+          mkdir -p .local-runtime/trivy
+          curl --fail --location --retry 3 --output .local-runtime/trivy/archive.tar.gz https://github.com/aquasecurity/trivy/releases/download/v0.76.1/trivy_0.76.1_Linux-64bit.tar.gz
+          echo 'c7cbe3137fb8a48a17574bede3dd6beb16742d1e9772929940fc90082c39d9c0  .local-runtime/trivy/archive.tar.gz' | sha256sum --check --strict
+          tar --extract --gzip --file .local-runtime/trivy/archive.tar.gz --directory .local-runtime/trivy trivy
+      - name: Build, smoke-test and scan unprivileged container
+        run: |
+          docker build -t scamguard-ci .
+          node scripts/container-smoke.mjs scamguard-ci
+          .local-runtime/trivy/trivy image --scanners vuln --severity HIGH,CRITICAL --format json --output .local-runtime/ci-evidence/container-image-scan.json scamguard-ci
+          node scripts/image-security.mjs .local-runtime/ci-evidence/container-image-scan.json
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        if: always()
+        with:
+          name: verification-evidence
+          path: .local-runtime/ci-evidence
+          retention-days: 14
