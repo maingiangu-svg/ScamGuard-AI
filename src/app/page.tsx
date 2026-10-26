@@ -848,11 +848,11 @@ export default function ScamShieldDashboard() {
           </div>
         </div>
 
-        {/* ── ASYMMETRIC MAIN GRID: EQUAL HEIGHT STRETCH (items-stretch) ────────── */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+        {/* Keep the input independent of the report height. */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* LEFT: Hero Upload & Input (~62% width) */}
           <div className={result ? "lg:col-span-5 print:hidden" : "lg:col-span-7 print:hidden"}>
-            <div className={`border rounded-2xl p-7 shadow-xs flex flex-col justify-between h-full space-y-5 transition-colors ${
+            <div className={`border rounded-2xl p-7 shadow-xs flex flex-col justify-between space-y-5 transition-colors ${
               isMuted
                 ? "bg-[#202024] border-[#2E2E34]"
                 : "bg-white border-[#E7E2D9]"
@@ -943,7 +943,7 @@ export default function ScamShieldDashboard() {
                       value={textInput}
                       onChange={(e) => setTextInput(e.target.value)}
                       placeholder={t.input.pastePlaceholder}
-                      className={`flex-1 min-h-[250px] w-full border rounded-xl p-4 text-[15px] placeholder:text-[#71717A] focus:outline-none transition leading-relaxed ${
+                      className={`min-h-[250px] w-full resize-y border rounded-xl p-4 text-[15px] placeholder:text-[#71717A] focus:outline-none transition leading-relaxed ${
                         isMuted
                           ? "bg-[#1A1A1D] border-[#383840] text-[#EDEAE4] focus:border-[#EDEAE4] focus:bg-[#202024]"
                           : "bg-[#FAF8F5]/60 border-[#D6D0C4] text-[#1C1917] focus:border-[#1C1917] focus:bg-white"
@@ -992,7 +992,7 @@ export default function ScamShieldDashboard() {
             </div>
           </div>
 
-          {/* RIGHT: Real-world cases (Height-matched to Left column before results) */}
+          {/* RIGHT: Real-world cases before results */}
           {!result && (
             <div className="lg:col-span-5 print:hidden">
               <div className={`p-7 rounded-2xl border flex flex-col justify-between h-full shadow-xs transition-colors ${
