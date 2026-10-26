@@ -3,6 +3,18 @@ import path from 'node:path';
 import { existsSync } from 'node:fs';
 import type { MLClassification } from './analysis-assessment';
 
+// Shared across route bundles in this server process. Multi-instance deployments
+// still need an upstream quota; do not queue unbounded Python/model startups.
+const inferenceState = globalThis as typeof globalThis & {scamguardActiveInferences?: number};
+const MAX_ACTIVE_INFERENCES = 2;
+
+export function getMLInputError(ml: MLClassification | null, language: string): string | null {
+  if (ml?.error !== 'INVALID_URL') return null;
+  return language === 'vi'
+    ? 'URL chưa đầy đủ hoặc không hợp lệ. Hãy nhập đầy đủ tên miền, ví dụ https://example.com.'
+    : 'The URL is incomplete or invalid. Enter a complete hostname, for example https://example.com.';
+}
+
 export function parseInput(body: unknown): {text: string; url: string; language: string} | null {
   if (!body || typeof body !== 'object' || Array.isArray(body)) return null;
   const input = body as Record<string, unknown>;
@@ -20,33 +32,41 @@ export async function runMLClassifier(text: string, url: string): Promise<MLClas
   const root = process.cwd();
   const localPython = path.join(root, '.venv', process.platform === 'win32' ? 'Scripts/python.exe' : 'bin/python');
   const executable = process.env.PYTHON_EXECUTABLE || (existsSync(localPython) ? localPython : 'python3');
+  // Explicit paths prevent Next's tracer from expanding ml_model/* into raw datasets.
   const scripts: Record<string, string> = {
-    hybrid: 'predict_hybrid.py', processed: 'predict_processed.py', legacy: 'predict.py',
+    hybrid: path.join(root, 'ml_model/predict_hybrid.py'),
+    processed: path.join(root, 'ml_model/predict_processed.py'),
+    legacy: path.join(root, 'ml_model/predict.py'),
   };
   const inferenceScript = scripts[process.env.SCAMGUARD_INFERENCE_MODE ?? 'hybrid'];
   if (!inferenceScript) return null;
-  return new Promise(resolve => {
-    const python = spawn(executable, [path.join(root, 'ml_model', inferenceScript)], {
+  if ((inferenceState.scamguardActiveInferences ?? 0) >= MAX_ACTIVE_INFERENCES) return null;
+  inferenceState.scamguardActiveInferences = (inferenceState.scamguardActiveInferences ?? 0) + 1;
+  return new Promise<MLClassification | null>(resolve => {
+    const python = spawn(executable, [inferenceScript], {
       cwd: root, timeout: 15000, windowsHide: true,
       env: {...process.env, PYTHONUTF8: '1', PYTHONIOENCODING: 'utf-8', OMP_NUM_THREADS: '1'},
     });
     let output = '';
     let oversized = false;
+    let inputFailed = false;
     python.stdout.on('data', (chunk: Buffer) => {
       output += chunk.toString('utf8');
       if (output.length > 1000000) { oversized = true; python.kill(); }
     });
     // Drain stderr without returning internal paths or input data to the client.
     python.stderr.on('data', () => {});
-    python.stdin.on('error', () => resolve(null));
+    python.stdin.on('error', () => { inputFailed = true; python.kill(); });
     python.on('error', () => resolve(null));
     python.on('close', code => {
-      if (code !== 0 || oversized) return resolve(null);
+      if (code !== 0 || oversized || inputFailed) return resolve(null);
       try {
         const parsed: unknown = JSON.parse(output);
         resolve(parsed && typeof parsed === 'object' ? parsed as MLClassification : null);
       } catch { resolve(null); }
     });
     python.stdin.end(JSON.stringify({text, url}));
+  }).catch(() => null).finally(() => {
+    inferenceState.scamguardActiveInferences = (inferenceState.scamguardActiveInferences ?? 1) - 1;
   });
 }

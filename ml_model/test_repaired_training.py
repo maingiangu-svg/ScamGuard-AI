@@ -8,9 +8,11 @@ from unittest.mock import patch
 import train_repaired_hybrid as training
 from repair_training_data import repair_rows, sha, write_json, write_jsonl
 from audit_vi_holdout import template_signature
+import repair_training_data
 
 
 def fixture(directory):
+    (directory / 'public_suffix_list.dat').write_text('com\n', encoding='utf-8')
     rows = []
     for branch, cohort in (('sms', 'processed_sms'), ('url', 'bundle_url')):
         for i in range(6):
@@ -44,7 +46,8 @@ class RepairedTrainingTests(unittest.TestCase):
         with tempfile.TemporaryDirectory(dir=Path(__file__).parent / 'models') as temporary:
             directory = Path(temporary)
             fixture(directory)
-            training.fit(directory)
+            with patch.object(repair_training_data, 'REF', directory):
+                training.fit(directory)
             bundle = pickle.loads((directory / 'candidate_bundle.pkl').read_bytes())
             vocabulary = bundle['sms']['model'].named_steps['features'].transformer_list[0][1].vocabulary_
             self.assertIn('training', vocabulary)
@@ -54,7 +57,8 @@ class RepairedTrainingTests(unittest.TestCase):
             self.assertEqual(bundle['training']['url_training_samples'], 4)
             self.assertEqual(bundle['training']['heldout_or_quarantined_rows_fitted'], 0)
             with self.assertRaisesRegex(ValueError, 'already exists'):
-                training.fit(directory)
+                with patch.object(repair_training_data, 'REF', directory):
+                    training.fit(directory)
 
     def test_data_tampering_fails_before_any_fit(self):
         with tempfile.TemporaryDirectory(dir=Path(__file__).parent / 'models') as temporary:

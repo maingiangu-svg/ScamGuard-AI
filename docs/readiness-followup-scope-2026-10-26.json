@@ -1,0 +1,63 @@
+{
+  "repository": "maingiangu-svg/ScamGuard-AI",
+  "branch": "codex/production-readiness",
+  "baseCommit": "f56205c6f6aca32037ee786612ffd5308f080a73",
+  "action": "Publish this additional container hardening and evidence commit to existing draft PR1, update PR description, run CI; no merge or deploy",
+  "files": [
+    {
+      "path": "Dockerfile",
+      "bytes": 1396,
+      "sha256": "50c80b3be2988a7dcacadd9a9220345cebeee19deccd26165c5457fa2c2d22a8"
+    },
+    {
+      "path": "scripts/container-smoke.mjs",
+      "bytes": 3118,
+      "sha256": "4ac14e9616747d042445eabfc223802fc25b0ab900e87124ef3b7ea3813b893a"
+    },
+    {
+      "path": "docs/project-readiness-2026-10-26.md",
+      "bytes": 9320,
+      "sha256": "b3f15f49c76d1d9a8330a728d3641ebf7988cbdc0a478e2f6fc1abcabc6e901e"
+    },
+    {
+      "path": "docs/container-security-triage-2026-10-26.md",
+      "bytes": 4365,
+      "sha256": "d3bfbafd2c14bbbe3abee04c3ffcc06ffe5e048236c03af7b367df5905d38a53"
+    },
+    {
+      "path": "docs/readiness-evidence/2026-10-26/summary.json",
+      "bytes": 2390,
+      "sha256": "84c8e3e67e18b212b825d69d7151c7f665b78b64f884530f57c14e08c46adf7c"
+    },
+    {
+      "path": "docs/readiness-evidence/2026-10-26/container-scan-before.json",
+      "bytes": 677137,
+      "sha256": "2b1310ba293e036821d94e4945991fc2f27313c20a515934dad78c325be72b76"
+    },
+    {
+      "path": "docs/readiness-evidence/2026-10-26/container-scan-after.json",
+      "bytes": 525374,
+      "sha256": "813a59447ba3ba7fc8c49eb1fe47e0b4e89d7fb1194971463a4cfebb0600a4a7"
+    },
+    {
+      "path": "docs/readiness-evidence/2026-10-26/github-ci-first.json",
+      "bytes": 3314,
+      "sha256": "adb13529e7af5dcedf3208f8ebe68175b3e2ad481a69927ecc244f1a8150b1d7"
+    },
+    {
+      "path": "docs/readiness-evidence/2026-10-26/docker-build.log",
+      "bytes": 9608,
+      "sha256": "98d8d2f18154efa0b447bf137722956153ea7af68b8250ab604f0f60d34bba67"
+    },
+    {
+      "path": "docs/readiness-evidence/2026-10-26/container-smoke.json",
+      "bytes": 197,
+      "sha256": "c44165992bff78992e55349d80384a3342b538c41766701100ab8982bdb7b307"
+    },
+    {
+      "path": "docs/readiness-evidence/2026-10-26/container.log",
+      "bytes": 146,
+      "sha256": "fe3a2547d917f987c322617c453427543846d32637a5c7dce9586bd3593238a3"
+    }
+  ]
+}

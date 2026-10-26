@@ -29,6 +29,102 @@ def bundle(text="hello", sms_score=.1, urls=None):
 
 
 class HybridPredictionTests(unittest.TestCase):
+    def test_source_calibrated_estimate_is_separate_from_raw_alert_score(self):
+        models = bundle('hello', .1)
+        models['sms']['probability_model'] = Estimator({text_input('hello'): .2})
+        with patch.object(live, 'load_bundle', return_value=models):
+            result = live.classify(text='hello')
+        self.assertEqual(result['ml_risk_score'], 10)
+        self.assertEqual(result['model_prediction_label'], 0)
+        self.assertAlmostEqual(result['calibrated_probability'], .2)
+        self.assertEqual(result['calibration_status'], 'source_label_calibrated')
+        self.assertFalse(result['calibrated_probability_expert_verified'])
+
+    def test_uncalibrated_artifact_never_invents_a_calibrated_estimate(self):
+        with patch.object(live, 'load_bundle', return_value=bundle('hello', .1)):
+            result = live.classify(text='hello')
+        self.assertIsNone(result['calibrated_probability'])
+        self.assertEqual(result['calibration_status'], 'unavailable')
+
+    def test_incomplete_url_only_input_is_invalid_before_either_model_runs(self):
+        for raw in ["https://", "http://", " HTTPS:// \n", "https:", "https:/",
+                    "https://?query=1", "https://.", "www.", "(https://)"]:
+            for field in ["text", "url"]:
+                with self.subTest(raw=raw, field=field), patch.object(live, "load_bundle", return_value=bundle(raw, 1.0)) as loader:
+                    result = live.classify(**{field: raw})
+                    self.assertEqual(result.get("error"), "INVALID_URL")
+                    self.assertIsNone(result["ml_risk_score"])
+                    self.assertNotIn("decision_branch", result)
+                    loader.assert_not_called()
+
+    def test_actual_message_mentioning_an_incomplete_url_remains_sms_input(self):
+        text = "The link starts with https:// but I did not copy the rest"
+        models = bundle(text, .1)
+        with patch.object(live, "load_bundle", return_value=models):
+            result = live.classify(text=text)
+        self.assertEqual(result["decision_branch"], "sms")
+        self.assertEqual(result["ml_risk_score"], 10)
+
+    def test_url_only_routing_ignores_whitespace_wrappers_and_multiple_links(self):
+        url = "https://uccle.monopinion.belgium.be/profiles/sunwinorgvc/badges"
+        other = "https://example.com/"
+        for text in [url, " " + url, "\n\t" + url + " \r\n", "(" + url + ")",
+                     "[" + url + "]", url + " \n " + other]:
+            models = bundle(text, .89, {url: .6969195741583459, other: .1})
+            with self.subTest(text=text), patch.object(live, "load_bundle", return_value=models):
+                result = live.classify(text=text)
+            self.assertEqual(result["mode"], "hybrid_url_only")
+            self.assertEqual(result["decision_branch"], "url")
+            self.assertIsNone(result["text_result"])
+            self.assertEqual(models["sms"]["model"].rows, [])
+            self.assertEqual(result["ml_risk_score"], 70)
+            self.assertFalse(result["url_review_required"])
+
+    def test_schemeless_domains_are_extracted_in_full_including_unlisted_tlds(self):
+        for raw in ["sunwin.org.vc", "sub.example.com.au/Case?next=1", "example.dev",
+                    "example.xn--p1ai"]:
+            url = "http://" + raw
+            models = bundle(urls={url: .8770976968115821})
+            with self.subTest(raw=raw), patch.object(live, "load_bundle", return_value=models):
+                result = live.classify(text=" " + raw + " ")
+            self.assertEqual(models["url"]["model"].rows, [url])
+            self.assertEqual(result["extracted_url"], url)
+            self.assertEqual(result["decision_branch"], "url")
+            self.assertIsNone(result["text_result"])
+            self.assertEqual(result["ml_risk_score"], 88)
+
+    def test_real_text_around_complete_bare_domains_still_uses_sms_and_url_heads(self):
+        text = "Kiểm tra sunwin.org.vc, rồi gọi lại."
+        url = "http://sunwin.org.vc"
+        models = bundle(text, .1, {url: .88})
+        with patch.object(live, "load_bundle", return_value=models):
+            result = live.classify(text=text)
+        self.assertEqual(models["sms"]["model"].rows, [text_input(text)])
+        self.assertEqual(models["url"]["model"].rows, [url])
+        self.assertEqual(result["decision_branch"], "sms")
+        self.assertEqual(result["ml_risk_score"], 10)
+        self.assertTrue(result["url_review_required"])
+
+    def test_email_addresses_and_decimal_numbers_are_not_extracted_as_urls(self):
+        for text in ["Email name@sunwin.org.vc", "Version 1.23.45"]:
+            with self.subTest(text=text), patch.object(live, "load_bundle", return_value=bundle(text)):
+                result = live.classify(text=text)
+            self.assertEqual(result["decision_branch"], "sms")
+            self.assertIsNone(result["url_result"])
+
+    def test_url_only_alerts_use_the_raw_url_threshold_not_the_sms_review_band(self):
+        url = "https://www.facebook.com/"
+        for raw, expected_label, expected_action in [
+            (.06, 0, "CLEAR"), (.347895, 0, "CLEAR"), (.4999, 0, "CLEAR"),
+            (.5, 1, "REVIEW"), (.79, 1, "REVIEW"), (.9, 1, "BLOCK"),
+        ]:
+            with self.subTest(raw=raw), patch.object(live, "load_bundle", return_value=bundle(urls={url: raw})):
+                result = live.classify(url=url)
+            self.assertEqual(result["model_prediction_label"], expected_label)
+            self.assertEqual(result["action"], expected_action)
+            self.assertEqual(result["ml_risk_score"], round(raw * 100))
+            self.assertEqual(result["url_result"]["score"], raw)
+
     def test_sms_keeps_the_processed_preprocessing_and_score(self):
         text = "Mã 123456: [https://Bank.Example/Login]"
         models = bundle(text, .7)
@@ -116,16 +212,31 @@ class HybridPredictionTests(unittest.TestCase):
         from predict import probability
         from predict import classify as bundle_classify
         from predict_processed import classify as processed_classify
+        import hashlib
 
         text = "Hey, are you free for lunch tomorrow?"
         url = "https://qi.lv/F0i"
         with tempfile.TemporaryDirectory(dir=live.ROOT / 'models') as directory:
             output = Path(directory) / 'historical.pkl'
-            with patch.object(package_hybrid, 'OUTPUT', output):
+            sms_source = Path(directory) / 'source-sms.pkl'
+            sms_fixture = {'sklearn_version': live.sklearn.__version__,
+                           'sms': {'model': Estimator({text_input(text): .23}), 'threshold': .65}}
+            sms_source.write_bytes(pickle.dumps(sms_fixture))
+            checksum = hashlib.sha256(sms_source.read_bytes()).hexdigest()
+            with patch.object(package_hybrid, 'OUTPUT', output), \
+                 patch.object(package_hybrid, 'SMS_SOURCE', sms_source), \
+                 patch.object(package_hybrid, 'EXPECTED_SHA256', checksum), \
+                 patch.object(package_hybrid, 'load_processed_bundle', return_value=sms_fixture) as sms_loader, \
+                 patch('predict_processed.load_processed_bundle', return_value=sms_fixture):
                 package_hybrid.package()
+                expected_sms = processed_classify(text=text)['text_result']['score']
+                sms_source.write_bytes(b'corrupted source')
+                with self.assertRaisesRegex(ValueError, 'checksum'):
+                    package_hybrid.package()
+                self.assertEqual(sms_loader.call_count, 1)
             models = pickle.loads(output.read_bytes())
         self.assertEqual(float(probability(models['sms']['model'], [text_input(text)])[0]),
-                         processed_classify(text=text)["text_result"]["score"])
+                         expected_sms)
         self.assertEqual(float(probability(models['url']['model'], [url])[0]),
                          bundle_classify(url=url)["url_result"]["score"])
 
@@ -133,18 +244,23 @@ class HybridPredictionTests(unittest.TestCase):
         manifest = json.loads(live.MANIFEST.read_text(encoding='utf-8'))
         models = live.load_bundle()
         self.assertEqual(models['training'], manifest['training'])
-        self.assertEqual(models['training']['run_id'], 'hybrid-isolated-20261026-icann')
-        self.assertEqual(models['training']['text_training_samples'], 3800)
-        self.assertEqual(models['training']['url_training_samples'], 32777)
+        self.assertEqual(models['training']['run_id'], 'group-calibrated-20261026')
+        self.assertEqual(models['training']['text_training_samples'], 3786)
+        self.assertEqual(models['training']['url_training_samples'], 31299)
+        self.assertTrue(manifest['calibration_gate_pass'])
+        self.assertEqual(manifest['parent_artifact']['bundle_sha256'],
+                         '9a49b7278cfb1b9da00f8ebc6970653a9de3320f3037db3ee190109926d1bd3a')
+        self.assertTrue(models['training']['calibrated_estimate_available'])
+        self.assertFalse(models['training']['probability_calibrated'])
         self.assertEqual(models['training']['heldout_or_quarantined_rows_fitted'], 0)
         self.assertTrue(models['training']['registered_domain_isolation'])
         self.assertTrue(models['training']['icann_owner_domain_isolation'])
         self.assertFalse(models['training']['campaign_independence_proven'])
         self.assertFalse(models['training']['all_labels_expert_verified'])
         for branch in ('sms', 'url'):
-            self.assertIn(branch + '_train.jsonl', manifest['dataset_files_sha256'])
+            self.assertIn(branch + '_fit_rows.jsonl', manifest['dataset_files_sha256'])
             self.assertEqual(manifest['source_sha256'][branch + '_train'],
-                             manifest['dataset_files_sha256'][branch + '_train.jsonl'])
+                             manifest['dataset_files_sha256'][branch + '_fit_rows.jsonl'])
 
     def test_historical_packager_cannot_overwrite_the_repaired_default(self):
         import package_hybrid

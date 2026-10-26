@@ -17,7 +17,7 @@ def package():
     active_manifest = ROOT / 'models/hybrid_manifest.json'
     if OUTPUT == ROOT / 'models/hybrid_bundle.pkl' and active_manifest.exists():
         active = json.loads(active_manifest.read_text(encoding='utf-8'))
-        if active['training']['run_id'].startswith('hybrid-isolated-'):
+        if active['training'].get('registered_domain_isolation'):
             raise ValueError('Refusing to overwrite the repaired model with historical fitted heads')
     sources = {"sms": (SMS_SOURCE, EXPECTED_SHA256), "url": (URL_SOURCE, URL_SHA256)}
     for source, expected in sources.values():

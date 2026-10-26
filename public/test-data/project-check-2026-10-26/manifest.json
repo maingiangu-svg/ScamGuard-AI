@@ -1,0 +1,57 @@
+{
+  "date": "2026-10-26",
+  "model_run": "hybrid-20261025",
+  "hybrid_bundle_sha256": "dc24729718288428c593aa4afcdb883cdcde09b71b9b5e70fb98264ad5b0b01c",
+  "sections": {
+    "SMS_EN": {
+      "source_rows": 39,
+      "exported": 36,
+      "source_labels": {
+        "0": 12,
+        "1": 24
+      },
+      "positive_groups": 1
+    },
+    "URL": {
+      "source_rows": 81,
+      "exported": 80,
+      "source_labels": {
+        "1": 22,
+        "0": 58
+      },
+      "positive_groups": 22
+    },
+    "VI_DIAGNOSTIC": {
+      "source_rows": 70,
+      "exported": 68,
+      "source_labels": {
+        "1": 16,
+        "0": 52
+      },
+      "positive_groups": 16
+    }
+  },
+  "total_cases": 184,
+  "excluded": 6,
+  "source_sha256": {
+    "ml_model\\data\\prepared\\smishx_training_2026-10-25\\test.jsonl": "a084349a886f7d0f61df67299d0d8347050b7b6c135fa04c8d1fcab47a2616e9",
+    "ml_model\\data\\prepared\\external_training_2026-10-25\\url_human_audit_all_200.jsonl": "fc627598e9efa73cc965e3e0dd628b7b2aa5a173c87e48f7899fd644da05951c",
+    "ml_model\\data\\prepared\\smishx_training_2026-10-25\\historical_vi_diagnostic.jsonl": "5aa19c347c03da553527b4ca871c3ffda0cb2daf558bbb680195d234783b8557",
+    "ml_model\\data\\reference\\external_2026-10-25\\public_suffix_list.dat": "0232f4df0831911356e8ee1f4d5c3b6b12c0ed3f6bd66b0f81c8ab5d3d49e9ca"
+  },
+  "audit_report_sha256": "6056c56bf9a65a1e8e0bd39eb1196720ad8f11f0b588943eec69f7246bd09a47",
+  "training_or_prediction_performed": false,
+  "new_independent_benchmark": false,
+  "campaign_independence_proven": false,
+  "expert_annotations_created": 0,
+  "file_sha256": {
+    "cases.json": "403f96c1ea69f901d4ef1e7a6dcc35949f03627637c633ba580a4893140941b7",
+    "DAP_AN.md": "9706b22108dc2c1b4b4182f9c04bdbcaabf056a60bd425e56964db52c1fc5b28",
+    "excluded.json": "5689bc8a4c4e3a1f9b0ba6fe00c2501da0434802709c06f71f56db9e9aec9567",
+    "README.md": "2b4112d7653a12c10cf24d466f3a44c5fe42164c071c6a9c973f693f366ce1c7",
+    "SMISHX_LICENSE.txt": "6eea23020ceed1ea3a7e44857031258133e7d9ffe6a6c1ee487fa7b11a7782f1",
+    "SMS_EN_TEST.txt": "8af5f4557f51e6954d412465b5d7c1a5ccd9f70b07aaf4bf0a9706a3a5628c87",
+    "TIENG_VIET_THAM_KHAO.txt": "4020aa253038018b1712a7f55b2be34b8917b5674472b4f186f5720cbfe854eb",
+    "URL_TEST.txt": "1cf7c186d8b5d90b395de8233d03956511ce7413a4dc2c728c1af0bfc4b1d865"
+  }
+}

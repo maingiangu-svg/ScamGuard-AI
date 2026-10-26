@@ -1,0 +1,50 @@
+{
+  "date": "2026-10-26",
+  "active_model_run": "hybrid-20261025",
+  "hybrid_bundle_sha256": "dc24729718288428c593aa4afcdb883cdcde09b71b9b5e70fb98264ad5b0b01c",
+  "branch_source_model_sha256": {
+    "sms": "a69b0afc4b2f3b6f997c86a8fd18488282ccb391a5040e8616129062f35099d2",
+    "url": "7c6a0da47fe331976f36f76798a581dcaed7440f884230bac7a74a10cba906c4"
+  },
+  "sms": {
+    "train": 3857,
+    "validation": 962,
+    "test": 39,
+    "source_labels": {
+      "0": 14,
+      "1": 25
+    },
+    "test_source_sha256": "a084349a886f7d0f61df67299d0d8347050b7b6c135fa04c8d1fcab47a2616e9",
+    "test_export_byte_identical": true,
+    "membership_provenance": "frozen_original_test_manifest"
+  },
+  "url": {
+    "train": 40004,
+    "test": 9996,
+    "source_labels": {
+      "1": 2280,
+      "0": 7716
+    },
+    "source_sha256": "b1a7c26b354632c80817e10af154c4e5007f9480fb43a8ac2730491500fa2780",
+    "split_source_sha256": "70d82f5d3e3a338ea786ae7df54397053bf94ce113a82eb2bcf517debad6cf4c",
+    "membership_provenance": "deterministic_reconstruction_of_recorded_training_recipe",
+    "shared_train_test_registered_domains": 519,
+    "test_rows_with_training_domain_overlap": 3074
+  },
+  "total_test_rows": 10035,
+  "filtered_rows": 0,
+  "expert_verification_claimed": false,
+  "campaign_independence_proven": false,
+  "training_or_scoring_performed_during_export": false,
+  "file_sha256": {
+    "CO_CANH_BAO_AUDIT.jsonl": "ac124d51fd91dde90d0065f10c197d7f1ad110ab9d897b531e9ad65779d81caa",
+    "DAP_AN_SMS.txt": "f8e457aee9dde646a4ef4faea3400dd5e8d8477d08ce8f0dff34c8dd02d117c5",
+    "DAP_AN_URL.txt": "4175a8c9bab9a95382cf057b09c350ee200a7822e8e67d32dfc0899a50c21f58",
+    "README.md": "c7956e50f6711c29f5f266ae5b6d398352477dc6551c2a3b03ad6d28c77212ea",
+    "SMISHX_LICENSE.txt": "6eea23020ceed1ea3a7e44857031258133e7d9ffe6a6c1ee487fa7b11a7782f1",
+    "SMS_NOI_DUNG.txt": "d7a09802ca3ffd2ee46987386fce431b9a175ebd3aa7fb40b1ad93d734362c8f",
+    "SMS_TEST.jsonl": "a084349a886f7d0f61df67299d0d8347050b7b6c135fa04c8d1fcab47a2616e9",
+    "URL_NOI_DUNG.txt": "5d3d7ad5e228ed747b518ff3f8c051317ecb8458cda1170ad62e129681a0ee78",
+    "URL_TEST.jsonl": "8f8ee3ff257e8b450adc2f1cb3e1cbafdb81fe9e0f07630b504141cb5879227f"
+  }
+}

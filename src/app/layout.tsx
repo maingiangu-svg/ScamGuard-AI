@@ -1,4 +1,6 @@
 import type { Metadata, Viewport } from "next";
+import {connection} from 'next/server';
+import {cookies} from 'next/headers';
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -20,13 +22,14 @@ export const viewport: Viewport = {
   themeColor: "#FAF8F5",
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  await connection();
+  const preferences = await cookies();
   return (
     <html
-      lang="en"
+      lang={preferences.get('scamguard-language')?.value === 'vi' ? 'vi' : 'en'}
       className="h-full antialiased"
     >
       <body className="min-h-full flex flex-col">{children}</body>

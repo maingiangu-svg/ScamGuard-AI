@@ -1,0 +1,22 @@
+✔ ordinary text is evaluated locally with no invented threat evidence (1980.7945ms)
+✔ review scores and binary labels use distinct declared thresholds (1775.5702ms)
+✔ an official URL does not bypass SMS; no untrained fusion is applied (1879.7767ms)
+✔ a URL-only request is scored by the URL estimator, with no forced whitelist score (1726.9574ms)
+✔ spaces and line breaks before the reported URL never activate the SMS branch (8293.1909ms)
+✔ the complete sunwin.org.vc domain is scored identically through both endpoints and input fields (8108.8876ms)
+✔ reported Facebook and Google URLs preserve model scores without a contradictory alert (9286.7943ms)
+✔ reported suspicious link uses the repaired URL head with the declared alert policy (1570.4537ms)
+✔ a risky link independently requires review when the message is below the review band (1605.8564ms)
+✔ all embedded URLs are included in the returned branch scores (1639.8056ms)
+✔ both endpoints reject malformed and excessive input (104.2676ms)
+✔ incomplete URL inputs return a useful validation error without a risk score (16204.3968ms)
+✔ image analysis is explicitly unsupported without a local OCR model (4.2886ms)
+✔ roleplay does not substitute keyword heuristics or an external model (13.9566ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 54258.1674

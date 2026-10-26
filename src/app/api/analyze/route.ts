@@ -1,45 +1,46 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getClientIp, rateLimit } from '@/lib/rate-limit';
+import { requestLimit } from '@/lib/rate-limit';
+import { apiHeaders, allowedOrigin } from '@/lib/api-policy';
 import { createAssessment, getRiskLevels } from '@/lib/analysis-assessment';
-import { parseInput, runMLClassifier } from '@/lib/ml-inference';
+import { getMLInputError, parseInput, runMLClassifier } from '@/lib/ml-inference';
 import { checkBrandDomain, getDomain } from '@/lib/url-verify';
+import { readJSONBody } from '@/lib/request-body';
 
 export const runtime = 'nodejs';
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-};
-
-export async function OPTIONS() {
-  return new NextResponse(null, {status: 200, headers: corsHeaders});
+export async function OPTIONS(req: NextRequest) {
+  return new NextResponse(null, {status: allowedOrigin(req) ? 204 : 403, headers: apiHeaders(req)});
 }
 
 export async function POST(req: NextRequest) {
-  if (!rateLimit(getClientIp(req)).ok) {
-    return NextResponse.json({error: 'Too many requests. Please try again later.'}, {status: 429, headers: corsHeaders});
+  const corsHeaders = apiHeaders(req);
+  if (!allowedOrigin(req)) return NextResponse.json({error: 'Origin not allowed.'}, {status: 403, headers: corsHeaders});
+  const quota = requestLimit(req);
+  if (!quota.ok) {
+    return NextResponse.json({error: 'Too many requests. Please try again later.'},
+      {status: 429, headers: {...corsHeaders, 'Retry-After': String(quota.retryAfter)}});
   }
-  if (!req.headers.get('content-type')?.includes('application/json')) {
-    return NextResponse.json({error: 'Chỉ hỗ trợ văn bản và URL. Ảnh cần OCR local, hiện chưa có trong mô hình.'},
-      {status: 415, headers: corsHeaders});
-  }
-  const input = parseInput(await req.json().catch(() => null));
+  const payload = await readJSONBody(req);
+  if ('error' in payload) return NextResponse.json({error: payload.error}, {status: payload.status, headers: corsHeaders});
+  const input = parseInput(payload.body);
   if (!input) return NextResponse.json({error: 'Provide text (up to 20,000 characters) or an HTTP URL.'}, {status: 400, headers: corsHeaders});
   const ml = await runMLClassifier(input.text, input.url);
+  const inputError = getMLInputError(ml, input.language);
+  if (inputError) return NextResponse.json({error: inputError}, {status: 400, headers: corsHeaders});
   const assessment = createAssessment(ml, !!ml?.url_result, input.language);
   if (!assessment || !ml) {
-    return NextResponse.json({error: 'Mô hình local chưa sẵn sàng hoặc không tương thích. Cần train bộ model hiện tại.'},
+    return NextResponse.json({error: 'Mô hình local chưa sẵn sàng, không tương thích hoặc đang bận. Vui lòng thử lại sau.'},
       {status: 503, headers: corsHeaders});
   }
   const {riskScore, riskLevel, reasons, detectedPatterns, summary, scam_type, urgent_actions} = assessment;
-  const threatLevel = riskLevel === 'MEDIUM' ? 'MEDIUM' : getRiskLevels(riskScore).threatLevel;
+  const threatLevel = riskLevel === 'HIGH' ? getRiskLevels(riskScore).threatLevel
+    : riskLevel === 'MEDIUM' ? 'MEDIUM' : 'LOW';
   const needsReview = riskLevel !== 'LOW';
   const domain = getDomain(ml.extracted_url || '');
   const brand = domain ? checkBrandDomain(domain) : null;
   // Domain annotations are separate context. They never bypass ML or modify its score.
   return NextResponse.json({
-    ...assessment, risk_score: riskScore, scam_detected: riskScore >= 80, threat_level: threatLevel,
+    ...assessment, risk_score: riskScore, scam_detected: riskLevel === 'HIGH', threat_level: threatLevel,
     executive_summary: summary, scam_type, urgent_actions,
     web_intelligence: {
       detected: !!domain, url: ml.extracted_url || null, domain,

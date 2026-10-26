@@ -1,0 +1,104 @@
+[
+  {
+    "name": "cloudpickle",
+    "version": "3.1.2",
+    "license_expression": null,
+    "license_classifiers": [
+      "License :: OSI Approved :: BSD License"
+    ],
+    "license_metadata_excerpt": "BSD-3-Clause"
+  },
+  {
+    "name": "joblib",
+    "version": "1.6.0",
+    "license_expression": "BSD-3-Clause",
+    "license_classifiers": [],
+    "license_metadata_excerpt": ""
+  },
+  {
+    "name": "narwhals",
+    "version": "2.27.1",
+    "license_expression": "MIT",
+    "license_classifiers": [],
+    "license_metadata_excerpt": ""
+  },
+  {
+    "name": "numpy",
+    "version": "2.5.4",
+    "license_expression": "BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0",
+    "license_classifiers": [],
+    "license_metadata_excerpt": ""
+  },
+  {
+    "name": "pandas",
+    "version": "3.0.6",
+    "license_expression": null,
+    "license_classifiers": [
+      "License :: OSI Approved :: BSD License"
+    ],
+    "license_metadata_excerpt": "BSD 3-Clause License\n\n Copyright (c) 2008-2011, AQR Capital Management, LLC, Lambda Foundry, Inc. and PyData Development Team\n All rights reserved.\n\n Copyright (c) 2011-2026, Open source contributors.\n\n Redistribution and use in source and binary forms, with or without\n modification, are permitted provided that the following conditions are met:\n\n * Redistributions of source code must retain the above copyright notice, this\n   list of conditions and the following disclaimer.\n\n * Redistributions in binary for"
+  },
+  {
+    "name": "pip",
+    "version": "26.2.2",
+    "license_expression": "MIT",
+    "license_classifiers": [],
+    "license_metadata_excerpt": ""
+  },
+  {
+    "name": "pypdf",
+    "version": "6.21.2",
+    "license_expression": "BSD-3-Clause",
+    "license_classifiers": [],
+    "license_metadata_excerpt": ""
+  },
+  {
+    "name": "python-dateutil",
+    "version": "2.9.0.post0",
+    "license_expression": null,
+    "license_classifiers": [
+      "License :: OSI Approved :: BSD License",
+      "License :: OSI Approved :: Apache Software License"
+    ],
+    "license_metadata_excerpt": "Dual License"
+  },
+  {
+    "name": "scikit-learn",
+    "version": "1.9.1",
+    "license_expression": "BSD-3-Clause",
+    "license_classifiers": [],
+    "license_metadata_excerpt": ""
+  },
+  {
+    "name": "scipy",
+    "version": "1.18.1",
+    "license_expression": null,
+    "license_classifiers": [
+      "License :: OSI Approved :: BSD License"
+    ],
+    "license_metadata_excerpt": "Copyright (c) 2001-2002 Enthought, Inc. 2003, SciPy Developers.\n All rights reserved.\n\n Redistribution and use in source and binary forms, with or without\n modification, are permitted provided that the following conditions\n are met:\n\n 1. Redistributions of source code must retain the above copyright\n    notice, this list of conditions and the following disclaimer.\n\n 2. Redistributions in binary form must reproduce the above\n    copyright notice, this list of conditions and the following\n    disclaimer in th"
+  },
+  {
+    "name": "six",
+    "version": "1.17.0",
+    "license_expression": null,
+    "license_classifiers": [
+      "License :: OSI Approved :: MIT License"
+    ],
+    "license_metadata_excerpt": "MIT"
+  },
+  {
+    "name": "threadpoolctl",
+    "version": "3.7.0",
+    "license_expression": "BSD-3-Clause",
+    "license_classifiers": [],
+    "license_metadata_excerpt": ""
+  },
+  {
+    "name": "tzdata",
+    "version": "2026.5",
+    "license_expression": null,
+    "license_classifiers": [],
+    "license_metadata_excerpt": "Apache-2.0"
+  }
+]

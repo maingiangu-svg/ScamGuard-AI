@@ -1,0 +1,391 @@
+{
+  "date": "2026-10-26",
+  "scope": "Local source, production standalone, selected ASVS controls and training label review",
+  "tests": {
+    "python": 91,
+    "node": 28,
+    "inferenceLifecycle": 3,
+    "api": 16,
+    "missingModel": 2,
+    "total": 140
+  },
+  "npmBefore": {
+    "info": 0,
+    "low": 0,
+    "moderate": 0,
+    "high": 5,
+    "critical": 2,
+    "total": 7
+  },
+  "npmAfter": {
+    "info": 0,
+    "low": 0,
+    "moderate": 0,
+    "high": 0,
+    "critical": 0,
+    "total": 0
+  },
+  "trivyAfter": {
+    "vulnerabilities": 0,
+    "secretFindings": 0,
+    "misconfigurations": [
+      {
+        "id": "DS-0026",
+        "title": "No HEALTHCHECK defined",
+        "severity": "LOW"
+      }
+    ],
+    "licenseRecords": 461,
+    "developmentDependenciesIncluded": true
+  },
+  "pipInstalledAfter": 0,
+  "lighthouse": {
+    "before": {
+      "version": "13.5.0",
+      "measuredAt": "2026-10-26T04:53:27.032Z",
+      "scores": {
+        "performance": 83,
+        "accessibility": 89,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "first-contentful-paint": 761.3272,
+        "largest-contentful-paint": 3253.9907999999996,
+        "total-blocking-time": 97,
+        "cumulative-layout-shift": 0.1943817381944588
+      },
+      "scriptTransferBytes": 336228
+    },
+    "after": {
+      "version": "13.5.0",
+      "measuredAt": "2026-10-26T06:03:50.180Z",
+      "scores": {
+        "performance": 89,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 100
+      },
+      "metrics": {
+        "first-contentful-paint": 760.1502,
+        "largest-contentful-paint": 2238.2253,
+        "total-blocking-time": 73,
+        "cumulative-layout-shift": 0.1943817381944588
+      },
+      "scriptTransferBytes": 165275
+    }
+  },
+  "browser": {
+    "browser": "156.0.4314.42",
+    "origin": "http://127.0.0.1:3101",
+    "errors": [],
+    "failedRequests": [],
+    "externalRequests": [],
+    "widths": [
+      {
+        "width": 320,
+        "viewport": 320,
+        "content": 320
+      },
+      {
+        "width": 390,
+        "viewport": 390,
+        "content": 390
+      },
+      {
+        "width": 768,
+        "viewport": 768,
+        "content": 768
+      },
+      {
+        "width": 1024,
+        "viewport": 1024,
+        "content": 1024
+      },
+      {
+        "width": 1440,
+        "viewport": 1440,
+        "content": 1440
+      }
+    ],
+    "headers": {
+      "cache-control": "s-maxage=31536000",
+      "connection": "keep-alive",
+      "content-encoding": "gzip",
+      "content-security-policy": "frame-ancestors 'none'; object-src 'none'; base-uri 'self'",
+      "content-type": "text/html; charset=utf-8",
+      "date": "Mon, 26 Oct 2026 06:03:44 GMT",
+      "etag": "\"fajxvqzl4bfa8\"",
+      "keep-alive": "timeout=5",
+      "permissions-policy": "camera=(), microphone=(), geolocation=()",
+      "referrer-policy": "no-referrer",
+      "transfer-encoding": "chunked",
+      "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding",
+      "x-content-type-options": "nosniff",
+      "x-frame-options": "DENY",
+      "x-nextjs-cache": "HIT",
+      "x-nextjs-prerender": "1, 1",
+      "x-nextjs-stale-time": "300"
+    },
+    "viewport": "width=device-width, initial-scale=1",
+    "apiDurationMs": 2832,
+    "model": {
+      "mode": "hybrid_text",
+      "riskScore": 2,
+      "riskLevel": "LOW"
+    },
+    "languageToggle": "PASS",
+    "htmlLanguageAfterVietnameseToggle": "vi",
+    "status": "PASS"
+  },
+  "cleanlab": {
+    "cleanlab_version": "2.9.0",
+    "folds": 5,
+    "seed": 42,
+    "method": "StratifiedGroupKFold using frozen connected repair_group identities",
+    "purpose": "Training label review candidates only; not an independent model benchmark",
+    "labels_changed": 0,
+    "serving_model_changed": false,
+    "expert_labels_created": 0,
+    "validation_or_test_predictions_used": false,
+    "isolation": {
+      "cross_partition_keys": [],
+      "cross_partition_similarity_edges": 0,
+      "registered_domain_isolation": "PASS",
+      "content_group_isolation": "PASS",
+      "overlap_counts_by_pair": {
+        "train/validation": {
+          "domain": 0,
+          "icann_domain": 0,
+          "sms": 0,
+          "url": 0,
+          "template": 0,
+          "source_group": 0,
+          "campaign_id": 0
+        },
+        "train/test": {
+          "domain": 0,
+          "icann_domain": 0,
+          "sms": 0,
+          "url": 0,
+          "template": 0,
+          "source_group": 0,
+          "campaign_id": 0
+        },
+        "validation/test": {
+          "domain": 0,
+          "icann_domain": 0,
+          "sms": 0,
+          "url": 0,
+          "template": 0,
+          "source_group": 0,
+          "campaign_id": 0
+        }
+      },
+      "campaign_independence_proven": false,
+      "all_labels_expert_verified": false
+    },
+    "frozen_manifest_sha256": "9c5cdc3c5aa0e20f191efae731b4f485c13eb8e7c9df93c33dfb5c9f72a7e747",
+    "audit_code_sha256": "a94a065a786efed8bda1689fc9234853d3b2a87827e3d48c2d8a9e5b58a64bd8",
+    "branches": {
+      "sms": {
+        "rows": 3800,
+        "train_sha256": "01d0dffc995d3c12973864513a8004f9649226a730a4dba35d98f693d9f8ee23",
+        "labels": {
+          "0": 3616,
+          "1": 184
+        },
+        "groups": 3442,
+        "candidates": 14,
+        "candidates_by_label": {
+          "0": 14
+        },
+        "candidates_by_provenance": {
+          "ai_semantic_review": 11,
+          "published_two_researcher_manual_relabeling_with_disagreement_resolution": 1,
+          "upstream_ham_or_non_smishing_spam": 2
+        },
+        "fold_proof": [
+          {
+            "fold": 0,
+            "train_rows": 3039,
+            "heldout_rows": 761,
+            "shared_groups": 0,
+            "train_labels": {
+              "0": 2892,
+              "1": 147
+            },
+            "heldout_labels": {
+              "0": 724,
+              "1": 37
+            }
+          },
+          {
+            "fold": 1,
+            "train_rows": 3040,
+            "heldout_rows": 760,
+            "shared_groups": 0,
+            "train_labels": {
+              "0": 2893,
+              "1": 147
+            },
+            "heldout_labels": {
+              "0": 723,
+              "1": 37
+            }
+          },
+          {
+            "fold": 2,
+            "train_rows": 3041,
+            "heldout_rows": 759,
+            "shared_groups": 0,
+            "train_labels": {
+              "0": 2893,
+              "1": 148
+            },
+            "heldout_labels": {
+              "0": 723,
+              "1": 36
+            }
+          },
+          {
+            "fold": 3,
+            "train_rows": 3040,
+            "heldout_rows": 760,
+            "shared_groups": 0,
+            "train_labels": {
+              "0": 2893,
+              "1": 147
+            },
+            "heldout_labels": {
+              "0": 723,
+              "1": 37
+            }
+          },
+          {
+            "fold": 4,
+            "train_rows": 3040,
+            "heldout_rows": 760,
+            "shared_groups": 0,
+            "train_labels": {
+              "0": 2893,
+              "1": 147
+            },
+            "heldout_labels": {
+              "0": 723,
+              "1": 37
+            }
+          }
+        ]
+      },
+      "url": {
+        "rows": 32777,
+        "train_sha256": "84e989da4d920c72fd19a5d52f16b899ad810a6b8303109124eb1b6fd5d66a15",
+        "labels": {
+          "0": 24974,
+          "1": 7803
+        },
+        "groups": 19747,
+        "candidates": 797,
+        "candidates_by_label": {
+          "0": 167,
+          "1": 630
+        },
+        "candidates_by_provenance": {
+          "inherited_url_source_not_expert_verified": 797
+        },
+        "fold_proof": [
+          {
+            "fold": 0,
+            "train_rows": 26222,
+            "heldout_rows": 6555,
+            "shared_groups": 0,
+            "train_labels": {
+              "0": 19980,
+              "1": 6242
+            },
+            "heldout_labels": {
+              "0": 4994,
+              "1": 1561
+            }
+          },
+          {
+            "fold": 1,
+            "train_rows": 26222,
+            "heldout_rows": 6555,
+            "shared_groups": 0,
+            "train_labels": {
+              "0": 19979,
+              "1": 6243
+            },
+            "heldout_labels": {
+              "0": 4995,
+              "1": 1560
+            }
+          },
+          {
+            "fold": 2,
+            "train_rows": 26222,
+            "heldout_rows": 6555,
+            "shared_groups": 0,
+            "train_labels": {
+              "0": 19979,
+              "1": 6243
+            },
+            "heldout_labels": {
+              "0": 4995,
+              "1": 1560
+            }
+          },
+          {
+            "fold": 3,
+            "train_rows": 26220,
+            "heldout_rows": 6557,
+            "shared_groups": 0,
+            "train_labels": {
+              "0": 19979,
+              "1": 6241
+            },
+            "heldout_labels": {
+              "0": 4995,
+              "1": 1562
+            }
+          },
+          {
+            "fold": 4,
+            "train_rows": 26222,
+            "heldout_rows": 6555,
+            "shared_groups": 0,
+            "train_labels": {
+              "0": 19979,
+              "1": 6243
+            },
+            "heldout_labels": {
+              "0": 4995,
+              "1": 1560
+            }
+          }
+        ]
+      }
+    }
+  },
+  "modelUnchanged": true,
+  "standaloneBefore": {
+    "private_training_files_in_standalone": 405,
+    "bytes": 1257370709
+  },
+  "standaloneAfter": {
+    "private_training_files_in_standalone": 0,
+    "bytes": 0,
+    "local_python_executable_only": true,
+    "audit_tools_present": false
+  },
+  "lockfileSha256": "898566c27958f006b485f628b1fb361fde3e65827446b38902affa991644a4e3",
+  "limitations": [
+    "No independent expert review or new campaign benchmark",
+    "No running container/image scan",
+    "No installed-extension browser test",
+    "Partial CSP, proxy identity and distributed quotas remain",
+    "Mobile CLS remains above 0.1; keyboard accessibility needs manual follow-up"
+  ]
+}

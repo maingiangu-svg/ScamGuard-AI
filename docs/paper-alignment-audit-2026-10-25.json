@@ -1,0 +1,305 @@
+{
+  "date": "2026-10-25",
+  "operation": "read_only_paper_alignment_audit",
+  "model_retrained": false,
+  "test_predictions_rerun": false,
+  "data_deleted_or_relabelled": false,
+  "checks": {
+    "current_bundle_checksum": true,
+    "frozen_helper_checksums": true,
+    "frozen_sms_artifact_checksums": true,
+    "current_sms_fit_manifest_checksum": true,
+    "current_url_fit_manifest_checksum": true,
+    "frozen_external_artifact_checksums": true,
+    "sms_train_validation_group_disjoint": true,
+    "sms_train_validation_case_id_disjoint": true,
+    "sms_train_validation_registered_domain_disjoint": true,
+    "sms_train_test_group_disjoint": true,
+    "sms_train_test_case_id_disjoint": true,
+    "sms_train_test_registered_domain_disjoint": true,
+    "sms_validation_test_group_disjoint": true,
+    "sms_validation_test_case_id_disjoint": true,
+    "sms_validation_test_registered_domain_disjoint": true,
+    "sms_training_rows_eligible": true,
+    "sms_quarantine_case_ids_not_fitted": true,
+    "url_train_validation_group_disjoint": true,
+    "url_train_validation_case_id_disjoint": true,
+    "url_train_test_group_disjoint": true,
+    "url_train_test_case_id_disjoint": true,
+    "url_validation_test_group_disjoint": true,
+    "url_validation_test_case_id_disjoint": true,
+    "url_training_rows_eligible": true,
+    "url_quarantine_case_ids_not_fitted": true,
+    "saved_predictions_match_revised_tables": true,
+    "weighted_class_weight_equation_matches_installed_sklearn": true,
+    "sms_C_1": true,
+    "sms_word_features_10000": true,
+    "sms_character_features_16000": true,
+    "sms_character_ngrams_3_5": true,
+    "url_character_features_1000": true,
+    "url_character_ngrams_3_5": true,
+    "url_HistGB_depth_4_iterations_100": true,
+    "url_learning_rate_01": true,
+    "no_paired_fusion": true,
+    "current_sms_url_registered_domains_disjoint": false,
+    "latex_environments_balanced": true,
+    "latex_braces_balanced": true
+  },
+  "all_checks_passed": false,
+  "split_summary": {
+    "sms": {
+      "train": {
+        "rows": 3857,
+        "labels": {
+          "0": 3664,
+          "1": 193
+        },
+        "groups": 3493,
+        "sha256": "3cbe3fd715579f067c94a8bfcaaa5cfa710dd8bc4001a3c4c2e14b868fba3bab",
+        "languages": {
+          "en": 3716,
+          "vi": 141
+        },
+        "label_provenance": {
+          "upstream_ham_or_non_smishing_spam": 3008,
+          "published_two_researcher_manual_relabeling_with_disagreement_resolution": 497,
+          "ai_semantic_review": 350,
+          "user_scope_decision": 2
+        },
+        "source_human_rows": 497
+      },
+      "validation": {
+        "rows": 962,
+        "labels": {
+          "1": 49,
+          "0": 913
+        },
+        "groups": 870,
+        "sha256": "3df5e061bf9cc728676adf2facf736e18bd31e9be06120456c56380769d3d2de",
+        "languages": {
+          "en": 921,
+          "vi": 41
+        },
+        "label_provenance": {
+          "ai_semantic_review": 98,
+          "upstream_ham_or_non_smishing_spam": 834,
+          "published_two_researcher_manual_relabeling_with_disagreement_resolution": 30
+        },
+        "source_human_rows": 30
+      },
+      "test": {
+        "rows": 39,
+        "labels": {
+          "0": 14,
+          "1": 25
+        },
+        "groups": 11,
+        "sha256": "a084349a886f7d0f61df67299d0d8347050b7b6c135fa04c8d1fcab47a2616e9",
+        "languages": {
+          "en": 39
+        },
+        "label_provenance": {
+          "published_two_researcher_manual_relabeling_with_disagreement_resolution": 39
+        },
+        "source_human_rows": 39
+      }
+    },
+    "url": {
+      "train": {
+        "rows": 9123,
+        "labels": {
+          "1": 1284,
+          "0": 7839
+        },
+        "groups": 6703,
+        "sha256": "c1dc5744c29f42c46278d384dd070fc445c60a0b1eec315e88d1b5ff0581fee3"
+      },
+      "validation": {
+        "rows": 3826,
+        "labels": {
+          "1": 321,
+          "0": 3505
+        },
+        "groups": 3126,
+        "sha256": "715209d3143132ce5d4c7acd50f8297573c3856c8ddde94339e07cc5ce838786"
+      },
+      "test": {
+        "rows": 2627,
+        "labels": {
+          "1": 69,
+          "0": 2558
+        },
+        "groups": 1529,
+        "sha256": "2a53d5b35751f3fa899ee33ea6dd177ee779f624783d4752c3f9c0523b0c1209"
+      }
+    }
+  },
+  "metrics_from_saved_predictions": {
+    "sms_new_english": {
+      "n": 39,
+      "tp": 24,
+      "fn": 1,
+      "fp": 1,
+      "tn": 13,
+      "precision": 0.96,
+      "recall": 0.96,
+      "f1": 0.96,
+      "saved_predictions_sha256": "6fedf1125e28267ce59a283b9e53ec280ff727287a39443909d6edcfd73d945c"
+    },
+    "url_source": {
+      "n": 2627,
+      "tp": 34,
+      "fn": 35,
+      "fp": 139,
+      "tn": 2419,
+      "precision": 0.19653179190751446,
+      "recall": 0.4927536231884058,
+      "f1": 0.2809917355371901,
+      "saved_predictions_sha256": "c80b713343c7f0ea5b2331aba6a65b14fe9726518e1b9de8488799a1a9098646"
+    },
+    "url_human_audit": {
+      "n": 81,
+      "tp": 16,
+      "fn": 6,
+      "fp": 7,
+      "tn": 52,
+      "precision": 0.6956521739130435,
+      "recall": 0.7272727272727273,
+      "f1": 0.7111111111111111,
+      "saved_predictions_sha256": "86182c17ccf908c4ce0caf8272218babb75f8e92f662120b9f961217be773715"
+    },
+    "sms_historical": {
+      "n": 1164,
+      "tp": 29,
+      "fn": 9,
+      "fp": 6,
+      "tn": 1120,
+      "precision": 0.8285714285714286,
+      "recall": 0.7631578947368421,
+      "f1": 0.7945205479452054,
+      "saved_predictions_sha256": "2486c76dd7b4e12f9c8a135603ef006f7b0243a54ea43f2e3050886bbee95e53"
+    },
+    "vi_historical": {
+      "n": 70,
+      "tp": 14,
+      "fn": 3,
+      "fp": 9,
+      "tn": 44,
+      "precision": 0.6086956521739131,
+      "recall": 0.8235294117647058,
+      "f1": 0.7,
+      "saved_predictions_sha256": "3feab83557a9774a0619ed5f0895ae9ceaba3896359174b25ec505b0f337dab8"
+    }
+  },
+  "sms_test_group_audit": {
+    "groups": 11,
+    "positive_groups": 1,
+    "negative_groups": 10,
+    "disjoint_from_all_previous_fit_groups": true,
+    "all_17_original_scope_disagreements_excluded": true
+  },
+  "data_decisions": {
+    "current_sms": "retain_frozen_eligible_records_with_mixed_label_provenance",
+    "current_url": "retain_gold_positive_gold_silver_benign_after_existing_exclusions",
+    "current_tests": "retain_even_errors_never_fit_or_tune_on_these",
+    "existing_quarantine": "retain_exclusion_preserve_originals_and_reasons",
+    "combined_keyword_smishing_and_legacy_url": "historical_baseline_only_not_current_fit",
+    "legacy_spam_csv": "excluded_use_checksum_pinned_UCI_only_for_declared_proxy",
+    "IMC25": "not_fitted_keep_source_for_future_review",
+    "MIMICS_3500": "zero_records_not_acquired",
+    "additional_deletions_required": false,
+    "cross_corpus_overlap": "preserve_independent_heads_disclose_seven_domains_exclude_before_future_fusion"
+  },
+  "limits": [
+    "Group checks do not establish complete campaign independence.",
+    "Annotation quality is not independently verified by this audit.",
+    "No new classifier accuracy experiment was run."
+  ],
+  "weighted_class_weights": {
+    "sklearn_version": "1.9.1",
+    "balanced_class_0": 0.5442592157783517,
+    "balanced_class_1": 6.1485411140583555,
+    "sample_weight_sum": 4636.0,
+    "formula": "sum(v)/(2*sum(v for same class))"
+  },
+  "revision_word_counts": {
+    "old_results_prose": 73,
+    "new_results_prose": 111,
+    "counting_rule": "Whitespace-separated tokens excluding table rows and section heading; versions cover different experiments."
+  },
+  "latex_compilation": "passed_tectonic_0.17.0_on_original_source; 5_A4_pages; no_TeX_errors_overfull_boxes_or_missing_character_warnings; visual_review_completed",
+  "findings": [
+    {
+      "condition": "current_sms_url_registered_domains_disjoint",
+      "passed": false,
+      "shared_registered_domains": [
+        "amazon.com",
+        "shop.app",
+        "whatsapp.com",
+        "youtu.be",
+        "zomato.com",
+        "zoom.com",
+        "zoom.us"
+      ],
+      "sms_records_by_role": {
+        "train": [
+          "SMISHX-0007",
+          "SMISHX-0024",
+          "SMISHX-0400",
+          "SMISHX-1193"
+        ],
+        "validation": [
+          "SMISHX-0006",
+          "SMISHX-0017"
+        ],
+        "test": [
+          "SMISHX-0856",
+          "SMISHX-0920"
+        ]
+      },
+      "url_domain_roles": {
+        "train": [
+          "amazon.com",
+          "zoom.com",
+          "zoom.us",
+          "shop.app"
+        ],
+        "validation": [
+          "whatsapp.com",
+          "youtu.be",
+          "zomato.com"
+        ],
+        "test": []
+      },
+      "url_shared_domain_labels": "All seven corresponding URL rows have source label 0.",
+      "interpretation": "New SmishX domains were added after the URL experiment froze its original SMS-domain exclusion. This prevents claims of joint cross-corpus domain independence. Independent branch-specific fitting and SMS-only decisions do not consume cross-branch labels or scores. Auxiliary URL scores are not joint domain-disjoint evidence.",
+      "action": "Preserve frozen artifacts and disclose. Block these overlaps before any new fusion experiment or joint domain-disjoint evaluation."
+    }
+  ],
+  "current_separate_branch_contract_checks_passed": true,
+  "check_summary": {
+    "passed": 38,
+    "total": 39,
+    "failed": [
+      "current_sms_url_registered_domains_disjoint"
+    ]
+  },
+  "documents_sha256": {
+    "ScamGuard_Full_Paper_Draft.md": "865c5d65898904d07a64b10bb590b3d14b454699197492325bddad2784ec72d8",
+    "scamguard_paper.tex": "cdf8c4d530b7fe8378b749ec3a3bb0781ec7e83ce21883bedc5d2f6afc2937c2",
+    "docs/paper-framework-comparison-2026-10-25.md": "7042951f24c8dda78dc6b87d358835c8fdd180df1c41c4dbb4005bb445e3c35e",
+    "docs/archive/ScamGuard_Full_Paper_Draft-2026-10-23.md": "4f2ba60bbf853728eb40eca40b7b879f1ecee3d9a4a7ddc1a8a3e5f6e9924b8c"
+  },
+  "historical_draft_preserved_matches_git_head_ignoring_line_endings": true,
+  "pdf_export": {
+    "file": "scamguard_paper.pdf",
+    "pages": 5,
+    "sha256": "a5445735c2dcae664c846a0ae78e5df90ed4b7c3754be04a4dcaff6fa5c86496",
+    "layout_changes_only": [
+      "breakable_long_paths_and_URLs",
+      "hidden_link_borders",
+      "sources_section_begins_on_new_page"
+    ],
+    "editor_compile_tool": "unavailable_in_session; used_direct_compilation_of_same_saved_source"
+  }
+}

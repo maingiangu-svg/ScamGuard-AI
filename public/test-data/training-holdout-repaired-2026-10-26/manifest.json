@@ -1,0 +1,26 @@
+{
+  "run_id": "hybrid-isolated-20261026-icann",
+  "bundle_sha256": "9a49b7278cfb1b9da00f8ebc6970653a9de3320f3037db3ee190109926d1bd3a",
+  "test_rows": 9973,
+  "campaign_independence_proven": false,
+  "all_labels_expert_verified": false,
+  "files_sha256": {
+    "CHECK_SPLITS.py": "b2f7bae2bf11e319630f59e7575ff5f691de5a32908c7c36b70e29df291be91f",
+    "DAP_AN_SMS.txt": "ab517325dc29737e4e16cda101042308081b917faff31f7af7ba43db02e113ce",
+    "DAP_AN_URL.txt": "9ec44c7a27ffb2a1b05fdd1c7cc0b603ba27782a038ace374fd79486d48e1f77",
+    "EVALUATION.json": "52d2da7f68004e8c0837e8eebf6559ee43a59fd19bb5dfc2085ec5d1aab12581",
+    "MODEL_MANIFEST.json": "27225103284ed36354a0c370eade49448324e09994e6cf44bb29fb50e63c3e7f",
+    "README.md": "4461906420384572efd5da06a1286b674c7e4212339b0a3a530721eb6f1095b9",
+    "REPAIR_REPORT.json": "a5a67a41510a9e0c55fa49b694935f45e16d0304381e97765f4b34df7b9ba657",
+    "REVIEW_NHAN_MAU_THUAN.jsonl": "7a22aa6f63732724bf2542539db0b05ab6f67cb27f9da820908b5942c7a33413",
+    "REVIEW_URL_LOI.jsonl": "42c7f0ede9505ba9d7d1b64aa3b2e2b8abdf39c545d1264c89e03b89ec50409a",
+    "SIMILARITY_EDGES.json": "156ee6922dc0681728258352e8c633bb9501558c3640cbde2a3609bb13511721",
+    "SMISHX_LICENSE.txt": "6eea23020ceed1ea3a7e44857031258133e7d9ffe6a6c1ee487fa7b11a7782f1",
+    "SMS_NOI_DUNG.txt": "9707b1d038d4e4e13a4382ba18d0ba31cfd1e2b31b8a6f0700988c95a2339c11",
+    "SMS_TEST.jsonl": "324ca8514e89ef9d7aea71c20631ad1f5236f9b12dbf22d3d7fe2cea617f7e0a",
+    "SPLIT_MEMBERSHIP.jsonl": "3696dabc5ae9e1ccc5cfe5e00b9393edd409c1158345972f3df4702ae56592f9",
+    "TRAINING_FROZEN.json": "9c5cdc3c5aa0e20f191efae731b4f485c13eb8e7c9df93c33dfb5c9f72a7e747",
+    "URL_NOI_DUNG.txt": "b885a3d40246f9a9359ab68dc41f16e71f3e39b84125e87a7cba8795142b8d87",
+    "URL_TEST.jsonl": "c01b3adb3d1ebcb407d929fd8c1907f2183b95c3fc8dde8cdfabe1eb9b0dd030"
+  }
+}

@@ -1,0 +1,169 @@
+{
+  "date": "2026-10-26",
+  "operation": "applied_quarantine_and_group_isolation",
+  "before": {
+    "processed_sms": {
+      "train": 3857,
+      "validation": 962,
+      "test": 39
+    },
+    "bundle_url": {
+      "test": 9996,
+      "train": 40004
+    }
+  },
+  "after": {
+    "sms": {
+      "train": {
+        "rows": 3800,
+        "labels": {
+          "0": 3616,
+          "1": 184
+        },
+        "label_provenance": {
+          "upstream_ham_or_non_smishing_spam": 2971,
+          "published_two_researcher_manual_relabeling_with_disagreement_resolution": 484,
+          "ai_semantic_review": 343,
+          "user_scope_decision": 2
+        }
+      },
+      "validation": {
+        "rows": 945,
+        "labels": {
+          "1": 49,
+          "0": 896
+        },
+        "label_provenance": {
+          "ai_semantic_review": 94,
+          "upstream_ham_or_non_smishing_spam": 822,
+          "published_two_researcher_manual_relabeling_with_disagreement_resolution": 29
+        }
+      },
+      "test": {
+        "rows": 38,
+        "labels": {
+          "0": 14,
+          "1": 24
+        },
+        "label_provenance": {
+          "published_two_researcher_manual_relabeling_with_disagreement_resolution": 38
+        }
+      },
+      "quarantine": {
+        "rows": 75,
+        "labels": {
+          "0": 65,
+          "1": 10
+        },
+        "label_provenance": {
+          "published_two_researcher_manual_relabeling_with_disagreement_resolution": 15,
+          "ai_semantic_review": 11,
+          "upstream_ham_or_non_smishing_spam": 49
+        }
+      }
+    },
+    "url": {
+      "train": {
+        "rows": 32777,
+        "labels": {
+          "0": 24974,
+          "1": 7803
+        },
+        "label_provenance": {
+          "inherited_url_source_not_expert_verified": 32777
+        }
+      },
+      "validation": {
+        "rows": 0,
+        "labels": {},
+        "label_provenance": {}
+      },
+      "test": {
+        "rows": 9935,
+        "labels": {
+          "1": 2230,
+          "0": 7705
+        },
+        "label_provenance": {
+          "inherited_url_source_not_expert_verified": 9935
+        }
+      },
+      "quarantine": {
+        "rows": 7288,
+        "labels": {
+          "0": 5912,
+          "1": 1376
+        },
+        "label_provenance": {
+          "inherited_url_source_not_expert_verified": 7288
+        }
+      }
+    }
+  },
+  "quarantine_reasons": {
+    "ambiguous_domain_mention": 235,
+    "reference_label_conflict": 14,
+    "connected_group_reserved_for_validation": 3,
+    "connected_group_reserved_for_test": 7046,
+    "malformed_or_ambiguous_url": 176
+  },
+  "proof": {
+    "cross_partition_keys": [],
+    "cross_partition_similarity_edges": 0,
+    "registered_domain_isolation": "PASS",
+    "content_group_isolation": "PASS",
+    "overlap_counts_by_pair": {
+      "train/validation": {
+        "domain": 0,
+        "icann_domain": 0,
+        "sms": 0,
+        "url": 0,
+        "template": 0,
+        "source_group": 0,
+        "campaign_id": 0
+      },
+      "train/test": {
+        "domain": 0,
+        "icann_domain": 0,
+        "sms": 0,
+        "url": 0,
+        "template": 0,
+        "source_group": 0,
+        "campaign_id": 0
+      },
+      "validation/test": {
+        "domain": 0,
+        "icann_domain": 0,
+        "sms": 0,
+        "url": 0,
+        "template": 0,
+        "source_group": 0,
+        "campaign_id": 0
+      }
+    },
+    "campaign_independence_proven": false,
+    "all_labels_expert_verified": false,
+    "similarity_threshold": 0.8,
+    "similarity_edges_checked": 539,
+    "label_changes": 0,
+    "new_expert_labels": 0,
+    "known_reference_conflicts_retained": 0,
+    "holdout_promoted_to_training": 0,
+    "campaign_limit": "Missing verified campaign IDs/actor/destination/timestamps; content groups are proxies only.",
+    "evaluation_status": "Reused historical holdouts; not a new untouched benchmark."
+  },
+  "psl_sha256": "0232f4df0831911356e8ee1f4d5c3b6b12c0ed3f6bd66b0f81c8ab5d3d49e9ca",
+  "protocol": {
+    "sms": {
+      "variant": "word_char",
+      "threshold": 0.65,
+      "weights": "vi=3, source-human=2, other=1"
+    },
+    "url": {
+      "estimator": "modeling.url_model",
+      "threshold": 0.5
+    },
+    "hyperparameter_or_threshold_selection": false,
+    "fit_on_train_only": true
+  }
+}

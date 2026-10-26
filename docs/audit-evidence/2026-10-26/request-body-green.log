@@ -1,0 +1,17 @@
+(node:40976) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/PV/OneDrive/Documents/ChatGPT/ScamGuard-AI/src/lib/request-body.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\PV\OneDrive\Documents\ChatGPT\ScamGuard-AI\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+✔ valid JSON including Vietnamese is parsed without changing input (13.905ms)
+✔ both unsupported media types and malformed JSON fail before inference (0.4579ms)
+✔ declared excessive size is refused without reading the stream (0.2035ms)
+✔ chunked oversized ignored fields cannot bypass the byte cap (0.7048ms)
+✔ the cap counts UTF-8 bytes rather than JavaScript characters (0.7128ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 101.4815

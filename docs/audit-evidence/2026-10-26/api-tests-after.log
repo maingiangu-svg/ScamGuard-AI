@@ -1,0 +1,28 @@
+
+> scamshield-forensic@0.1.0 test:api
+> node --test --test-concurrency=1 scripts/analyze.integration.test.mjs scripts/api-security.integration.test.mjs
+
+✔ ordinary text is evaluated locally with no invented threat evidence (2705.2877ms)
+✔ review scores and binary labels use distinct declared thresholds (2540.3262ms)
+✔ an official URL does not bypass SMS; no untrained fusion is applied (2400.2284ms)
+✔ a URL-only request is scored by the URL estimator, with no forced whitelist score (2372.8265ms)
+✔ spaces and line breaks before the reported URL never activate the SMS branch (11832.0538ms)
+✔ the complete sunwin.org.vc domain is scored identically through both endpoints and input fields (12115.4ms)
+✔ reported Facebook and Google URLs preserve model scores without a contradictory alert (13474.4869ms)
+✔ reported suspicious link uses the repaired URL head with the declared alert policy (2212.8247ms)
+✔ a risky link independently requires review when the message is below the review band (2282.2087ms)
+✔ all embedded URLs are included in the returned branch scores (2297.1344ms)
+✔ both endpoints reject malformed and excessive input (99.6044ms)
+✔ incomplete URL inputs return a useful validation error without a risk score (22316.8634ms)
+✔ image analysis is explicitly unsupported without a local OCR model (18.0428ms)
+✔ roleplay does not substitute keyword heuristics or an external model (27.6365ms)
+✔ both inference routes reject unsupported, malformed, and oversized bodies (76.4332ms)
+✔ shared inference admission rejects excess work across both endpoints (4430.4413ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 16
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 81337.8768

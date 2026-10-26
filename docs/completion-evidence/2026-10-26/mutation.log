@@ -1,0 +1,18 @@
+test_activation_backs_up_prior_weights_and_installs_bound_candidate (test_calibrate_supervised.CalibrationTests.test_activation_backs_up_prior_weights_and_installs_bound_candidate) ... ERROR
+
+======================================================================
+ERROR: test_activation_backs_up_prior_weights_and_installs_bound_candidate (test_calibrate_supervised.CalibrationTests.test_activation_backs_up_prior_weights_and_installs_bound_candidate)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<workspace>\.local-runtime\completion-mutation\test_calibrate_supervised.py", line 65, in test_activation_backs_up_prior_weights_and_installs_bound_candidate
+    result = activate(*args)
+  File "<workspace>\.local-runtime\completion-mutation\calibrate_supervised.py", line 223, in activate
+    raise ValueError('A passed calibration gate is required before activation')
+ValueError: A passed calibration gate is required before activation
+
+----------------------------------------------------------------------
+Ran 1 test in 0.022s
+
+FAILED (errors=1)
+
+PASS: inverted activation gate was rejected by the regression test; production source unchanged.

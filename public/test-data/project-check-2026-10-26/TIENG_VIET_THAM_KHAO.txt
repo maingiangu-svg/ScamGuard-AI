@@ -1,0 +1,436 @@
+TẬP KIỂM TRA TAY — VI_DIAGNOSTIC
+Chỉ dán NỘI DUNG của từng mẫu vào ứng dụng; không dán ID hay tiêu đề.
+Đáp án nằm trong DAP_AN.md; không dùng điểm 80 làm ngưỡng nhãn nhị phân.
+Nhãn AI chỉ dùng tham khảo.
+VITRAIN-1997
+
+Cuc Thue TP.HCM: Thong bao quy khach chua hoan thanh nghia vu thue thu nhap ca nhan nam o muc rui ro cao. Tra cuu quyet dinh tai: [http://thuedientu.gdt-gov.vip]
+
+------------------------------------------------------------
+
+VITRAIN-2026
+
+J&T Express thong bao: Kien hang cua ban da ve den kho nhung bi qua han luu kho mien phi. Quy khach can thanh toan [MONEY] phi luu kho tai: [http://jt-express.thutuc-luukho.cc]
+
+------------------------------------------------------------
+
+VITRAIN-0057
+
+Quý khách đã hủy gia hạn gói ST5K trước đó. Chi tiết LH 198 ([MONEY]). Trân trọng.
+
+------------------------------------------------------------
+
+VITRAIN-0307
+
+[TB] Chúc mừng năm mới Giáp Thìn [NUMBER]! Người dân chủ động sắp xếp thời gian trở lại nơi làm việc và sinh sống tại các thành phố lớn, tránh tình trạng ùn tắc giao thông vào cuối dịp nghỉ lễ, tuyệt đối không điều khiển phương tiện khi đã sử dụng rượu, bia.
+
+------------------------------------------------------------
+
+VITRAIN-0320
+
+[QC] Tổng đài Thông tin Kinh tế - Xã hội Viettel giải đáp danh bạ điện thoại, giá cả thị trường, thông tin thể thao trong nước và quốc tế, hỗ trợ các thủ tục hành chính và pháp lý. Quý khách vui lòng gọi [NUMBER]/[NUMBER] (từ số điện thoại Viettel) hoặc [NUMBER]/[NUMBER] (từ số điện thoại mạng khác). Giá cước: [MONEY]/p. 
+Từ chối QC, soạn TC3 gửi 199.
+
+------------------------------------------------------------
+
+VITRAIN-0368
+
+[NUMBER] la ma xac thuc dang nhap tren cong dich vu cong quoc gia. Ma co hieu luc trong vong [TIME].
+
+------------------------------------------------------------
+
+VITRAIN-0410
+
+Mã xác thực Discord của bạn là: [NUMBER]
+
+------------------------------------------------------------
+
+VITRAIN-0500
+
+TK ViettelPay [NUMBER] GD +[MONEY] luc [NUMBER] [TIME] So du [MONEY] ND: 240713150140715 VIETTELMONEY TRATHUONG CPM MALCA1 240713150140715 [NUMBER]
+
+------------------------------------------------------------
+
+VITRAIN-0518
+
+[TB] Toan dan tich cuc tham gia phong, chong mua ban nguoi. Khi phat hien dau hieu lien quan, hay thong bao ngay den co quan Cong an noi gan nhat hoac Tong dai quoc gia 111 de duoc tu van, ho tro, huong dan kip thoi.
+
+------------------------------------------------------------
+
+VITRAIN-0660
+
+[TB] Chuc mung Quy khach da dang ky thanh cong goi ST5KM tren ung dung My Viettel ngay [DATE] va duoc tang 04 ma uu dai de su dung dich vu GrabBike, GrabCar va GrabFood. Quy khach truy cap link https://grb.to/VIETTEL_SV_24 de nhan uu dai. Chuong trinh co the ket thuc som hon du kien do so luong uu dai co han. Chi tiet LH 198 ([MONEY]). Tran trong!
+
+------------------------------------------------------------
+
+VITRAIN-0686
+
+[TB] Theo Luật Viễn thông, từ ngày [DATE], các thuê bao sẽ phải chịu trách nhiệm trước pháp luật về các số điện thoại mình đã đăng ký sử dụng với nhà mạng. Khuyến cáo thuê bao không chuyển SIM của mình cho người lạ sử dụng để tránh bị liên đới trách nhiệm.
+
+------------------------------------------------------------
+
+VITRAIN-0706
+
+(QC) Tha ga choi game Free Fire voi 30GB DATA TOC DO CAO (1GB/ngay) va GIFTCODE VAT PHAM TIEP TE khi dang ky DV Data Free Fire. Soan FF30 gui [NUMBER] ([MONEY]/30 ngay, gia han sau 30 ngay). Chi tiet tai https://freedataviettel.ff.garena.vn/ hoac LH 198 ([MONEY]). Tu choi QC, soan TC4 gui 199.
+
+------------------------------------------------------------
+
+VITRAIN-0739
+
+[QC] CHÀO [NUMBER]! Viettel gửi tặng Quý khách 30 ngày trải nghiệm miễn phí DV iSign Plus - cho phép thiết lập mỗi cuộc gọi kèm một tin nhắn hiển thị tự động giúp NHẬN DIỆN CUỘC GỌI DỄ DÀNG, NHANH CHÓNG!
+Soạn DK8 gửi [NUMBER] để đăng ký ngay, DV không tự động gia hạn.
+Chi tiết truy cập https://isignplus.vn hoặc LH 198 ([MONEY]). Từ chối QC, soạn TC4 gửi 199.
+
+------------------------------------------------------------
+
+VITRAIN-0742
+
+Đăng ký nhận [MONEY], chơi game ngắm gái đẹp, website: https://[NUMBER].vip
+
+------------------------------------------------------------
+
+VITRAIN-0787
+
+Quy khach vua nap the thanh cong va duoc khuyen mai 20% gia tri the nap. Bam *102# de kiem tra tai khoan khuyen mai. Tran trong.
+
+------------------------------------------------------------
+
+VITRAIN-0817
+
+[CẢNH BÁO] Xuất hiện tình trạng tội phạm tạo lập các website, facebook giả mạo trường đại học, trung tâm đào tạo, quảng cáo khóa huấn luyện, học kỳ/trại hè quân đội, công an... cho trẻ em nhằm tiếp cận phụ huynh có nhu cầu và dụ dỗ nộp tiền tham gia để chiếm đoạt tài sản. Khuyến cáo người dân: Nâng cao cảnh giác, chỉ đăng ký tham gia và chuyển tiền khi đã tìm hiểu rõ thông tin của đơn vị tổ chức. Khi phát hiện dấu hiệu bị lừa đảo chiếm đoạt tài sản, cần nhanh chóng trình báo Cơ quan Công an nơi gần nhất và phản ánh qua ứng dụng VNeID.
+
+------------------------------------------------------------
+
+VITRAIN-0841
+
+VNeID: Ma OTP 143861 co hieu luc trong [TIME], su dung de xac thuc cho yeu cau lay lai mat khau. Vi ly do bao mat, tuyet doi khong duoc cung cap ma OTP nay cho bat ky ai. Tran trong!
+
+------------------------------------------------------------
+
+VITRAIN-0909
+
+VNG: Activation code [NUMBER] is used for VNGGames authentication
+
+------------------------------------------------------------
+
+VITRAIN-0939
+
+[TB] Tien ich Loi nhan thoai cua Viettel: Quy khach co loi nhan tu TB [NUMBER] vao luc [TIME] [DATE]. Voi noi dung: kính chào quý khách viettel xin được giới thiệu chương trình siêu khuyến mại quý khách có thể đổi [MONEY] trong tài khoản gốc thành [MONEY] tiền khuyến mại để gọi nội mạng nhắn tin nội mạng và truy cập internet trong 15 ngày để tham gia chương trình quý khách vui lòng nói tôi đồng ý hoặc nói từ chối nếu không đồng ý tham gia kính chào quý khách viettel xin được giới thiệu chương trình siêu khuyến mại quý khách có thể đổi [MONEY] trong tài khoản gốc thành [MONEY] tiền khuyến mại để gọi nội mạng nhắn tin nội mạng và truy cập internet trong 15 ngày để tham gia chương trình quý khách vui lòng nói tôi đồng ý hoặc nói từ chối nếu không đồng ý tham gia xin lỗi quý khách viettel xin phép gọi lại sau ạ. De nghe loi nhan thoai, vui long bam goi [NUMBER] (mien phi).
+
+------------------------------------------------------------
+
+VITRAIN-0948
+
+[QC] Mở thẻ tín dụng VPBank miễn phí thường niên, hạn mức đến [MONEY], trả góp [MONEY] cùng hoàn tiền tới 15%. Để đăng ký nhận link mở thẻ và đồng ý cung cấp số điện thoại của QK cho VPBank (qua đối tác Viettel, CTCP Thịnh Phát) để nhận hướng dẫn mở thẻ, soạn VP gửi [NUMBER] (MP). Từ chối QC, soạn TC gửi [NUMBER].
+
+------------------------------------------------------------
+
+VITRAIN-0961
+
+Thue bao [NUMBER] vua tra cuu chi tiet cuoc tren MyViettel. Tran trong
+
+------------------------------------------------------------
+
+VITRAIN-0974
+
+(VIB) Ma xac thuc: [NUMBER] (hieu luc trong [TIME]) de xac thuc khach hang dang ky moi. Lien he [NUMBER] ([MONEY]/phut) de duoc ho tro.
+
+------------------------------------------------------------
+
+VITRAIN-1010
+
+[QC] Kính mời Quý khách trải nghiệm miễn phí bảo tàng số, hệ sinh thái sản phẩm Viettel từ 01-[DATE] và tham dự sự kiện âm nhạc Viettel Y-Fest vào 19h30 ngày [DATE] cùng các nghệ sĩ: SƠN TÙNG MTP, SOOBIN, TRÚC NHÂN, [NAME]... tại Phố Đi Bộ Nguyễn Huệ, TP. Hồ Chí Minh. Chi tiết LH 198 ([MONEY]). Từ chối QC, soạn TC3 gửi 199.
+
+------------------------------------------------------------
+
+VITRAIN-1088
+
+FPT ID Ma OTP cua QK la 253881, hieu luc [TIME]. FPT ID dung dang nhap cac App FPT, KHONG chia se ma nay voi bat ky ai, ke ca NV FPT.
+@accounts.fpt.vn #[NUMBER]
+
+------------------------------------------------------------
+
+VITRAIN-1175
+
+Ma OTP Vinhomes cua Quy khach la: 902879
+
+------------------------------------------------------------
+
+VITRAIN-1205
+
+[QC] INTERNET MẠNH - AN TÂM TRỌN VẸN!
+Tặng ngay bộ cảm biến khói thông minh giúp gia đình yên tâm hơn mỗi ngày khi đăng ký Internet Viettel: Giá cước chỉ từ [MONEY]/tháng, đường truyền tốc độ từ 500Mbps.
+Áp dụng tại Hà Nội và TP. Hồ Chí Minh.
+Chi tiết gọi [NUMBER] ([MONEY]). Từ chối QC: TC3 gửi 199.
+
+------------------------------------------------------------
+
+VITRAIN-1246
+
+[TB] Sở Khoa học và Công nghệ Thành phố Hồ Chí Minh đề nghị chủ thuê bao thực hiện xác thực thông tin thuê bao di động trước ngày [DATE] để bảo vệ quyền lợi người sử dụng; phòng, chống lừa 
+đảo, đảm bảo an toàn thông tin cá nhân theo Thông tư 08/[NUMBER]/TT-BKHCN. Chủ thuê bao thực hiện xác thực theo một trong các hình thức sau:
+(1) Ứng dụng VNeID của Bộ Công an;
+(2) Xác thực trên ứng dụng của nhà mạng viễn thông;
+(3) Đến các điểm giao dịch gần nhất trong khu vực.
+Trường hợp số thuê bao đã sử dụng để đăng ký tài khoản định danh điện tử mức độ 2 thì không phải xác thực lại thông tin.
+
+------------------------------------------------------------
+
+VITRAIN-1287
+
+[KHAO SAT] Quy khach co dong y voi nhan dinh "Tong dai Viettel da ho tro tich cuc de giup Quy khach giai quyet van de gap phai mot cach de dang"? Vui long nhap so diem tu 1 den 7 (1-3: Khong dong y; 4-5: Binh thuong; 6-7: Dong y) va phan hoi lai tin nhan nay (mien phi).
+
+------------------------------------------------------------
+
+VITRAIN-1311
+
+(TB) Tang thue bao [NUMBER] 1.2GB data/[TIME] khi dang ky va gia han thanh cong lien tiep 6 ngay dich vu Vui hoc +01 tai khoan on luyen kien thuc chuan chuong trinh tren vuihoc.vn. Soan VHO5 gui 888 de dang ky. Cuoc [MONEY]/[TIME]. CSKH [NUMBER] ([MONEY]).
+
+------------------------------------------------------------
+
+VITRAIN-1351
+
+Tai khoan cua Quy khach da duoc nap [MONEY] tu [NUMBER] vao [DATE] [TIME]. Ma giao dich [NUMBER]. Chi tiet lien he CSKH [NUMBER] ([MONEY]). Tran trong cam on!
+
+------------------------------------------------------------
+
+VITRAIN-1433
+
+BVDHYD-CS2 kinh moi Quy KH HOA THI BACH LAN (Ho so: [NUMBER]) den tai kham vao ngay [DATE] theo hen tren toa thuoc. Tran trong.
+
+------------------------------------------------------------
+
+VITRAIN-1475
+
+(TB) CỤC AN NINH MẠNG VÀ PCTP SỬ DỤNG CÔNG NGHỆ CAO – BỘ CÔNG AN khuyến cáo người dân không tham gia tổ chức đánh bạc, đánh bạc, cá độ bóng đá dưới mọi hình thức trên không gian mạng. Mọi hành vi vi phạm pháp luật về cờ bạc sẽ bị xử lý nghiêm theo quy định.
+
+------------------------------------------------------------
+
+VITRAIN-1484
+
+(TB) CHỈ [MONEY] CÓ NGAY 7GB DATA TỐC ĐỘ CAO
+Soạn DK D10SP gửi 888 ([MONEY]/[TIME]) Bao trọn Data tốc độ cao
+TRỰC TIẾP VÀ TRỌN VẸN WORLD CUP [NUMBER] trên Truyền hình MyTV cùng thế giới kênh và giải trí phong phú.
+Tải app MyTV xem ngay: https://mytv.com.vn/tai-ve?c=byueNwLb
+CSKH: [NUMBER] ([MONEY])
+
+------------------------------------------------------------
+
+VITRAIN-1541
+
+(TB) VinaPhone tặng Quý khách quyền lợi trải nghiệm dịch vụ QUẢN LÝ CUỘC GỌI THÔNG MINH, CHẶN CUỘC GỌI RÁC khi đăng ký gói SD3, có ngay:
++ 300MB Data sử dụng trong [TIME] (hết dung lượng tính cước theo quy định).
++ Sử dụng toàn bộ tính năng quản lý cuộc gọi thông minh, chặn cuộc gọi rác. 
+Soạn DK SD3 gửi [NUMBER] ngay kẻo lỡ. Cước chỉ [MONEY]/ngày. CSKH [NUMBER] ([MONEY]).
+
+------------------------------------------------------------
+
+VITRAIN-1546
+
+[Reoqoovn] [NUMBER] is your Reoqoo verification code. http://reoqoovn.com.vn/
+
+------------------------------------------------------------
+
+VITRAIN-1612
+
+Mật khẩu đăng nhập vào Tài khoản Google drtai678@gmail.com của bạn đã bị lộ trong một sự cố rò rỉ dữ liệu xảy ra ngoài Google. Hãy đổi mật khẩu ngay bây giờ.
+
+------------------------------------------------------------
+
+VITRAIN-1635
+
+Ban dang yeu cau khoi phuc/thay doi Mat khau cho tai khoan Garena. Ma OTP 294734. Vui long khong cung cap ma OTP cho bat ky ai de bao ve tai khoan.
+
+------------------------------------------------------------
+
+VITRAIN-1683
+
+Dat phong [NUMBER] tai OHOME APARTMENT da bi huy boi he thong. Moi thac mac xin lien he qua hotline: [NUMBER]
+
+------------------------------------------------------------
+
+VITRAIN-1699
+
+DH [NUMBER] cua ban se huy vao ngay mai. Vui long ghe nha thuoc Pharmacity - 88 [NAME], Phuong Phuoc Long B, Quan 9, TP.HCM de nhan hang.Ho tro: [NUMBER]
+
+------------------------------------------------------------
+
+VITRAIN-1734
+
+SHOPEE: Nhap ma [NUMBER] de xac nhan thanh toan don hang bang SPayLater. Ma co hieu luc trong [TIME]. KHONG chia se ma nay cho bat ky ai.
+
+------------------------------------------------------------
+
+VITRAIN-1770
+
+Chuc mung ban duoc trai nghiem Goi ho tro tang doanh thu giup tang truong ngay ngoai chien dich. Moi ban xem thong tin chi tiet tai day: https://lzd.co/3EjOQRu
+
+------------------------------------------------------------
+
+VITRAIN-1772
+
+Apple Inc, iPhone 13 Pro Max Sierra Blue cua ban da duoc dinh vi hom nay luc [TIME] ΑΜ. Xem vi tri tai: ICloud.co/2k610s Ho Tro Apple
+
+------------------------------------------------------------
+
+VITRAIN-1776
+
+Techcom: Kinh gui Quy khach, [POINT] Vietcom Priority sap het han. De tranh het han, vui long doi diem ngay tai: tech-com- priority.com
+
+------------------------------------------------------------
+
+VITRAIN-1795
+
+Tai khoan Telegram cua ban bi nghi ngo vi pham quy dinh. Vui long dang nhap vao trang web chinh thuc imad-TG.com trong vòng [TIME] de xac minh va go bo han che.
+
+------------------------------------------------------------
+
+VITRAIN-1799
+
+(ACB) Tai khoan cua ban da mo dich vu tai chinh toan cau phi dich vu hang thang la [MONEY] se bi tru trong [TIME]. Neu khong phai ban mo dich vu vui long nhan vao https://acb.vnipay.top de huy
+
+------------------------------------------------------------
+
+VITRAIN-1804
+
+Cảnh sát Giao thông Việt Nam: Hiện tại, bạn đang có một khoản tiền phạt chưa thanh toán trong tài khoản. Vui lòng thanh toán khoản phí này càng sớm càng tốt để tránh những bất tiện không đáng có. Để biết thêm thông tin, vui lòng truy cập: https:// dichvucongg.top/vn
+
+------------------------------------------------------------
+
+VITRAIN-1815
+
+Pkwin dinh cao giai tri-rut tien nhanh,nap tien Ian dau nhan thuong 100% gioi thieu ban be nhan [MONEY] tai https://m.[NUMBER].cc/Account&gister?f-[NUMBER]
+
+------------------------------------------------------------
+
+VITRAIN-1918
+
+NOHU tang CODE [MONEY] mien phi cho khach VIP: <FMN4BMHS>Link: https://nohucode50k.club
+
+------------------------------------------------------------
+
+VITRAIN-1944
+
+Nha Cai MU88 Truc Tuyen nap rut nhanh 24/24
+TAI APP:nap tien [MONEY] tang Km dau [MONEY] và KM [MONEY] http://e9zo.com/r/6MTIf6euOx
+Nhap ma gioi thieu: [NUMBER].
+UIIBC
+
+------------------------------------------------------------
+
+VITRAIN-1955
+
+Rj https://DWOK.gemhay.me dang ky tai khoan nhan ngay 2'9'[MONEY], nap dau duoc thuong 1'0'0% xs
+
+------------------------------------------------------------
+
+VITRAIN-1957
+
+WI Tham Gia Nhan 200 Ka. Nap Dau Nhan Uu Dai Khung!
+nY5c.GeqrE.me wo
+
+------------------------------------------------------------
+
+VITRAIN-1991
+
+[BIDV] Khan cap: Tai khoan cua ban đã dang ky chuong trinh rut tham trung thuong moi thang thu phi [MONEY]. De HUY dich vu, vao: http://ctacq.cc
+
+------------------------------------------------------------
+
+VITRAIN-1996
+
+Cuc duong bo thong bao: Phuong tien cua ban co 1 bien ban PHAT NGUOI chua nop phat tai Ha Noi. Tra cuu bien ban va dong phat tai: [http://phatnguoi.cucduongbo.top]
+
+------------------------------------------------------------
+
+VITRAIN-2002
+
+Yeu cau nguoi dan khai bao lai thong tin cu tru tam vang tren ung dung quoc gia de tranh bi phat hanh chinh. Tai file huong dan: [http://vneid.hethong-chinhphu.top]
+
+------------------------------------------------------------
+
+VITRAIN-2038
+
+[Agri_bank] Kính gửi quý khách: Dịch vụ Smart OTP trên đt của bạn chuẩn bị hết hạn xác thực định kỳ. Vui lòng cập nhật ngay tại: http://agribank.xacthuc-otp.online
+
+------------------------------------------------------------
+
+VITRAIN-2079
+
+[Agoda_B00k] Cảnh báo: Giao dịch đặt phòng khách sạn của bạn tại Đà Nẵng bị từ chối do thẻ tín dụng lỗi mã CVV. Nhập lại thông tin thẻ để giữ phòng: http://agoda.datphong-suco.cc
+
+------------------------------------------------------------
+
+VITRAIN-2085
+
+[KU.B_ET] Chúc mừng tkhoản cá cược của b đg có 1 voucher kmãi 100% nạp đầu lên tới 2tr8. Vào sảnh nhận ngay kẻo hết hạn nhe ae: http://kubet.napthuong-[NUMBER].club
+
+------------------------------------------------------------
+
+VITRAIN-2094
+
+[Fi88_Net] Đánh bài online, casino trực tuyến có người thật chia bài. Đăng ký tài khoản nhận ngay code tân thủ [MONEY] trải nghiệm free: https://jwf88pefdz.682667com-dhxl.top
+
+------------------------------------------------------------
+
+VITRAIN-2110
+
+[Pi_Network_Vn] Sàn giao dịch Pi chính thức mở cửa cho phép đổi Pi lấy tiền mặt VNĐ tỉ giá cao. Đồng bộ ví Pi của bạn để thanh khoản ngay: http://pinetwork-gb64tykw.web3pi.icu
+
+------------------------------------------------------------
+
+VITRAIN-2126
+
+[VlNh0mEs] Mở giữ chỗ căn hộ chung cư phân khu mới, hỗ trợ vay vốn 0% lãi suất trong 2 năm, tặng gói nội thất cao cấp trị giá [MONEY]. Đăng ký tham quan: http://vinhome.duan-bds.vip
+
+------------------------------------------------------------
+
+VITRAIN-2168
+
+[B00king_CTV] Thông báo tuyển dụng: Cần 50 CTV trực tuyến làm nhiệm vụ nhận đặt phòng khách sạn ảo để tăng tương tác, nhận lương cứng [MONEY]/ngày. Đăng ký tại: http://booking.ctv-review.top
+
+------------------------------------------------------------
+
+VITRAIN-2186
+
+[789-B.E.T] Thg báo: Đêm nay có đại tiệc Ngoại Hạng Anh, tỉ lệ kèo chấp cực thơm nạp 1 ăn 99. Đăng ký nhận code trải nghiệm [MONEY] free: http://789bet.keonhacai.top
+
+------------------------------------------------------------
+
+VITRAIN-2219
+
+[GaiGoi_CaoCap] Khai truong sanh sgbb, gai goi sinh vien cao cap khu vuc Tp.HCM/Ha Noi, giam gia 50% cho khach hang moi choi lan dau. Xem album anh k che: http://sexphotoss490.000webhostapp.com
+
+------------------------------------------------------------
+
+VITRAIN-2221
+
+[Telegram_Sex] Nhóm leak clip nóng, video nhạy cảm của các idol tóp tóp, hot girl học đường đang hot nhất hnay. Click link vào group kín khg che: https://telegram.tgatgj.xyz
+
+------------------------------------------------------------
+
+VITRAIN-2232
+
+VIB: Diem tin dung cua ban (11.[POINT]) se het han hom nay. Hay quy doi ngay de nhan phan thuong doc quyen.
+Chi tiet: https://vib-diem.com
+
+------------------------------------------------------------
+
+VITRAIN-2233
+
+[TB] Ứng dụng Tuyên giáo và Dân vận -kênh thông tin chính thống của Đảng; chủ trương, chính sách được cập nhật nhanh, giải thích dễ hiểu; thư viện số phong phú; hỏi - đáp, tra cứu thuận tiện; lắng nghe, phản hồi ý kiến Nhân dân.
+Mời Nhân dân tham gia sử dụng: https://tgdv.vtscloud.vn/installation
+
+------------------------------------------------------------
+
+VITRAIN-2315
+
+Bạn trúng thưởng [MONEY]! Để nhận, đóng phí hồ sơ [MONEY] vào số tài khoản [NUMBER] Techcombank. Tiền thưởng chuyển ngay sau đó.
+
+------------------------------------------------------------
+
+VITRAIN-2372
+
+Spa Hùng ưu đãi 70% gói chăm sóc da dịp lễ, tặng kèm 2 buổi trị liệu. Gọi [NUMBER] đặt lịch ngay hôm nay.
+
+------------------------------------------------------------

@@ -1,10 +1,14 @@
 # Local training and inference
 
-The web defaults to `predict_hybrid.py`: processed SMS (3,857 training messages,
-threshold 0.65) plus bundle URL (40,004 training URLs, reference threshold 0.50).
+The web defaults to `predict_hybrid.py`: `group-calibrated-20261026`, SMS (3,786
+training messages, threshold 0.65) plus URL (31,299 training URLs, threshold 0.50).
 The checksum-pinned `models/hybrid_bundle.pkl` and `hybrid_manifest.json` ship
 with the app. SMS stays the primary score when text is present; URL positives
-independently require link review. Scores are not averaged or recalibrated.
+independently require link review. Alert scores are not averaged or recalibrated.
+The separate `calibrated_probability` estimates source label 1 using train-only
+nested group sigmoid calibration; it is not an expert-verified fraud probability.
+See [current results and reproducibility](../docs/completion-results-2026-10-26.md)
+for the review quarantine, training protocol, commands, and diagnostic limits.
 Missing or incompatible artifacts fail closed. See
 `../docs/hybrid-model-integration-2026-10-25.md` for routing, provenance and limits.
 
@@ -151,9 +155,16 @@ version. Missing, corrupted or incompatible bundles return unavailable, never a
 safe score. Rerun training after changing preprocessing or estimator definitions.
 Never load pickle artifacts from an untrusted source.
 
-Inference is fully local for every score, including 30–79. The policy is <30 low,
-30–79 review, >=80 high risk. These thresholds are fixed review policy, not claimed
-optimal thresholds or calibrated probabilities. URL annotations cannot alter scores.
+Inference is fully local for every score. SMS retains the <30 low, 30–79 review,
+>=80 high-risk policy. In the default hybrid adapter, URL-only input requires
+review when its raw URL score meets the URL head's 0.50 threshold; >=80 rounded
+points remains high risk. An independently positive URL still requires review
+when SMS is present, without changing the SMS score. Both API endpoints and the
+web verdict consume the inference action rather than reapplying SMS thresholds.
+Legacy and processed adapters retain their historical policies. Scores are not
+calibrated probabilities; a below-threshold result does not verify a website.
+URL annotations cannot alter scores. See
+`../docs/url-alert-policy-fix-2026-10-26.md` for the measured false-alarm/recall tradeoff.
 Images and dialogue evaluation are unavailable until suitable local models exist.
 
     npm.cmd ci --ignore-scripts

@@ -68,6 +68,7 @@ class ProcessedPredictionTests(unittest.TestCase):
 
     def test_corrupt_artifact_is_rejected_before_pickle_loading(self):
         root = Path(__file__).resolve().parent / "data/prepared"
+        root.mkdir(parents=True, exist_ok=True)
         with tempfile.TemporaryDirectory(dir=root) as directory:
             self.assertTrue(Path(directory).resolve().is_relative_to(root))
             target = Path(directory) / "invalid.pkl"

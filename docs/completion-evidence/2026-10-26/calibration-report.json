@@ -1,0 +1,134 @@
+{
+  "protocol": {
+    "method": "sigmoid",
+    "ensemble": false,
+    "outer_group_folds": 3,
+    "inner_group_folds": 3,
+    "seed": 42,
+    "brier_and_log_loss_must_not_increase": true,
+    "fit_partitions": [
+      "train"
+    ],
+    "all_labels_expert_verified": false,
+    "new_independent_benchmark": false,
+    "base_bundle_sha256": "9a49b7278cfb1b9da00f8ebc6970653a9de3320f3037db3ee190109926d1bd3a",
+    "fit_code_sha256": "ba705641d1e48e24028b23791b63a085b2b1848767b615bfeaaae30a9d4acebe",
+    "review_sha256": "c77b8bc78b702bf8cad10672e01070ce38a31fc7db15b35b89003bf976676072",
+    "user_decisions_sha256": "f0420cbf1f0e270cf3f8c8a291a6deda6a15d48c91b09cfc7eef9eb3427a1c99",
+    "review_package_identities_sha256": "307f1ebf52f8a33f6eaf18ea3fdbc381d34a43c46c31b58f5967dbe340d104c5"
+  },
+  "fit_rows": {
+    "sms": 3786,
+    "url": 31299
+  },
+  "label_provenance_counts": {
+    "sms": {
+      "upstream_ham_or_non_smishing_spam": 2966,
+      "published_two_researcher_manual_relabeling_with_disagreement_resolution": 483,
+      "ai_semantic_review": 334,
+      "user_scope_decision": 2,
+      "user_decision": 1
+    },
+    "url": {
+      "inherited_url_source_not_expert_verified": 31299
+    }
+  },
+  "metrics": {
+    "sms": {
+      "raw": {
+        "rows": 3786,
+        "labels": {
+          "0": 3601,
+          "1": 185
+        },
+        "brier": 0.017118610403704687,
+        "log_loss": 0.08736288008201208,
+        "ece_10_bins": 0.053471701893939724
+      },
+      "calibrated": {
+        "rows": 3786,
+        "labels": {
+          "0": 3601,
+          "1": 185
+        },
+        "brier": 0.013243998243913039,
+        "log_loss": 0.04486387131485324,
+        "ece_10_bins": 0.006666493501860846
+      },
+      "gate_pass": true,
+      "brier_delta_group_bootstrap_95ci": [
+        -0.005189789119902765,
+        -0.0026620953281504783
+      ]
+    },
+    "url": {
+      "raw": {
+        "rows": 31299,
+        "labels": {
+          "0": 24251,
+          "1": 7048
+        },
+        "brier": 0.04529302456412734,
+        "log_loss": 0.16452524895746476,
+        "ece_10_bins": 0.044850993097763324
+      },
+      "calibrated": {
+        "rows": 31299,
+        "labels": {
+          "0": 24251,
+          "1": 7048
+        },
+        "brier": 0.042088402710799735,
+        "log_loss": 0.13854074253088816,
+        "ece_10_bins": 0.008532178650282963
+      },
+      "gate_pass": true,
+      "brier_delta_group_bootstrap_95ci": [
+        -0.004036140111581075,
+        -0.002373652625472894
+      ]
+    }
+  },
+  "gate_pass": true,
+  "proof": {
+    "cross_partition_keys": [],
+    "cross_partition_similarity_edges": 0,
+    "registered_domain_isolation": "PASS",
+    "content_group_isolation": "PASS",
+    "overlap_counts_by_pair": {
+      "train/validation": {
+        "domain": 0,
+        "icann_domain": 0,
+        "sms": 0,
+        "url": 0,
+        "template": 0,
+        "source_group": 0,
+        "campaign_id": 0
+      },
+      "train/test": {
+        "domain": 0,
+        "icann_domain": 0,
+        "sms": 0,
+        "url": 0,
+        "template": 0,
+        "source_group": 0,
+        "campaign_id": 0
+      },
+      "validation/test": {
+        "domain": 0,
+        "icann_domain": 0,
+        "sms": 0,
+        "url": 0,
+        "template": 0,
+        "source_group": 0,
+        "campaign_id": 0
+      }
+    },
+    "campaign_independence_proven": false,
+    "all_labels_expert_verified": false
+  },
+  "expert_labels_created": 0,
+  "historical_test_used_in_fit_or_gate": false,
+  "new_independent_vietnamese_benchmark": false,
+  "seconds": 194.129
+}

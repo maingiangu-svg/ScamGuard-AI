@@ -1,0 +1,12 @@
+test_duplicate_identity_is_rejected (test_label_audit.LabelAuditTests.test_duplicate_identity_is_rejected) ... ok
+Fold 1/3: fit 8, predict 4.
+Fold 2/3: fit 8, predict 4.
+Fold 3/3: fit 8, predict 4.
+test_every_prediction_comes_from_a_model_that_has_not_seen_its_group (test_label_audit.LabelAuditTests.test_every_prediction_comes_from_a_model_that_has_not_seen_its_group) ... ok
+test_heldout_quarantined_and_missing_provenance_rows_are_rejected (test_label_audit.LabelAuditTests.test_heldout_quarantined_and_missing_provenance_rows_are_rejected) ... ok
+test_insufficient_groups_and_single_class_folds_fail_closed (test_label_audit.LabelAuditTests.test_insufficient_groups_and_single_class_folds_fail_closed) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.017s
+
+OK

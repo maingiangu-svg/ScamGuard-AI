@@ -1,0 +1,44 @@
+[
+  {
+    "section": "SMS_EN",
+    "case_id": "SMISHX-0753",
+    "reasons": [
+      "ambiguous_domain_mention"
+    ]
+  },
+  {
+    "section": "SMS_EN",
+    "case_id": "SMISHX-0890",
+    "reasons": [
+      "train_or_validation_registered_domain_overlap"
+    ]
+  },
+  {
+    "section": "SMS_EN",
+    "case_id": "SMISHX-0920",
+    "reasons": [
+      "train_or_validation_registered_domain_overlap"
+    ]
+  },
+  {
+    "section": "URL",
+    "case_id": "PHISHVN-AUDIT-V0026",
+    "reasons": [
+      "train_or_validation_registered_domain_overlap"
+    ]
+  },
+  {
+    "section": "VI_DIAGNOSTIC",
+    "case_id": "VITRAIN-1802",
+    "reasons": [
+      "ambiguous_domain_mention"
+    ]
+  },
+  {
+    "section": "VI_DIAGNOSTIC",
+    "case_id": "VITRAIN-1983",
+    "reasons": [
+      "ambiguous_domain_mention"
+    ]
+  }
+]

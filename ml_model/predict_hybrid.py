@@ -7,18 +7,43 @@ import re
 import sys
 import time
 from pathlib import Path
+from urllib.parse import urlsplit
 
 import sklearn
 
 from audit_vi_holdout import audit_url_text
 from predict import probability
 from predict_processed import text_signals
-from preprocess import canonicalize_url, extract_urls
+from preprocess import canonicalize_url
 from round2_experiment import text_input
 
 ROOT = Path(__file__).resolve().parent
 MODEL = ROOT / "models/hybrid_bundle.pkl"
 MANIFEST = ROOT / "models/hybrid_manifest.json"
+# Input routing accepts complete hostnames; training preprocessing stays frozen.
+INPUT_URL_RE = re.compile(
+    r"https?://[^\s<>\"{}]+|www\.[^\s<>\"{}]+|"
+    r"(?<![@\w.-])(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+"
+    r"(?:[a-z]{2,63}|xn--[a-z0-9-]+)(?![\w-]|\.[a-z0-9])"
+    r"(?:[/:?][^\s<>\"{}]*)?", re.I
+)
+
+
+def extract_input_urls(text):
+    """Extract and mask whole input URLs without changing model features."""
+    urls = []
+
+    def mask(match):
+        raw = match.group().rstrip(".,;:!?)'\"")
+        try:
+            url = canonicalize_url(raw)
+        except (ValueError, UnicodeError):
+            return match.group()
+        if url not in urls:
+            urls.append(url)
+        return "<URL>" + match.group()[len(raw):]
+
+    return INPUT_URL_RE.sub(mask, text), urls
 
 
 def load_bundle():
@@ -36,6 +61,9 @@ def load_bundle():
         raise ValueError("Estimator runtime version mismatch")
     if bundle["sms"]["threshold"] != .65 or bundle["url"]["threshold"] != .5:
         raise ValueError("Hybrid threshold mismatch")
+    if any('probability_model' in bundle[branch] for branch in ('sms', 'url')):
+        if manifest.get('calibration_gate_pass') is not True or not bundle['training'].get('calibrated_estimate_available'):
+            raise ValueError('Calibrated estimate requires a passed, manifest-bound calibration gate')
     return bundle
 
 
@@ -48,15 +76,29 @@ def classify(text="", url=""):
             raise ValueError("Text or URL required")
         if len(text) > 20000 or len(url) > 4096:
             raise ValueError("Input too long")
-        masked, links = extract_urls(audit_url_text(text))
+        candidate = text.strip().strip("()[]{}<>\"'").strip()
+        url_inputs = [url] if url.strip() else []
+        if re.fullmatch(r"(?:https?:|www\.)\S*", candidate, flags=re.I):
+            url_inputs.append(candidate)
+        for raw in url_inputs:
+            try:
+                value = raw.strip().strip("()[]{}<>\"'").strip()
+                if value.lower() == "www." or not urlsplit(canonicalize_url(value)).hostname:
+                    raise ValueError("URL hostname required")
+            except (ValueError, UnicodeError):
+                return {**unavailable, "error": "INVALID_URL"}
+        masked, links = extract_input_urls(audit_url_text(text))
         if url.strip():
             links = list(dict.fromkeys([canonicalize_url(url)] + links))
         if len(links) > 20:
             raise ValueError("Too many URLs")
-        has_text = bool(re.sub(r"<url>|[\W_]+", "", masked, flags=re.I))
+        # Remove whole placeholders first: punctuation matching must not eat '<'.
+        remainder = re.sub(r"<url>", "", masked, flags=re.I)
+        has_text = bool(re.sub(r"[\W_]+", "", remainder))
         bundle = load_bundle()
         normalized = text_input(text)
         text_result, url_result, signals = None, None, []
+        text_calibrated, url_calibrated = None, None
         selected_url = ""
         if has_text:
             head = bundle["sms"]
@@ -64,16 +106,23 @@ def classify(text="", url=""):
             signals = text_signals(head["model"], normalized)
             text_result = {"score": pt, "model_ready": True, "top_features": signals,
                            "threshold": head["threshold"], "model_id": head["model_id"]}
+            if 'probability_model' in head:
+                text_calibrated = float(probability(head['probability_model'], [normalized])[0])
+                text_result['calibrated_probability'] = text_calibrated
         if links:
             head = bundle["url"]
             # Keep the exact URL preprocessing used to train this URL head.
             values = probability(head["model"], links)
             pu = float(values.max())
             selected_url = links[int(values.argmax())]
+            if 'probability_model' in head:
+                url_calibrated = float(probability(head['probability_model'], links)[int(values.argmax())])
             url_result = {"score": pu, "model_ready": True, "top_features": [],
                           "threshold": head["threshold"], "model_id": head["model_id"],
                           "target": "upstream_good_bad_url_source_labels",
                           "urls": [{"url": u, "score": float(p)} for u, p in zip(links, values)]}
+            if url_calibrated is not None:
+                url_result['calibrated_probability'] = url_calibrated
         if text_result is not None:
             raw_score, branch, mode = pt, "sms", "hybrid_text"
         elif url_result is not None:
@@ -83,8 +132,10 @@ def classify(text="", url=""):
         # Independent URL review never changes the SMS score/binary prediction.
         url_review = text_result is not None and url_result is not None and pu >= bundle["url"]["threshold"]
         score = int(round(raw_score * 100))
+        # URL-only review uses the URL head's raw threshold, not the SMS 30-point band.
+        needs_review = raw_score >= bundle["url"]["threshold"] if branch == "url" else score >= 30 or url_review
         label, action = ("SCAM", "BLOCK") if score >= 80 else (
-            ("SUSPICIOUS", "REVIEW") if score >= 30 or url_review else ("SAFE", "CLEAR"))
+            ("SUSPICIOUS", "REVIEW") if needs_review else ("SAFE", "CLEAR"))
         return {"model_ready": True, "ml_risk_score": score, "ml_label": label, "action": action,
                 "ml_confidence": round(max(raw_score, 1 - raw_score) * 100, 1), "ml_top_signals": signals,
                 "uncertainty": round(1 - 2 * abs(raw_score - .5), 4),
@@ -93,6 +144,10 @@ def classify(text="", url=""):
                 "mode": mode, "meta_formula": None, "inference_ms": round((time.perf_counter() - started) * 1000, 2),
                 "model_prediction_label": int(raw_score >= bundle[branch]["threshold"]),
                 "decision_threshold": bundle[branch]["threshold"], "decision_branch": branch,
+                "calibrated_probability": text_calibrated if branch == 'sms' else url_calibrated,
+                "calibration_status": 'source_label_calibrated' if
+                    (text_calibrated if branch == 'sms' else url_calibrated) is not None else 'unavailable',
+                "calibrated_probability_expert_verified": False,
                 "training": bundle["training"]}
     except (OSError, ValueError, KeyError, TypeError, AttributeError, EOFError, RuntimeError, pickle.UnpicklingError):
         return {**unavailable, "error": "MODEL_UNAVAILABLE_OR_INCOMPATIBLE"}
