@@ -9,7 +9,9 @@ Open the extension popup to choose either mode:
 - **Manual (default):** press the check button to screen the active HTTP/HTTPS tab.
   The extension uses `activeTab` and injects the checker for that action.
 - **Automatic (opt-in):** choose automatic mode and approve the browser's optional
-  access to HTTP/HTTPS sites. A registered content script screens visited pages.
+  access to HTTP/HTTPS sites. Enabling it checks the current tab immediately;
+  subsequent navigation and tab activation also trigger checks. The background
+  worker repairs a missing content listener when the popup opens or a page loads.
   Switching back to manual unregisters automatic scripts and attempts to remove
   those optional grants. If the browser retains a grant, the popup explains how
   to revoke it in extension settings; automatic scanning stays off.
@@ -29,6 +31,11 @@ only in a query or fragment is outside this URL check in either mode.
 
 The extension does not use a remote AI service. A banner appears for a HIGH or
 CRITICAL verdict or score >=80, consistent with the app's existing alert policy.
+After any successful check, the icon badge and popup display the 0–100 score.
+An exclamation mark indicates a permission, injection, or local API failure;
+opening the popup shows error guidance instead of waiting indefinitely. The
+tooltip identifies the minimized URL that was checked. Results use current
+tab state, without storing browsing history.
 An absent banner is not a safety guarantee: the model can miss threats, the API
 can be unavailable, or browser local-network permissions can block the request.
 
@@ -41,7 +48,10 @@ switch races, sender validation, permission checks and URL minimization.
 `scripts/extension-browser.mjs` installs the production manifest into isolated
 Chromium and checks default manual mode, the real popup/service worker/API flow,
 and rejection of automatic mode without host grants. A separately identified
-fixture pregrants hosts to test automatic registration, warnings and disabling;
+fixture pregrants hosts to test automatic registration, immediate current-tab
+checks, warnings, disabling, and repair after deliberately removing the content
+listener. A synthetic intercepted page at the HTTPS YouTube origin exercises
+external-origin behavior; it does not inspect a user's video or browsing profile.
 the production manifest is not changed. See the [readiness report](../docs/project-readiness-2026-10-26.md).
 
 Before release, manually accept/deny the native optional-permission prompt in
@@ -49,3 +59,11 @@ each supported Chrome/Edge version and test manual checks on an external site
 with `activeTab`. That native prompt and cross-browser/local-network settings
 are not established by the automated fixture. A page already displaying a banner
 may retain it until navigation after automatic scanning is disabled.
+
+When upgrading to 1.1.2, open `edge://extensions` (or `chrome://extensions`),
+press **Reload** for this unpacked extension, then reopen its popup. The footer
+must show **Phiên bản 1.1.2**. With the local app running, select automatic mode
+and approve site access. The current HTTP/HTTPS page should receive a score
+without pressing the manual button. Reload the web tab if it was open during
+the extension upgrade. Recheck this in the real browser: a native extension
+Reload and permission dialog were not automated by the isolated test fixture.

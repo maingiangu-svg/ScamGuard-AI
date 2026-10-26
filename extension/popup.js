@@ -2,13 +2,25 @@ const status = document.getElementById('status');
 const check = document.getElementById('check');
 const modes = document.querySelectorAll('input[name="mode"]');
 const origins = ['http://*/*', 'https://*/*'];
+document.getElementById('version').textContent = `Phiên bản ${chrome.runtime.getManifest().version}`;
 
-async function showSettings() {
-  const settings = await chrome.runtime.sendMessage({action: 'GET_SETTINGS'});
+async function showSettings(ensure = false) {
+  const settings = await chrome.runtime.sendMessage({action: 'GET_SETTINGS', ensure});
   if (settings.error) throw new Error(settings.error);
   document.querySelector(`input[value="${settings.automatic ? 'automatic' : 'manual'}"]`).checked = true;
+  if (settings.automatic) {
+    if (settings.unsupportedPage) {status.textContent = 'Trang này không hỗ trợ kiểm tra. Hãy mở một trang HTTP/HTTPS.'; return;}
+    const [tab] = await chrome.tabs.query({active: true, currentWindow: true});
+    const badge = tab && await chrome.action.getBadgeText({tabId: tab.id});
+    status.textContent = badge === '!' ? 'Chưa kiểm tra được trang này. Hãy kiểm tra quyền extension và dịch vụ local.'
+      : /^\d+$/.test(badge) ? `Kết quả trang hiện tại: ${badge}/100. Hãy xác minh độc lập.`
+      : 'Tự quét đang bật. Trang web sẽ được kiểm tra khi tải xong.';
+  }
 }
-showSettings().catch(error => {status.textContent = error.message;});
+showSettings(true).catch(error => {status.textContent = error.message;});
+setInterval(() => {
+  if (![...modes].some(radio => radio.disabled)) showSettings().catch(() => {});
+}, 1000);
 
 for (const mode of modes) mode.addEventListener('change', async () => {
   for (const radio of modes) radio.disabled = true;
@@ -18,7 +30,7 @@ for (const mode of modes) mode.addEventListener('change', async () => {
     const result = await chrome.runtime.sendMessage({action: 'SET_MODE', automatic});
     if (result.error) throw new Error(result.error);
     const removed = automatic || await chrome.permissions.remove({origins}).catch(() => false);
-    status.textContent = automatic ? 'Đã bật tự quét cho các trang mở tiếp theo.'
+    status.textContent = automatic ? 'Đã bật tự quét và kiểm tra trang đang mở. Điểm sẽ hiện trên biểu tượng.'
       : 'Đã chuyển sang quét thủ công.' + (removed ? '' : ' Bạn có thể thu hồi quyền trang web trong cài đặt trình duyệt.');
   } catch (error) {
     status.textContent = error.message;
