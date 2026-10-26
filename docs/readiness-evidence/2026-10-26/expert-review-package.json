@@ -1,0 +1,12 @@
+{
+  "cases": 811,
+  "labels_created": 0,
+  "expert_verification_by_tool": false,
+  "model_or_dataset_modified": false,
+  "blind_order_seed": 42,
+  "original_label_or_model_score_in_forms": false,
+  "branches": {
+    "sms": 14,
+    "url": 797
+  }
+}

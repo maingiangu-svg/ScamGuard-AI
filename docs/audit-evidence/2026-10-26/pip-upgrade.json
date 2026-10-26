@@ -1,0 +1,6 @@
+{
+  "package": "pip",
+  "from": "25.2",
+  "to": "26.2.2",
+  "source": "https://pypi.org/pypi/pip/json"
+}

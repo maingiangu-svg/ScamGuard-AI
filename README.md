@@ -59,10 +59,56 @@ They are not live model evaluations. The extension warns only at the >=80 policy
 ## Checks
 
     .\.venv\Scripts\python.exe -m unittest discover -s ml_model -v
-    node --test scripts/analysis-assessment.test.mjs
-    node --test scripts/analyze.integration.test.mjs
+    npm.cmd test
+    npm.cmd run test:inference
+    npm.cmd run test:api
     npm.cmd run lint
     npm.cmd run build
 
 Integration tests require the local app. Python startup is included in request
 latency; the application makes no sub-4ms end-to-end performance claim.
+
+See the [project audit and remaining limitations](docs/project-audit-2026-10-26.md)
+for Trivy, Lighthouse, ASVS review, 140 passing tests and train-only cleanlab
+results from the initial audit. The follow-up [five-step readiness report](docs/project-readiness-2026-10-26.md)
+records the security, CI, expert-review preparation and browser/PDF work, current
+verification results, and remaining environment checks.
+
+The [extension instructions](extension/README.md) explain the user's choice of
+manual checks (default) or optional automatic screening. The [expert-review
+protocol](docs/ml-expert-review-protocol.md) keeps the 811 train-review candidates
+separate from a future independent Vietnamese benchmark.
+
+## Production configuration
+
+`SCAMGUARD_ALLOWED_ORIGINS` is a comma-separated exact browser-origin allowlist.
+The default includes localhost:3000, the current Cloud Run URL and the unpacked
+extension ID. Set it explicitly for a new domain or extension ID. API responses
+are not cached; root HTML uses a fresh CSP script nonce and private/no-store.
+
+`SCAMGUARD_TRUSTED_PROXY_HOPS=0` ignores forwarded client IP headers by default.
+Only configure trusted hops after verifying the proxy topology and header
+rewriting. `RATE_LIMIT_TOTAL_PER_MINUTE` (default 60) limits both inference
+endpoints together per process; `RATE_LIMIT_PER_MINUTE` (default 10) also limits
+recognized clients. This is an in-memory safeguard: replicas and restarts do
+not share a durable quota. A public deployment needing a global quota needs
+an edge/distributed limiter with an explicit operating budget.
+
+`GET /api/health` checks the current hybrid artifact against its checksum
+manifest. Real inference is verified separately by integration/container smoke
+tests. The health endpoint alone does not prove prediction quality or Python
+runtime compatibility.
+
+The pinned GitHub Actions workflow runs lint, tests, standalone build, API,
+browser, installed-extension, dependency audits and Docker smoke checks on Linux.
+For a local full integration run after `npm run build`, install the locked tools
+in `tools/audit` (or set `AUDIT_NODE_TOOLS`), install Playwright Chromium, and run
+`node scripts/ci-integration.mjs` with `TEST_EXTENSION=1`. It owns test servers on
+ports 3000 and 3101–3103; these ports must be free.
+
+After a successful image smoke check, `scripts/deploy-cloud-run.sh` accepts
+`GCP_PROJECT_ID`, optional `GCP_REGION` and `GCP_SERVICE`. Its HTTP startup and
+liveness probes follow [Cloud Run's documented probe configuration](https://docs.cloud.google.com/run/docs/configuring/healthchecks).
+Review the project/service before running it: this command publishes an
+unauthenticated service and may incur cloud costs. Preparing this script has
+not deployed the workspace changes.

@@ -1,0 +1,8 @@
+test_blind_forms_preserve_content_identity_without_model_labels (test_expert_review.ExpertReviewTests.test_blind_forms_preserve_content_identity_without_model_labels) ... ok
+test_mismatched_id_or_input_hash_cannot_be_accepted (test_expert_review.ExpertReviewTests.test_mismatched_id_or_input_hash_cannot_be_accepted) ... ok
+test_same_reviewer_cannot_supply_both_independent_decisions (test_expert_review.ExpertReviewTests.test_same_reviewer_cannot_supply_both_independent_decisions) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.062s
+
+OK

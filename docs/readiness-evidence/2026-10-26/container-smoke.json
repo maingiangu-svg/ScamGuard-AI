@@ -1,0 +1,7 @@
+{
+  "image": "scamguard-readiness:20261026",
+  "status": "PASS",
+  "user": "10001:10001",
+  "inferenceMs": 858,
+  "healthcheckExit": ""
+}

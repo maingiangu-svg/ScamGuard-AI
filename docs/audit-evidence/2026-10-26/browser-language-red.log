@@ -1,0 +1,64 @@
+{
+  "browser": "156.0.4314.42",
+  "origin": "http://127.0.0.1:3101",
+  "errors": [],
+  "failedRequests": [],
+  "externalRequests": [],
+  "widths": [
+    {
+      "width": 320,
+      "viewport": 320,
+      "content": 320
+    },
+    {
+      "width": 390,
+      "viewport": 390,
+      "content": 390
+    },
+    {
+      "width": 768,
+      "viewport": 768,
+      "content": 768
+    },
+    {
+      "width": 1024,
+      "viewport": 1024,
+      "content": 1024
+    },
+    {
+      "width": 1440,
+      "viewport": 1440,
+      "content": 1440
+    }
+  ],
+  "headers": {
+    "cache-control": "s-maxage=31536000",
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-security-policy": "frame-ancestors 'none'; object-src 'none'; base-uri 'self'",
+    "content-type": "text/html; charset=utf-8",
+    "date": "Mon, 26 Oct 2026 06:00:40 GMT",
+    "etag": "\"hobr2pg0mrfa8\"",
+    "keep-alive": "timeout=5",
+    "permissions-policy": "camera=(), microphone=(), geolocation=()",
+    "referrer-policy": "no-referrer",
+    "transfer-encoding": "chunked",
+    "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "DENY",
+    "x-nextjs-cache": "HIT",
+    "x-nextjs-prerender": "1, 1",
+    "x-nextjs-stale-time": "300"
+  },
+  "viewport": "width=device-width, initial-scale=1",
+  "apiDurationMs": 2553,
+  "model": {
+    "mode": "hybrid_text",
+    "riskScore": 2,
+    "riskLevel": "LOW"
+  },
+  "languageToggle": "PASS",
+  "htmlLanguageAfterVietnameseToggle": "en",
+  "status": "FAIL",
+  "failure": "Expected values to be strictly equal:\n\n'en' !== 'vi'\n"
+}

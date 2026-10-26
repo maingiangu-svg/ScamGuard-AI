@@ -1,0 +1,13 @@
+✔ page screening uses URL-only input and excludes title, credentials, query and fragment (2.902ms)
+✔ a hostname beginning with the localhost exclusion still gets checked (1.1349ms)
+✔ the actual local app and non-web protocols are excluded (2.1209ms)
+✔ low-risk and unavailable responses never create a high-risk banner (1.0281ms)
+✔ the background excludes only the real localhost origin (0.5469ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 67.3872

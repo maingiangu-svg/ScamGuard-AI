@@ -1,0 +1,126 @@
+✔ ordinary text is evaluated locally with no invented threat evidence (1676.6807ms)
+✔ review scores and binary labels use distinct declared thresholds (1596.4434ms)
+✔ an official URL does not bypass SMS; no untrained fusion is applied (1540.0333ms)
+✔ a URL-only request is scored by the URL estimator, with no forced whitelist score (1571.6026ms)
+✔ spaces and line breaks before the reported URL never activate the SMS branch (7848.7423ms)
+✔ the complete sunwin.org.vc domain is scored identically through both endpoints and input fields (7812.6054ms)
+✔ reported Facebook and Google URLs preserve model scores without a contradictory alert (9248.9201ms)
+✔ reported suspicious link uses the repaired URL head with the declared alert policy (1573.3082ms)
+✔ a risky link independently requires review when the message is below the review band (1610.8132ms)
+✔ all embedded URLs are included in the returned branch scores (1545.7645ms)
+✔ both endpoints reject malformed and excessive input (105.2192ms)
+✔ incomplete URL inputs return a useful validation error without a risk score (15342.5926ms)
+✔ image analysis is explicitly unsupported without a local OCR model (4.781ms)
+✔ roleplay does not substitute keyword heuristics or an external model (16.9411ms)
+✔ both inference routes reject unsupported, malformed, and oversized bodies (63.4011ms)
+✔ shared inference admission rejects excess work across both endpoints (3162.7913ms)
+✔ both endpoints reject foreign origins without wildcard CORS and disable caching (34.1347ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 54854.5875
+✔ /api/analyze returns unavailable without a fabricated risk score (1627.4698ms)
+✔ /api/ml-classify returns unavailable without a fabricated risk score (1641.6054ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3321.8288
+PASS: shared quota cannot be bypassed by rotating forwarding headers.
+{
+  "browser": "156.0.4314.42",
+  "origin": "http://127.0.0.1:3101",
+  "errors": [],
+  "failedRequests": [],
+  "externalRequests": [],
+  "widths": [
+    {
+      "width": 320,
+      "viewport": 320,
+      "content": 320
+    },
+    {
+      "width": 390,
+      "viewport": 390,
+      "content": 390
+    },
+    {
+      "width": 768,
+      "viewport": 768,
+      "content": 768
+    },
+    {
+      "width": 1024,
+      "viewport": 1024,
+      "content": 1024
+    },
+    {
+      "width": 1440,
+      "viewport": 1440,
+      "content": 1440
+    }
+  ],
+  "headers": {
+    "connection": "keep-alive",
+    "content-encoding": "gzip",
+    "content-type": "text/html; charset=utf-8",
+    "date": "Mon, 26 Oct 2026 08:23:50 GMT",
+    "keep-alive": "timeout=5",
+    "permissions-policy": "camera=(), microphone=(), geolocation=()",
+    "referrer-policy": "no-referrer",
+    "transfer-encoding": "chunked",
+    "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch, Accept-Encoding",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "DENY",
+    "cache-control": "private, no-store",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'nonce-ZTFjNmIyMjItNDc2Yy00OTIyLTk2YWEtZTRmZTQyOTIxZGRk' 'strict-dynamic'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'"
+  },
+  "viewport": "width=device-width, initial-scale=1",
+  "pdf": {
+    "status": "PASS",
+    "bytes": 100497,
+    "file": "browser-sample-report.pdf",
+    "language": "vi"
+  },
+  "apiDurationMs": 1667,
+  "model": {
+    "mode": "hybrid_text",
+    "riskScore": 2,
+    "riskLevel": "LOW"
+  },
+  "languageToggle": "PASS",
+  "htmlLanguageAfterVietnameseToggle": "vi",
+  "preferencePersistence": "PASS",
+  "status": "PASS"
+}
+{
+  "status": "PASS",
+  "network": [
+    {
+      "url": "http://localhost:3105/test"
+    }
+  ],
+  "automaticPermissionPromptTested": false,
+  "extensionId": "lamffehgecaabedhleppfmgjcagamlih",
+  "manualResult": "85/100 — HIGH. The model indicates high risk. Verify independently before sharing credentials or transferring funds.",
+  "manualMode": "PASS",
+  "automaticPermissionGuard": "PASS",
+  "automaticFixture": {
+    "productionManifestSha256": "c9fa93d5798f685373f503be7b92c4dc19efea29293cc8ec1201c852dd89a448",
+    "difference": "Optional http/https host permissions pregranted in fixture manifest; source scripts unchanged"
+  },
+  "automaticRequests": [
+    {
+      "url": "http://localhost:3105/test"
+    }
+  ],
+  "automaticModeAfterConsent": "PASS",
+  "disableAutomatic": "PASS"
+}
