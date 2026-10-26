@@ -34,10 +34,18 @@ Docker Desktop ban đầu không khởi động được do lỗi đổi tên so
 Lần kiểm tra sau engine đã trả phiên bản `29.7.2`; không xác định được tác nhân
 làm engine phục hồi. Không reset/xóa Docker data để xử lý sự cố này.
 **Build Linux image và smoke test thực tế đều PASS**: UID/GID 10001, filesystem
-chỉ đọc, health 200, dự đoán URL thật 200 (858 ms trong lần kiểm này), không có
+chỉ đọc, health 200, dự đoán URL/SMS thật 200, không có
 `ml_model/data` trong image. Container thử nghiệm đã được xóa sau kiểm tra.
 Evidence: `readiness-evidence/2026-10-26/docker-build.log`, `container-smoke.json`
 và `container.log`. Image local: `scamguard-readiness:20261026`.
+
+Runtime cuối chuyển sang `python:3.14-slim-trixie` (Debian 13), kiểm `pip check`
+trước khi gỡ pip vì phục vụ model không dùng package installer. Module pip không
+còn import được; không tuyên bố đã xóa mọi wheel ensurepip trong Python stdlib.
+Image mới chạy URL 890 ms, SMS 980 ms ở phép đo local. Quét image mức High/Critical
+giảm từ 67 bản ghi/20 advisory xuống 44 bản ghi/8 advisory OS, 0 Critical và
+0 High/Critical ở Node/Python. **Vẫn còn cảnh báo OS chưa có FixedVersion cho
+Debian 13 trong kết quả scan.** Xem [triage container](container-security-triage-2026-10-26.md).
 
 Extension:
 
@@ -65,9 +73,13 @@ Các test Python đã bỏ phụ thuộc fixture dữ liệu riêng nhưng giữ
 holdout và bảo toàn điểm. Bản sao sạch chỉ có `.py`, ba model artifact đã track
 và thư mục prepared rỗng chạy **94/94 PASS**.
 
-Workflow chưa được push/chạy trên GitHub. Cũng chưa thiết lập branch protection;
+Đã push nhánh `codex/production-readiness`, mở [draft PR #1](https://github.com/maingiangu-svg/ScamGuard-AI/pull/1).
+[CI đầu tiên](https://github.com/maingiangu-svg/ScamGuard-AI/actions/runs/40293478509)
+đã PASS trên commit `f56205c6f6aca32037ee786612ffd5308f080a73`, gồm Docker smoke Linux.
+Các sửa runtime tiếp theo cần CI trên SHA mới; xem checks hiện tại của PR.
+Chưa thiết lập branch protection;
 tài khoản hiện tại có quyền push nhưng không có quyền admin repo. Kiểm tra local
-không được gọi là một remote CI run đã thành công.
+và CI thành công không tự thiết lập quyền bắt buộc checks trước merge.
 
 ## 4. Rà soát nhãn và benchmark độc lập
 
@@ -125,10 +137,11 @@ Trong [thư mục evidence](readiness-evidence/2026-10-26/):
 - Lint, TypeScript và production build PASS.
 - Docker build và container smoke PASS trên Linux engine 29.7.2.
 - npm audit: 0 vulnerability; Trivy: 0 vulnerability, 0 misconfiguration fail,
-  0 secret finding trong phạm vi scan tại thời điểm chạy.
+  0 secret finding trong **scan source/dependency dự án**. Scan image riêng có
+  cảnh báo OS nêu trên; không được gộp thành tuyên bố container không có lỗ hổng.
 - `browser-audit.json`, `extension-browser.json`, `ci-integration-final.log`,
   `clean-python-tests.log`, `lighthouse-mobile.report.json`, `trivy.json`.
 
-Những việc cần bằng chứng ngoài workspace: remote CI run và bảo vệ nhánh, kiểm
-native permission/activeTab, xác minh cấu hình sau deploy; sau đó mới quyết định
+Những việc còn trước release: xử lý/chấp nhận rủi ro OS theo hồ sơ triage, bảo vệ
+nhánh, kiểm native permission/activeTab, xác minh cấu hình sau deploy; sau đó mới quyết định
 release. Nhãn chuyên gia/benchmark mới cần người và dữ liệu thực tế theo quy trình.

@@ -6,12 +6,12 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build
 
-FROM python:3.14-slim-bookworm AS runtime
+FROM python:3.14-slim-trixie AS runtime
 WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends libstdc++6 && rm -rf /var/lib/apt/lists/*
 COPY --from=build /usr/local/bin/node /usr/local/bin/node
 COPY ml_model/requirements.txt ./ml_model/requirements.txt
-RUN pip install --no-cache-dir -r ml_model/requirements.txt
+RUN pip install --no-cache-dir -r ml_model/requirements.txt && pip check && python -m pip uninstall --yes pip
 COPY --from=build /app/.next/standalone ./
 COPY --from=build /app/.next/static ./.next/static
 COPY --from=build /app/public ./public

@@ -32,9 +32,20 @@ try {
   assert.equal(result.ml_classifier.model_ready, true);
   assert.equal(result.ml_classifier.mode, 'hybrid_url_only');
   evidence.inferenceMs = Math.round(performance.now() - started);
+  const smsStarted = performance.now();
+  const sms = await fetch('http://127.0.0.1:3110/api/analyze', {method: 'POST',
+    headers: {'Content-Type': 'application/json'}, body: JSON.stringify({text: 'Hello, can we meet at 3 tomorrow?'}),
+    signal: AbortSignal.timeout(25000)});
+  assert.equal(sms.status, 200);
+  const smsResult = await sms.json();
+  assert.equal(smsResult.ml_classifier.model_ready, true);
+  assert.equal(smsResult.ml_classifier.mode, 'hybrid_text');
+  evidence.smsInferenceMs = Math.round(performance.now() - smsStarted);
   evidence.healthcheckExit = docker('exec', name, 'node', '-e',
     "fetch('http://127.0.0.1:8080/api/health').then(r=>process.exit(r.ok?0:1))");
   assert.equal(docker('exec', name, 'python', '-c', "from pathlib import Path; print(Path('/app/ml_model/data').exists())"), 'False');
+  assert.equal(docker('exec', name, 'python', '-c', "import importlib.util; print(importlib.util.find_spec('pip') is None)"), 'True');
+  evidence.packageInstallerRemoved = true;
   evidence.status = 'PASS';
 } catch (error) {
   evidence.error = error.message;

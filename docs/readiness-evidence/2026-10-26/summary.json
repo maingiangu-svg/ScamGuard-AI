@@ -1,19 +1,89 @@
 {
   "date": "2026-10-26",
   "scope": "local readiness verification; no production deployment",
-  "tests": {"python": 94, "node": 34, "inferenceLifecycle": 3, "api": 17, "unavailable": 2, "total": 150, "failed": 0},
+  "tests": {
+    "python": 94,
+    "node": 34,
+    "inferenceLifecycle": 3,
+    "api": 17,
+    "unavailable": 2,
+    "total": 150,
+    "failed": 0
+  },
   "lint": "PASS",
   "typescript": "PASS",
   "productionBuild": "PASS",
   "cleanPythonCopy": "PASS: no private datasets required",
   "fullIntegrationRunner": "PASS",
-  "installedExtension": {"manual": "PASS", "automaticPermissionGuard": "PASS", "automaticPostConsentFixture": "PASS", "disableAutomatic": "PASS", "nativePermissionPromptTested": false, "externalSiteActiveTabTested": false},
-  "container": {"build": "PASS", "smoke": "PASS", "engineVersion": "29.7.2", "user": "10001:10001", "readOnlyRoot": true, "healthStatus": 200, "realInferenceStatus": 200, "inferenceMs": 858, "mlModelDataPackaged": false},
-  "lighthouse": {"environment": "local mobile lab", "performance": 99, "accessibility": 100, "bestPractices": 100, "seo": 100, "cls": 0, "lcpMs": 2207.35985, "tbtMs": 42},
-  "pdf": {"download": "PASS", "vietnameseUnicode": "PASS", "demoAndModelLimitations": "PASS", "visualInspection": "PASS"},
-  "securityScan": {"npmVulnerabilities": 0, "trivyVulnerabilities": 0, "trivyFailedMisconfigurations": 0, "trivySecrets": 0},
-  "expertReview": {"cases": 811, "sms": 14, "url": 797, "pending": 811, "expertLabelsCreated": 0, "complete": false, "newBenchmarkCreated": false, "modelOrDatasetChanged": false},
-  "remoteCi": "NOT_RUN",
+  "installedExtension": {
+    "manual": "PASS",
+    "automaticPermissionGuard": "PASS",
+    "automaticPostConsentFixture": "PASS",
+    "disableAutomatic": "PASS",
+    "nativePermissionPromptTested": false,
+    "externalSiteActiveTabTested": false
+  },
+  "container": {
+    "build": "PASS",
+    "smoke": "PASS",
+    "engineVersion": "29.7.2",
+    "user": "10001:10001",
+    "readOnlyRoot": true,
+    "healthStatus": 200,
+    "realInferenceStatus": 200,
+    "inferenceMs": 890,
+    "mlModelDataPackaged": false,
+    "runtimeBase": "python:3.14-slim-trixie",
+    "debian": "13.7",
+    "smsInferenceMs": 980,
+    "activePipModuleRemoved": true
+  },
+  "lighthouse": {
+    "environment": "local mobile lab",
+    "performance": 99,
+    "accessibility": 100,
+    "bestPractices": 100,
+    "seo": 100,
+    "cls": 0,
+    "lcpMs": 2207.35985,
+    "tbtMs": 42
+  },
+  "pdf": {
+    "download": "PASS",
+    "vietnameseUnicode": "PASS",
+    "demoAndModelLimitations": "PASS",
+    "visualInspection": "PASS"
+  },
+  "securityScan": {
+    "npmVulnerabilities": 0,
+    "trivyVulnerabilities": 0,
+    "trivyFailedMisconfigurations": 0,
+    "trivySecrets": 0,
+    "container": {
+      "highPackageAdvisoryRecords": 44,
+      "uniqueOsAdvisories": 8,
+      "critical": 0,
+      "nodePythonHighCritical": 0,
+      "availableFixedVersionsInScan": 0,
+      "productionRiskAccepted": false
+    }
+  },
+  "expertReview": {
+    "cases": 811,
+    "sms": 14,
+    "url": 797,
+    "pending": 811,
+    "expertLabelsCreated": 0,
+    "complete": false,
+    "newBenchmarkCreated": false,
+    "modelOrDatasetChanged": false
+  },
+  "remoteCi": {
+    "status": "PASS",
+    "sourceCommit": "f56205c6f6aca32037ee786612ffd5308f080a73",
+    "url": "https://github.com/maingiangu-svg/ScamGuard-AI/actions/runs/40293478509",
+    "note": "Subsequent runtime changes require CI on latest PR head."
+  },
   "branchProtection": "NOT_CONFIGURED: current account lacks admin permission",
   "productionDeployment": "NOT_PERFORMED"
 }
