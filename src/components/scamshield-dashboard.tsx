@@ -64,6 +64,8 @@ interface ForensicResult {
     extracted_url?: string;
     meta_formula?: string | null;
     inference_ms?: number;
+    calibrated_probability?: number | null;
+    calibration_status?: 'source_label_calibrated' | 'unavailable';
     mode?: string;
     model_prediction_label?: 0 | 1;
     decision_threshold?: number;
@@ -1161,6 +1163,16 @@ export default function ScamShieldDashboard({initialOnboarding, initialLanguage,
                         {lang === 'vi'
                           ? 'Điểm mô hình chưa được hiệu chuẩn, không phải xác suất lừa đảo.'
                           : 'The model score is uncalibrated; it is not a probability of fraud.'}
+                      </p>
+                    )}
+                    {result.ml_classifier?.calibration_status === 'source_label_calibrated'
+                      && typeof result.ml_classifier.calibrated_probability === 'number'
+                      && Number.isFinite(result.ml_classifier.calibrated_probability) && (
+                      <p className={`text-xs ${isMuted ? 'text-[#A19E95]' : 'text-[#57534E]'}`}>
+                        {lang === 'vi' ? 'Xác suất mô hình cho nhãn 1 sau hiệu chuẩn: ' : 'Calibrated model estimate for label 1: '}
+                        {(result.ml_classifier.calibrated_probability * 100).toFixed(1)}%.
+                        {' '}{lang === 'vi' ? 'Theo bộ nhãn nguồn; chưa kiểm định trên benchmark tiếng Việt độc lập.'
+                          : 'Relative to source labels; not validated on an independent Vietnamese benchmark.'}
                       </p>
                     )}
                   </div>

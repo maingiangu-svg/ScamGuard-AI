@@ -2,9 +2,26 @@
 
 ## Phạm vi đã thống nhất
 
-Chưa có chuyên gia hoặc bộ dữ liệu tiếng Việt mới đã xác minh. Công việc hiện tại
-là chuẩn bị biểu mẫu và quy trình; không gán nhãn chuyên gia, tự đổi nhãn hoặc
-huấn luyện lại model đang phục vụ.
+Chưa có chuyên gia hoặc bộ dữ liệu tiếng Việt mới đã xác minh. Sau bước chuẩn bị,
+chủ dự án cho phép AI rà soát và huấn luyện có giám sát với provenance được giữ
+rõ ràng. AI không ký thay chuyên gia; hai biểu mẫu chuyên gia vẫn chưa được điền.
+
+## Kết quả AI rà soát và quyết định người dùng
+
+811 ứng viên được rà soát: đọc nội dung 14 SMS và kiểm tra mức đủ bằng chứng của
+797 URL. Không mở các URL nghi vấn; chuỗi URL đơn thuần không xác minh được nhãn.
+AI đề xuất ba SMS nhãn 0 và một SMS nhãn 1. Người dùng xác nhận nhãn 1 cho case
+SMISHX-0704; quyết định được ràng buộc hash nội dung và ghi `user_decision`.
+Đây không phải nhãn chuyên gia. Mười SMS quảng cáo/thiếu ngữ cảnh và toàn bộ
+797 URL giữ `unknown`, cách ly theo lựa chọn người dùng.
+
+Ledger riêng ở `ml_model/data/prepared/ai_review_2026-10-26/` giữ mọi đề xuất,
+lý do và provenance. Không ghi đè nhãn nguồn hay biểu mẫu reviewer. Toàn bộ
+nhóm train chứa 807 case unknown bị loại khỏi lần fit mới (1.492 hàng); còn
+3.786 SMS và 31.299 URL. Ba SMS được AI đề xuất nhãn 0 giữ nhãn nguồn; chỉ
+case đã được người dùng duyệt nhận override. Mọi phép fit/hiệu chuẩn chỉ dùng
+train, tách nhóm ở cả vòng trong và vòng ngoài. Chi tiết trong
+[báo cáo hiện tại](completion-results-2026-10-26.md).
 
 Gói `ml_model/data/prepared/expert_review_2026-10-26/` chứa 811 ứng viên từ train:
 14 SMS và 797 URL. **Đây là tập rà soát dữ liệu train, không phải benchmark mới.**

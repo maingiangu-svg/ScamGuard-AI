@@ -78,6 +78,12 @@ try {
   assert.equal(result.ml_classifier.model_ready, true);
   assert.equal(result.web_intelligence.verified_live, false);
   report.model = {mode: result.ml_classifier.mode, riskScore: result.riskScore, riskLevel: result.riskLevel};
+  assert.equal(result.ml_classifier.calibration_status, 'source_label_calibrated');
+  assert.equal(result.ml_classifier.calibrated_probability_expert_verified, false);
+  const calibrated = page.getByText(/^Calibrated model estimate for label 1:/);
+  await calibrated.waitFor();
+  assert.ok((await calibrated.innerText()).includes((result.ml_classifier.calibrated_probability * 100).toFixed(1) + '%'));
+  report.model.sourceCalibratedEstimate = result.ml_classifier.calibrated_probability;
   await page.screenshot({path: path.join(output, 'browser-result-after.png'), fullPage: true});
   await page.getByRole('button', {name: 'VI', exact: true}).click();
   assert.ok(await page.getByRole('button', {name: 'Kiểm tra nội dung', exact: true}).isVisible());

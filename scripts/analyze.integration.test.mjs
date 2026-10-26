@@ -25,6 +25,10 @@ async function analyze(body) {
   assert.equal(result.ml_classifier.training.registered_domain_isolation, true);
   assert.equal(result.ml_classifier.training.campaign_independence_proven, false);
   assert.equal(result.ml_classifier.training.paired_training_samples, 0);
+  assert.equal(result.ml_classifier.calibration_status, 'source_label_calibrated');
+  assert.ok(Number.isFinite(result.ml_classifier.calibrated_probability));
+  assert.ok(result.ml_classifier.calibrated_probability >= 0 && result.ml_classifier.calibrated_probability <= 1);
+  assert.equal(result.ml_classifier.calibrated_probability_expert_verified, false);
   return result;
 }
 

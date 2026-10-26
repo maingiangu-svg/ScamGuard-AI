@@ -4,6 +4,7 @@ import csv
 import hashlib
 import json
 import random
+from datetime import datetime, timezone
 from pathlib import Path
 
 
@@ -71,11 +72,59 @@ def inspect_reviews(directory):
                 expert_verification_by_tool=False, labels_or_model_changed=0)
 
 
+def record_ai_review(package, decisions, output):
+    """Record content triage without signing either independent expert form."""
+    identities = json.loads((package / 'identities.json').read_text(encoding='utf-8'))
+    with (package / 'reviewer-a.csv').open(encoding='utf-8-sig', newline='') as file:
+        rows = list(csv.DictReader(file))
+    if len(rows) != len(identities) or {row['case_id'] for row in rows} != identities.keys():
+        raise ValueError('Review case identity mismatch')
+    if set(decisions) - identities.keys():
+        raise ValueError('Unknown review case ID')
+    records = []
+    reviewed_at = datetime.now(timezone.utc).isoformat()
+    for row in rows:
+        identity = identities[row['case_id']]
+        if (digest(row['input']) != identity['display_sha256'] or row['branch'] != identity['branch']
+                or row['input_sha256'] != identity['input_sha256']):
+            raise ValueError('Review content identity mismatch')
+        decision = decisions.get(row['case_id'])
+        if row['branch'] == 'sms' and decision is None:
+            raise ValueError('Every SMS needs an explicit content review')
+        label = decision.get('label') if decision else 'unknown'
+        if (label != 'unknown' and (type(label) is not int or label not in (0, 1))) \
+                or (decision and (decision.get('expert_verified') or not decision.get('rationale', '').strip())):
+            raise ValueError('AI review cannot create expert verification or an unsupported label')
+        if row['branch'] == 'url' and label != 'unknown':
+            raise ValueError('URL-only evidence cannot verify a positive or negative label')
+        records.append(dict(case_id=row['case_id'], branch=row['branch'],
+            input_sha256=identity['input_sha256'], proposed_label=label,
+            provenance='ai_content_review' if row['branch'] == 'sms' else 'url_evidence_sufficiency_check',
+            reviewer='Codex (AI)', reviewed_at=reviewed_at, expert_verified=False,
+            quarantine_required=label == 'unknown', automatic_training_eligible=False,
+            rationale=decision['rationale'] if decision else
+                'Only a URL string is available; no dated capture or independent page evidence verifies its historical label.'))
+    output.mkdir(parents=True, exist_ok=False)
+    (output / 'ai_review.jsonl').write_text(''.join(json.dumps(row, ensure_ascii=False) + '\n'
+                                                   for row in records), encoding='utf-8')
+    (output / 'quarantine_case_ids.json').write_text(json.dumps([
+        row['case_id'] for row in records if row['quarantine_required']], indent=2), encoding='utf-8')
+    summary = dict(cases=len(records), sms_content_reviewed=sum(r['branch'] == 'sms' for r in records),
+        url_evidence_audited=sum(r['branch'] == 'url' for r in records),
+        ai_label_proposals=sum(r['proposed_label'] != 'unknown' for r in records),
+        unresolved=sum(r['quarantine_required'] for r in records), expert_labels_created=0,
+        automatic_dataset_changes=0, benchmark_ready=False)
+    (output / 'summary.json').write_text(json.dumps(summary, indent=2), encoding='utf-8')
+    return summary
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('command', choices=['prepare', 'verify'])
+    parser.add_argument('command', choices=['prepare', 'verify', 'ai-review'])
     parser.add_argument('--audit', type=Path, default=Path(__file__).parent / 'data/prepared/label_audit_2026-10-26')
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--package', type=Path)
+    parser.add_argument('--decisions', type=Path)
     args = parser.parse_args()
     if args.command == 'prepare':
         records = []
@@ -83,6 +132,10 @@ if __name__ == '__main__':
             records.extend(dict(json.loads(line), branch=branch) for line in
                            (args.audit / f'{branch}_blind_review.jsonl').read_text(encoding='utf-8').splitlines() if line)
         result = create_package(records, args.output)
+    elif args.command == 'ai-review':
+        if args.package is None or args.decisions is None:
+            parser.error('ai-review requires --package and --decisions')
+        result = record_ai_review(args.package, json.loads(args.decisions.read_text(encoding='utf-8')), args.output)
     else:
         result = inspect_reviews(args.output)
     print(json.dumps(result, ensure_ascii=False))

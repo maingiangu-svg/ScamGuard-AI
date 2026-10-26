@@ -61,6 +61,9 @@ def load_bundle():
         raise ValueError("Estimator runtime version mismatch")
     if bundle["sms"]["threshold"] != .65 or bundle["url"]["threshold"] != .5:
         raise ValueError("Hybrid threshold mismatch")
+    if any('probability_model' in bundle[branch] for branch in ('sms', 'url')):
+        if manifest.get('calibration_gate_pass') is not True or not bundle['training'].get('calibrated_estimate_available'):
+            raise ValueError('Calibrated estimate requires a passed, manifest-bound calibration gate')
     return bundle
 
 
@@ -95,6 +98,7 @@ def classify(text="", url=""):
         bundle = load_bundle()
         normalized = text_input(text)
         text_result, url_result, signals = None, None, []
+        text_calibrated, url_calibrated = None, None
         selected_url = ""
         if has_text:
             head = bundle["sms"]
@@ -102,16 +106,23 @@ def classify(text="", url=""):
             signals = text_signals(head["model"], normalized)
             text_result = {"score": pt, "model_ready": True, "top_features": signals,
                            "threshold": head["threshold"], "model_id": head["model_id"]}
+            if 'probability_model' in head:
+                text_calibrated = float(probability(head['probability_model'], [normalized])[0])
+                text_result['calibrated_probability'] = text_calibrated
         if links:
             head = bundle["url"]
             # Keep the exact URL preprocessing used to train this URL head.
             values = probability(head["model"], links)
             pu = float(values.max())
             selected_url = links[int(values.argmax())]
+            if 'probability_model' in head:
+                url_calibrated = float(probability(head['probability_model'], links)[int(values.argmax())])
             url_result = {"score": pu, "model_ready": True, "top_features": [],
                           "threshold": head["threshold"], "model_id": head["model_id"],
                           "target": "upstream_good_bad_url_source_labels",
                           "urls": [{"url": u, "score": float(p)} for u, p in zip(links, values)]}
+            if url_calibrated is not None:
+                url_result['calibrated_probability'] = url_calibrated
         if text_result is not None:
             raw_score, branch, mode = pt, "sms", "hybrid_text"
         elif url_result is not None:
@@ -133,6 +144,10 @@ def classify(text="", url=""):
                 "mode": mode, "meta_formula": None, "inference_ms": round((time.perf_counter() - started) * 1000, 2),
                 "model_prediction_label": int(raw_score >= bundle[branch]["threshold"]),
                 "decision_threshold": bundle[branch]["threshold"], "decision_branch": branch,
+                "calibrated_probability": text_calibrated if branch == 'sms' else url_calibrated,
+                "calibration_status": 'source_label_calibrated' if
+                    (text_calibrated if branch == 'sms' else url_calibrated) is not None else 'unavailable',
+                "calibrated_probability_expert_verified": False,
                 "training": bundle["training"]}
     except (OSError, ValueError, KeyError, TypeError, AttributeError, EOFError, RuntimeError, pickle.UnpicklingError):
         return {**unavailable, "error": "MODEL_UNAVAILABLE_OR_INCOMPATIBLE"}

@@ -3,10 +3,44 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from expert_review import create_package, inspect_reviews
+from expert_review import create_package, inspect_reviews, record_ai_review
 
 
 class ExpertReviewTests(unittest.TestCase):
+    def test_ai_review_is_separate_from_expert_labels_and_unknowns_remain_quarantined(self):
+        with tempfile.TemporaryDirectory(dir=Path(__file__).parent / 'models') as folder:
+            root = Path(folder) / 'review'
+            create_package([dict(case_id='A', branch='sms', input='example message'),
+                            dict(case_id='B', branch='url', input='https://example.com/')], root)
+            before = (root / 'reviewer-a.csv').read_bytes()
+            result = record_ai_review(root, {'A': {'label': 0, 'rationale': 'Content review only.'}}, Path(folder) / 'ai')
+            self.assertEqual(result['ai_label_proposals'], 1)
+            self.assertEqual(result['unresolved'], 1)
+            self.assertEqual(result['expert_labels_created'], 0)
+            self.assertFalse(result['benchmark_ready'])
+            self.assertEqual((root / 'reviewer-a.csv').read_bytes(), before)
+            self.assertEqual(inspect_reviews(root)['pending'], 2)
+
+    def test_ai_review_rejects_fabricated_expertise_or_url_only_labels(self):
+        with tempfile.TemporaryDirectory(dir=Path(__file__).parent / 'models') as folder:
+            root = Path(folder) / 'review'
+            create_package([dict(case_id='B', branch='url', input='https://example.com/')], root)
+            for decision in [dict(label=0, rationale='Brand alone'),
+                             dict(label='unknown', rationale='No evidence', expert_verified=True)]:
+                with self.assertRaises(ValueError):
+                    record_ai_review(root, {'B': decision}, Path(folder) / 'ai')
+
+    def test_ai_review_requires_every_sms_and_preserves_input_identity(self):
+        with tempfile.TemporaryDirectory(dir=Path(__file__).parent / 'models') as folder:
+            root = Path(folder) / 'review'
+            create_package([dict(case_id='A', branch='sms', input='original')], root)
+            with self.assertRaises(ValueError):
+                record_ai_review(root, {}, Path(folder) / 'ai')
+            path = root / 'reviewer-a.csv'
+            path.write_text(path.read_text(encoding='utf-8-sig').replace('original', 'changed'), encoding='utf-8-sig')
+            with self.assertRaises(ValueError):
+                record_ai_review(root, {'A': dict(label=0, rationale='review')}, Path(folder) / 'ai')
+
     def test_blind_forms_preserve_content_identity_without_model_labels(self):
         rows = [dict(case_id='A', branch='sms', input='=FORMULA()', label=1, score=.99),
                 dict(case_id='B', branch='url', input='https://example.com/', label=0)]
