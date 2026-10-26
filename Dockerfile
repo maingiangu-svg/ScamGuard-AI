@@ -19,6 +19,9 @@ COPY ml_model/*.py ./ml_model/
 COPY ml_model/models/model_bundle.pkl ./ml_model/models/model_bundle.pkl
 COPY ml_model/models/hybrid_bundle.pkl ./ml_model/models/hybrid_bundle.pkl
 COPY ml_model/models/hybrid_manifest.json ./ml_model/models/hybrid_manifest.json
-ENV NODE_ENV=production HOSTNAME=0.0.0.0 PORT=8080 PYTHON_EXECUTABLE=python PYTHONUTF8=1 OMP_NUM_THREADS=1
+RUN chown -R 10001:10001 /app/.next
+ENV NODE_ENV=production HOSTNAME=0.0.0.0 PORT=8080 PYTHON_EXECUTABLE=python PYTHONUTF8=1 PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=1
+USER 10001:10001
 EXPOSE 8080
+HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 CMD ["node", "-e", "fetch('http://127.0.0.1:'+(process.env.PORT||8080)+'/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
 CMD ["node", "server.js"]

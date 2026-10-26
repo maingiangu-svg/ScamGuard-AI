@@ -55,6 +55,7 @@ ml_model/models/metrics.json
 
 # Local Python environment and caches
 /.local-runtime/
+/tools/audit/node_modules/
 /.venv/
 __pycache__/
 *.pyc

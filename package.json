@@ -6,15 +6,19 @@
     "dev": "next dev --webpack",
     "build": "next build --webpack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "check:types": "tsc --noEmit",
+    "test": "node --test scripts/analysis-assessment.test.mjs scripts/request-body.test.mjs scripts/api-policy.test.mjs scripts/extension.test.mjs",
+    "test:inference": "node --test scripts/inference-lifecycle.test.mjs",
+    "test:api": "node --test --test-concurrency=1 scripts/analyze.integration.test.mjs scripts/api-security.integration.test.mjs",
+    "test:unavailable": "node --test scripts/model-unavailable.integration.test.mjs"
   },
   "dependencies": {
     "canvas-confetti": "^1.9.4",
     "clsx": "^2.1.1",
-    "html2canvas": "^1.4.1",
     "jspdf": "^4.2.1",
     "lucide-react": "^1.31.0",
-    "next": "16.3.1",
+    "next": "16.4.3",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "tailwind-merge": "^3.6.0"
@@ -26,7 +30,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.3.1",
+    "eslint-config-next": "16.4.3",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

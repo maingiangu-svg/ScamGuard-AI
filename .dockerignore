@@ -9,3 +9,7 @@ ml_model/models/*
 !ml_model/models/hybrid_bundle.pkl
 !ml_model/models/hybrid_manifest.json
 .local-runtime
+tools
+.github
+docs/audit-evidence
+docs/readiness-evidence
