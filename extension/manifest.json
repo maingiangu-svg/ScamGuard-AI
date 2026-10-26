@@ -1,24 +1,20 @@
 {
   "manifest_version": 3,
   "name": "ScamGuard AI Threat Detector",
-  "version": "1.0.0",
+  "version": "1.1.0",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAuXHTSaWalh5U0k65taFI6Z91aSry5I1yx7CdVvaugyEvmq1ZfjNSUyvOmOv9R3N93Kv8NZNAaSRbZ5iBfvY4Rk32zc0qce6YQ5mkNLNBktyQdPf0Ih+ckjnJRrNOtivUVGSEtIGTsiKyDScQILHRRiBwr26NyyYTFDBJPmrE9GOyTXFbrCBElwg3umdODkBq4zD5Rc5bzmVcpTxr2ZBJSHwE/sKmjy1rlbKTMW7nqO8D7uMKtlUxYeocVUER3TYa0W04yt+DxZyo7qe2c5TH4Q460+JnnmViq37AfZIgXwbx757im1N2GN0EWSW36dI9r3NAKeQIKgoMRfd1vpRWdQIDAQAB",
   "description": "Chrome Extension for ScamGuard AI Threat Detector",
   "permissions": [
     "activeTab",
-    "scripting"
+    "scripting",
+    "storage"
   ],
   "host_permissions": [
-    "<all_urls>",
-    "http://localhost:3000/*"
+    "http://localhost/*"
   ],
+  "optional_host_permissions": ["http://*/*", "https://*/*"],
+  "action": {"default_popup": "popup.html", "default_title": "ScamGuard — chọn chế độ quét"},
   "background": {
     "service_worker": "background.js"
-  },
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "css": ["overlay.css"],
-      "js": ["content.js"]
-    }
-  ]
+  }
 }

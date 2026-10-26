@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="vi">
+<head><meta charset="utf-8"><title>ScamGuard</title><link rel="stylesheet" href="popup.css"></head>
+<body>
+  <h1>ScamGuard</h1>
+  <fieldset><legend>Chế độ kiểm tra</legend>
+    <label><input type="radio" name="mode" value="manual" checked> Quét thủ công</label>
+    <p>Chỉ kiểm tra trang khi bạn bấm nút bên dưới.</p>
+    <label><input type="radio" name="mode" value="automatic"> Tự quét trang web</label>
+    <p>Cần bạn cấp quyền truy cập trang web. Có thể tắt bất cứ lúc nào.</p>
+  </fieldset>
+  <button id="check" type="button">Kiểm tra trang hiện tại</button>
+  <p id="status" role="status" aria-live="polite"></p>
+  <small>Gửi địa chỉ trang đã bỏ query, fragment và thông tin đăng nhập tới dịch vụ local ở localhost:3000. Đường dẫn vẫn có thể chứa dữ liệu cá nhân. Không có cảnh báo không đồng nghĩa an toàn.</small>
+  <script src="popup.js"></script>
+</body>
+</html>
