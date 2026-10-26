@@ -3,6 +3,13 @@ import path from 'node:path';
 import { existsSync } from 'node:fs';
 import type { MLClassification } from './analysis-assessment';
 
+export function getMLInputError(ml: MLClassification | null, language: string): string | null {
+  if (ml?.error !== 'INVALID_URL') return null;
+  return language === 'vi'
+    ? 'URL chưa đầy đủ hoặc không hợp lệ. Hãy nhập đầy đủ tên miền, ví dụ https://example.com.'
+    : 'The URL is incomplete or invalid. Enter a complete hostname, for example https://example.com.';
+}
+
 export function parseInput(body: unknown): {text: string; url: string; language: string} | null {
   if (!body || typeof body !== 'object' || Array.isArray(body)) return null;
   const input = body as Record<string, unknown>;

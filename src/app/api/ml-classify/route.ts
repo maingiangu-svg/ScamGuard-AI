@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { parseInput, runMLClassifier } from '@/lib/ml-inference';
+import { getMLInputError, parseInput, runMLClassifier } from '@/lib/ml-inference';
 import { isMLAvailable } from '@/lib/analysis-assessment';
 
 export const runtime = 'nodejs';
@@ -14,6 +14,8 @@ export async function POST(req: NextRequest) {
   const input = parseInput(await req.json().catch(() => null));
   if (!input) return NextResponse.json({error: 'Provide valid text or URL.'}, {status: 400, headers: corsHeaders});
   const result = await runMLClassifier(input.text, input.url);
+  const inputError = getMLInputError(result, input.language);
+  if (inputError) return NextResponse.json({error: inputError}, {status: 400, headers: corsHeaders});
   if (!isMLAvailable(result)) {
     return NextResponse.json({error: 'Local model unavailable.', model_ready: false},
       {status: 503, headers: corsHeaders});

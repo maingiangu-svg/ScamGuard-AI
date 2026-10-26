@@ -29,6 +29,85 @@ def bundle(text="hello", sms_score=.1, urls=None):
 
 
 class HybridPredictionTests(unittest.TestCase):
+    def test_incomplete_url_only_input_is_invalid_before_either_model_runs(self):
+        for raw in ["https://", "http://", " HTTPS:// \n", "https:", "https:/",
+                    "https://?query=1", "https://.", "www.", "(https://)"]:
+            for field in ["text", "url"]:
+                with self.subTest(raw=raw, field=field), patch.object(live, "load_bundle", return_value=bundle(raw, 1.0)) as loader:
+                    result = live.classify(**{field: raw})
+                    self.assertEqual(result.get("error"), "INVALID_URL")
+                    self.assertIsNone(result["ml_risk_score"])
+                    self.assertNotIn("decision_branch", result)
+                    loader.assert_not_called()
+
+    def test_actual_message_mentioning_an_incomplete_url_remains_sms_input(self):
+        text = "The link starts with https:// but I did not copy the rest"
+        models = bundle(text, .1)
+        with patch.object(live, "load_bundle", return_value=models):
+            result = live.classify(text=text)
+        self.assertEqual(result["decision_branch"], "sms")
+        self.assertEqual(result["ml_risk_score"], 10)
+
+    def test_url_only_routing_ignores_whitespace_wrappers_and_multiple_links(self):
+        url = "https://uccle.monopinion.belgium.be/profiles/sunwinorgvc/badges"
+        other = "https://example.com/"
+        for text in [url, " " + url, "\n\t" + url + " \r\n", "(" + url + ")",
+                     "[" + url + "]", url + " \n " + other]:
+            models = bundle(text, .89, {url: .6969195741583459, other: .1})
+            with self.subTest(text=text), patch.object(live, "load_bundle", return_value=models):
+                result = live.classify(text=text)
+            self.assertEqual(result["mode"], "hybrid_url_only")
+            self.assertEqual(result["decision_branch"], "url")
+            self.assertIsNone(result["text_result"])
+            self.assertEqual(models["sms"]["model"].rows, [])
+            self.assertEqual(result["ml_risk_score"], 70)
+            self.assertFalse(result["url_review_required"])
+
+    def test_schemeless_domains_are_extracted_in_full_including_unlisted_tlds(self):
+        for raw in ["sunwin.org.vc", "sub.example.com.au/Case?next=1", "example.dev",
+                    "example.xn--p1ai"]:
+            url = "http://" + raw
+            models = bundle(urls={url: .8770976968115821})
+            with self.subTest(raw=raw), patch.object(live, "load_bundle", return_value=models):
+                result = live.classify(text=" " + raw + " ")
+            self.assertEqual(models["url"]["model"].rows, [url])
+            self.assertEqual(result["extracted_url"], url)
+            self.assertEqual(result["decision_branch"], "url")
+            self.assertIsNone(result["text_result"])
+            self.assertEqual(result["ml_risk_score"], 88)
+
+    def test_real_text_around_complete_bare_domains_still_uses_sms_and_url_heads(self):
+        text = "Kiểm tra sunwin.org.vc, rồi gọi lại."
+        url = "http://sunwin.org.vc"
+        models = bundle(text, .1, {url: .88})
+        with patch.object(live, "load_bundle", return_value=models):
+            result = live.classify(text=text)
+        self.assertEqual(models["sms"]["model"].rows, [text_input(text)])
+        self.assertEqual(models["url"]["model"].rows, [url])
+        self.assertEqual(result["decision_branch"], "sms")
+        self.assertEqual(result["ml_risk_score"], 10)
+        self.assertTrue(result["url_review_required"])
+
+    def test_email_addresses_and_decimal_numbers_are_not_extracted_as_urls(self):
+        for text in ["Email name@sunwin.org.vc", "Version 1.23.45"]:
+            with self.subTest(text=text), patch.object(live, "load_bundle", return_value=bundle(text)):
+                result = live.classify(text=text)
+            self.assertEqual(result["decision_branch"], "sms")
+            self.assertIsNone(result["url_result"])
+
+    def test_url_only_alerts_use_the_raw_url_threshold_not_the_sms_review_band(self):
+        url = "https://www.facebook.com/"
+        for raw, expected_label, expected_action in [
+            (.06, 0, "CLEAR"), (.347895, 0, "CLEAR"), (.4999, 0, "CLEAR"),
+            (.5, 1, "REVIEW"), (.79, 1, "REVIEW"), (.9, 1, "BLOCK"),
+        ]:
+            with self.subTest(raw=raw), patch.object(live, "load_bundle", return_value=bundle(urls={url: raw})):
+                result = live.classify(url=url)
+            self.assertEqual(result["model_prediction_label"], expected_label)
+            self.assertEqual(result["action"], expected_action)
+            self.assertEqual(result["ml_risk_score"], round(raw * 100))
+            self.assertEqual(result["url_result"]["score"], raw)
+
     def test_sms_keeps_the_processed_preprocessing_and_score(self):
         text = "Mã 123456: [https://Bank.Example/Login]"
         models = bundle(text, .7)

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getClientIp, rateLimit } from '@/lib/rate-limit';
 import { createAssessment, getRiskLevels } from '@/lib/analysis-assessment';
-import { parseInput, runMLClassifier } from '@/lib/ml-inference';
+import { getMLInputError, parseInput, runMLClassifier } from '@/lib/ml-inference';
 import { checkBrandDomain, getDomain } from '@/lib/url-verify';
 
 export const runtime = 'nodejs';
@@ -27,19 +27,22 @@ export async function POST(req: NextRequest) {
   const input = parseInput(await req.json().catch(() => null));
   if (!input) return NextResponse.json({error: 'Provide text (up to 20,000 characters) or an HTTP URL.'}, {status: 400, headers: corsHeaders});
   const ml = await runMLClassifier(input.text, input.url);
+  const inputError = getMLInputError(ml, input.language);
+  if (inputError) return NextResponse.json({error: inputError}, {status: 400, headers: corsHeaders});
   const assessment = createAssessment(ml, !!ml?.url_result, input.language);
   if (!assessment || !ml) {
     return NextResponse.json({error: 'Mô hình local chưa sẵn sàng hoặc không tương thích. Cần train bộ model hiện tại.'},
       {status: 503, headers: corsHeaders});
   }
   const {riskScore, riskLevel, reasons, detectedPatterns, summary, scam_type, urgent_actions} = assessment;
-  const threatLevel = riskLevel === 'MEDIUM' ? 'MEDIUM' : getRiskLevels(riskScore).threatLevel;
+  const threatLevel = riskLevel === 'HIGH' ? getRiskLevels(riskScore).threatLevel
+    : riskLevel === 'MEDIUM' ? 'MEDIUM' : 'LOW';
   const needsReview = riskLevel !== 'LOW';
   const domain = getDomain(ml.extracted_url || '');
   const brand = domain ? checkBrandDomain(domain) : null;
   // Domain annotations are separate context. They never bypass ML or modify its score.
   return NextResponse.json({
-    ...assessment, risk_score: riskScore, scam_detected: riskScore >= 80, threat_level: threatLevel,
+    ...assessment, risk_score: riskScore, scam_detected: riskLevel === 'HIGH', threat_level: threatLevel,
     executive_summary: summary, scam_type, urgent_actions,
     web_intelligence: {
       detected: !!domain, url: ml.extracted_url || null, domain,

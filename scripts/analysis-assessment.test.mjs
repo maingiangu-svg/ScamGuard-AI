@@ -15,6 +15,30 @@ test('a low score has no threat evidence or absolute safety claim', () => {
   assert.doesNotMatch(result.summary, /nội dung an toàn\./i);
 });
 
+test('URL results below their detection threshold do not become suspicious at 30 points', () => {
+  for (const score of [35, 44, 50]) {
+    const result = createAssessment(ml(score, {
+      action: 'CLEAR', decision_branch: 'url', mode: 'hybrid_url_only', model_prediction_label: 0, decision_threshold: .5,
+      ml_top_signals: [],
+    }), true);
+    assert.equal(result.riskLevel, 'LOW');
+    assert.equal(result.riskScore, score);
+    assert.deepEqual(result.reasons, []);
+    assert.deepEqual(result.urgent_actions, []);
+    assert.match(result.summary, /ngưỡng/);
+    assert.doesNotMatch(result.summary, /dưới 30/);
+  }
+});
+
+test('URL positives and high risk still require action, independently of SMS', () => {
+  for (const [score, action, level] of [[50, 'REVIEW', 'MEDIUM'], [95, 'BLOCK', 'HIGH']]) {
+    const result = createAssessment(ml(score, {action, decision_branch: 'url', model_prediction_label: 1}), true);
+    assert.equal(result.riskLevel, level);
+    assert.equal(result.riskScore, score);
+    assert.ok(result.urgent_actions.length);
+  }
+});
+
 test('every valid ML score is preserved without a whitelist or external blend', () => {
   for (const score of [0, 11, 30, 35, 79, 80, 100]) {
     assert.equal(createAssessment(ml(score), true).riskScore, score);

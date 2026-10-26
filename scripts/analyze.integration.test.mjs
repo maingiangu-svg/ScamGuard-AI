@@ -64,6 +64,64 @@ test('a URL-only request is scored by the URL estimator, with no forced whitelis
   assert.equal(result.ml_classifier.model_prediction_label, Number(result.ml_classifier.url_result.score >= .5));
 });
 
+test('spaces and line breaks before the reported URL never activate the SMS branch', async () => {
+  const url = 'https://uccle.monopinion.belgium.be/profiles/sunwinorgvc/badges';
+  const baseline = await analyze({url});
+  for (const textInput of [url, ' ' + url, '\n\t' + url + ' \r\n', '(' + url + ')']) {
+    const result = await analyze({textInput, language: 'vi'});
+    assert.equal(result.ml_classifier.mode, 'hybrid_url_only');
+    assert.equal(result.ml_classifier.decision_branch, 'url');
+    assert.equal(result.ml_classifier.text_result, null);
+    assert.equal(result.ml_classifier.text_score, null);
+    assert.equal(result.riskScore, baseline.riskScore);
+    assert.equal(result.ml_classifier.url_result.score, baseline.ml_classifier.url_result.score);
+    assert.equal(result.ml_classifier.url_review_required, false);
+    assert.equal(result.riskLevel, 'MEDIUM');
+    assert.doesNotMatch(result.summary, /SMS/);
+  }
+});
+
+test('the complete sunwin.org.vc domain is scored identically through both endpoints and input fields', async () => {
+  const url = 'http://sunwin.org.vc';
+  const baseline = await analyze({url});
+  for (const textInput of ['sunwin.org.vc', ' sunwin.org.vc \n']) {
+    const result = await analyze({textInput});
+    assert.equal(result.ml_classifier.decision_branch, 'url');
+    assert.equal(result.ml_classifier.text_result, null);
+    assert.equal(result.web_intelligence.domain, 'sunwin.org.vc');
+    assert.equal(result.ml_classifier.extracted_url, url);
+    assert.equal(result.ml_classifier.url_result.urls.length, 1);
+    assert.equal(result.ml_classifier.url_result.urls[0].url, url);
+    assert.equal(result.riskScore, baseline.riskScore);
+    const response = await post('/api/ml-classify', {textInput});
+    assert.equal(response.status, 200);
+    const prediction = await response.json();
+    assert.equal(prediction.decision_branch, 'url');
+    assert.equal(prediction.extracted_url, url);
+    assert.equal(prediction.ml_risk_score, baseline.riskScore);
+  }
+});
+
+test('reported Facebook and Google URLs preserve model scores without a contradictory alert', async () => {
+  for (const url of ['https://www.facebook.com/', 'https://facebook.com/', 'https://www.google.com/']) {
+    const result = await analyze({textInput: url});
+    assert.equal(result.ml_classifier.decision_branch, 'url');
+    assert.ok(result.ml_classifier.url_result.score < result.ml_classifier.decision_threshold);
+    assert.equal(result.ml_classifier.model_prediction_label, 0);
+    assert.equal(result.ml_classifier.action, 'CLEAR');
+    assert.equal(result.riskLevel, 'LOW');
+    assert.equal(result.threat_level, 'LOW');
+    assert.equal(result.scam_detected, false);
+    assert.deepEqual(result.red_flags, []);
+    assert.deepEqual(result.urgent_actions, []);
+    const classifier = await post('/api/ml-classify', {url});
+    assert.equal(classifier.status, 200);
+    const prediction = await classifier.json();
+    assert.equal(prediction.action, 'CLEAR');
+    assert.equal(prediction.ml_risk_score, result.riskScore);
+  }
+});
+
 test('reported suspicious link uses the repaired URL head with the declared alert policy', async () => {
   const result = await analyze({textInput:'https://qi.lv/F0i'});
   assert.equal(result.ml_classifier.text_result, null);
@@ -97,6 +155,24 @@ test('both endpoints reject malformed and excessive input', async () => {
   for (const route of ['/api/analyze', '/api/ml-classify']) {
     for (const body of [{textInput:7}, {textInput:'a'.repeat(20001)}, {url:'file:///secret'}, {}]) {
       assert.equal((await post(route, body)).status, 400);
+    }
+  }
+});
+
+test('incomplete URL inputs return a useful validation error without a risk score', async () => {
+  for (const route of ['/api/analyze', '/api/ml-classify']) {
+    for (const body of [
+      {textInput:'https://', language:'vi'}, {textInput:' \nHTTPS:// ', language:'vi'},
+      {textInput:'https:/', language:'vi'}, {textInput:'www.', language:'vi'},
+      {url:'https://', language:'en'},
+    ]) {
+      const response = await post(route, body);
+      assert.equal(response.status, 400);
+      const result = await response.json();
+      assert.match(result.error, body.language === 'vi' ? /URL.*tên miền/ : /URL.*hostname/);
+      for (const key of ['riskScore', 'risk_score', 'ml_risk_score', 'ml_classifier']) {
+        assert.equal(result[key], undefined);
+      }
     }
   }
 });

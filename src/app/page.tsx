@@ -71,8 +71,8 @@ interface ForensicResult {
     decision_threshold?: number;
     decision_branch?: 'sms' | 'url';
     url_review_required?: boolean;
-    text_result?: {threshold?: number; model_id?: string} | null;
-    url_result?: {threshold?: number; model_id?: string} | null;
+    text_result?: {score?: number; threshold?: number; model_id?: string} | null;
+    url_result?: {score?: number; threshold?: number; model_id?: string} | null;
     training?: {run_id?: string; paired_training_samples?: number; text_training_samples?: number; url_training_samples?: number; target?: string};
   };
 }
@@ -666,6 +666,8 @@ export default function ScamShieldDashboard() {
       setResult(analysisData);
         setActiveTab("overview");
     } catch (err: unknown) {
+      setResult(null);
+      setCaseId("");
       setError(err instanceof Error ? err.message : "Analysis failed");
     } finally {
       setLoading(false);
@@ -1096,9 +1098,8 @@ export default function ScamShieldDashboard() {
               {/* ── VERDICT CARD ────────────────────────────────────────────────────── */}
               {(() => {
                 const s = result.risk_score;
-                const urlReview = result.ml_classifier?.url_review_required === true;
-                const isScam = s >= 80;
-                const isSuspicious = !isScam && (s >= 30 || urlReview);
+                const isScam = result.scam_detected;
+                const isSuspicious = !isScam && result.threat_level === 'MEDIUM';
 
                 return (
                   <div className={`p-6 rounded-2xl border space-y-4 shadow-xs ${
@@ -1154,8 +1155,16 @@ export default function ScamShieldDashboard() {
                         : isMuted ? "bg-[#064E3B]/20 text-[#6EE7B7] border-[#064E3B]/50" : "bg-[#F0FDF4] text-[#166534] border-[#DCFCE7]"
                     }`}>
                       <span className="font-semibold">{lang === "vi" ? "Khuyến nghị an toàn: " : "Safety advice: "}</span>
-                      {isScam ? t.verdict.actionScam : isSuspicious ? t.verdict.actionSuspicious : t.verdict.actionSafe}
+                      {isScam ? t.verdict.actionScam : isSuspicious ? t.verdict.actionSuspicious
+                        : result.ml_classifier?.decision_branch === 'url' ? result.executive_summary : t.verdict.actionSafe}
                     </div>
+                    {result.ml_classifier?.model_ready && (
+                      <p className={`text-xs ${isMuted ? "text-[#A19E95]" : "text-[#57534E]"}`}>
+                        {lang === 'vi'
+                          ? 'Điểm mô hình chưa được hiệu chuẩn, không phải xác suất lừa đảo.'
+                          : 'The model score is uncalibrated; it is not a probability of fraud.'}
+                      </p>
+                    )}
                   </div>
                 );
               })()}
@@ -1214,9 +1223,13 @@ export default function ScamShieldDashboard() {
                       <p className="text-xs opacity-75">
                         {lang === "vi" ? "Ngưỡng phân loại đã chọn: " : "Selected classification threshold: "}
                         {result.ml_classifier.decision_threshold.toFixed(2)}.
-                        {lang === "vi"
-                          ? " Nhãn này dùng để đối chiếu tập test; mức cảnh báo theo điểm vẫn dùng các mốc 30/80."
-                          : " Compare this label with test answers; score-based alerts still use the 30/80 policy."}
+                        {result.ml_classifier.mode === 'hybrid_url_only'
+                          ? (lang === 'vi'
+                            ? ' URL đạt ngưỡng này sẽ cần xem xét; từ 80 điểm cảnh báo cao. So sánh ngưỡng trên điểm gốc trước khi làm tròn.'
+                            : ' URLs meeting this threshold require review; high risk starts at 80 points. Threshold comparisons use the unrounded score.')
+                          : (lang === 'vi'
+                            ? ' Mô hình này dùng mốc 30/80 để cảnh báo sớm; ngưỡng phân loại dùng đối chiếu tập test.'
+                            : ' This adapter uses the 30/80 early-review policy; the classification threshold is used for test evaluation.')}
                       </p>
                     </div>
                   )}
@@ -1248,7 +1261,7 @@ export default function ScamShieldDashboard() {
                       <div className="w-full bg-black/10 dark:bg-white/10 h-1.5 rounded-full overflow-hidden">
                         <div
                           className={`h-full transition-all duration-500 ${
-                            (result.ml_classifier.text_score ?? 0) >= 100 * (result.ml_classifier.text_result?.threshold ?? .5) ? "bg-red-500" : "bg-emerald-500"
+                            (result.ml_classifier.text_result?.score ?? 0) >= (result.ml_classifier.text_result?.threshold ?? .5) ? "bg-red-500" : "bg-emerald-500"
                           }`}
                           style={{ width: `${Math.min(100, Math.max(0, result.ml_classifier.text_score ?? 0))}%` }}
                         />
@@ -1287,7 +1300,7 @@ export default function ScamShieldDashboard() {
                       <div className="w-full bg-black/10 dark:bg-white/10 h-1.5 rounded-full overflow-hidden">
                         <div
                           className={`h-full transition-all duration-500 ${
-                            (result.ml_classifier.url_score ?? 0) >= 100 * (result.ml_classifier.url_result?.threshold ?? .5) ? "bg-red-500" : "bg-emerald-500"
+                            (result.ml_classifier.url_result?.score ?? 0) >= (result.ml_classifier.url_result?.threshold ?? .5) ? "bg-red-500" : "bg-emerald-500"
                           }`}
                           style={{ width: `${Math.min(100, Math.max(0, result.ml_classifier.url_score ?? 0))}%` }}
                         />
