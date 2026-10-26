@@ -195,16 +195,31 @@ class HybridPredictionTests(unittest.TestCase):
         from predict import probability
         from predict import classify as bundle_classify
         from predict_processed import classify as processed_classify
+        import hashlib
 
         text = "Hey, are you free for lunch tomorrow?"
         url = "https://qi.lv/F0i"
         with tempfile.TemporaryDirectory(dir=live.ROOT / 'models') as directory:
             output = Path(directory) / 'historical.pkl'
-            with patch.object(package_hybrid, 'OUTPUT', output):
+            sms_source = Path(directory) / 'source-sms.pkl'
+            sms_fixture = {'sklearn_version': live.sklearn.__version__,
+                           'sms': {'model': Estimator({text_input(text): .23}), 'threshold': .65}}
+            sms_source.write_bytes(pickle.dumps(sms_fixture))
+            checksum = hashlib.sha256(sms_source.read_bytes()).hexdigest()
+            with patch.object(package_hybrid, 'OUTPUT', output), \
+                 patch.object(package_hybrid, 'SMS_SOURCE', sms_source), \
+                 patch.object(package_hybrid, 'EXPECTED_SHA256', checksum), \
+                 patch.object(package_hybrid, 'load_processed_bundle', return_value=sms_fixture) as sms_loader, \
+                 patch('predict_processed.load_processed_bundle', return_value=sms_fixture):
                 package_hybrid.package()
+                expected_sms = processed_classify(text=text)['text_result']['score']
+                sms_source.write_bytes(b'corrupted source')
+                with self.assertRaisesRegex(ValueError, 'checksum'):
+                    package_hybrid.package()
+                self.assertEqual(sms_loader.call_count, 1)
             models = pickle.loads(output.read_bytes())
         self.assertEqual(float(probability(models['sms']['model'], [text_input(text)])[0]),
-                         processed_classify(text=text)["text_result"]["score"])
+                         expected_sms)
         self.assertEqual(float(probability(models['url']['model'], [url])[0]),
                          bundle_classify(url=url)["url_result"]["score"])
 

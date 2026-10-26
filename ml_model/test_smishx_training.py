@@ -42,6 +42,7 @@ class SmishxTrainingTests(unittest.TestCase):
     def test_unicode_line_separators_roundtrip_with_existing_jsonl_loader(self):
         row = {"raw_text": "Hello\u2028there\u0085friend\u2029!", "label": 0}
         test_root = Path(__file__).resolve().parent / "data/prepared"
+        test_root.mkdir(parents=True, exist_ok=True)
         with tempfile.TemporaryDirectory(dir=test_root) as directory:
             self.assertTrue(Path(directory).resolve().is_relative_to(test_root.resolve()))
             export_rows(Path(directory), "sample", [row])
