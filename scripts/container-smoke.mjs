@@ -31,6 +31,8 @@ try {
   const result = await prediction.json();
   assert.equal(result.ml_classifier.model_ready, true);
   assert.equal(result.ml_classifier.mode, 'hybrid_url_only');
+  assert.equal(result.ml_classifier.calibration_status, 'source_label_calibrated');
+  assert.ok(result.ml_classifier.calibrated_probability >= 0 && result.ml_classifier.calibrated_probability <= 1);
   evidence.inferenceMs = Math.round(performance.now() - started);
   const smsStarted = performance.now();
   const sms = await fetch('http://127.0.0.1:3110/api/analyze', {method: 'POST',
@@ -40,12 +42,18 @@ try {
   const smsResult = await sms.json();
   assert.equal(smsResult.ml_classifier.model_ready, true);
   assert.equal(smsResult.ml_classifier.mode, 'hybrid_text');
+  assert.equal(smsResult.ml_classifier.calibration_status, 'source_label_calibrated');
+  assert.equal(smsResult.ml_classifier.calibrated_probability_expert_verified, false);
   evidence.smsInferenceMs = Math.round(performance.now() - smsStarted);
   evidence.healthcheckExit = docker('exec', name, 'node', '-e',
     "fetch('http://127.0.0.1:8080/api/health').then(r=>process.exit(r.ok?0:1))");
   assert.equal(docker('exec', name, 'python', '-c', "from pathlib import Path; print(Path('/app/ml_model/data').exists())"), 'False');
   assert.equal(docker('exec', name, 'python', '-c', "import importlib.util; print(importlib.util.find_spec('pip') is None)"), 'True');
   evidence.packageInstallerRemoved = true;
+  assert.equal(docker('exec', name, 'python', '-c',
+    "from pathlib import Path; print(any(Path(p).exists() for p in ['/bin/sh','/usr/bin/mount','/usr/bin/nsenter','/usr/bin/perl','/usr/bin/infocmp','/usr/lib/systemd/systemd-homed','/usr/bin/apt','/usr/bin/dpkg']))"), 'False');
+  evidence.unusedOsToolsRemoved = true;
+  evidence.sourceCalibratedEstimates = 'PASS';
   evidence.status = 'PASS';
 } catch (error) {
   evidence.error = error.message;

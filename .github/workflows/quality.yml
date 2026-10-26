@@ -61,10 +61,18 @@ jobs:
           npm audit --audit-level=high
           .venv/bin/python -m pip_audit -r ml_model/requirements.txt --strict
           .venv/bin/python scripts/verify-export-pdf.py .local-runtime/ci-evidence/browser-sample-report.pdf
-      - name: Build and smoke-test unprivileged container
+      - name: Install checksum-pinned image scanner
+        run: |
+          mkdir -p .local-runtime/trivy
+          curl --fail --location --retry 3 --output .local-runtime/trivy/archive.tar.gz https://github.com/aquasecurity/trivy/releases/download/v0.76.1/trivy_0.76.1_Linux-64bit.tar.gz
+          echo 'c7cbe3137fb8a48a17574bede3dd6beb16742d1e9772929940fc90082c39d9c0  .local-runtime/trivy/archive.tar.gz' | sha256sum --check --strict
+          tar --extract --gzip --file .local-runtime/trivy/archive.tar.gz --directory .local-runtime/trivy trivy
+      - name: Build, smoke-test and scan unprivileged container
         run: |
           docker build -t scamguard-ci .
           node scripts/container-smoke.mjs scamguard-ci
+          .local-runtime/trivy/trivy image --scanners vuln --severity HIGH,CRITICAL --format json --output .local-runtime/ci-evidence/container-image-scan.json scamguard-ci
+          node scripts/image-security.mjs .local-runtime/ci-evidence/container-image-scan.json
       - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         if: always()
         with:
