@@ -2,18 +2,22 @@
 
 Local machine learning screening for suspicious messages and URLs.
 
-The default web model is `group-calibrated-20261026`: word/character TF-IDF + Logistic
-Regression for SMS, and lexical/character features + HistGradientBoosting for
-URLs. SMS decisions use the text model; embedded URLs are scored separately.
-Both heads were refitted after quarantining unresolved review groups and isolating
-connected domains and message groups. Train-only nested group folds fit separate
-sigmoid estimates for source labels. No fusion model was trained for this fit.
+The default local web model is `sms-confirmation-english-20261029`: a supervised
+English confirmation head caps its SMS score at the previous model's score.
+Uncertain language keeps the previous SMS score. Grouped calibration, historical
+regression and full application checks preserve false-positive and false-negative
+counts. A separate sigmoid provides a source-label probability estimate.
+The inherited supervised URL ensemble and its owner-domain temperature calibration
+remain unchanged; embedded URLs independently require review when positive.
+See [training, activation and verification](docs/conservative-sms-training-2026-10-29.md)
+and the [URL ensemble evidence](docs/url-regression-repair-2026-10-27.md).
 The app makes no external AI calls and does not fetch submitted URLs.
 
 The 0–100 alert score is not proof of fraud or a calibrated probability.
 A separate calibrated estimate is conditional on the source labels; it is not
 an expert-verified real-world probability that a message or website is fraudulent.
-Policy: <30 low risk, 30–79 review, >=80 high risk. Domain annotations never
+SMS policy: <30 low risk, 30–79 review, >=80 high risk. URL-only review uses the
+URL head's raw 0.50 threshold; >=80 points remains high risk. Domain annotations never
 bypass the classifier or modify its score. Missing/incompatible models return
 HTTP 503 rather than an invented safe verdict.
 
@@ -62,8 +66,11 @@ Historical modes do not inherit the repaired bundle's split-isolation evidence.
 
 Image analysis and roleplay are unavailable because no local OCR/dialogue model
 has been trained. Sample scenarios are clearly labelled educational illustrations.
-They are not live model evaluations. Extension 1.1.2 displays a score badge after
-successful checks at any score; its warning banner still uses the >=80 policy.
+They are not live model evaluations. Extension 2.0.0 checks only when requested:
+right-click a link or selected message and choose the ScamGuard menu item, or
+press the toolbar popup's current-page button. Results open in the extension UI.
+Automatic scanning, page outlines and broad optional web access were removed.
+See [extension instructions](extension/README.md) and [manual checks](docs/extension-context-menu.md).
 
 ## Checks
 
@@ -83,8 +90,8 @@ results from the initial audit. The follow-up [five-step readiness report](docs/
 records the security, CI, expert-review preparation and browser/PDF work, current
 verification results, and remaining environment checks.
 
-The [extension instructions](extension/README.md) explain the user's choice of
-manual checks (default) or optional automatic screening. The [expert-review
+The [extension instructions](extension/README.md) explain right-click link/message
+checks and the explicit current-page button. The [expert-review
 protocol](docs/ml-expert-review-protocol.md) keeps the 811 train-review candidates
 separate from a future independent Vietnamese benchmark.
 

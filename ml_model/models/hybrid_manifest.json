@@ -1,35 +1,38 @@
 {
-  "bundle_sha256": "6a0fd38b35570bff4b0ae56dd52a07747a6670d3dc2eceda304e1f10898314d0",
+  "bundle_sha256": "1688e9e0960fb9320cac0e4ff2f4e98b705cb5f8db11a8a47cbcdcedda78c8f1",
   "source_sha256": {
-    "sms_train": "14ba54a040b08b7b3793eeeb44dd97a794e43c87e7b3e4f34425a98269f7b006",
-    "url_train": "8acad6b8b39ec61aefd665c60ae12f72fbbb3c8d04fe2df0e12c1e9b3cfd3ce4"
+    "sms_train": "9e0db4e76045ffbe22d072cbae7dba4c1b2918c2c3f8fd79af206912a2cf07d7",
+    "url_train": "ff69e64671b9c3d9ca0033b90d896ea89dbd0faf1991671af8cf3b5d9237186c"
   },
   "code_sha256": {
     "preprocess.py": "9906e0438726035c0c2241c7571683a321a7085fd884df392fcee3136f93a9a7",
     "modeling.py": "da61219b788d301b58ba25bd30c9f821cfcfe8c7354495f7d70d98afd4baa49b",
     "round2_experiment.py": "240cf124ab6dc4f62960b425d831594e0718937a48382a4af13ef28fd3ea97e7",
-    "audit_vi_holdout.py": "a99afd751e5d207d9475fe848c98d1c37ca271e662aae265f6dca90e83f3cf73"
+    "audit_vi_holdout.py": "a99afd751e5d207d9475fe848c98d1c37ca271e662aae265f6dca90e83f3cf73",
+    "url_ensemble.py": "663758471fe568c78fcbab1b88dd0e23682599f9f965ef8a7d60bad630d35692",
+    "conservative_sms.py": "bd2cb5d4c96941fb32685d1aacef64f0cf5e355c45d658ccf7064bc412a1ca5b",
+    "predict.py": "8089a00b87aa6cad929f39a96c9fdd908041a394d66b9b82e4034614260cbafe"
   },
   "code_hash_normalization": "CRLF to LF for Windows/Linux parity",
   "training": {
-    "run_id": "group-calibrated-20261026",
-    "method": "Supervised source-label heads with train-only nested-group sigmoid calibration",
-    "text_training_samples": 3786,
-    "url_training_samples": 31299,
+    "run_id": "sms-confirmation-english-20261029",
+    "method": "minimum of pinned SMS anchor and supervised confirmation",
+    "text_training_samples": 4186,
+    "url_training_samples": 74309,
     "paired_training_samples": 0,
     "synthetic_pairs": 0,
     "probability_calibrated": false,
     "target": "SMS project smishing scope; URL upstream good/bad scope",
-    "text_label_provenance": "Mixed source-human, inherited source, AI review and user scope decisions; not all expert verified",
-    "url_label_provenance": "Inherited source good/bad labels; not independently expert verified",
+    "text_label_provenance": "Inherited supervised labels with retained human, source and AI provenance",
+    "url_label_provenance": "Inherited source good/bad labels plus 10 AI-reviewed official URL seeds; not expert verified",
     "registered_domain_isolation": true,
     "icann_owner_domain_isolation": true,
     "campaign_independence_proven": false,
     "all_labels_expert_verified": false,
     "known_label_conflicts_fitted": 0,
     "heldout_or_quarantined_rows_fitted": 0,
-    "hyperparameters_retuned": false,
-    "training_manifest_sha256": "b7ed99fee87ace0ca04d4955dfa23216fd83589c2d11c5ee32a70bfa0b5755a6",
+    "hyperparameters_retuned": true,
+    "training_manifest_sha256": "efd811679c6c703f1b7b18743b4ddf89118c237a115e75535e6e1d6a0dd9e38e",
     "calibrated_estimate_available": true,
     "calibrated_estimate_scope": "source-label estimate; not expert-verified population fraud probability",
     "label_provenance_counts": {
@@ -38,51 +41,266 @@
         "published_two_researcher_manual_relabeling_with_disagreement_resolution": 483,
         "ai_semantic_review": 334,
         "user_scope_decision": 2,
-        "user_decision": 1
+        "user_decision": 1,
+        "source_feed_phishing_with_ai_template_scope_screen": 338,
+        "uci_source_ham_proxy_not_expert_smishing_verdict": 62
       },
       "url": {
-        "inherited_url_source_not_expert_verified": 31299
+        "inherited_url_source_not_expert_verified": 74299,
+        "user_requested_first_party_url_ai_evidence_review": 10
       }
     },
     "human_user_decisions": 1,
-    "review_unknown_cases_excluded": 807
+    "review_unknown_cases_excluded": 807,
+    "selected_url_configuration": "wide_lr_c4",
+    "official_url_seed_samples": 10,
+    "selection_used_historical_test": false,
+    "fresh_test_used_in_fitting": false,
+    "raw_url_training_samples": 71309,
+    "url_calibration_training_samples": 3000,
+    "url_gate_training_samples": 71299,
+    "url_ensemble_learned_cutoff": 0.8,
+    "url_ensemble_trained": true,
+    "url_calibration_method": "temperature",
+    "confirmation_loss_rows": 3848,
+    "original_anchor_training_samples": 3786,
+    "calibration_method": "Sigmoid on logit of selected inner OOF minimum scores; never in-sample predictions",
+    "language_gate_threshold": 0.99,
+    "language_gate_provenance": "supervised prepared train language metadata; source/AI, not expert verified"
   },
-  "fitted_rows": 35085,
-  "test_evaluation_performed": false,
-  "fit_code_sha256": "ba705641d1e48e24028b23791b63a085b2b1848767b615bfeaaae30a9d4acebe",
-  "fit_seconds": 194.129,
+  "fitted_rows": 78495,
+  "test_evaluation_performed": true,
+  "fit_code_sha256": "3a4814509b6b9af1b72c890296dce4ee3deb4379624dc477b46b1e0eb1d87a36",
+  "fit_seconds": 7.105,
   "dataset_files_sha256": {
-    "fit_rows.jsonl": "b7ed99fee87ace0ca04d4955dfa23216fd83589c2d11c5ee32a70bfa0b5755a6",
-    "sms_fit_rows.jsonl": "14ba54a040b08b7b3793eeeb44dd97a794e43c87e7b3e4f34425a98269f7b006",
-    "url_fit_rows.jsonl": "8acad6b8b39ec61aefd665c60ae12f72fbbb3c8d04fe2df0e12c1e9b3cfd3ce4",
-    "protocol.json": "f0aa0b94a0ddbd2a494ee08f3edee5f39b0a83f97a3a7eb7162083b749518299"
+    "candidate_bundle.pkl": "1688e9e0960fb9320cac0e4ff2f4e98b705cb5f8db11a8a47cbcdcedda78c8f1",
+    "final_selection.json": "ed4f211010db96cb21179d89a9185ca7520ae554c6d458120dfa96e4daaa604d",
+    "fit_code.py": "3a4814509b6b9af1b72c890296dce4ee3deb4379624dc477b46b1e0eb1d87a36",
+    "outer_0_selection.json": "43052e75bedd17bd2baad71d41847e26be5371d37c8567e40e7b8e455b49ee7a",
+    "outer_1_selection.json": "7d552fcede67cde5e1ce2c3ce85c4cb6a25f9e66d5320c4025afa37ec6256d7b",
+    "outer_2_selection.json": "10e3608aa1e4fc5be320ca7dfe22cbf85b5900bdaec86474af3d0385d49898f1",
+    "protocol.json": "efd811679c6c703f1b7b18743b4ddf89118c237a115e75535e6e1d6a0dd9e38e",
+    "sms_fit_rows.csv": "6a75ebcde2139d4923d00a0db250a263c8b852a4df63fd9de1935f06d4138f33",
+    "sms_fit_rows.jsonl": "9e0db4e76045ffbe22d072cbae7dba4c1b2918c2c3f8fd79af206912a2cf07d7",
+    "sms_fold_assignments.csv": "46995e655c4b6403233e5822f903a6ca5817334e24a06d83aa0fc7f3f444cfda",
+    "sms_fold_assignments.jsonl": "6ec4f0c00c0fa5ac7a90842051ad59f16e7767b88bc47d8facc52b9334d5f2cf",
+    "sms_oof_predictions.csv": "82abed09579ec8834d2552ffb52343b125a5e435770cf22cfcb43990bb96de0f",
+    "sms_oof_predictions.jsonl": "f6d054213043ae6df575e4eb706847f640790eaf5c87b342bd9679f5727fda59",
+    "training_report.json": "84dbd548a3a3be507284597eacb31321f7c26f7213d5afab65e4ce8a17c4d7e1"
   },
   "threshold_provenance": {
     "sms": "Existing fixed 0.65; inherited historical validation choice, not reselected",
     "url": "Existing fixed 0.50; no threshold selection"
   },
   "parent_artifact": {
-    "bundle_sha256": "9a49b7278cfb1b9da00f8ebc6970653a9de3320f3037db3ee190109926d1bd3a",
+    "bundle_sha256": "26373a849458c95c3bfea30f73e93be7460e7a2b314a5ece80a71fa890efd008",
     "source_sha256": {
-      "sms_train": "01d0dffc995d3c12973864513a8004f9649226a730a4dba35d98f693d9f8ee23",
-      "url_train": "84e989da4d920c72fd19a5d52f16b899ad810a6b8303109124eb1b6fd5d66a15"
+      "sms_train": "14ba54a040b08b7b3793eeeb44dd97a794e43c87e7b3e4f34425a98269f7b006",
+      "url_train": "ff69e64671b9c3d9ca0033b90d896ea89dbd0faf1991671af8cf3b5d9237186c"
     },
+    "code_sha256": {
+      "preprocess.py": "9906e0438726035c0c2241c7571683a321a7085fd884df392fcee3136f93a9a7",
+      "modeling.py": "da61219b788d301b58ba25bd30c9f821cfcfe8c7354495f7d70d98afd4baa49b",
+      "round2_experiment.py": "240cf124ab6dc4f62960b425d831594e0718937a48382a4af13ef28fd3ea97e7",
+      "audit_vi_holdout.py": "a99afd751e5d207d9475fe848c98d1c37ca271e662aae265f6dca90e83f3cf73",
+      "url_ensemble.py": "663758471fe568c78fcbab1b88dd0e23682599f9f965ef8a7d60bad630d35692"
+    },
+    "code_hash_normalization": "CRLF to LF for Windows/Linux parity",
+    "training": {
+      "run_id": "url-ensemble-20261027",
+      "method": "Supervised residual URL ensemble; frozen learned heads; disjoint-owner temperature calibration; SMS inherited",
+      "text_training_samples": 3786,
+      "url_training_samples": 74309,
+      "paired_training_samples": 0,
+      "synthetic_pairs": 0,
+      "probability_calibrated": false,
+      "target": "SMS project smishing scope; URL upstream good/bad scope",
+      "text_label_provenance": "Mixed source-human, inherited source, AI review and user scope decisions; not all expert verified",
+      "url_label_provenance": "Inherited source good/bad labels plus 10 AI-reviewed official URL seeds; not expert verified",
+      "registered_domain_isolation": true,
+      "icann_owner_domain_isolation": true,
+      "campaign_independence_proven": false,
+      "all_labels_expert_verified": false,
+      "known_label_conflicts_fitted": 0,
+      "heldout_or_quarantined_rows_fitted": 0,
+      "hyperparameters_retuned": true,
+      "training_manifest_sha256": "74e4b0e1db6572e5e39f49b11a1eefb3cc142024f802051f86807cb5946dfcfb",
+      "calibrated_estimate_available": true,
+      "calibrated_estimate_scope": "source-label estimate; not expert-verified population fraud probability",
+      "label_provenance_counts": {
+        "sms": {
+          "upstream_ham_or_non_smishing_spam": 2966,
+          "published_two_researcher_manual_relabeling_with_disagreement_resolution": 483,
+          "ai_semantic_review": 334,
+          "user_scope_decision": 2,
+          "user_decision": 1
+        },
+        "url": {
+          "inherited_url_source_not_expert_verified": 74299,
+          "user_requested_first_party_url_ai_evidence_review": 10
+        }
+      },
+      "human_user_decisions": 1,
+      "review_unknown_cases_excluded": 807,
+      "selected_url_configuration": "wide_lr_c4",
+      "official_url_seed_samples": 10,
+      "selection_used_historical_test": false,
+      "fresh_test_used_in_fitting": false,
+      "raw_url_training_samples": 71309,
+      "url_calibration_training_samples": 3000,
+      "url_gate_training_samples": 71299,
+      "url_ensemble_learned_cutoff": 0.8,
+      "url_ensemble_trained": true,
+      "url_calibration_method": "temperature"
+    },
+    "fitted_rows": 78095,
+    "test_evaluation_performed": true,
+    "fit_code_sha256": "365f7f8590b7ed8353b718d5031fac275ed1ee9dc74ab858b566a8f49114b82d",
+    "fit_seconds": 7.105,
     "dataset_files_sha256": {
-      "all_rows.jsonl": "c7a8d5b54a47400d48d07c232e9a1728753160f8d9edf57159e7e60297d77b6c",
-      "repair_report.json": "a5a67a41510a9e0c55fa49b694935f45e16d0304381e97765f4b34df7b9ba657",
-      "similarity_edges.json": "d483c50229d8f4dc02ce27fcefd283fc536d5ee882a0e444f0462f74e0075856",
-      "sms_quarantine.jsonl": "80a38002d47fecbc9c11054c3e9db74998b325747274efdaaec699bed9482399",
-      "sms_test.jsonl": "324ca8514e89ef9d7aea71c20631ad1f5236f9b12dbf22d3d7fe2cea617f7e0a",
-      "sms_train.jsonl": "01d0dffc995d3c12973864513a8004f9649226a730a4dba35d98f693d9f8ee23",
-      "sms_validation.jsonl": "83ec880f035911abeb3b53595363ff8ebbbf1c55646da213eaa5cf07ea9d4c49",
-      "url_quarantine.jsonl": "0ac1373443c02fac1afff89ac748aebf5246101274987b1db90268d97f2b0e8a",
-      "url_test.jsonl": "c01b3adb3d1ebcb407d929fd8c1907f2183b95c3fc8dde8cdfabe1eb9b0dd030",
-      "url_train.jsonl": "84e989da4d920c72fd19a5d52f16b899ad810a6b8303109124eb1b6fd5d66a15",
-      "url_validation.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      "calibration_train.jsonl": "eaa4af3fe037323cc31c4dc840465cfc8fcc11711adc4cf08ab82aa9e36fe809",
+      "calibration_validation.jsonl": "02e0aa73209abe165f6f174a20f1514db16e5fb7b9c7818a3cec525618eb7389",
+      "fresh_test.jsonl": "713f0d419110a089707d020437130e8ddf35c9fb50e70943c95f283753d409d9",
+      "data_frozen.json": "07c4778a763939e1b809f2fcb698c1dcd30d69d584b27fe228af4ca23ce47fb2",
+      "protocol.json": "0598228e35e058dcd3012bc09b023b73b9ad290a123a21d244e52dcdf55426fb",
+      "gate_training.json": "55ef8e9c3c909ed9d6dbadc683ad613337eacb78c9ac62738705032391ec4ae5",
+      "gate_oof_scores.jsonl": "d088e9ec4b99db9a5877cbd568635697c235b1840f4c7c52ee49f263b6fda000",
+      "url_fit_rows.jsonl": "ff69e64671b9c3d9ca0033b90d896ea89dbd0faf1991671af8cf3b5d9237186c",
+      "sms_fit_rows.jsonl": "14ba54a040b08b7b3793eeeb44dd97a794e43c87e7b3e4f34425a98269f7b006",
+      "fit_rows.jsonl": "74e4b0e1db6572e5e39f49b11a1eefb3cc142024f802051f86807cb5946dfcfb",
+      "sigmoid_failed_report.json": "3a8a59ed2fca5c328d6b25f44c4706d275af9e777ca71ddef880fac21b3a33a4"
     },
-    "evaluation_sha256": "52d2da7f68004e8c0837e8eebf6559ee43a59fd19bb5dfc2085ec5d1aab12581"
+    "threshold_provenance": {
+      "sms": "Existing fixed 0.65; inherited historical validation choice, not reselected",
+      "url": "Existing fixed 0.50; no threshold selection"
+    },
+    "parent_artifact": {
+      "bundle_sha256": "6a0fd38b35570bff4b0ae56dd52a07747a6670d3dc2eceda304e1f10898314d0",
+      "source_sha256": {
+        "sms_train": "14ba54a040b08b7b3793eeeb44dd97a794e43c87e7b3e4f34425a98269f7b006",
+        "url_train": "8acad6b8b39ec61aefd665c60ae12f72fbbb3c8d04fe2df0e12c1e9b3cfd3ce4"
+      },
+      "code_sha256": {
+        "preprocess.py": "9906e0438726035c0c2241c7571683a321a7085fd884df392fcee3136f93a9a7",
+        "modeling.py": "da61219b788d301b58ba25bd30c9f821cfcfe8c7354495f7d70d98afd4baa49b",
+        "round2_experiment.py": "240cf124ab6dc4f62960b425d831594e0718937a48382a4af13ef28fd3ea97e7",
+        "audit_vi_holdout.py": "a99afd751e5d207d9475fe848c98d1c37ca271e662aae265f6dca90e83f3cf73"
+      },
+      "code_hash_normalization": "CRLF to LF for Windows/Linux parity",
+      "training": {
+        "run_id": "group-calibrated-20261026",
+        "method": "Supervised source-label heads with train-only nested-group sigmoid calibration",
+        "text_training_samples": 3786,
+        "url_training_samples": 31299,
+        "paired_training_samples": 0,
+        "synthetic_pairs": 0,
+        "probability_calibrated": false,
+        "target": "SMS project smishing scope; URL upstream good/bad scope",
+        "text_label_provenance": "Mixed source-human, inherited source, AI review and user scope decisions; not all expert verified",
+        "url_label_provenance": "Inherited source good/bad labels; not independently expert verified",
+        "registered_domain_isolation": true,
+        "icann_owner_domain_isolation": true,
+        "campaign_independence_proven": false,
+        "all_labels_expert_verified": false,
+        "known_label_conflicts_fitted": 0,
+        "heldout_or_quarantined_rows_fitted": 0,
+        "hyperparameters_retuned": false,
+        "training_manifest_sha256": "b7ed99fee87ace0ca04d4955dfa23216fd83589c2d11c5ee32a70bfa0b5755a6",
+        "calibrated_estimate_available": true,
+        "calibrated_estimate_scope": "source-label estimate; not expert-verified population fraud probability",
+        "label_provenance_counts": {
+          "sms": {
+            "upstream_ham_or_non_smishing_spam": 2966,
+            "published_two_researcher_manual_relabeling_with_disagreement_resolution": 483,
+            "ai_semantic_review": 334,
+            "user_scope_decision": 2,
+            "user_decision": 1
+          },
+          "url": {
+            "inherited_url_source_not_expert_verified": 31299
+          }
+        },
+        "human_user_decisions": 1,
+        "review_unknown_cases_excluded": 807
+      },
+      "fitted_rows": 35085,
+      "test_evaluation_performed": false,
+      "fit_code_sha256": "ba705641d1e48e24028b23791b63a085b2b1848767b615bfeaaae30a9d4acebe",
+      "fit_seconds": 194.129,
+      "dataset_files_sha256": {
+        "fit_rows.jsonl": "b7ed99fee87ace0ca04d4955dfa23216fd83589c2d11c5ee32a70bfa0b5755a6",
+        "sms_fit_rows.jsonl": "14ba54a040b08b7b3793eeeb44dd97a794e43c87e7b3e4f34425a98269f7b006",
+        "url_fit_rows.jsonl": "8acad6b8b39ec61aefd665c60ae12f72fbbb3c8d04fe2df0e12c1e9b3cfd3ce4",
+        "protocol.json": "f0aa0b94a0ddbd2a494ee08f3edee5f39b0a83f97a3a7eb7162083b749518299"
+      },
+      "threshold_provenance": {
+        "sms": "Existing fixed 0.65; inherited historical validation choice, not reselected",
+        "url": "Existing fixed 0.50; no threshold selection"
+      },
+      "parent_artifact": {
+        "bundle_sha256": "9a49b7278cfb1b9da00f8ebc6970653a9de3320f3037db3ee190109926d1bd3a",
+        "source_sha256": {
+          "sms_train": "01d0dffc995d3c12973864513a8004f9649226a730a4dba35d98f693d9f8ee23",
+          "url_train": "84e989da4d920c72fd19a5d52f16b899ad810a6b8303109124eb1b6fd5d66a15"
+        },
+        "dataset_files_sha256": {
+          "all_rows.jsonl": "c7a8d5b54a47400d48d07c232e9a1728753160f8d9edf57159e7e60297d77b6c",
+          "repair_report.json": "a5a67a41510a9e0c55fa49b694935f45e16d0304381e97765f4b34df7b9ba657",
+          "similarity_edges.json": "d483c50229d8f4dc02ce27fcefd283fc536d5ee882a0e444f0462f74e0075856",
+          "sms_quarantine.jsonl": "80a38002d47fecbc9c11054c3e9db74998b325747274efdaaec699bed9482399",
+          "sms_test.jsonl": "324ca8514e89ef9d7aea71c20631ad1f5236f9b12dbf22d3d7fe2cea617f7e0a",
+          "sms_train.jsonl": "01d0dffc995d3c12973864513a8004f9649226a730a4dba35d98f693d9f8ee23",
+          "sms_validation.jsonl": "83ec880f035911abeb3b53595363ff8ebbbf1c55646da213eaa5cf07ea9d4c49",
+          "url_quarantine.jsonl": "0ac1373443c02fac1afff89ac748aebf5246101274987b1db90268d97f2b0e8a",
+          "url_test.jsonl": "c01b3adb3d1ebcb407d929fd8c1907f2183b95c3fc8dde8cdfabe1eb9b0dd030",
+          "url_train.jsonl": "84e989da4d920c72fd19a5d52f16b899ad810a6b8303109124eb1b6fd5d66a15",
+          "url_validation.jsonl": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "evaluation_sha256": "52d2da7f68004e8c0837e8eebf6559ee43a59fd19bb5dfc2085ec5d1aab12581"
+      },
+      "calibration_protocol_sha256": "f0aa0b94a0ddbd2a494ee08f3edee5f39b0a83f97a3a7eb7162083b749518299",
+      "calibration_report_sha256": "c1c54564d5ff6ffb2b93f80fc33618c868dddc276dfe4ee4cb8ab8b800dad232",
+      "calibration_gate_pass": true
+    },
+    "calibration_protocol_sha256": "0598228e35e058dcd3012bc09b023b73b9ad290a123a21d244e52dcdf55426fb",
+    "calibration_report_sha256": "22b17a05aed401c83d0836edd1d0c5621689c095273010bd4da3a06513c1d494",
+    "calibration_gate_pass": true,
+    "head_model_ids": {
+      "sms": "group-calibrated-20261026:sms",
+      "url": "url-ensemble-20261027:url"
+    },
+    "url_gate_selection_pass": true,
+    "url_ensemble_sources": {
+      "primary_bundle_sha256": "cb64212f5bec259ac8ad62b3c701fd9119fb46cd50091a333f5e3800b6ca9e62",
+      "parent_bundle_sha256": "6a0fd38b35570bff4b0ae56dd52a07747a6670d3dc2eceda304e1f10898314d0"
+    },
+    "calibration_method_revision": "Temperature selected on disjoint calibration validation; fresh test untouched",
+    "evaluation_sha256": "c9fc8a5cde7d2c526e13677ce8f802b3f715a60f969e23188766ecc5d99e5603"
   },
-  "calibration_protocol_sha256": "f0aa0b94a0ddbd2a494ee08f3edee5f39b0a83f97a3a7eb7162083b749518299",
-  "calibration_report_sha256": "c1c54564d5ff6ffb2b93f80fc33618c868dddc276dfe4ee4cb8ab8b800dad232",
-  "calibration_gate_pass": true
+  "calibration_protocol_sha256": "efd811679c6c703f1b7b18743b4ddf89118c237a115e75535e6e1d6a0dd9e38e",
+  "calibration_report_sha256": "84dbd548a3a3be507284597eacb31321f7c26f7213d5afab65e4ce8a17c4d7e1",
+  "calibration_gate_pass": true,
+  "head_model_ids": {
+    "sms": "sms-confirmation-english-20261029:sms",
+    "url": "url-ensemble-20261027:url"
+  },
+  "url_gate_selection_pass": true,
+  "url_ensemble_sources": {
+    "primary_bundle_sha256": "cb64212f5bec259ac8ad62b3c701fd9119fb46cd50091a333f5e3800b6ca9e62",
+    "parent_bundle_sha256": "6a0fd38b35570bff4b0ae56dd52a07747a6670d3dc2eceda304e1f10898314d0"
+  },
+  "calibration_method_revision": "Temperature selected on disjoint calibration validation; fresh test untouched",
+  "release_approved": true,
+  "evaluation_sha256": "f5f515b8b318885d4b8f31bcdf6cd3efe187d34d9e1c65e3fae015f2b6d52835",
+  "historical_nonregression_pass": true,
+  "all_policy_nonregression_pass": true,
+  "full_application_nonregression_pass": true,
+  "release_date": "2026-10-29",
+  "release_evidence_sha256": {
+    "release_protocol.json": "e61551546867556c3ac6cf1061d7e72c8f4f2d59eb04afdb898e60ca0fc6b9c5",
+    "training_report.json": "84dbd548a3a3be507284597eacb31321f7c26f7213d5afab65e4ce8a17c4d7e1",
+    "evaluation.json": "f5f515b8b318885d4b8f31bcdf6cd3efe187d34d9e1c65e3fae015f2b6d52835",
+    "serving_action_evaluation.json": "449638e129d9359f2e450d0cc48fcc9ca5d40cd3b68fc35e534ce0349814b472",
+    "http_verification.json": "2bc589450bc3c1a5372e732a219a786bb992e19e7f191967c9ba435bd89d4f57"
+  }
 }

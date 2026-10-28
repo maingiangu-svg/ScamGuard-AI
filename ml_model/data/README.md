@@ -43,3 +43,30 @@ holdout exclusions produced a completed isolated SMS experiment in
 the initial download exports remain unassigned and must not be concatenated
 into training. See `../../docs/smishx-training-2026-10-25.md` for actual usage.
 The initial IMC review pool remains blocked from fitting.
+
+English expansion, 2026-10-28: a new pinned source from the NCSU IEEE S&P 2024
+SMS phishing release is stored in `reference/english_expansion_2026-10-28/`.
+It has 68,029 raw SMS records and 35,128 campaign records. The prepared package
+is `prepared/english_expansion_2026-10-28/`; use its final report and explicit
+training-additions export, never concatenate the raw source. Feed-derived labels
+retain their provenance; AI template scope screening is not expert verification.
+Unknowns, promotions, reserved groups and redundant variants remain outside
+training. Campaign URLs have no individual verdict and stay in a blocked review
+pool. See `../../docs/english-data-expansion-2026-10-28.md` for the workflow.
+
+English negative additions, 2026-10-28: the pinned original UCI archive supplies
+62 unused source-ham inputs after language screening and historical component
+isolation. The package is `prepared/english_ham_expansion_2026-10-28/`. Use only
+its additions export; 4,455 blocked inputs remain excluded. Source ham is a
+negative-label proxy, not expert smishing verification. The combined inventory
+has 4,053 English plus 133 Vietnamese rows and requires regrouping before a
+future fitting experiment. No fitting or activation occurred. See
+`../../docs/english-ham-expansion-2026-10-28.md`.
+
+Training follow-up, 2026-10-29: the 62 admitted source-ham messages now
+participate in the activated conservative English confirmation workflow.
+The previous model files referenced by older package hashes are archived in
+`prepared/conservative_sms_english_gate_2026-10-29/parent_bundle.pkl` and
+`parent_manifest.json`. Data exports and source labels remain unchanged.
+Use that release's `release_artifact.py verify` to check current sources plus
+the exact archived parent. See `../../docs/conservative-sms-training-2026-10-29.md`.

@@ -244,12 +244,31 @@ class HybridPredictionTests(unittest.TestCase):
         manifest = json.loads(live.MANIFEST.read_text(encoding='utf-8'))
         models = live.load_bundle()
         self.assertEqual(models['training'], manifest['training'])
-        self.assertEqual(models['training']['run_id'], 'group-calibrated-20261026')
-        self.assertEqual(models['training']['text_training_samples'], 3786)
-        self.assertEqual(models['training']['url_training_samples'], 31299)
+        self.assertEqual(models['training']['run_id'], 'sms-confirmation-english-20261029')
+        self.assertEqual(models['training']['text_training_samples'], 4186)
+        self.assertEqual(models['training']['url_training_samples'], 74309)
         self.assertTrue(manifest['calibration_gate_pass'])
         self.assertEqual(manifest['parent_artifact']['bundle_sha256'],
+                         '26373a849458c95c3bfea30f73e93be7460e7a2b314a5ece80a71fa890efd008')
+        parent = manifest['parent_artifact']
+        self.assertEqual(parent['training']['run_id'], 'url-ensemble-20261027')
+        self.assertEqual(parent['training']['text_training_samples'], 3786)
+        self.assertEqual(parent['training']['url_training_samples'], 74309)
+        self.assertEqual(parent['parent_artifact']['bundle_sha256'],
+                         '6a0fd38b35570bff4b0ae56dd52a07747a6670d3dc2eceda304e1f10898314d0')
+        grandparent = parent['parent_artifact']
+        self.assertEqual(grandparent['training']['run_id'], 'group-calibrated-20261026')
+        self.assertEqual(grandparent['training']['url_training_samples'], 31299)
+        self.assertEqual(grandparent['parent_artifact']['bundle_sha256'],
                          '9a49b7278cfb1b9da00f8ebc6970653a9de3320f3037db3ee190109926d1bd3a')
+        for gate in ['release_approved', 'historical_nonregression_pass',
+                     'all_policy_nonregression_pass', 'full_application_nonregression_pass']:
+            self.assertIs(manifest[gate], True)
+        self.assertEqual(models['training']['confirmation_loss_rows'], 3848)
+        self.assertEqual(models['training']['language_gate_threshold'], .99)
+        self.assertIn('conservative_sms.py', manifest['code_sha256'])
+        self.assertEqual(models['url']['model_id'], parent['head_model_ids']['url'])
+        self.assertEqual(models['sms']['model_id'], manifest['head_model_ids']['sms'])
         self.assertTrue(models['training']['calibrated_estimate_available'])
         self.assertFalse(models['training']['probability_calibrated'])
         self.assertEqual(models['training']['heldout_or_quarantined_rows_fitted'], 0)
@@ -257,10 +276,14 @@ class HybridPredictionTests(unittest.TestCase):
         self.assertTrue(models['training']['icann_owner_domain_isolation'])
         self.assertFalse(models['training']['campaign_independence_proven'])
         self.assertFalse(models['training']['all_labels_expert_verified'])
-        for branch in ('sms', 'url'):
-            self.assertIn(branch + '_fit_rows.jsonl', manifest['dataset_files_sha256'])
-            self.assertEqual(manifest['source_sha256'][branch + '_train'],
-                             manifest['dataset_files_sha256'][branch + '_fit_rows.jsonl'])
+        self.assertIn('sms_fit_rows.jsonl', manifest['dataset_files_sha256'])
+        self.assertEqual(manifest['source_sha256']['sms_train'],
+                         manifest['dataset_files_sha256']['sms_fit_rows.jsonl'])
+        # The URL estimator is inherited with its complete prior fitting proof.
+        self.assertIn('url_fit_rows.jsonl', parent['dataset_files_sha256'])
+        self.assertEqual(manifest['source_sha256']['url_train'], parent['source_sha256']['url_train'])
+        self.assertEqual(manifest['source_sha256']['url_train'],
+                         parent['dataset_files_sha256']['url_fit_rows.jsonl'])
 
     def test_historical_packager_cannot_overwrite_the_repaired_default(self):
         import package_hybrid
