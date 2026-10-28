@@ -43,7 +43,7 @@ async function run(args, env = {}) {
 
 try {
   await start(3101);
-  await run(['--test', '--test-concurrency=1', 'scripts/analyze.integration.test.mjs', 'scripts/api-security.integration.test.mjs'],
+  await run(['--test', '--test-concurrency=1', 'scripts/analyze.integration.test.mjs', 'scripts/api-security.integration.test.mjs', 'scripts/link-batch.integration.test.mjs'],
     {TEST_APP_URL: 'http://127.0.0.1:3101'});
   await start(3102, {SCAMGUARD_MODEL_PATH: path.join(root, '.local-runtime/missing-ci-model.pkl')});
   await run(['--test', 'scripts/model-unavailable.integration.test.mjs'], {TEST_APP_URL: 'http://127.0.0.1:3102'});

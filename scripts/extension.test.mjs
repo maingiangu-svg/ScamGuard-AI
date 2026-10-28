@@ -3,202 +3,256 @@ import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 import {test} from 'node:test';
 
-const content = readFileSync(new URL('../extension/content.js', import.meta.url), 'utf8');
-const background = readFileSync(new URL('../extension/background.js', import.meta.url), 'utf8');
-
-async function inspectPage(href, verdict = {riskScore: 95, riskLevel: 'HIGH'}) {
-  const calls = [], banners = [];
-  let contentListener;
-  const pageWindow = {location: {href}};
-  const document = {
-    title: 'Welcome — private title', readyState: 'complete',
-    getElementById: () => null,
-    createElement: () => ({appendChild() {}, addEventListener() {}}),
-    body: {prepend: banner => banners.push(banner)},
-  };
-  vm.runInNewContext(content, {
-    document, window: pageWindow, URL, AbortController,
-    setTimeout: () => 1, clearTimeout() {}, console: {warn() {}},
-    chrome: {storage: {local: {get: async () => ({automatic: true})}}, runtime: {
-      getManifest: () => ({version: '1.1.2'}),
-      onMessage: {addListener: listener => {contentListener = listener;}},
-      sendMessage: async message => {calls.push({body: {url: message.url}}); return typeof verdict === 'function' ? verdict() : verdict;},
-    }},
-    fetch: async (url, options) => {
-      calls.push({url, body: JSON.parse(options.body)});
-      return {ok: true, json: async () => verdict};
-    },
-  });
-  await new Promise(resolve => setImmediate(resolve));
-  const send = action => new Promise(resolve => contentListener({action}, {}, resolve));
-  return {calls, banners, send, pageWindow};
-}
-
-test('page screening uses URL-only input and excludes title, credentials, query and fragment', async () => {
-  const {calls, banners} = await inspectPage('https://user:password@evil.example/login?token=private#private');
-  assert.equal(calls.length, 1);
-  assert.deepEqual(calls[0].body, {url: 'https://evil.example/login'});
-  assert.equal(banners.length, 1);
-});
-
-test('a hostname beginning with the localhost exclusion still gets checked', async () => {
-  assert.equal((await inspectPage('http://localhost:3000@evil.example/')).calls.length, 1);
-  assert.equal((await inspectPage('http://localhost:30000/')).calls.length, 1);
-});
-
-test('the actual local app and non-web protocols are excluded', async () => {
-  for (const url of ['http://localhost:3000/path', 'chrome://settings', 'about:blank', 'file:///private']) {
-    assert.equal((await inspectPage(url)).calls.length, 0);
-  }
-});
-
-test('low-risk and unavailable responses never create a high-risk banner', async () => {
-  for (const result of [{riskScore: 10, riskLevel: 'LOW'}, {model_ready: false}]) {
-    assert.equal((await inspectPage('https://example.com/', result)).banners.length, 0);
-  }
-});
-
-test('automatic rechecks of the same URL are deduplicated; manual refresh still runs', async () => {
-  const page = await inspectPage('https://example.com/', {riskScore: 12, riskLevel: 'LOW'});
-  await page.send('AUTO_PAGE');
-  await page.send('AUTO_PAGE');
-  assert.equal(page.calls.length, 1);
-  await page.send('CHECK_PAGE');
-  assert.equal(page.calls.length, 2);
-});
-
-test('a late result for the previous URL cannot display a warning on the new page', async () => {
-  let release;
-  const waiting = new Promise(resolve => {release = resolve;});
-  const page = await inspectPage('https://old.example/', () => waiting);
-  page.pageWindow.location.href = 'https://new.example/';
-  release({riskScore: 95, riskLevel: 'HIGH'});
-  await new Promise(resolve => setImmediate(resolve));
-  assert.equal(page.banners.length, 0);
-});
+const source = readFileSync(new URL('../extension/background.js', import.meta.url), 'utf8');
+const manifest = JSON.parse(readFileSync(new URL('../extension/manifest.json', import.meta.url), 'utf8'));
+const senderURL = 'https://chat.example/inbox?private=1';
+const linkInfo = {menuItemId: 'scamguard-link', pageUrl: senderURL, linkUrl: 'https://example.com/shared?token=private#secret'};
+const selectionInfo = {menuItemId: 'scamguard-selection', pageUrl: senderURL, selectionText: 'Are you free for lunch tomorrow?'};
 
 function worker(options = {}) {
-  const requests = [], registrations = [], injections = [], tabMessages = [], badges = [];
-  let listener, updated, installed;
-  let tabURL = 'https://evil.example/path?private=1';
-  const titles = new Map();
+  const requests = [], windows = [], menus = [], registrations = [], listeners = {};
+  const session = {}, local = {automatic: true};
+  let sequence = 0, now = 1000;
+  const event = name => ({addListener(callback) {listeners[name] = callback;}});
+  const storage = values => ({get: async key => typeof key === 'object' ? {...key, ...values} : {[key]: structuredClone(values[key])},
+    set: async value => Object.assign(values, structuredClone(value)), setAccessLevel: async () => {}});
   const id = 'lamffehgecaabedhleppfmgjcagamlih';
-  const settings = {automatic: options.automatic ?? false};
-  const event = {addListener() {}};
-  vm.runInNewContext(background, {URL, AbortSignal, console, chrome: {
-    runtime: {id, getURL: name => `chrome-extension://${id}/${name}`,
-      getManifest: () => ({version: '1.1.2'}),
-      onMessage: {addListener: callback => {listener = callback;}}, onInstalled: {addListener: callback => {installed = callback;}}, onStartup: event},
-    storage: {local: {get: async () => settings, set: async value => Object.assign(settings, value)}},
-    permissions: {contains: async () => true, onRemoved: event},
-    action: {setBadgeText: async value => badges.push(value), setBadgeBackgroundColor: async () => {},
-      setTitle: async value => titles.set(value.tabId, value.title), getTitle: async value => titles.get(value.tabId) ?? '',
-      getBadgeText: async value => badges.findLast(badge => badge.tabId === value.tabId)?.text ?? ''},
-    scripting: {insertCSS: async () => {}, executeScript: async value => {
-      injections.push(value); if (options.executeScript) await options.executeScript(value);
-    },
-      unregisterContentScripts: async () => {}, registerContentScripts: async value => {
-      registrations.push(value);
-      if (options.register) await options.register();
-    }},
-    tabs: {onUpdated: {addListener: callback => {updated = callback;}}, onActivated: event,
-      query: async () => [{id: 1, url: 'https://example.com/already-open?private=1'}],
-      get: async () => ({id: 1, url: tabURL}),
-      sendMessage: async (id, message) => {tabMessages.push({id, message});
-        return message.action === 'PING' ? {version: options.liveContentVersion} : {riskScore: 12, riskLevel: 'LOW'};}},
-  }, fetch: async (url, request) => {requests.push({url, body: JSON.parse(request.body)});
-    return {ok: true, json: async () => options.verdict ?? ({riskScore: 95, riskLevel: 'HIGH'})};}});
-  const send = (message, sender) => new Promise(resolve => listener(message, {id, ...sender}, resolve));
-  const navigate = async url => {tabURL = url; await updated(1, {url});};
-  return {requests, registrations, settings, injections, tabMessages, badges, send, navigate, restore: () => installed(),
-    popup: {url: `chrome-extension://${id}/popup.html`}};
+  const context = {URL, AbortSignal, console, Date: class extends Date {static now() {return now;}},
+    crypto: {randomUUID: () => 'job-' + (++sequence)}, setTimeout,
+    chrome: {runtime: {id, getURL: file => `chrome-extension://${id}/${file}`,
+      getManifest: () => manifest, onInstalled: event('installed'), onStartup: event('startup'), onMessage: event('message')},
+    storage: {local: storage(local), session: storage(session)},
+    contextMenus: {removeAll: async () => {menus.length = 0;}, create: (value, callback) => {menus.push(value); callback?.(); return value.id;},
+      onClicked: event('context')},
+    scripting: {unregisterContentScripts: async value => registrations.push(value)},
+    action: {setBadgeText: async () => {}},
+    tabs: {query: async () => [{id: 1, url: options.tabURL ?? senderURL}], onUpdated: event('updated'), onActivated: event('activated')},
+    windows: {create: async value => {windows.push(value); return {id: windows.length};}}},
+    fetch: async (url, request) => {
+      const body = JSON.parse(request.body); requests.push({url, body, credentials: request.credentials, cache: request.cache});
+      if (options.fetch) return options.fetch(body);
+      return {ok: options.status === undefined || options.status === 200, status: options.status ?? 200,
+        json: async () => options.result ?? {riskScore: 12, riskLevel: 'LOW', summary: 'Owned test result', ml_classifier: {model_ready: true}}};
+    }};
+  vm.runInNewContext(source, context);
+  const ui = {id, url: `chrome-extension://${id}/popup.html`};
+  const send = (message, sender = ui) => new Promise(resolve => listeners.message(message, sender, resolve));
+  const menu = info => listeners.context(info, {id: 1, url: senderURL});
+  return {requests, windows, menus, registrations, listeners, session, local, ui, send, menu,
+    initialize: () => listeners.installed(), advance: ms => {now += ms;}};
 }
 
-test('worker accepts only a minimized URL matching its browser-provided sender', async () => {
-  const w = worker();
-  const sender = {url: 'https://evil.example/path?private=1', tab: {id: 1, url: 'https://evil.example/path?private=1'}};
-  assert.ok((await w.send({action: 'ANALYZE_URL', url: 'https://other.example/'}, sender)).error);
+test('manifest adds context menus and removes broad optional access and content scripts', () => {
+  assert.ok(manifest.permissions.includes('contextMenus'));
+  assert.ok(manifest.permissions.includes('activeTab'));
+  assert.deepEqual(manifest.host_permissions, ['http://localhost/*']);
+  assert.equal(manifest.optional_host_permissions, undefined);
+  assert.equal(manifest.content_scripts, undefined);
+});
+
+test('install migrates automatic mode off and unregisters the old scanner without analysis', async () => {
+  const w = worker(); await w.initialize();
+  assert.equal(w.local.automatic, false);
+  assert.ok(w.registrations.some(value => value.ids.includes('scamguard-automatic')));
   assert.equal(w.requests.length, 0);
-  assert.equal((await w.send({action: 'ANALYZE_URL', url: 'https://evil.example/path'}, sender)).riskScore, 95);
-  assert.deepEqual(w.requests[0].body, {url: 'https://evil.example/path'});
+});
+
+test('menus are limited to web link and selected-text contexts without private text in titles', async () => {
+  const w = worker(); await w.initialize();
+  const link = w.menus.find(value => value.id === 'scamguard-link');
+  const text = w.menus.find(value => value.id === 'scamguard-selection');
+  assert.deepEqual(Array.from(link.contexts), ['link']);
+  assert.deepEqual(Array.from(text.contexts), ['selection']);
+  assert.ok(w.menus.every(value => value.documentUrlPatterns.includes('https://*/*') && !value.title.includes('%s')));
+});
+
+test('reinitialization recreates menus without duplicates or automatic event handlers', async () => {
+  const w = worker(); await w.initialize(); await w.initialize();
+  assert.equal(new Set(w.menus.map(menu => menu.id)).size, w.menus.length);
+  assert.equal(w.menus.length, 3);
+  assert.equal(w.listeners.updated, undefined);
+  assert.equal(w.listeners.activated, undefined);
+  assert.equal(w.requests.length, 0);
+});
+
+test('right-click link submits only its minimized destination and opens an extension result window', async () => {
+  const w = worker(); const job = await w.menu(linkInfo);
+  assert.equal(job.status, 'done');
+  assert.deepEqual(w.requests[0].body, {url: 'https://example.com/shared', language: 'vi'});
   assert.equal(w.requests[0].url, 'http://localhost:3000/api/analyze');
+  assert.equal(w.requests[0].credentials, 'omit'); assert.equal(w.requests[0].cache, 'no-store');
+  assert.match(w.windows[0].url, /^chrome-extension:\/\/lamffehgecaabedhleppfmgjcagamlih\/popup.html\?check=/);
+  assert.equal(w.windows[0].type, 'popup');
 });
 
-test('automatic mode is opt-in and pages cannot change user settings', async () => {
+test('recognized redirect wrappers are decoded locally before stripping private URL parts', async () => {
+  for (const linkUrl of ['https://l.facebook.com/l.php?u=https%3A%2F%2Fexample.com%2Flogin%3Fsecret%3D1',
+    'https://www.google.com/url?q=https%3A%2F%2Fexample.com%2Flogin',
+    'https://www.youtube.com/redirect?q=https%3A%2F%2Fexample.com%2Flogin']) {
+    const w = worker(); await w.menu({...linkInfo, linkUrl});
+    assert.equal(w.requests[0].body.url, 'https://example.com/login');
+  }
+});
+
+test('credentials are removed from link checks', async () => {
+  const w = worker(); await w.menu({...linkInfo, linkUrl: 'https://user:password@example.com/path?secret=1#private'});
+  assert.equal(w.requests[0].body.url, 'https://example.com/path');
+});
+
+test('lookalike wrapper hosts are checked themselves instead of a forged target', async () => {
+  const w = worker(); await w.menu({...linkInfo, linkUrl: 'https://l.facebook.com.evil.example/l.php?u=https://good.example/'});
+  assert.equal(w.requests[0].body.url, 'https://l.facebook.com.evil.example/l.php');
+});
+
+test('selected message is submitted exactly, without collecting surrounding page content', async () => {
+  const w = worker(); await w.menu({...selectionInfo, selectionText: '  Đoạn tin nhắn được chọn\nhttps://example.com/?selected=1  '});
+  assert.deepEqual(w.requests[0].body, {text: '  Đoạn tin nhắn được chọn\nhttps://example.com/?selected=1  ', language: 'vi'});
+});
+
+test('empty selected text never produces a request or a safe verdict', async () => {
+  const w = worker(); const job = await w.menu({...selectionInfo, selectionText: ' \n '});
+  assert.equal(job.status, 'error'); assert.equal(job.score, undefined); assert.equal(w.requests.length, 0);
+});
+
+test('oversized selections are rejected rather than silently truncated', async () => {
+  const w = worker(); const job = await w.menu({...selectionInfo, selectionText: 'a'.repeat(20001)});
+  assert.equal(job.status, 'error'); assert.equal(w.requests.length, 0);
+});
+
+test('missing or non-string selected text is rejected', async () => {
+  for (const selectionText of [undefined, 12, {}]) {
+    const w = worker(); assert.equal((await w.menu({...selectionInfo, selectionText})).status, 'error');
+    assert.equal(w.requests.length, 0);
+  }
+});
+
+test('non-web link protocols cannot initiate classification', async () => {
+  for (const linkUrl of ['javascript:alert(1)', 'file:///private', 'mailto:private@example.com', 'data:text/html,private']) {
+    const w = worker(); assert.equal((await w.menu({...linkInfo, linkUrl})).status, 'error');
+    assert.equal(w.requests.length, 0);
+  }
+});
+
+test('malformed, oversized or invalid wrapped URLs cannot become low-risk results', async () => {
+  for (const linkUrl of ['https://', 'https://example.com/' + 'x'.repeat(4096),
+    'https://l.facebook.com/l.php?u=javascript%3Aalert(1)', 'https://l.facebook.com/l.php']) {
+    const w = worker(); assert.equal((await w.menu({...linkInfo, linkUrl})).status, 'error');
+    assert.equal(w.requests.length, 0);
+  }
+});
+
+test('context actions on restricted browser documents are rejected', async () => {
+  const w = worker(); assert.equal((await w.menu({...linkInfo, pageUrl: 'chrome://settings'})).status, 'error');
+  assert.equal(w.requests.length, 0);
+});
+
+test('unknown native menu IDs do not trigger any action', async () => {
+  const w = worker(); await w.menu({...linkInfo, menuItemId: 'forged'});
+  assert.equal(w.requests.length, 0); assert.equal(w.windows.length, 0);
+});
+
+test('toolbar button checks the browser-provided active URL without content injection', async () => {
+  const w = worker(); const job = await w.send({action: 'CHECK_ACTIVE_TAB'});
+  assert.equal(job.status, 'done'); assert.equal(w.requests[0].body.url, 'https://chat.example/inbox');
+  assert.equal(w.windows.length, 0);
+});
+
+test('popup cannot override the active URL with an arbitrary message field', async () => {
+  const w = worker(); await w.send({action: 'CHECK_ACTIVE_TAB', url: 'https://forged.example/'});
+  assert.equal(w.requests[0].body.url, 'https://chat.example/inbox');
+});
+
+test('non-web active tabs return an error instead of calling the model', async () => {
+  const w = worker({tabURL: 'edge://extensions'}); assert.equal((await w.send({action: 'CHECK_ACTIVE_TAB'})).status, 'error');
+  assert.equal(w.requests.length, 0);
+});
+
+test('ordinary pages cannot request analysis or inspect private result summaries', async () => {
   const w = worker();
-  assert.equal(w.settings.automatic, false);
-  const forged = await w.send({action: 'SET_MODE', automatic: true}, {url: 'https://evil.example/', tab: {id: 1}});
-  assert.ok(forged.error);
-  assert.equal(w.settings.automatic, false);
-  await w.send({action: 'SET_MODE', automatic: true}, w.popup);
-  assert.equal(w.settings.automatic, true);
-  assert.equal(w.registrations.length, 1);
-  await w.send({action: 'SET_MODE', automatic: false}, w.popup);
-  assert.equal(w.settings.automatic, false);
+  for (const action of ['CHECK_ACTIVE_TAB', 'GET_RESULT']) assert.ok((await w.send({action}, {id: w.ui.id, url: senderURL, tab: {id: 1}})).error);
+  assert.equal(w.requests.length, 0);
 });
 
-test('a delayed enable cannot overwrite a later manual-mode choice', async () => {
-  let release;
-  const pending = new Promise(resolve => {release = resolve;});
-  const w = worker({register: () => pending});
-  const enabling = w.send({action: 'SET_MODE', automatic: true}, w.popup);
-  await new Promise(resolve => setImmediate(resolve));
-  const disabling = w.send({action: 'SET_MODE', automatic: false}, w.popup);
-  release();
-  await Promise.all([enabling, disabling]);
-  assert.equal(w.settings.automatic, false);
-});
-
-test('enabling automatic mode checks the already-open active page without a manual click', async () => {
+test('foreign extension IDs and popup lookalike paths are rejected', async () => {
   const w = worker();
-  const result = await w.send({action: 'SET_MODE', automatic: true}, w.popup);
-  await new Promise(resolve => setImmediate(resolve));
-  assert.equal(result.automatic, true);
-  assert.equal(w.injections.filter(item => item.files?.includes('content.js')).length, 1);
-  assert.equal(w.tabMessages.at(-1).message.action, 'AUTO_PAGE');
+  for (const sender of [{id: 'foreign', url: w.ui.url}, {...w.ui, url: w.ui.url + '/forged'}]) {
+    assert.ok((await w.send({action: 'CHECK_ACTIVE_TAB'}, sender)).error);
+  }
+  assert.equal(w.requests.length, 0);
 });
 
-test('restoring an already-enabled extension checks the current page without toggling the radio', async () => {
-  const w = worker({automatic: true});
-  await w.restore();
-  await new Promise(resolve => setImmediate(resolve));
-  assert.equal(w.settings.automatic, true);
-  assert.equal(w.tabMessages.at(-1)?.message.action, 'AUTO_PAGE');
+test('legacy scanning and forged context commands cannot start analysis through messaging', async () => {
+  const w = worker();
+  for (const action of ['ANALYZE_URL', 'ANALYZE_LINK', 'ANALYZE_LINKS', 'SET_MODE', 'CHECK_SELECTION', 'CONTEXT_MENU']) {
+    assert.ok((await w.send({action, automatic: true, url: 'https://example.com/', text: 'private'})).error);
+  }
+  assert.equal(w.requests.length, 0);
 });
 
-test('opening automatic popup with no result repairs missing injection', async () => {
-  const w = worker({automatic: true});
-  await w.send({action: 'GET_SETTINGS', ensure: true}, w.popup);
-  await new Promise(resolve => setImmediate(resolve));
-  assert.equal(w.injections.filter(item => item.files?.includes('content.js')).length, 1);
+test('HTTP failure never produces a score', async () => {
+  const w = worker({status: 503}); const job = await w.menu(linkInfo);
+  assert.equal(job.status, 'error'); assert.equal(job.score, undefined);
 });
 
-test('overlapping automatic requests initialize a page only once', async () => {
+test('network and malformed JSON failures leave an explicit error result', async () => {
+  for (const fetch of [async () => {throw new Error('offline');}, async () => ({ok: true, json: async () => {throw new Error('bad JSON');}})]) {
+    const w = worker({fetch}); assert.equal((await w.menu(linkInfo)).status, 'error');
+  }
+});
+
+test('an unavailable or missing model cannot be presented as low risk', async () => {
+  for (const result of [{model_ready: false}, {riskScore: 0, riskLevel: 'LOW', ml_classifier: {model_ready: false}},
+    {riskScore: 0, riskLevel: 'LOW'}]) {
+    const w = worker({result}); assert.equal((await w.menu(linkInfo)).status, 'error');
+  }
+});
+
+test('invalid scores and unknown risk levels never enter a successful result', async () => {
+  for (const [riskScore, riskLevel] of [[-1, 'LOW'], [101, 'LOW'], [NaN, 'LOW'], ['0', 'LOW'], [0, 'SAFE']]) {
+    const w = worker({result: {riskScore, riskLevel, ml_classifier: {model_ready: true}}});
+    assert.equal((await w.menu(linkInfo)).status, 'error');
+  }
+});
+
+test('low, review and high scores are preserved without forced whitelist values', async () => {
+  for (const [riskScore, riskLevel] of [[1, 'LOW'], [59, 'MEDIUM'], [94, 'HIGH']]) {
+    const w = worker({result: {riskScore, riskLevel, ml_classifier: {model_ready: true}}});
+    const job = await w.menu(linkInfo); assert.equal(job.score, riskScore); assert.equal(job.level, riskLevel);
+  }
+});
+
+test('risky embedded URL stays visible without inflating a low message score', async () => {
+  const w = worker({result: {riskScore: 2, riskLevel: 'MEDIUM', summary: 'Independent URL review',
+    ml_classifier: {model_ready: true, url_review_required: true, url_score: 94}}});
+  const job = await w.menu(selectionInfo);
+  assert.equal(job.score, 2); assert.equal(job.level, 'MEDIUM'); assert.equal(job.urlScore, 94);
+});
+
+test('raw selected messages are not stored in session or local storage or result URLs', async () => {
+  const w = worker(); const privateText = 'PRIVATE_MESSAGE_SENTINEL_123';
+  await w.menu({...selectionInfo, selectionText: privateText});
+  assert.ok(!JSON.stringify({session: w.session, local: w.local, windows: w.windows}).includes(privateText));
+});
+
+test('result IDs preserve independent checks when responses arrive out of order', async () => {
   let release;
-  const waiting = new Promise(resolve => {release = resolve;});
-  const w = worker({automatic: true, executeScript: () => waiting});
-  const first = w.send({action: 'GET_SETTINGS', ensure: true}, w.popup);
-  const second = w.send({action: 'GET_SETTINGS', ensure: true}, w.popup);
+  const held = new Promise(resolve => {release = resolve;});
+  const w = worker({fetch: async body => {
+    if (body.url) await held;
+    return {ok: true, json: async () => ({riskScore: body.url ? 94 : 2, riskLevel: body.url ? 'HIGH' : 'LOW', ml_classifier: {model_ready: true}})};
+  }});
+  const first = w.menu(linkInfo);
   await new Promise(resolve => setImmediate(resolve));
-  try {assert.equal(w.injections.length, 1);} finally {release();}
-  await Promise.all([first, second]);
+  const second = await w.menu(selectionInfo); release(); const old = await first;
+  assert.notEqual(old.id, second.id);
+  assert.equal((await w.send({action: 'GET_RESULT', id: old.id})).score, 94);
+  assert.equal((await w.send({action: 'GET_RESULT', id: second.id})).score, 2);
 });
 
-test('a completed low-score scan is visible in the extension badge', async () => {
-  const w = worker({verdict: {riskScore: 12, riskLevel: 'LOW'}});
-  await w.send({action: 'ANALYZE_URL', url: 'https://evil.example/path'},
-    {url: 'https://evil.example/path?private=1', tab: {id: 1}});
-  assert.equal(w.badges.length, 1);
-  assert.equal(w.badges[0].tabId, 1);
-  assert.equal(w.badges[0].text, '12');
-});
-
-test('query/fragment-only navigation preserves a result for the same minimized URL', async () => {
-  const w = worker({verdict: {riskScore: 12, riskLevel: 'LOW'}});
-  await w.send({action: 'ANALYZE_URL', url: 'https://evil.example/path'},
-    {url: 'https://evil.example/path?private=1', tab: {id: 1}});
-  await w.navigate('https://evil.example/path?private=2#new');
-  assert.equal(w.badges.at(-1).text, '12');
-  await w.navigate('https://evil.example/different');
-  assert.equal(w.badges.at(-1).text, '');
+test('stored summaries are bounded and expired results are unavailable', async () => {
+  const w = worker(); const first = await w.menu(linkInfo);
+  for (let index = 0; index < 12; index++) await w.menu(linkInfo);
+  assert.ok(Object.keys(w.session.checks ?? {}).length <= 10);
+  w.advance(600001);
+  assert.equal(await w.send({action: 'GET_RESULT', id: first.id}), null);
 });

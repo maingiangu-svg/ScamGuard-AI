@@ -2,7 +2,8 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { readFileSync } from 'node:fs';
 
-const manifest = JSON.parse(readFileSync(new URL('../ml_model/models/hybrid_manifest.json', import.meta.url), 'utf8'));
+const manifest = JSON.parse(readFileSync(process.env.TEST_MODEL_MANIFEST ??
+  new URL('../ml_model/models/hybrid_manifest.json', import.meta.url), 'utf8'));
 
 const origin = process.env.TEST_APP_URL ?? 'http://127.0.0.1:3000';
 let requestId = 0;
@@ -129,7 +130,7 @@ test('reported Facebook and Google URLs preserve model scores without a contradi
 test('reported suspicious link uses the repaired URL head with the declared alert policy', async () => {
   const result = await analyze({textInput:'https://qi.lv/F0i'});
   assert.equal(result.ml_classifier.text_result, null);
-  assert.equal(result.ml_classifier.url_result.model_id, manifest.training.run_id + ':url');
+  assert.equal(result.ml_classifier.url_result.model_id, manifest.head_model_ids?.url ?? manifest.training.run_id + ':url');
   assert.equal(result.riskScore, Math.round(result.ml_classifier.url_result.score * 100));
   assert.ok(result.riskScore >= 80);
   assert.equal(result.riskLevel, 'HIGH');
@@ -137,7 +138,7 @@ test('reported suspicious link uses the repaired URL head with the declared aler
 
 test('a risky link independently requires review when the message is below the review band', async () => {
   const result = await analyze({textInput:'Hey, are you free for lunch tomorrow?', url:'https://qi.lv/F0i'});
-  assert.equal(result.ml_classifier.text_result.model_id, manifest.training.run_id + ':sms');
+  assert.equal(result.ml_classifier.text_result.model_id, manifest.head_model_ids?.sms ?? manifest.training.run_id + ':sms');
   assert.ok(result.riskScore < 30);
   assert.equal(result.riskScore, Math.round(result.ml_classifier.text_result.score * 100));
   assert.equal(result.ml_classifier.model_prediction_label, 0);

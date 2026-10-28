@@ -8,9 +8,9 @@
     "start": "next start",
     "lint": "eslint",
     "check:types": "tsc --noEmit",
-    "test": "node --test scripts/analysis-assessment.test.mjs scripts/request-body.test.mjs scripts/api-policy.test.mjs scripts/extension.test.mjs scripts/image-security.test.mjs",
+    "test": "node --test scripts/analysis-assessment.test.mjs scripts/request-body.test.mjs scripts/api-policy.test.mjs scripts/extension.test.mjs scripts/image-security.test.mjs scripts/link-batch.test.mjs scripts/model-health.test.mjs",
     "test:inference": "node --test scripts/inference-lifecycle.test.mjs",
-    "test:api": "node --test --test-concurrency=1 scripts/analyze.integration.test.mjs scripts/api-security.integration.test.mjs",
+    "test:api": "node --test --test-concurrency=1 scripts/analyze.integration.test.mjs scripts/api-security.integration.test.mjs scripts/link-batch.integration.test.mjs",
     "test:unavailable": "node --test scripts/model-unavailable.integration.test.mjs"
   },
   "dependencies": {

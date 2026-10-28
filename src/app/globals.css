@@ -21,7 +21,8 @@ body {
 }
 
 .font-editorial {
-  font-family: "Newsreader", "Instrument Serif", Georgia, "Times New Roman", serif;
+  /* Keep Vietnamese diacritics in one font to avoid detached fallback glyphs. */
+  font-family: "Times New Roman", Times, serif;
 }
 
 /* Clean, subtle custom scrollbar */

@@ -2,6 +2,7 @@ import { spawn } from 'node:child_process';
 import path from 'node:path';
 import { existsSync } from 'node:fs';
 import type { MLClassification } from './analysis-assessment';
+import type { LinkBatchResult } from './link-batch';
 
 // Shared across route bundles in this server process. Multi-instance deployments
 // still need an upstream quota; do not queue unbounded Python/model startups.
@@ -29,20 +30,28 @@ export function parseInput(body: unknown): {text: string; url: string; language:
 }
 
 export async function runMLClassifier(text: string, url: string): Promise<MLClassification | null> {
+  // Keep complete literal paths: tracing a dynamic ml_model directory includes raw datasets.
+  const scripts: Record<string, string> = {
+    hybrid: path.join(process.cwd(), 'ml_model/predict_hybrid.py'),
+    processed: path.join(process.cwd(), 'ml_model/predict_processed.py'),
+    legacy: path.join(process.cwd(), 'ml_model/predict.py'),
+  };
+  return runPython<MLClassification>(scripts[process.env.SCAMGUARD_INFERENCE_MODE ?? 'hybrid'], {text, url});
+}
+
+export async function runMLLinkBatch(urls: string[]): Promise<LinkBatchResult | null> {
+  if ((process.env.SCAMGUARD_INFERENCE_MODE ?? 'hybrid') !== 'hybrid') return null;
+  return runPython<LinkBatchResult>(path.join(process.cwd(), 'ml_model/predict_links.py'), {urls});
+}
+
+async function runPython<T>(inferenceScript: string | undefined, payload: object): Promise<T | null> {
   const root = process.cwd();
   const localPython = path.join(root, '.venv', process.platform === 'win32' ? 'Scripts/python.exe' : 'bin/python');
   const executable = process.env.PYTHON_EXECUTABLE || (existsSync(localPython) ? localPython : 'python3');
-  // Explicit paths prevent Next's tracer from expanding ml_model/* into raw datasets.
-  const scripts: Record<string, string> = {
-    hybrid: path.join(root, 'ml_model/predict_hybrid.py'),
-    processed: path.join(root, 'ml_model/predict_processed.py'),
-    legacy: path.join(root, 'ml_model/predict.py'),
-  };
-  const inferenceScript = scripts[process.env.SCAMGUARD_INFERENCE_MODE ?? 'hybrid'];
   if (!inferenceScript) return null;
   if ((inferenceState.scamguardActiveInferences ?? 0) >= MAX_ACTIVE_INFERENCES) return null;
   inferenceState.scamguardActiveInferences = (inferenceState.scamguardActiveInferences ?? 0) + 1;
-  return new Promise<MLClassification | null>(resolve => {
+  return new Promise<T | null>(resolve => {
     const python = spawn(executable, [inferenceScript], {
       cwd: root, timeout: 15000, windowsHide: true,
       env: {...process.env, PYTHONUTF8: '1', PYTHONIOENCODING: 'utf-8', OMP_NUM_THREADS: '1'},
@@ -62,10 +71,10 @@ export async function runMLClassifier(text: string, url: string): Promise<MLClas
       if (code !== 0 || oversized || inputFailed) return resolve(null);
       try {
         const parsed: unknown = JSON.parse(output);
-        resolve(parsed && typeof parsed === 'object' ? parsed as MLClassification : null);
+        resolve(parsed && typeof parsed === 'object' ? parsed as T : null);
       } catch { resolve(null); }
     });
-    python.stdin.end(JSON.stringify({text, url}));
+    python.stdin.end(JSON.stringify(payload));
   }).catch(() => null).finally(() => {
     inferenceState.scamguardActiveInferences = (inferenceState.scamguardActiveInferences ?? 1) - 1;
   });

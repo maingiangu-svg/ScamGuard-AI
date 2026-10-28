@@ -3,165 +3,135 @@ import fs from 'node:fs/promises';
 import http from 'node:http';
 import path from 'node:path';
 import {pathToFileURL} from 'node:url';
-import {createHash} from 'node:crypto';
 
 const tools = path.resolve(process.env.AUDIT_NODE_TOOLS ?? '.local-runtime/audit/node-tools');
 const {chromium} = await import(pathToFileURL(path.join(tools, 'node_modules/playwright/index.mjs')));
-const output = process.env.AUDIT_OUTPUT ?? 'docs/readiness-evidence/2026-10-26';
-await fs.mkdir('.local-runtime/readiness', {recursive: true});
+const output = process.env.AUDIT_OUTPUT ?? '.local-runtime/extension-v200';
 await fs.mkdir(output, {recursive: true});
-const profile = await fs.mkdtemp(path.resolve('.local-runtime/readiness/extension-profile-'));
-const extension = path.resolve('extension');
+const extension = await fs.mkdtemp(path.resolve('.local-runtime/context-extension-'));
+await fs.cp('extension', extension, {recursive: true});
+const apiOrigin = process.env.TEST_APP_URL ?? 'http://localhost:3000';
+if (apiOrigin !== 'http://localhost:3000') {
+  const file = path.join(extension, 'background.js');
+  await fs.writeFile(file, (await fs.readFile(file, 'utf8')).replaceAll('http://localhost:3000/api/analyze', apiOrigin + '/api/analyze'));
+}
+const profile = await fs.mkdtemp(path.resolve('.local-runtime/context-profile-'));
+const sourceURL = 'http://localhost:3115/inbox?PRIVATE_SENTINEL=1#secret';
 const server = http.createServer((request, response) => {
   response.writeHead(200, {'Content-Type': 'text/html; charset=utf-8'});
-  response.end('<!doctype html><html><head><title>Private test title</title></head><body><h1>Extension test page</h1></body></html>');
+  response.end('<!doctype html><html lang="vi"><meta charset="utf-8"><title>Owned context fixture</title><body><h1>Owned messages</h1><p>PRIVATE_BODY_SENTINEL</p><a id="link" href="https://qi.lv/F0i?private=1#secret">Link trong tin nhắn</a><p id="message">Hello, are you free for lunch tomorrow?</p></body></html>');
 });
-await new Promise(resolve => server.listen(3105, resolve));
-const evidence = {status: 'FAIL', network: [], automaticPermissionPromptTested: false};
+await new Promise(resolve => server.listen(3115, '127.0.0.1', resolve));
+const evidence = {status: 'FAIL', apiOrigin, requests: [], destinationRequests: [], errors: [],
+  nativeMenuSelectionAutomated: false,
+  fixture: 'Native menu registration covered by unit tests; invoke its registered worker handler with owned click data. Real Chrome result windows and local API; no private profile.'};
 let context;
-let popup;
 try {
   context = await chromium.launchPersistentContext(profile, {channel: 'chromium', headless: true,
-    args: [`--disable-extensions-except=${extension}`, `--load-extension=${extension}`]});
+    viewport: {width: 420, height: 640}, args: [`--disable-extensions-except=${extension}`, `--load-extension=${extension}`]});
   const worker = context.serviceWorkers()[0] ?? await context.waitForEvent('serviceworker');
-  evidence.extensionId = new URL(worker.url()).host;
-  assert.equal(evidence.extensionId, 'lamffehgecaabedhleppfmgjcagamlih');
-  const settings = await worker.evaluate(() => chrome.storage.local.get({automatic: false}));
-  assert.equal(settings.automatic, false);
-  assert.deepEqual(await worker.evaluate(() => chrome.scripting.getRegisteredContentScripts()), []);
+  const id = new URL(worker.url()).host;
+  assert.equal(id, 'lamffehgecaabedhleppfmgjcagamlih');
+  context.on('page', page => page.on('pageerror', error => evidence.errors.push(error.message)));
   context.on('request', request => {
-    if (request.url() === 'http://localhost:3000/api/analyze') evidence.network.push(JSON.parse(request.postData()));
+    if (request.url() === apiOrigin + '/api/analyze' && request.method() === 'POST') evidence.requests.push(JSON.parse(request.postData()));
   });
+  await context.route('https://**/*', route => {evidence.destinationRequests.push(route.request().url()); return route.abort();});
   const page = await context.newPage();
-  await page.goto('http://localhost:3105/test?private=1#private', {waitUntil: 'networkidle'});
-  assert.equal(await page.evaluate(() => !!window.__scamguardInstalled), false);
-  assert.equal(evidence.network.length, 0);
-  const tabs = await worker.evaluate(() => chrome.tabs.query({}));
-  const tab = tabs.find(tab => tab.url?.startsWith('http://localhost:3105/'));
-  assert.ok(tab);
-  popup = await context.newPage();
-  await popup.goto(`chrome-extension://${evidence.extensionId}/popup.html`);
-  assert.equal(await popup.locator('input[value="manual"]').isChecked(), true);
-  // Bring the web tab forward before invoking the installed popup's real click handler.
-  // localhost access is a declared host permission; no browser-profile grant is fabricated.
-  await popup.evaluate(async tabId => {
-    await chrome.tabs.update(tabId, {active: true});
-    document.getElementById('check').click();
-  }, tab.id);
-  await popup.locator('#status').filter({hasText: /\/100/}).waitFor({timeout: 25000});
-  assert.equal(evidence.network.length, 1);
-  assert.deepEqual(evidence.network[0], {url: 'http://localhost:3105/test'});
-  evidence.manualResult = await popup.locator('#status').innerText();
-  const expectedScore = Number(evidence.manualResult.split('/')[0]);
-  assert.ok(expectedScore >= 80 && expectedScore <= 100, 'The fixed local fixture must exercise a high-score warning');
-  await popup.screenshot({path: path.join(output, 'extension-popup.png')});
-  // Lack of automatic host permission must not silently turn on collection.
-  const denied = await popup.evaluate(() => chrome.runtime.sendMessage({action: 'SET_MODE', automatic: true}));
-  assert.ok(denied.error);
-  assert.equal((await worker.evaluate(() => chrome.storage.local.get('automatic'))).automatic, false);
-  evidence.manualMode = 'PASS';
-  evidence.automaticPermissionGuard = 'PASS';
-  await context.close();
-  context = undefined;
-  // Test the post-consent state with an explicit fixture manifest. Application
-  // scripts are unchanged; only optional host grants are preinstalled for this test.
-  const fixture = await fs.mkdtemp(path.resolve('.local-runtime/readiness/extension-auto-fixture-'));
-  await fs.cp(extension, fixture, {recursive: true});
-  const manifestBytes = await fs.readFile(path.join(extension, 'manifest.json'));
-  const manifest = JSON.parse(manifestBytes);
-  manifest.host_permissions = [...new Set([...manifest.host_permissions, ...manifest.optional_host_permissions])];
-  await fs.writeFile(path.join(fixture, 'manifest.json'), JSON.stringify(manifest, null, 2));
-  evidence.automaticFixture = {productionManifestSha256: createHash('sha256').update(manifestBytes).digest('hex'),
-    difference: 'Optional http/https host permissions pregranted in fixture manifest; source scripts unchanged'};
-  const autoProfile = await fs.mkdtemp(path.resolve('.local-runtime/readiness/extension-auto-profile-'));
-  context = await chromium.launchPersistentContext(autoProfile, {channel: 'chromium', headless: true,
-    args: [`--disable-extensions-except=${fixture}`, `--load-extension=${fixture}`]});
-  const autoWorker = context.serviceWorkers()[0] ?? await context.waitForEvent('serviceworker');
-  const automaticRequests = [];
-  context.on('request', request => {
-    if (request.url() === 'http://localhost:3000/api/analyze') automaticRequests.push(JSON.parse(request.postData()));
+  await page.goto(sourceURL, {waitUntil: 'networkidle'});
+  evidence.registeredMenuIds = await worker.evaluate(async () => {
+    const ids = ['scamguard-root', 'scamguard-link', 'scamguard-selection'];
+    for (const id of ids) await chrome.contextMenus.update(id, {enabled: true});
+    return ids;
   });
-  const alreadyOpen = await context.newPage();
-  await alreadyOpen.goto('http://localhost:3105/test?already-open=1#private', {waitUntil: 'networkidle'});
-  assert.equal(await alreadyOpen.evaluate(() => !!window.__scamguardInstalled), false);
-  assert.equal(automaticRequests.length, 0);
-  const existingTab = (await autoWorker.evaluate(() => chrome.tabs.query({})))
-    .find(tab => tab.url?.includes('already-open=1'));
-  assert.ok(existingTab);
-  let autoPopup = await context.newPage();
-  await autoPopup.goto(`chrome-extension://${evidence.extensionId}/popup.html`);
-  await autoPopup.evaluate(async tabId => {
-    await chrome.tabs.update(tabId, {active: true});
-    document.querySelector('input[value="automatic"]').click();
-  }, existingTab.id);
-  await alreadyOpen.locator('#scamguard-alert-banner').waitFor({timeout: 25000});
-  assert.deepEqual(automaticRequests, [{url: 'http://localhost:3105/test'}]);
-  const activeBadge = await autoWorker.evaluate(tabId => chrome.action.getBadgeText({tabId}), existingTab.id);
-  assert.equal(activeBadge, String(expectedScore));
-  evidence.automaticAlreadyOpenPage = 'PASS';
-  evidence.actualBadge = activeBadge;
-  assert.equal((await autoWorker.evaluate(() => chrome.storage.local.get('automatic'))).automatic, true);
-  assert.equal((await autoWorker.evaluate(() => chrome.scripting.getRegisteredContentScripts())).length, 1);
-  const autoPage = await context.newPage();
-  await autoPage.goto('http://localhost:3105/test?automatic=1#private', {waitUntil: 'networkidle'});
-  await autoPage.locator('#scamguard-alert-banner').waitFor({timeout: 25000});
-  assert.deepEqual(automaticRequests, [{url: 'http://localhost:3105/test'}, {url: 'http://localhost:3105/test'}]);
-  evidence.automaticRequests = automaticRequests;
-  await context.route('https://www.youtube.com/**', route => route.fulfill({
-    status: 200, contentType: 'text/html', body: '<!doctype html><title>External-origin permission fixture</title><p>Owned synthetic page</p>',
-  }));
-  const external = await context.newPage();
-  await external.goto('https://www.youtube.com/watch?private=fixture#private', {waitUntil: 'networkidle'});
-  const externalTab = (await autoWorker.evaluate(() => chrome.tabs.query({})))
-    .find(tab => tab.url?.startsWith('https://www.youtube.com/watch'));
-  assert.ok(externalTab);
-  await external.waitForFunction(() => !!document.documentElement, {timeout: 5000});
-  let externalBadge;
-  for (let attempt = 0; attempt < 100; attempt++) {
-    externalBadge = await autoWorker.evaluate(tabId => chrome.action.getBadgeText({tabId}), externalTab.id);
-    if (/^\d+$/.test(externalBadge)) break;
-    await new Promise(resolve => setTimeout(resolve, 200));
+  const grants = await worker.evaluate(() => chrome.permissions.getAll());
+  assert.ok(!grants.origins.some(origin => origin === 'http://*/*' || origin === 'https://*/*'));
+  assert.deepEqual(await worker.evaluate(() => chrome.scripting.getRegisteredContentScripts()), []);
+  assert.equal((await worker.evaluate(() => chrome.storage.local.get('automatic'))).automatic, false);
+  await page.evaluate(() => {const a = document.createElement('a'); a.href = 'https://new-link.example/'; a.textContent = 'New message link'; document.body.append(a);});
+  await page.locator('#link').click({button: 'right'});
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(1000);
+  assert.equal(evidence.requests.length, 0, 'Load, mutations and right-click alone must not analyze anything');
+  const tab = (await worker.evaluate(() => chrome.tabs.query({}))).find(tab => tab.url === sourceURL);
+  assert.ok(tab);
+
+  async function menu(info) {
+    const opened = context.waitForEvent('page');
+    const completed = worker.evaluate(({info, tab}) => handleMenuClick(info, tab), {info: {...info, pageUrl: sourceURL}, tab});
+    const view = await opened;
+    await view.waitForURL('**/popup.html?check=*');
+    const job = await completed;
+    await view.waitForFunction(status => document.getElementById('status').textContent.includes(status),
+      job.status === 'done' ? 'Đã kiểm tra' : 'Chưa kiểm tra');
+    return {view, job};
   }
-  assert.match(externalBadge, /^\d+$/);
-  assert.ok(automaticRequests.some(request => request.url === 'https://www.youtube.com/watch'));
-  evidence.externalOriginAutomatic = {status: 'PASS', badge: externalBadge,
-    pageFixture: 'HTTPS YouTube origin intercepted with owned HTML; no real YouTube content or browser profile used'};
-  const beforeReload = automaticRequests.length;
-  // Fault-inject a missing receiver while keeping automatic=true and the old
-  // installation marker. runtime.reload() disables CLI-loaded fixture extensions
-  // in this browser; this is receiver recovery, not a claimed native Reload test.
-  await autoWorker.evaluate(async tabId => {
-    await chrome.scripting.executeScript({target: {tabId}, func: () => window.__scamguardInstalled?.cleanup?.()});
-    await chrome.action.setBadgeText({tabId, text: ''});
-  }, externalTab.id);
-  await autoPopup.evaluate(async tabId => {
-    await chrome.tabs.update(tabId, {active: true});
-    return chrome.runtime.sendMessage({action: 'GET_SETTINGS', ensure: true});
-  }, externalTab.id);
-  for (let attempt = 0; attempt < 100 && automaticRequests.length === beforeReload; attempt++) {
-    await new Promise(resolve => setTimeout(resolve, 200));
-  }
-  assert.ok(automaticRequests.length > beforeReload, 'An enabled extension must repair a missing page receiver without a manual scan');
-  assert.equal((await autoPopup.evaluate(() => chrome.storage.local.get('automatic'))).automatic, true);
-  evidence.missingReceiverRecovery = 'PASS';
-  evidence.nativeRuntimeReloadTested = false;
-  await autoPopup.bringToFront();
-  await autoPopup.locator('input[value="manual"]').check();
-  await autoPopup.locator('#status').filter({hasText: 'Đã chuyển sang quét thủ công'}).waitFor();
-  assert.deepEqual(await autoPopup.evaluate(() => chrome.scripting.getRegisteredContentScripts()), []);
-  const disabledPage = await context.newPage();
-  await disabledPage.goto('http://localhost:3105/manual-again', {waitUntil: 'networkidle'});
-  assert.equal(await disabledPage.evaluate(() => !!window.__scamguardInstalled), false);
-  evidence.automaticModeAfterConsent = 'PASS';
-  evidence.disableAutomatic = 'PASS';
+  const high = await menu({menuItemId: 'scamguard-link', linkUrl: 'https://qi.lv/F0i?private=1#secret'});
+  assert.equal(high.job.score, 94); assert.equal(high.job.level, 'HIGH');
+  assert.equal(await high.view.locator('#score').innerText(), '94/100');
+  assert.equal(await high.view.locator('#target').innerText(), 'https://qi.lv/F0i');
+  await high.view.screenshot({path: path.join(output, 'right-click-link.png')});
+  await high.view.locator('#close').focus();
+  const closed = high.view.waitForEvent('close');
+  await high.view.keyboard.press('Enter').catch(error => {if (!high.view.isClosed()) throw error;});
+  await closed;
+
+  const low = await menu({menuItemId: 'scamguard-link', linkUrl: 'https://www.facebook.com/'});
+  assert.equal(low.job.score, 1); assert.equal(low.job.level, 'LOW');
+  assert.equal(await low.view.locator('#level').innerText(), 'Rủi ro thấp');
+  await low.view.close();
+
+  const selectedText = await page.locator('#message').innerText();
+  const message = await menu({menuItemId: 'scamguard-selection', selectionText: selectedText});
+  assert.ok(message.job.score < 30); assert.equal(message.job.kind, 'message');
+  assert.deepEqual(evidence.requests.at(-1), {text: selectedText, language: 'vi'});
+  await message.view.screenshot({path: path.join(output, 'selected-message.png')});
+  const memory = await worker.evaluate(() => chrome.storage.session.get(null));
+  assert.ok(!JSON.stringify(memory).includes(selectedText));
+  await message.view.close();
+
+  const mixedText = selectedText + ' https://qi.lv/F0i';
+  const mixedResponse = context.waitForEvent('response', {predicate: response => response.url() === apiOrigin + '/api/analyze'
+    && response.request().method() === 'POST' && JSON.parse(response.request().postData()).text === mixedText});
+  const mixed = await menu({menuItemId: 'scamguard-selection', selectionText: mixedText});
+  const baseline = await (await mixedResponse).json();
+  // Literal URLs produce a URL placeholder in the SMS input. Preserve that
+  // actual text-head score rather than assuming it equals a URL-free message.
+  assert.equal(mixed.job.score, Math.round(baseline.ml_classifier.text_result.score * 100));
+  assert.equal(mixed.job.level, baseline.riskLevel); assert.equal(mixed.job.urlScore, 94);
+  assert.match(await mixed.view.locator('#url-note').innerText(), /94\/100/);
+  await mixed.view.close();
+
+  const popup = await context.newPage();
+  await popup.goto(`chrome-extension://${id}/popup.html`);
+  assert.match(await popup.locator('#version').innerText(), /2\.0\.0/);
+  assert.equal(await popup.locator('input[name="mode"]').count(), 0);
+  const beforePopup = evidence.requests.length;
+  const denied = await popup.evaluate(() => chrome.runtime.sendMessage({action: 'ANALYZE_LINKS', urls: ['https://forged.example/']}));
+  assert.ok(denied.error); assert.equal(evidence.requests.length, beforePopup);
+  await popup.evaluate(async tabId => {await chrome.tabs.update(tabId, {active: true}); document.getElementById('check').click();}, tab.id);
+  await popup.waitForFunction(() => document.getElementById('kind').textContent.includes('Trang bạn yêu cầu')
+    && /\/100$/.test(document.getElementById('score').textContent), null, {timeout: 25000});
+  assert.deepEqual(evidence.requests.at(-1), {url: 'http://localhost:3115/inbox', language: 'vi'});
+  await popup.screenshot({path: path.join(output, 'manual-popup.png')});
+
+  await context.route(apiOrigin + '/api/analyze', route => route.fulfill({status: 503, json: {error: 'Owned outage fixture'}}));
+  const failed = await menu({menuItemId: 'scamguard-link', linkUrl: 'https://unavailable.example/'});
+  assert.equal(failed.job.status, 'error'); assert.equal(await failed.view.locator('#score').innerText(), '');
+  assert.equal(await failed.view.locator('#level').innerText(), '');
+  await failed.view.close();
+  assert.equal(await page.locator('[data-scamguard-risk]').count(), 0);
+  assert.ok(evidence.requests.every(body => !JSON.stringify(body).includes('PRIVATE_BODY_SENTINEL') && !JSON.stringify(body).includes('PRIVATE_SENTINEL')));
+  assert.deepEqual(evidence.destinationRequests, []); assert.deepEqual(evidence.errors, []);
+  evidence.checks = ['no automatic scan', 'native-handler link flow', 'real high/low scores', 'selected text only',
+    'independent URL warning', 'separate result windows', 'keyboard close', 'manual current page', 'rejected legacy messages',
+    'outage without safe score', 'no stored message text', 'no destination fetch', 'no page outlines'];
   evidence.status = 'PASS';
 } catch (error) {
-  evidence.error = error.message;
-  if (popup) evidence.popupStatus = await popup.locator('#status').innerText().catch(() => 'unavailable');
-  process.exitCode = 1;
+  evidence.error = error.stack; process.exitCode = 1;
 } finally {
   if (context) await context.close();
   await new Promise(resolve => server.close(resolve));
-  await fs.writeFile(path.join(output, 'extension-browser.json'), JSON.stringify(evidence, null, 2));
+  await fs.writeFile(path.join(output, 'context-browser.json'), JSON.stringify(evidence, null, 2));
   console.log(JSON.stringify(evidence, null, 2));
 }

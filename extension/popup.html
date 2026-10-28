@@ -1,17 +1,26 @@
 <!doctype html>
 <html lang="vi">
-<head><meta charset="utf-8"><title>ScamGuard</title><link rel="stylesheet" href="popup.css"></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ScamGuard — Kết quả kiểm tra</title><link rel="stylesheet" href="popup.css"></head>
 <body>
   <h1>ScamGuard</h1>
-  <fieldset><legend>Chế độ kiểm tra</legend>
-    <label><input type="radio" name="mode" value="manual" checked> Quét thủ công</label>
-    <p>Chỉ kiểm tra trang khi bạn bấm nút bên dưới.</p>
-    <label><input type="radio" name="mode" value="automatic"> Tự quét trang web</label>
-    <p>Cần bạn cấp quyền truy cập trang web. Có thể tắt bất cứ lúc nào.</p>
-  </fieldset>
-  <button id="check" type="button">Kiểm tra trang hiện tại</button>
-  <p id="status" role="status" aria-live="polite"></p>
-  <small>Gửi địa chỉ trang đã bỏ query, fragment và thông tin đăng nhập tới dịch vụ local ở localhost:3000. Đường dẫn vẫn có thể chứa dữ liệu cá nhân. Không có cảnh báo không đồng nghĩa an toàn.</small>
+  <div id="instructions">
+    <p>Kiểm tra khi bạn yêu cầu.</p>
+    <ol>
+      <li>Chuột phải vào link → <strong>ScamGuard AI → Kiểm tra liên kết này</strong>.</li>
+      <li>Bôi đen tin nhắn, chuột phải → <strong>Kiểm tra tin nhắn đã chọn</strong>.</li>
+    </ol>
+    <button id="check" type="button">Kiểm tra trang hiện tại</button>
+  </div>
+  <p id="status" role="status" aria-live="polite">Chọn link hoặc tin nhắn để kiểm tra.</p>
+  <section id="result" class="result" hidden aria-label="Kết quả đánh giá">
+    <p id="kind"></p>
+    <p id="target"></p>
+    <div class="metric"><strong id="score"></strong><span id="level"></span></div>
+    <p id="summary"></p>
+    <p id="url-note" hidden></p>
+  </section>
+  <small>Chỉ link hoặc phần tin nhắn bạn chọn được gửi tới dịch vụ local ở localhost:3000. Không tự đọc cuộc trò chuyện. Kết quả không bảo đảm an toàn tuyệt đối.</small>
+  <button id="close" class="secondary" type="button" hidden>Đóng kết quả</button>
   <p id="version"></p>
   <script src="popup.js"></script>
 </body>

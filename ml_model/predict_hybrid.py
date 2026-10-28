@@ -48,6 +48,9 @@ def extract_input_urls(text):
 
 def load_bundle():
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+    for gate in ('historical_nonregression_pass', 'all_policy_nonregression_pass', 'release_approved'):
+        if gate in manifest and manifest[gate] is not True:
+            raise ValueError('Model has not passed its declared release gate: ' + gate)
     content = Path(os.environ.get("SCAMGUARD_MODEL_PATH", MODEL)).read_bytes()
     if hashlib.sha256(content).hexdigest() != manifest["bundle_sha256"]:
         raise ValueError("Hybrid model checksum mismatch")
