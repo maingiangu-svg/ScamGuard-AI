@@ -1,0 +1,80 @@
+{
+  "raw_ham_rows": 4827,
+  "unique_model_inputs": 4517,
+  "unused_before_isolation": 1776,
+  "admitted_negative_rows": 62,
+  "admitted_groups": 61,
+  "admitted_templates": 62,
+  "blocked_rows": 4455,
+  "blocked_reasons": {
+    "already_fitted_model_input": 2741,
+    "protected_historical_component": 1684,
+    "language_not_confident_english": 30
+  },
+  "cap_blocked_rows": 0,
+  "base_rows": 4124,
+  "merged_rows": 4186,
+  "merged_labels": {
+    "0": 3663,
+    "1": 523
+  },
+  "models_fitted": 0,
+  "models_scored": 0,
+  "expert_labels_created": 0,
+  "independent_benchmark_created": false,
+  "source_url": "https://archive.ics.uci.edu/dataset/228/sms+spam+collection",
+  "protected_inputs_unchanged": true,
+  "files_sha256": {
+    "historical_inputs.json": "8556fd2c19f8b21ffbceaa9619e6caa9a206fc95ac0bef732842fa7b496b79e8",
+    "prepare_code.py": "a5ab811e9f76063a3e1afc766232efe2b4c6331c2c4273f2cc68d83760a36779",
+    "protocol.json": "b7d19fc46aaa58c2447fa04abf746280392278a02dae4f56e02de220ca7c4445",
+    "similarity_edges.json": "97a5ece327196146917a0f41a3bf5826a17d48730e3e6fdd1985255819e9e218",
+    "sms_quarantine.csv": "237a9562cfd344353901bafcaab1947e2a8bd3d505fe350c5b015668cf2b7397",
+    "sms_quarantine.jsonl": "83172d774c927bf2c91b0114900d407745151164f01eb031ccab345e3d682189",
+    "sms_train_additions.csv": "470b22260c66e25c8d9b87edaf949c30cd7754eff68e7616f1585ef59139eddf",
+    "sms_train_additions.jsonl": "2acb04ff2f0c40bb20b33e1502036aec52aa109cf2eaca9ca7e1054d75cb52c8",
+    "sms_train_merged.csv": "5de869cc9a279a418b82a960a5587ea70b45e7b8e85835ee512b939af3d637a3",
+    "sms_train_merged.jsonl": "af3a9dd33d986790daecf736ac869f98af70d1ed41a76b7fa0683975a24a5090",
+    "source_ham.csv": "2b2736c6ed91268efbee263d612ff2db1b054a12e4f894e4e0eaa90bde803615",
+    "source_ham.jsonl": "d8900a7ec982b4c509d161a9b5615df8a7f28f1baa4084ceeae64296d85fd4e1",
+    "source_readme.txt": "8753cd2d3cab68f80c8257851b8c2037778c267f55accb6fd1b5a2e32d36a84e"
+  },
+  "verification": {
+    "verified": true,
+    "source_membership_verified": 4827,
+    "admitted_source_negatives": 62,
+    "unique_model_inputs": 4517,
+    "english_training_rows": 4053,
+    "vietnamese_training_rows": 133,
+    "english_labels": {
+      "0": 3584,
+      "1": 469
+    },
+    "actual_source_record_mapping_checked": true,
+    "all_protected_hashes_unchanged": true,
+    "repeated_case_ids": 0,
+    "repeated_model_inputs": 0,
+    "protected_roles_in_additions": 0,
+    "expert_labels_created": 0,
+    "models_fitted": 0,
+    "models_scored": 0,
+    "merged_inventory_requires_regrouping_before_future_fitting": true,
+    "current_model_sha256": "26373a849458c95c3bfea30f73e93be7460e7a2b314a5ece80a71fa890efd008",
+    "current_manifest_sha256": "b14bd6e155354321398b676ac2a3c7a0ce9d623e7a4ade176d0629efc374e1ac",
+    "final_report_sha256": "3cf915a9175dfeb58d512ea71c630fc57f9dead6ff9bde27eff932572c11ae17",
+    "test_log_sha256": "25ef5a0f31df2b505036e111c26b9a2e9d824b08c2df560a3baed1ccb78f445c"
+  },
+  "package": "ml_model\\data\\prepared\\english_ham_expansion_2026-10-28",
+  "history_input_files": 143,
+  "tests": {
+    "python_passed": 170,
+    "new_tests": 4,
+    "log": "ml_model/data/prepared/english-ham-tests-2026-10-28.log"
+  },
+  "verification_report_sha256": "f9955eadb6ca7d0ffb783ceeca21f83cd26bd6f6e7f97d8ebf400a66ffa68758",
+  "independent_benchmark": false,
+  "accuracy_gain_measured": false,
+  "serving_model_changed": false,
+  "limitation": "Mostly informal personal conversations; not a modern transactional, OTP or advertising corpus.",
+  "source_license_url": "https://archive.ics.uci.edu/dataset/228/sms%2Bspam%2Bcollection"
+}

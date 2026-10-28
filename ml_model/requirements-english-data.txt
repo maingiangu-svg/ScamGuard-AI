@@ -1,0 +1,3 @@
+# Offline data preparation only; install into .local-runtime/english-data-libs.
+# Uses the existing project's numpy, without altering serving dependencies.
+langid==1.1.6

@@ -1,0 +1,347 @@
+{
+  "status": "trained_not_activated_serving_regression",
+  "selection": {
+    "reference": {
+      "rows": 31309,
+      "threshold": 0.5,
+      "labels": {
+        "0": 24261,
+        "1": 7048
+      },
+      "confusion_matrix_tn_fp_fn_tp": [
+        23910,
+        351,
+        1423,
+        5625
+      ],
+      "precision": 0.9412650602409639,
+      "recall": 0.7980987514188422,
+      "f1": 0.8637899262899262
+    },
+    "candidates": {
+      "sparse_c1": {
+        "rows": 31309,
+        "threshold": 0.5,
+        "labels": {
+          "0": 24261,
+          "1": 7048
+        },
+        "confusion_matrix_tn_fp_fn_tp": [
+          23959,
+          302,
+          1287,
+          5761
+        ],
+        "precision": 0.9501896750783441,
+        "recall": 0.8173950056753689,
+        "f1": 0.8788040576615056
+      },
+      "sparse_c4": {
+        "rows": 31309,
+        "threshold": 0.5,
+        "labels": {
+          "0": 24261,
+          "1": 7048
+        },
+        "confusion_matrix_tn_fp_fn_tp": [
+          23862,
+          399,
+          946,
+          6102
+        ],
+        "precision": 0.9386248269497001,
+        "recall": 0.8657775255391601,
+        "f1": 0.9007306812310871
+      },
+      "sparse_c16": {
+        "rows": 31309,
+        "threshold": 0.5,
+        "labels": {
+          "0": 24261,
+          "1": 7048
+        },
+        "confusion_matrix_tn_fp_fn_tp": [
+          23762,
+          499,
+          803,
+          6245
+        ],
+        "precision": 0.9260083036773428,
+        "recall": 0.886066969353008,
+        "f1": 0.9055974477958236
+      }
+    },
+    "winner": "sparse_c1",
+    "gate_pass": true,
+    "historical_test_used": false,
+    "selection_estimate_not_independent_accuracy": true
+  },
+  "calibration": {
+    "raw": {
+      "rows": 31309,
+      "labels": {
+        "0": 24261,
+        "1": 7048
+      },
+      "brier": 0.04070163871139372,
+      "log_loss": 0.15214282296229273,
+      "ece_10_bins": 0.045477790134231824
+    },
+    "calibrated": {
+      "rows": 31309,
+      "labels": {
+        "0": 24261,
+        "1": 7048
+      },
+      "brier": 0.03672341598819372,
+      "log_loss": 0.12797072352655076,
+      "ece_10_bins": 0.001919417302195087
+    },
+    "gate_pass": true,
+    "sms_gate_inherited": true,
+    "sms_parent_calibration_report_sha256": "c1c54564d5ff6ffb2b93f80fc33618c868dddc276dfe4ee4cb8ab8b800dad232",
+    "configuration_selection_bias_possible": true,
+    "seconds": 80.791
+  },
+  "evaluation": {
+    "bundle_sha256": "4eed2fb808c06fcdeb7381d0f59996348552e9d058707943ac86b48fa745a268",
+    "protocol_sha256": "4c7c300fe47af0cece29db597a83d79b59ed296add3fe1cf38f70df56b466ba0",
+    "metrics": {
+      "baseline": {
+        "rows": 9935,
+        "threshold": 0.5,
+        "labels": {
+          "1": 2230,
+          "0": 7705
+        },
+        "confusion_matrix_tn_fp_fn_tp": [
+          7545,
+          160,
+          606,
+          1624
+        ],
+        "precision": 0.9103139013452914,
+        "recall": 0.7282511210762331,
+        "f1": 0.8091679123069258
+      },
+      "candidate": {
+        "rows": 9935,
+        "threshold": 0.5,
+        "labels": {
+          "1": 2230,
+          "0": 7705
+        },
+        "confusion_matrix_tn_fp_fn_tp": [
+          7611,
+          94,
+          472,
+          1758
+        ],
+        "precision": 0.949244060475162,
+        "recall": 0.7883408071748879,
+        "f1": 0.8613424791768741
+      }
+    },
+    "seed_sanity_checks": [
+      {
+        "domain": "youtube.com",
+        "url": "https://www.youtube.com/",
+        "evidence_url": "https://about.youtube/",
+        "status": "added",
+        "baseline_score": 0.3873229192626251,
+        "candidate_score": 0.003986445523806778
+      },
+      {
+        "domain": "facebook.com",
+        "url": "https://www.facebook.com/",
+        "evidence_url": "https://about.fb.com/news/2020/05/the-new-facebook-com/",
+        "status": "added",
+        "baseline_score": 0.2544498543275971,
+        "candidate_score": 0.009418816351720963
+      },
+      {
+        "domain": "google.com",
+        "url": "https://www.google.com/",
+        "evidence_url": "https://www.google.com/",
+        "status": "reserved_domain",
+        "baseline_score": 0.34553616796333786,
+        "candidate_score": 0.026930170221181583
+      },
+      {
+        "domain": "microsoft.com",
+        "url": "https://www.microsoft.com/vi-vn/",
+        "evidence_url": "https://www.microsoft.com/vi-vn/",
+        "status": "reserved_domain",
+        "baseline_score": 0.1430994318585142,
+        "candidate_score": 0.015226069910136818
+      },
+      {
+        "domain": "apple.com",
+        "url": "https://www.apple.com/vn/contact/",
+        "evidence_url": "https://www.apple.com/vn/contact/",
+        "status": "reserved_domain",
+        "baseline_score": 0.059549116505333746,
+        "candidate_score": 0.03358134777402807
+      },
+      {
+        "domain": "zalo.me",
+        "url": "https://zalo.me/pc",
+        "evidence_url": "https://zalo.me/pc",
+        "status": "added",
+        "baseline_score": 0.7519576669353225,
+        "candidate_score": 0.2297564175052766
+      },
+      {
+        "domain": "shopee.vn",
+        "url": "https://shopee.vn/",
+        "evidence_url": "https://shopee.vn/",
+        "status": "added",
+        "baseline_score": 0.4834552474039878,
+        "candidate_score": 0.15175733461261406
+      },
+      {
+        "domain": "tiki.vn",
+        "url": "https://tiki.vn/",
+        "evidence_url": "https://tiki.vn/",
+        "status": "added",
+        "baseline_score": 0.46756403630106647,
+        "candidate_score": 0.07842304368216689
+      },
+      {
+        "domain": "vietcombank.com.vn",
+        "url": "https://www.vietcombank.com.vn/",
+        "evidence_url": "https://www.vietcombank.com.vn/",
+        "status": "added",
+        "baseline_score": 0.7756288327780889,
+        "candidate_score": 0.2042646572579571
+      },
+      {
+        "domain": "bidv.com.vn",
+        "url": "https://bidv.com.vn/",
+        "evidence_url": "https://bidv.com.vn/",
+        "status": "added",
+        "baseline_score": 0.0941052810799894,
+        "candidate_score": 0.17520198283589844
+      },
+      {
+        "domain": "momo.vn",
+        "url": "https://www.momo.vn/",
+        "evidence_url": "https://www.momo.vn/",
+        "status": "added",
+        "baseline_score": 0.6382596817003242,
+        "candidate_score": 0.07892612854481061
+      },
+      {
+        "domain": "dichvucong.gov.vn",
+        "url": "https://dichvucong.gov.vn/p/home/dvc-tthc-category.html",
+        "evidence_url": "https://dichvucong.gov.vn/p/home/dvc-tthc-category.html",
+        "status": "added",
+        "baseline_score": 0.011294116470444664,
+        "candidate_score": 0.0013338921197398146
+      },
+      {
+        "domain": "wikipedia.org",
+        "url": "https://www.wikipedia.org/",
+        "evidence_url": "https://www.wikipedia.org/",
+        "status": "reserved_domain",
+        "baseline_score": 0.08321336444960047,
+        "candidate_score": 0.003772511877623273
+      },
+      {
+        "domain": "vnexpress.net",
+        "url": "https://vnexpress.net/",
+        "evidence_url": "https://vnexpress.net/",
+        "status": "added",
+        "baseline_score": 0.22319391859584828,
+        "candidate_score": 0.04817032684522582
+      }
+    ],
+    "seed_results_are_independent_accuracy": false,
+    "historical_test_reused": true,
+    "new_independent_benchmark": false,
+    "release_gate_pass": true
+  },
+  "runtime_regressions": {
+    "candidate_bundle_sha256": "4eed2fb808c06fcdeb7381d0f59996348552e9d058707943ac86b48fa745a268",
+    "cases": [
+      {
+        "model": "baseline",
+        "direct_score": 94,
+        "direct_action": "BLOCK",
+        "direct_high_risk_check_pass": true,
+        "mixed_url_review_required": true,
+        "mixed_action": "REVIEW"
+      },
+      {
+        "model": "candidate",
+        "direct_score": 30,
+        "direct_action": "CLEAR",
+        "direct_high_risk_check_pass": false,
+        "mixed_url_review_required": false,
+        "mixed_action": "CLEAR"
+      }
+    ],
+    "runtime_regression_gate_pass": false,
+    "new_training_labels_created": 0,
+    "activation_performed": false
+  },
+  "protocol": {
+    "run_id": "sparse-url-20261027",
+    "base_bundle_sha256": "6a0fd38b35570bff4b0ae56dd52a07747a6670d3dc2eceda304e1f10898314d0",
+    "code_sha256": {
+      "url_model_selection.py": "508651a201e6fdaf2b9e8de40a2ca1da441dc837d1a827145fc25cf8d6f37503",
+      "official_domain_training.py": "205d49771ef3da6e2e581b54de4aae216fb6cea7376e00ea575972293a47d6de",
+      "calibrate_supervised.py": "bb3e9c9548386cf57db3d0b061d4b17e665c9520de3b9325c40b608e4715b7c7",
+      "modeling.py": "da61219b788d301b58ba25bd30c9f821cfcfe8c7354495f7d70d98afd4baa49b",
+      "preprocess.py": "9906e0438726035c0c2241c7571683a321a7085fd884df392fcee3136f93a9a7",
+      "repair_training_data.py": "663f8b03080ba9c884b9216f3c3ad558950f7d3e8c333c49744dcf16b6cc5ad1"
+    },
+    "input_sha256": {
+      "parent_bundle.pkl": "6a0fd38b35570bff4b0ae56dd52a07747a6670d3dc2eceda304e1f10898314d0",
+      "parent_manifest.json": "a3686ebcb5e268e1e1917483f5962d75500b64dd76491a818aad1a6d1a0f0377",
+      "seeds.json": "20359fe36a1668aa713de6fa993906fd565220b7db50204dbb27efad6b32e1cd",
+      "seed_decisions.json": "d338bc583045732dcee3d3a9ef87c71950f4f47baf0df2db1bb21a2cd7fa2acf",
+      "fit_rows.jsonl": "002b320e7c30afa4440fd6dcddae548397a2ceb3b3a358f05a91c66b197a3d31",
+      "sms_fit_rows.jsonl": "14ba54a040b08b7b3793eeeb44dd97a794e43c87e7b3e4f34425a98269f7b006",
+      "url_fit_rows.jsonl": "96d7c6fa6098cb12cea01de6a5de3408f16001c5c6bf8c2b80e4ea1115c7d995",
+      "url_test.jsonl": "c01b3adb3d1ebcb407d929fd8c1907f2183b95c3fc8dde8cdfabe1eb9b0dd030",
+      "selection_folds.jsonl": "e0e1e5a4c4b59d49ca2f974b4ba1ea4a4aaf6807c6a5c8e459c971917e429104"
+    },
+    "configurations": {
+      "sparse_c1": 1.0,
+      "sparse_c4": 4.0,
+      "sparse_c16": 16.0
+    },
+    "vectorizer_features": 20000,
+    "min_df": 2,
+    "solver": "liblinear",
+    "selection_group_folds": 3,
+    "outer_group_folds": 3,
+    "inner_group_folds": 3,
+    "seed": 42,
+    "method": "sigmoid",
+    "url_threshold": 0.5,
+    "new_row_weight": 1,
+    "sms_head_preserved": true,
+    "brier_and_log_loss_must_not_increase": true,
+    "release_max_false_positive_increase": 0,
+    "release_max_true_positive_decrease": 0,
+    "historical_tests_used_in_selection": false,
+    "threshold_selection_performed": false,
+    "expert_labels_created": 0,
+    "holdout_rows_fitted": 0,
+    "new_independent_benchmark": false
+  },
+  "verification": {
+    "python_tests_passed": 123,
+    "javascript_unit_tests_passed": 47,
+    "active_model_inference_lifecycle_tests_passed": 3,
+    "active_model_api_integration_tests_passed": 17,
+    "candidate_existing_behavior_regressions": 2,
+    "lint": "pass",
+    "build": "pass",
+    "types": "pass",
+    "active_bundle_and_manifest_unchanged": true,
+    "candidate_activated": false
+  }
+}

@@ -1,0 +1,294 @@
+{
+  "date": "2026-10-27",
+  "final_revision": "vi_readiness_2026-10-27-final",
+  "source": {
+    "source_rows": 2991,
+    "source_labels": {
+      "0": 2193,
+      "1": 798
+    },
+    "groups": 1006,
+    "disposition": {
+      "training_review_candidate": 373,
+      "quarantine": 1247,
+      "reserved_historical_test": 1196,
+      "reserved_historical_validation": 175
+    },
+    "historical_files": 121,
+    "historical_text_role_records": 205763,
+    "source_hashes": {
+      "full_dataset.csv": "8a29d50a6335c8938b8beef0a3daf57d276e880244394da453bc656f5a4c7847",
+      "train.csv": "bf5c34567685fcb9d73e5087289fbc64a196d39fd63d43d027bb68737786da32",
+      "test.csv": "166c27e44e90c6648df07c1bf03b7106a909d62d2b5122a727405a3ba8c68391",
+      "README.md": "55b9f147c83e4222ea6f6165e5e9676ad771cab4216821c6d871c245e21392cd"
+    },
+    "psl_sha256": "0232f4df0831911356e8ee1f4d5c3b6b12c0ed3f6bd66b0f81c8ab5d3d49e9ca",
+    "similarity_threshold": 0.8,
+    "historical_test_rows_reassigned_to_train": 0,
+    "fresh_benchmark_rows": 0,
+    "campaign_independence_proven": false,
+    "expert_labels_created": 0
+  },
+  "annotation": {
+    "corpus_sha256": "ef82cb8ae6aaf0004be289a8b7f982c4949fcdc32d47a25bc1ba00f62e4ce110",
+    "decisions_sha256": "d7ec4b68a0a8ec3b21a75c5ebf832db4f0b29eea358f959634192ad38e741f94",
+    "code_sha256": "ce3e3c06f3ec0539a1439c535ff51d3e66535649f5942a806cb267f0c6e50296",
+    "previous_review_hashes": {
+      "round2/latest_train_review_with_user_decisions.jsonl": "1913fb4ac6d9a93c04ae08fcfbea6dd5f243cfff869c2f171d6249c844a6fa43",
+      "round2/reviewed_validation.jsonl": "b48279c2166d0decd9ade40b960c40a9572e9ef273f3213025a6394bfa205ea9",
+      "round2/test_reviewed_all.jsonl": "31ab40e33ba5e596e850823d63872a1385dc1bb11a2a63f69db2fb1a60303db6",
+      "vi_ai_review.jsonl": "3745ba6d9335df34d0cfa2c85a317db2c0b56a4eb701c853fe18b09f73f9ab9c"
+    },
+    "label_counts": {
+      "legitimate": 464,
+      "unknown": 1863,
+      "spam": 440,
+      "scam": 224
+    },
+    "training_labels": {
+      "legitimate": 146,
+      "spam": 44,
+      "scam": 28
+    },
+    "new_ai_decisions": 401,
+    "expert_labels_created": 0,
+    "independently_human_verified": false
+  },
+  "verification": {
+    "status": "PASS",
+    "source_rows": 2991,
+    "source_trace_rows": 2991,
+    "historical_files_verified": 121,
+    "train_rows": 218,
+    "training_labels": {
+      "legitimate": 146,
+      "spam": 44,
+      "scam": 28
+    },
+    "cross_role_group_overlap": 0,
+    "cross_role_domain_overlap": 0,
+    "fitted_holdout_or_quarantine_rows": 0,
+    "known_expert_signatures_created": 0,
+    "active_bundle_unchanged": true,
+    "active_manifest_unchanged": true,
+    "blind_human_review": {
+      "cases": 500,
+      "counts": {
+        "pending": 500
+      },
+      "human_review_complete": false,
+      "expert_qualifications_verified": false
+    },
+    "new_independent_real_benchmark_rows": 0,
+    "campaign_independence_proven": false,
+    "final_data_revision": "vi_readiness_2026-10-27-final",
+    "verification_code_sha256": "56503d7b87ad41bb7cad1f27d90ef237785834a04346280220ddfbe04562e2ce"
+  },
+  "experiment": {
+    "training_rows": 218,
+    "training_labels": {
+      "legitimate": 146,
+      "spam": 44,
+      "scam": 28
+    },
+    "training_groups": 189,
+    "development": {
+      "rows": 218,
+      "groups": 189,
+      "classification": {
+        "legitimate": {
+          "precision": 0.8974358974358975,
+          "recall": 0.958904109589041,
+          "f1-score": 0.9271523178807947,
+          "support": 146.0
+        },
+        "spam": {
+          "precision": 0.7948717948717948,
+          "recall": 0.7045454545454546,
+          "f1-score": 0.7469879518072289,
+          "support": 44.0
+        },
+        "scam": {
+          "precision": 0.7391304347826086,
+          "recall": 0.6071428571428571,
+          "f1-score": 0.6666666666666666,
+          "support": 28.0
+        },
+        "accuracy": 0.8623853211009175,
+        "macro avg": {
+          "precision": 0.810479375696767,
+          "recall": 0.7568641404257842,
+          "f1-score": 0.7802689787848966,
+          "support": 218.0
+        },
+        "weighted avg": {
+          "precision": 0.8564020741922617,
+          "recall": 0.8623853211009175,
+          "f1-score": 0.8573319952145906,
+          "support": 218.0
+        }
+      },
+      "confusion_matrix": [
+        [
+          140,
+          5,
+          1
+        ],
+        [
+          8,
+          31,
+          5
+        ],
+        [
+          8,
+          3,
+          17
+        ]
+      ],
+      "label_order": [
+        "legitimate",
+        "spam",
+        "scam"
+      ],
+      "scam_binary": {
+        "tn": 184,
+        "fp": 6,
+        "fn": 11,
+        "tp": 17,
+        "precision": 0.7391304347826086,
+        "recall": 0.6071428571428571
+      },
+      "label_provenance": {
+        "ai_semantic_review": 218
+      },
+      "expert_verified_accuracy": false
+    },
+    "development_scope": "grouped_training_only_oof_not_independent_test",
+    "model_sha256": "a774ebc6356989fd3cba4c308fe2c71c0d08a5115b0a180cffde2836eceebcbb",
+    "protocol_sha256": "42926ebe21ba36e7429a86709d65d60fc301ef589f4cb25a45e5b8716330ae9b",
+    "active_model_changed": false
+  },
+  "diagnostic": {
+    "scope": "reused_historical_ai_label_diagnostic_not_new_benchmark",
+    "metrics": {
+      "rows": 643,
+      "groups": 476,
+      "classification": {
+        "legitimate": {
+          "precision": 0.6901041666666666,
+          "recall": 0.9601449275362319,
+          "f1-score": 0.803030303030303,
+          "support": 276.0
+        },
+        "spam": {
+          "precision": 0.8581081081081081,
+          "recall": 0.7016574585635359,
+          "f1-score": 0.7720364741641338,
+          "support": 181.0
+        },
+        "scam": {
+          "precision": 0.8018018018018018,
+          "recall": 0.478494623655914,
+          "f1-score": 0.5993265993265994,
+          "support": 186.0
+        },
+        "accuracy": 0.7480559875583204,
+        "macro avg": {
+          "precision": 0.7833380255255257,
+          "recall": 0.7134323365852273,
+          "f1-score": 0.7247977921736788,
+          "support": 643.0
+        },
+        "weighted avg": {
+          "precision": 0.7697067693665672,
+          "recall": 0.7480559875583204,
+          "f1-score": 0.735380579991943,
+          "support": 643.0
+        }
+      },
+      "confusion_matrix": [
+        [
+          265,
+          8,
+          3
+        ],
+        [
+          35,
+          127,
+          19
+        ],
+        [
+          84,
+          13,
+          89
+        ]
+      ],
+      "label_order": [
+        "legitimate",
+        "spam",
+        "scam"
+      ],
+      "scam_binary": {
+        "tn": 435,
+        "fp": 22,
+        "fn": 97,
+        "tp": 89,
+        "precision": 0.8018018018018018,
+        "recall": 0.478494623655914
+      },
+      "label_provenance": {
+        "ai_semantic_review": 637,
+        "user_decision": 6
+      },
+      "expert_verified_accuracy": false
+    },
+    "independent_benchmark": {
+      "rows": 0,
+      "label_counts": {},
+      "groups": 0,
+      "ready": false,
+      "reasons": [
+        "bound_human_review_required",
+        "fewer_than_10_groups_in_a_class",
+        "fewer_than_300_real_messages",
+        "fewer_than_30_messages_in_a_class"
+      ],
+      "campaign_independence_proven": false
+    },
+    "total_reserved_rows": 1196,
+    "unknown_labels_excluded": true,
+    "protocol_sha256": "42926ebe21ba36e7429a86709d65d60fc301ef589f4cb25a45e5b8716330ae9b",
+    "model_sha256": "a774ebc6356989fd3cba4c308fe2c71c0d08a5115b0a180cffde2836eceebcbb",
+    "active_model_changed": false,
+    "group_bootstrap_accuracy_95ci": [
+      0.6915633496774781,
+      0.7990580538749045
+    ]
+  },
+  "public_source_candidates": 6,
+  "new_real_sms_admitted": 0,
+  "new_independent_benchmark_ready": false,
+  "active_model_changed": false,
+  "remote_deployment": false,
+  "source_annotation_counts": {
+    "ai_semantic_review": 1277,
+    "pending_review": 1708,
+    "user_decision": 6
+  },
+  "checks": {
+    "python_tests": 149,
+    "javascript_tests": 65,
+    "lint": "PASS",
+    "typescript": "PASS",
+    "production_build": "PASS in isolated workspace copy",
+    "build_log": "vi_readiness_2026-10-27/build-isolated-elevated.log"
+  },
+  "user_policy": {
+    "debt_or_family_payment_without_context": "unknown",
+    "ordinary_gambling_or_loan_ads": "spam",
+    "bank_account_rental": "scam",
+    "provenance": "explicit_user_answers_in_this_chat",
+    "expert_verified": false
+  },
+  "automated_privacy_scan_is_not_full_anonymization_certification": true
+}

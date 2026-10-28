@@ -1,0 +1,23 @@
+{
+  "reviewed_on": "2026-10-27",
+  "label": 0,
+  "label_scope": "The exact first-party service URL is legitimate; no claim about all content, redirects, downloads or subdomains",
+  "label_provenance": "user_requested_first_party_url_ai_evidence_review",
+  "expert_verified": false,
+  "sites": [
+    {"domain": "youtube.com", "url": "https://www.youtube.com/", "evidence_url": "https://about.youtube/"},
+    {"domain": "facebook.com", "url": "https://www.facebook.com/", "evidence_url": "https://about.fb.com/news/2020/05/the-new-facebook-com/"},
+    {"domain": "google.com", "url": "https://www.google.com/", "evidence_url": "https://www.google.com/"},
+    {"domain": "microsoft.com", "url": "https://www.microsoft.com/vi-vn/", "evidence_url": "https://www.microsoft.com/vi-vn/"},
+    {"domain": "apple.com", "url": "https://www.apple.com/vn/contact/", "evidence_url": "https://www.apple.com/vn/contact/"},
+    {"domain": "zalo.me", "url": "https://zalo.me/pc", "evidence_url": "https://zalo.me/pc"},
+    {"domain": "shopee.vn", "url": "https://shopee.vn/", "evidence_url": "https://shopee.vn/"},
+    {"domain": "tiki.vn", "url": "https://tiki.vn/", "evidence_url": "https://tiki.vn/"},
+    {"domain": "vietcombank.com.vn", "url": "https://www.vietcombank.com.vn/", "evidence_url": "https://www.vietcombank.com.vn/"},
+    {"domain": "bidv.com.vn", "url": "https://bidv.com.vn/", "evidence_url": "https://bidv.com.vn/"},
+    {"domain": "momo.vn", "url": "https://www.momo.vn/", "evidence_url": "https://www.momo.vn/"},
+    {"domain": "dichvucong.gov.vn", "url": "https://dichvucong.gov.vn/p/home/dvc-tthc-category.html", "evidence_url": "https://dichvucong.gov.vn/p/home/dvc-tthc-category.html"},
+    {"domain": "wikipedia.org", "url": "https://www.wikipedia.org/", "evidence_url": "https://www.wikipedia.org/"},
+    {"domain": "vnexpress.net", "url": "https://vnexpress.net/", "evidence_url": "https://vnexpress.net/"}
+  ]
+}

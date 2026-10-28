@@ -1,0 +1,722 @@
+{
+  "date": "2026-10-28",
+  "scope": "Local audit: no fitting, relabeling, inference or URL fetching. Language counts use recorded metadata. URL page language is unknown.",
+  "active_run": "url-ensemble-20261027",
+  "active_bundle_hash_matches": true,
+  "active_dataset_hash_matches": {
+    "calibration_train.jsonl": true,
+    "calibration_validation.jsonl": true,
+    "fresh_test.jsonl": true,
+    "data_frozen.json": true,
+    "protocol.json": true,
+    "gate_training.json": true,
+    "gate_oof_scores.jsonl": true,
+    "url_fit_rows.jsonl": true,
+    "sms_fit_rows.jsonl": true,
+    "fit_rows.jsonl": true,
+    "sigmoid_failed_report.json": true
+  },
+  "roles": {
+    "sms_train": {
+      "rows": 3786,
+      "labels": {
+        "0": 3601,
+        "1": 185
+      },
+      "language_metadata": {
+        "en": 3653,
+        "vi": 133
+      },
+      "english_rows": 3653,
+      "english_labels": {
+        "0": 3522,
+        "1": 131
+      },
+      "english_label_provenance": {
+        "upstream_ham_or_non_smishing_spam": 2966,
+        "published_two_researcher_manual_relabeling_with_disagreement_resolution": 483,
+        "ai_semantic_review": 203,
+        "user_decision": 1
+      },
+      "english_positive_provenance": {
+        "ai_semantic_review": 62,
+        "published_two_researcher_manual_relabeling_with_disagreement_resolution": 68,
+        "user_decision": 1
+      },
+      "provenance": {
+        "upstream_ham_or_non_smishing_spam": 2966,
+        "published_two_researcher_manual_relabeling_with_disagreement_resolution": 483,
+        "ai_semantic_review": 334,
+        "user_scope_decision": 2,
+        "user_decision": 1
+      },
+      "owner_domains": 186,
+      "groups": 3432,
+      "positive_groups": 128,
+      "identity_duplicates": 0,
+      "invalid_labels": 0,
+      "blank_content": 0,
+      "expert_verified_flags": 0,
+      "forbidden_training_flags": 0,
+      "invalid_url_format": {},
+      "ambiguous_host_mentions_rows": 0,
+      "timestamps_present_rows": 0,
+      "campaign_ids_present_rows": 0
+    },
+    "sms_validation": {
+      "rows": 945,
+      "labels": {
+        "1": 49,
+        "0": 896
+      },
+      "language_metadata": {
+        "en": 904,
+        "vi": 41
+      },
+      "english_rows": 904,
+      "english_labels": {
+        "1": 33,
+        "0": 871
+      },
+      "english_label_provenance": {
+        "ai_semantic_review": 53,
+        "upstream_ham_or_non_smishing_spam": 822,
+        "published_two_researcher_manual_relabeling_with_disagreement_resolution": 29
+      },
+      "english_positive_provenance": {
+        "ai_semantic_review": 15,
+        "published_two_researcher_manual_relabeling_with_disagreement_resolution": 18
+      },
+      "provenance": {
+        "ai_semantic_review": 94,
+        "upstream_ham_or_non_smishing_spam": 822,
+        "published_two_researcher_manual_relabeling_with_disagreement_resolution": 29
+      },
+      "owner_domains": 51,
+      "groups": 860,
+      "positive_groups": 25,
+      "identity_duplicates": 0,
+      "invalid_labels": 0,
+      "blank_content": 0,
+      "expert_verified_flags": 0,
+      "forbidden_training_flags": null,
+      "invalid_url_format": {},
+      "ambiguous_host_mentions_rows": 0,
+      "timestamps_present_rows": 0,
+      "campaign_ids_present_rows": 0
+    },
+    "sms_test": {
+      "rows": 38,
+      "labels": {
+        "0": 14,
+        "1": 24
+      },
+      "language_metadata": {
+        "en": 38
+      },
+      "english_rows": 38,
+      "english_labels": {
+        "0": 14,
+        "1": 24
+      },
+      "english_label_provenance": {
+        "published_two_researcher_manual_relabeling_with_disagreement_resolution": 38
+      },
+      "english_positive_provenance": {
+        "published_two_researcher_manual_relabeling_with_disagreement_resolution": 24
+      },
+      "provenance": {
+        "published_two_researcher_manual_relabeling_with_disagreement_resolution": 38
+      },
+      "owner_domains": 11,
+      "groups": 11,
+      "positive_groups": 1,
+      "identity_duplicates": 0,
+      "invalid_labels": 0,
+      "blank_content": 0,
+      "expert_verified_flags": 0,
+      "forbidden_training_flags": null,
+      "invalid_url_format": {},
+      "ambiguous_host_mentions_rows": 0,
+      "timestamps_present_rows": 0,
+      "campaign_ids_present_rows": 0
+    },
+    "url_raw_train": {
+      "rows": 71309,
+      "labels": {
+        "0": 51034,
+        "1": 20275
+      },
+      "language_metadata": {
+        "not_recorded": 71309
+      },
+      "english_rows": 0,
+      "english_labels": {},
+      "english_label_provenance": {},
+      "english_positive_provenance": {},
+      "provenance": {
+        "inherited_url_source_not_expert_verified": 71299,
+        "user_requested_first_party_url_ai_evidence_review": 10
+      },
+      "owner_domains": 54290,
+      "groups": 54258,
+      "positive_groups": 17177,
+      "identity_duplicates": 5,
+      "invalid_labels": 0,
+      "blank_content": 0,
+      "expert_verified_flags": 0,
+      "forbidden_training_flags": 0,
+      "invalid_url_format": {},
+      "ambiguous_host_mentions_rows": 0,
+      "timestamps_present_rows": 0,
+      "campaign_ids_present_rows": 0
+    },
+    "url_calibration_train": {
+      "rows": 3000,
+      "labels": {
+        "0": 2062,
+        "1": 938
+      },
+      "language_metadata": {
+        "not_recorded": 3000
+      },
+      "english_rows": 0,
+      "english_labels": {},
+      "english_label_provenance": {},
+      "english_positive_provenance": {},
+      "provenance": {
+        "inherited_url_source_not_expert_verified": 3000
+      },
+      "owner_domains": 2838,
+      "groups": 2838,
+      "positive_groups": 873,
+      "identity_duplicates": 1,
+      "invalid_labels": 0,
+      "blank_content": 0,
+      "expert_verified_flags": 0,
+      "forbidden_training_flags": 0,
+      "invalid_url_format": {},
+      "ambiguous_host_mentions_rows": 0,
+      "timestamps_present_rows": 0,
+      "campaign_ids_present_rows": 0
+    },
+    "url_calibration_validation": {
+      "rows": 3000,
+      "labels": {
+        "1": 978,
+        "0": 2022
+      },
+      "language_metadata": {
+        "not_recorded": 3000
+      },
+      "english_rows": 0,
+      "english_labels": {},
+      "english_label_provenance": {},
+      "english_positive_provenance": {},
+      "provenance": {
+        "inherited_url_source_not_expert_verified": 3000
+      },
+      "owner_domains": 2825,
+      "groups": 2825,
+      "positive_groups": 914,
+      "identity_duplicates": 0,
+      "invalid_labels": 0,
+      "blank_content": 0,
+      "expert_verified_flags": 0,
+      "forbidden_training_flags": null,
+      "invalid_url_format": {},
+      "ambiguous_host_mentions_rows": 0,
+      "timestamps_present_rows": 0,
+      "campaign_ids_present_rows": 0
+    },
+    "url_fresh_test": {
+      "rows": 4000,
+      "labels": {
+        "1": 1293,
+        "0": 2707
+      },
+      "language_metadata": {
+        "not_recorded": 4000
+      },
+      "english_rows": 0,
+      "english_labels": {},
+      "english_label_provenance": {},
+      "english_positive_provenance": {},
+      "provenance": {
+        "inherited_url_source_not_expert_verified": 4000
+      },
+      "owner_domains": 3740,
+      "groups": 3740,
+      "positive_groups": 1196,
+      "identity_duplicates": 0,
+      "invalid_labels": 0,
+      "blank_content": 0,
+      "expert_verified_flags": 0,
+      "forbidden_training_flags": null,
+      "invalid_url_format": {},
+      "ambiguous_host_mentions_rows": 0,
+      "timestamps_present_rows": 0,
+      "campaign_ids_present_rows": 0
+    },
+    "url_historical_test": {
+      "rows": 9935,
+      "labels": {
+        "1": 2230,
+        "0": 7705
+      },
+      "language_metadata": {
+        "not_recorded": 9935
+      },
+      "english_rows": 0,
+      "english_labels": {},
+      "english_label_provenance": {},
+      "english_positive_provenance": {},
+      "provenance": {
+        "inherited_url_source_not_expert_verified": 9935
+      },
+      "owner_domains": 5435,
+      "groups": 5345,
+      "positive_groups": 1688,
+      "identity_duplicates": 0,
+      "invalid_labels": 0,
+      "blank_content": 0,
+      "expert_verified_flags": 0,
+      "forbidden_training_flags": null,
+      "invalid_url_format": {},
+      "ambiguous_host_mentions_rows": 0,
+      "timestamps_present_rows": 0,
+      "campaign_ids_present_rows": 0
+    },
+    "url_previous_fresh_test": {
+      "rows": 4000,
+      "labels": {
+        "0": 2670,
+        "1": 1330
+      },
+      "language_metadata": {
+        "not_recorded": 4000
+      },
+      "english_rows": 0,
+      "english_labels": {},
+      "english_label_provenance": {},
+      "english_positive_provenance": {},
+      "provenance": {
+        "inherited_url_source_not_expert_verified": 4000
+      },
+      "owner_domains": 3764,
+      "groups": 3764,
+      "positive_groups": 1244,
+      "identity_duplicates": 0,
+      "invalid_labels": 0,
+      "blank_content": 0,
+      "expert_verified_flags": 0,
+      "forbidden_training_flags": null,
+      "invalid_url_format": {},
+      "ambiguous_host_mentions_rows": 0,
+      "timestamps_present_rows": 0,
+      "campaign_ids_present_rows": 0
+    }
+  },
+  "overlaps": {
+    "sms_train / sms_validation": {
+      "owner": 0,
+      "private_psl_domain": 0,
+      "identity": 0,
+      "group": 0,
+      "template": 0
+    },
+    "sms_train / sms_test": {
+      "owner": 0,
+      "private_psl_domain": 0,
+      "identity": 0,
+      "group": 0,
+      "template": 0
+    },
+    "sms_train / url_raw_train": {
+      "owner": 1,
+      "private_psl_domain": 1
+    },
+    "sms_train / url_calibration_train": {
+      "owner": 0,
+      "private_psl_domain": 0
+    },
+    "sms_train / url_calibration_validation": {
+      "owner": 0,
+      "private_psl_domain": 0
+    },
+    "sms_train / url_fresh_test": {
+      "owner": 0,
+      "private_psl_domain": 0
+    },
+    "sms_train / url_historical_test": {
+      "owner": 0,
+      "private_psl_domain": 0
+    },
+    "sms_train / url_previous_fresh_test": {
+      "owner": 0,
+      "private_psl_domain": 0
+    },
+    "sms_validation / sms_test": {
+      "owner": 0,
+      "private_psl_domain": 0,
+      "identity": 0,
+      "group": 0,
+      "template": 0
+    },
+    "sms_validation / url_raw_train": {
+      "owner": 0,
+      "private_psl_domain": 0
+    },
+    "sms_validation / url_calibration_train": {
+      "owner": 0,
+      "private_psl_domain": 0
+    },
+    "sms_validation / url_calibration_validation": {
+      "owner": 0,
+      "private_psl_domain": 0
+    },
+    "sms_validation / url_fresh_test": {
+      "owner": 0,
+      "private_psl_domain": 0
+    },
+    "sms_validation / url_historical_test": {
+      "owner": 0,
+      "private_psl_domain": 0
+    },
+    "sms_validation / url_previous_fresh_test": {
+      "owner": 0,
+      "private_psl_domain": 0
+    },
+    "sms_test / url_raw_train": {
+      "owner": 0,
+      "private_psl_domain": 0
+    },
+    "sms_test / url_calibration_train": {
+      "owner": 0,
+      "private_psl_domain": 0
+    },
+    "sms_test / url_calibration_validation": {
+      "owner": 0,
+      "private_psl_domain": 0
+    },
+    "sms_test / url_fresh_test": {
+      "owner": 0,
+      "private_psl_domain": 0
+    },
+    "sms_test / url_historical_test": {
+      "owner": 0,
+      "private_psl_domain": 0
+    },
+    "sms_test / url_previous_fresh_test": {
+      "owner": 0,
+      "private_psl_domain": 0
+    },
+    "url_raw_train / url_calibration_train": {
+      "owner": 0,
+      "private_psl_domain": 0,
+      "identity": 0,
+      "group": 0,
+      "template": 0
+    },
+    "url_raw_train / url_calibration_validation": {
+      "owner": 0,
+      "private_psl_domain": 0,
+      "identity": 0,
+      "group": 0,
+      "template": 0
+    },
+    "url_raw_train / url_fresh_test": {
+      "owner": 0,
+      "private_psl_domain": 0,
+      "identity": 0,
+      "group": 0,
+      "template": 0
+    },
+    "url_raw_train / url_historical_test": {
+      "owner": 0,
+      "private_psl_domain": 0,
+      "identity": 0,
+      "group": 0,
+      "template": 0
+    },
+    "url_raw_train / url_previous_fresh_test": {
+      "owner": 0,
+      "private_psl_domain": 0,
+      "identity": 0,
+      "group": 0,
+      "template": 0
+    },
+    "url_calibration_train / url_calibration_validation": {
+      "owner": 0,
+      "private_psl_domain": 0,
+      "identity": 0,
+      "group": 0,
+      "template": 0
+    },
+    "url_calibration_train / url_fresh_test": {
+      "owner": 0,
+      "private_psl_domain": 0,
+      "identity": 0,
+      "group": 0,
+      "template": 0
+    },
+    "url_calibration_train / url_historical_test": {
+      "owner": 0,
+      "private_psl_domain": 0,
+      "identity": 0,
+      "group": 0,
+      "template": 0
+    },
+    "url_calibration_train / url_previous_fresh_test": {
+      "owner": 0,
+      "private_psl_domain": 0,
+      "identity": 0,
+      "group": 0,
+      "template": 0
+    },
+    "url_calibration_validation / url_fresh_test": {
+      "owner": 0,
+      "private_psl_domain": 0,
+      "identity": 0,
+      "group": 0,
+      "template": 0
+    },
+    "url_calibration_validation / url_historical_test": {
+      "owner": 0,
+      "private_psl_domain": 0,
+      "identity": 0,
+      "group": 0,
+      "template": 0
+    },
+    "url_calibration_validation / url_previous_fresh_test": {
+      "owner": 0,
+      "private_psl_domain": 0,
+      "identity": 0,
+      "group": 0,
+      "template": 0
+    },
+    "url_fresh_test / url_historical_test": {
+      "owner": 0,
+      "private_psl_domain": 0,
+      "identity": 0,
+      "group": 0,
+      "template": 0
+    },
+    "url_fresh_test / url_previous_fresh_test": {
+      "owner": 0,
+      "private_psl_domain": 0,
+      "identity": 0,
+      "group": 0,
+      "template": 0
+    },
+    "url_historical_test / url_previous_fresh_test": {
+      "owner": 0,
+      "private_psl_domain": 0,
+      "identity": 0,
+      "group": 0,
+      "template": 0
+    }
+  },
+  "raw_sources": {
+    "smishing_combined.csv": {
+      "rows": 84863,
+      "labels": {
+        "0": 60777,
+        "1": 24086
+      },
+      "exact_duplicate_rows": 10105,
+      "exact_content_conflicting_groups": 34,
+      "blank_content": 0,
+      "sha256": "4dc1311965acb80b9b97536db5afdbe874a1e2175143d3b145e32caf9bb81a8d",
+      "aux_spam_label_missing": 1076,
+      "aux_spam_label_nonbinary_nonempty": 624
+    },
+    "phishing_site_urls.csv": {
+      "rows": 549346,
+      "labels": {
+        "bad": 156422,
+        "good": 392924
+      },
+      "exact_duplicate_rows": 42150,
+      "exact_content_conflicting_groups": 1,
+      "blank_content": 0,
+      "sha256": "b1a7c26b354632c80817e10af154c4e5007f9480fb43a8ac2730491500fa2780"
+    }
+  },
+  "url_direct_source_trace": {
+    "url_raw_train": {
+      "traced": 71299,
+      "other_source_rows": 10,
+      "url_or_label_mismatches": 0,
+      "mismatch_case_ids": []
+    },
+    "url_calibration_train": {
+      "traced": 3000,
+      "other_source_rows": 0,
+      "url_or_label_mismatches": 0,
+      "mismatch_case_ids": []
+    },
+    "url_calibration_validation": {
+      "traced": 3000,
+      "other_source_rows": 0,
+      "url_or_label_mismatches": 0,
+      "mismatch_case_ids": []
+    },
+    "url_fresh_test": {
+      "traced": 4000,
+      "other_source_rows": 0,
+      "url_or_label_mismatches": 0,
+      "mismatch_case_ids": []
+    },
+    "url_historical_test": {
+      "traced": 9935,
+      "other_source_rows": 0,
+      "url_or_label_mismatches": 0,
+      "mismatch_case_ids": []
+    },
+    "url_previous_fresh_test": {
+      "traced": 4000,
+      "other_source_rows": 0,
+      "url_or_label_mismatches": 0,
+      "mismatch_case_ids": []
+    }
+  },
+  "saved_url_predictions_recomputed": {
+    "rows": 4000,
+    "tn": 2659,
+    "fp": 48,
+    "fn": 145,
+    "tp": 1148,
+    "accuracy": 0.95175,
+    "recall": 0.8878576952822892,
+    "precision": 0.959866220735786
+  },
+  "known_limits": [
+    "Language metadata is not independent language verification",
+    "No expert relabeling",
+    "Domains/groups are proxies, not verified campaigns",
+    "No capture-time evidence for URL label truth",
+    "Stored predictions only; no fresh model evaluation",
+    "URL holdout is from the same raw source and has already been evaluated"
+  ],
+  "additional_checks": {
+    "cross_head_train_overlap": [
+      {
+        "owner": "nokia.com",
+        "sms_ids": [
+          "M5971-4696"
+        ],
+        "url_ids": [
+          "BUNDLE_URL-13464"
+        ]
+      }
+    ],
+    "url_duplicate_details": {
+      "raw_train": {
+        "groups": [
+          [
+            {
+              "case_id": "BUNDLE_URL-12753",
+              "url": "http://eu.diablo.net.ca.ms-login.in/",
+              "label": 1
+            },
+            {
+              "case_id": "BUNDLE_URL-19712",
+              "url": "http://eu.diablo.net.ca.ms-login.in",
+              "label": 1
+            }
+          ],
+          [
+            {
+              "case_id": "BUNDLE_URL-16915",
+              "url": "http://www.sorteado0898.com",
+              "label": 1
+            },
+            {
+              "case_id": "BUNDLE_URL-28863",
+              "url": "http://www.sorteado0898.com/",
+              "label": 1
+            }
+          ],
+          [
+            {
+              "case_id": "SOURCE95-499193",
+              "url": "http://ccjlwb22w6c22p2k.onion.city",
+              "label": 1
+            },
+            {
+              "case_id": "SOURCE95-500541",
+              "url": "http://ccjlwb22w6c22p2k.onion.city/",
+              "label": 1
+            }
+          ],
+          [
+            {
+              "case_id": "SOURCE95-17196",
+              "url": "http://aol.com.secure.loginpage.greatcapacity.pt/",
+              "label": 1
+            },
+            {
+              "case_id": "SOURCE95-17282",
+              "url": "http://aol.com.secure.loginpage.greatcapacity.pt",
+              "label": 1
+            }
+          ],
+          [
+            {
+              "case_id": "SOURCE95-22036",
+              "url": "http://paypal.com.cacgi-bin.webscr.cmd.home.country.lang.x.stallingoverloon.nl",
+              "label": 1
+            },
+            {
+              "case_id": "SOURCE95-21916",
+              "url": "http://paypal.com.cacgi-bin.webscr.cmd.home.country.lang.x.stallingoverloon.nl/",
+              "label": 1
+            }
+          ]
+        ],
+        "conflicting_groups": 0,
+        "exact_url_duplicates": 0
+      },
+      "calibration_train": {
+        "groups": [
+          [
+            {
+              "case_id": "REPAIR95-514556",
+              "url": "http://p27dokhpz2n7nvgr.onion/",
+              "label": 1
+            },
+            {
+              "case_id": "REPAIR95-515732",
+              "url": "http://p27dokhpz2n7nvgr.onion",
+              "label": 1
+            }
+          ]
+        ],
+        "conflicting_groups": 0,
+        "exact_url_duplicates": 0
+      }
+    },
+    "english_train_positive_groups": 79
+  },
+  "imc_export_checks": {
+    "imc25_english_original_source_labels.jsonl": {
+      "rows": 22078,
+      "all_project_labels_null": true,
+      "all_do_not_train": true
+    },
+    "imc25_english_unique_review_pool.jsonl": {
+      "rows": 15477,
+      "all_project_labels_null": true,
+      "all_do_not_train": true
+    }
+  },
+  "methods": {
+    "sms_identity": "NFC, casefold, whitespace collapse; not full semantic deduplication",
+    "url_identity": "canonicalized host/path/query; scheme ignored and empty path equivalent to /",
+    "domain_isolation": "Recomputed host parsing and pinned PSL with both ICANN-only owner and private suffix rules",
+    "templates_and_groups": "Existing frozen template and repair_group fields; no new all-pairs similarity clustering",
+    "source_trace": "Repaired URL and binary source label compared directly to the pinned CSV source_record; 10 official seeds belong to separate provenance",
+    "timestamp_coverage": "Only timestamp, collected_at, collection_date, first_seen and capture_date keys inspected"
+  }
+}

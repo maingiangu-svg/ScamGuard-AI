@@ -1,0 +1,109 @@
+{
+  "result": {
+    "date": "2026-10-28",
+    "source_rows": 68029,
+    "source_membership_reconciled": true,
+    "exports": {
+      "sms_train_additions": 338,
+      "sms_train_english_merged": 3991,
+      "sms_validation_candidates": 95,
+      "sms_test_candidates": 96,
+      "sms_training_review_pool": 3957,
+      "sms_quarantine": 24182
+    },
+    "baseline_english_rows": 3653,
+    "baseline_english_positive": 131,
+    "added_positive": 338,
+    "added_groups": 102,
+    "accepted_before_redundancy_caps": 3417,
+    "redundancy_caps": {
+      "max_per_template": 3,
+      "max_per_group": 20
+    },
+    "merged_english_labels": {
+      "0": 3522,
+      "1": 469
+    },
+    "scope_review_decisions": {
+      "retain_source_phishing": 261,
+      "uncertain": 22,
+      "exclude_promotion": 17
+    },
+    "train_holdout_domain_overlap": {
+      "validation": 0,
+      "test": 0
+    },
+    "historical_and_model_hashes_unchanged": true,
+    "source_label_scope_screen": "AI review of explicit templates; retained source feed targets; variants inherit template screen, not independent expert labels",
+    "human_benchmark_complete": false,
+    "expert_labels_created": 0,
+    "model_trained": false,
+    "url_pool": {
+      "source_campaigns": 35128,
+      "unique_url_candidates": 3003,
+      "individually_verified_url_labels": 0,
+      "english_page_language_verified": 0
+    },
+    "files_sha256": {
+      "deduplicated_sms.csv": "192d4ad96633fffa10ba9a6a54d9139a09130aa3027edac731b1485a1e5bfb70",
+      "deduplicated_sms.jsonl": "8706e37006f9b2c8f34b5c29b038b0253ca4b7be8e32c3a824229a79bdf36a93",
+      "group_frozen.json": "d6328575974c3882a2e65181e0a94b192c8c8eb271f21f6f5d4c242653e87191",
+      "grouped_sms.csv": "e85447f5bcd5a630ccb1ffb1a6088d84bacb32397187389925fc162811fc8c22",
+      "grouped_sms.jsonl": "679d6ff7ab7e3a0b803eae3c3c8cbab9f00c724dc6c79a51fd0d52a0ea6af0c2",
+      "historical_inputs.json": "62f06b07d3d8783fb2ced3873403e3ec68d2f13957694f89e799b660b7ed0733",
+      "intake_report.json": "bf8a9fb49e309b798d7fd797379171dc561dd58e4cfed2fbfb7ac186f83fedc2",
+      "preparation_policy.json": "1104b44eaaaf38dcda7ed554c0f721aba22596885b730837a69ff6af4d35e524",
+      "protocol.json": "2ef3b07ec1ae3f38928b6f5d39546123fd849b41c43cc8078f67b3fa56600a15",
+      "python-tests-default-temp.log": "dbd92810ac24114b4be249a19398508ee53041c2a166d95d5106d5140eb9a0ee",
+      "python-tests.log": "77c3ed463dcccaef05cc0ec0b68e41c1bd2f97cfd48b1ade741e480ea61a35de",
+      "scope_decisions.json": "898a99b681288764fec1239d43c04e933e61d598b5fb38ec9e7173fe91eb9ac3",
+      "scope_review_candidates.csv": "6683f6e451bceea7059cb886d60ee2585eee6c249faf6e0c7adbf5971c76a6df",
+      "scope_review_candidates.jsonl": "255f2d9cdbca80cd85398e4940bd313bf3163719fa16a2628267dcea02c09278",
+      "similarity_edges.json": "ac5aa18c16fe6a9f584fcc5c041cd44c5d08c71c90c25c400d52d6e219bff5fc",
+      "sms_quarantine.csv": "fba7a6b30c55ed72f14398dd9f546469b00003aadc53555a4d34ac4d39dda905",
+      "sms_quarantine.jsonl": "4446fa996af1af6dea8ab3d355621b564091dbd975daff85afb633e5ad5b64db",
+      "sms_test_candidates.csv": "c2717cfdd80977d43603c7bd01f99c9582f766bd813df08c1dc37891c618a69b",
+      "sms_test_candidates.jsonl": "6836c7b92bab58027893753ca96dfe746203d2d64ea93fd80deaf785a00b4582",
+      "sms_train_additions.csv": "2b2c08a7d39cccfaa7873beecf3b70c00f309294ac425283f9c428cf1c6b909d",
+      "sms_train_additions.jsonl": "296d8c8027221b739e3273b31935c253e4c778d27cfdf26d790332d194fbb3aa",
+      "sms_train_english_merged.csv": "cdf0e04d47207016f68d3224cef6e966c17e12c6fbb769105f95bf6487c55853",
+      "sms_train_english_merged.jsonl": "55383d8dfabe23a37b8304e1232c1961e442e2e6d07d72a73c530a6f0addeda1",
+      "sms_training_review_pool.csv": "deb40ac45ec72adeafa527a5543d2a6f194be0ecbb0767f12ffee73b0dfef09d",
+      "sms_training_review_pool.jsonl": "b7d8bf024d17a6ae7c98e0d1cbe9db00be49ecd57b095ac13f637523abb379e4",
+      "sms_validation_candidates.csv": "d4a71c54fa6572e1e0116e445d24687aff5b71b3bbe48bae0ceabe4d69bd6fb5",
+      "sms_validation_candidates.jsonl": "76ca928ee66ad362180178508607224e085688cd69e7b251dd04a9dee7ee381e",
+      "source_membership.csv": "f3bac0c59917e1fa26c51e7bcbae6c33bb515b919f046699ea0209d6a1cc051d",
+      "source_membership.jsonl": "75da5313680901d0d90eff01dce00207075ad0050025f5786de5a978510da1e4",
+      "source_sms.csv": "274786bc86efb2c2a1b058f1697496fe8236913c634bed297e8392899f6367ac",
+      "source_sms.jsonl": "45ea606c786ffdb22855d0d7892eddf6759de7d528f4d9ee789517af3e602371",
+      "url_source_review_pool.csv": "764ed5e4d15c41e58f39dc44b7edc4b7a63822b2d20fed7995bc63a37c611cd9",
+      "url_source_review_pool.jsonl": "cab5c7848cfbb6a221862ab4024a083166b14c0c2928ce16bc98f7a5e23461fe",
+      "workflow_code.py": "6ecadbd8992820f7e0e50e506a68251b9940f6231bbc36716bd4fd7e2102ee07"
+    }
+  },
+  "verification": {
+    "bound_file_hashes_pass": true,
+    "source_membership_rows": 68029,
+    "all_source_rows_reconciled": true,
+    "csv_jsonl_training_content_match": true,
+    "per_template_and_group_caps_pass": true,
+    "all_source_variant_domain_overlap": {
+      "validation": 0,
+      "test": 0
+    },
+    "candidate_holdout_groups": {
+      "validation": 37,
+      "test": 64
+    },
+    "active_model_checksum_matches": true,
+    "active_run": "url-ensemble-20261027",
+    "python_tests_passed": 154,
+    "known_model_input_duplicates_excluded": 55,
+    "duplicate_inputs_with_project_label_conflict": 0,
+    "test_data_scored": false,
+    "new_expert_labels": 0
+  },
+  "primary_source": "https://github.com/wspr-ncsu/sms-phishing/tree/a4f18cedc9909cbf8234eea3c2028080a1e95cd4",
+  "prepared_package": "C:\\Users\\PV\\OneDrive\\Documents\\ChatGPT\\ScamGuard-AI\\ml_model\\data\\prepared\\english_expansion_2026-10-28",
+  "source_manifest_sha256": "2fbc94eba08240a4b875bfabcef9e46f0ac83ac1e314389b5228da417ca57587"
+}

@@ -1,0 +1,237 @@
+{
+  "status": "trained_not_activated_release_gate_failed",
+  "evaluation": {
+    "bundle_sha256": "2bd32ba07111692040836f9e13ccfe132a8b11a78cf82e217eb938268835ab37",
+    "protocol_sha256": "ee1229b8ce433581ce39fc0b9f65a729d88365780b13df9f3905245d8515ec22",
+    "metrics": {
+      "baseline": {
+        "rows": 9935,
+        "threshold": 0.5,
+        "labels": {
+          "1": 2230,
+          "0": 7705
+        },
+        "confusion_matrix_tn_fp_fn_tp": [
+          7545,
+          160,
+          606,
+          1624
+        ],
+        "precision": 0.9103139013452914,
+        "recall": 0.7282511210762331,
+        "f1": 0.8091679123069258
+      },
+      "candidate": {
+        "rows": 9935,
+        "threshold": 0.5,
+        "labels": {
+          "1": 2230,
+          "0": 7705
+        },
+        "confusion_matrix_tn_fp_fn_tp": [
+          7541,
+          164,
+          619,
+          1611
+        ],
+        "precision": 0.9076056338028169,
+        "recall": 0.7224215246636772,
+        "f1": 0.8044943820224719
+      }
+    },
+    "seed_sanity_checks": [
+      {
+        "domain": "youtube.com",
+        "url": "https://www.youtube.com/",
+        "evidence_url": "https://about.youtube/",
+        "status": "added",
+        "baseline_score": 0.3873229192626251,
+        "candidate_score": 0.1672812240127926
+      },
+      {
+        "domain": "facebook.com",
+        "url": "https://www.facebook.com/",
+        "evidence_url": "https://about.fb.com/news/2020/05/the-new-facebook-com/",
+        "status": "added",
+        "baseline_score": 0.2544498543275971,
+        "candidate_score": 0.07426121601612834
+      },
+      {
+        "domain": "google.com",
+        "url": "https://www.google.com/",
+        "evidence_url": "https://www.google.com/",
+        "status": "reserved_domain",
+        "baseline_score": 0.34553616796333786,
+        "candidate_score": 0.06198713186202977
+      },
+      {
+        "domain": "microsoft.com",
+        "url": "https://www.microsoft.com/vi-vn/",
+        "evidence_url": "https://www.microsoft.com/vi-vn/",
+        "status": "reserved_domain",
+        "baseline_score": 0.1430994318585142,
+        "candidate_score": 0.09756786594009174
+      },
+      {
+        "domain": "apple.com",
+        "url": "https://www.apple.com/vn/contact/",
+        "evidence_url": "https://www.apple.com/vn/contact/",
+        "status": "reserved_domain",
+        "baseline_score": 0.059549116505333746,
+        "candidate_score": 0.06042412425070653
+      },
+      {
+        "domain": "zalo.me",
+        "url": "https://zalo.me/pc",
+        "evidence_url": "https://zalo.me/pc",
+        "status": "added",
+        "baseline_score": 0.7519576669353225,
+        "candidate_score": 0.6454778133504898
+      },
+      {
+        "domain": "shopee.vn",
+        "url": "https://shopee.vn/",
+        "evidence_url": "https://shopee.vn/",
+        "status": "added",
+        "baseline_score": 0.4834552474039878,
+        "candidate_score": 0.34363930815538574
+      },
+      {
+        "domain": "tiki.vn",
+        "url": "https://tiki.vn/",
+        "evidence_url": "https://tiki.vn/",
+        "status": "added",
+        "baseline_score": 0.46756403630106647,
+        "candidate_score": 0.3239532840123656
+      },
+      {
+        "domain": "vietcombank.com.vn",
+        "url": "https://www.vietcombank.com.vn/",
+        "evidence_url": "https://www.vietcombank.com.vn/",
+        "status": "added",
+        "baseline_score": 0.7756288327780889,
+        "candidate_score": 0.7676530253794013
+      },
+      {
+        "domain": "bidv.com.vn",
+        "url": "https://bidv.com.vn/",
+        "evidence_url": "https://bidv.com.vn/",
+        "status": "added",
+        "baseline_score": 0.0941052810799894,
+        "candidate_score": 0.05933927000818228
+      },
+      {
+        "domain": "momo.vn",
+        "url": "https://www.momo.vn/",
+        "evidence_url": "https://www.momo.vn/",
+        "status": "added",
+        "baseline_score": 0.6382596817003242,
+        "candidate_score": 0.3865288560603014
+      },
+      {
+        "domain": "dichvucong.gov.vn",
+        "url": "https://dichvucong.gov.vn/p/home/dvc-tthc-category.html",
+        "evidence_url": "https://dichvucong.gov.vn/p/home/dvc-tthc-category.html",
+        "status": "added",
+        "baseline_score": 0.011294116470444664,
+        "candidate_score": 0.01088644929908857
+      },
+      {
+        "domain": "wikipedia.org",
+        "url": "https://www.wikipedia.org/",
+        "evidence_url": "https://www.wikipedia.org/",
+        "status": "reserved_domain",
+        "baseline_score": 0.08321336444960047,
+        "candidate_score": 0.10656820723671036
+      },
+      {
+        "domain": "vnexpress.net",
+        "url": "https://vnexpress.net/",
+        "evidence_url": "https://vnexpress.net/",
+        "status": "added",
+        "baseline_score": 0.22319391859584828,
+        "candidate_score": 0.2236100578984136
+      }
+    ],
+    "seed_results_are_independent_accuracy": false,
+    "historical_test_reused": true,
+    "new_independent_benchmark": false,
+    "release_gate_pass": false
+  },
+  "calibration": {
+    "raw": {
+      "rows": 31309,
+      "labels": {
+        "0": 24261,
+        "1": 7048
+      },
+      "brier": 0.04371744615824714,
+      "log_loss": 0.15976660560533124,
+      "ece_10_bins": 0.045816297894816296
+    },
+    "calibrated": {
+      "rows": 31309,
+      "labels": {
+        "0": 24261,
+        "1": 7048
+      },
+      "brier": 0.03998081077255444,
+      "log_loss": 0.13294713475608871,
+      "ece_10_bins": 0.00588050970630056
+    },
+    "gate_pass": true,
+    "sms_gate_inherited": true,
+    "sms_parent_calibration_report_sha256": "c1c54564d5ff6ffb2b93f80fc33618c868dddc276dfe4ee4cb8ab8b800dad232",
+    "seconds": 208.809
+  },
+  "protocol": {
+    "run_id": "official-domains-20261027",
+    "base_bundle_sha256": "6a0fd38b35570bff4b0ae56dd52a07747a6670d3dc2eceda304e1f10898314d0",
+    "code_sha256": {
+      "official_domain_training.py": "205d49771ef3da6e2e581b54de4aae216fb6cea7376e00ea575972293a47d6de",
+      "calibrate_supervised.py": "bb3e9c9548386cf57db3d0b061d4b17e665c9520de3b9325c40b608e4715b7c7",
+      "modeling.py": "da61219b788d301b58ba25bd30c9f821cfcfe8c7354495f7d70d98afd4baa49b",
+      "preprocess.py": "9906e0438726035c0c2241c7571683a321a7085fd884df392fcee3136f93a9a7",
+      "repair_training_data.py": "663f8b03080ba9c884b9216f3c3ad558950f7d3e8c333c49744dcf16b6cc5ad1"
+    },
+    "input_sha256": {
+      "parent_bundle.pkl": "6a0fd38b35570bff4b0ae56dd52a07747a6670d3dc2eceda304e1f10898314d0",
+      "parent_manifest.json": "a3686ebcb5e268e1e1917483f5962d75500b64dd76491a818aad1a6d1a0f0377",
+      "seeds.json": "20359fe36a1668aa713de6fa993906fd565220b7db50204dbb27efad6b32e1cd",
+      "seed_decisions.json": "d338bc583045732dcee3d3a9ef87c71950f4f47baf0df2db1bb21a2cd7fa2acf",
+      "fit_rows.jsonl": "002b320e7c30afa4440fd6dcddae548397a2ceb3b3a358f05a91c66b197a3d31",
+      "sms_fit_rows.jsonl": "14ba54a040b08b7b3793eeeb44dd97a794e43c87e7b3e4f34425a98269f7b006",
+      "url_fit_rows.jsonl": "96d7c6fa6098cb12cea01de6a5de3408f16001c5c6bf8c2b80e4ea1115c7d995",
+      "url_test.jsonl": "c01b3adb3d1ebcb407d929fd8c1907f2183b95c3fc8dde8cdfabe1eb9b0dd030"
+    },
+    "repaired_dataset_manifest_sha256": "9c5cdc3c5aa0e20f191efae731b4f485c13eb8e7c9df93c33dfb5c9f72a7e747",
+    "method": "sigmoid",
+    "outer_group_folds": 3,
+    "inner_group_folds": 3,
+    "seed": 42,
+    "url_threshold": 0.5,
+    "new_row_weight": 1,
+    "sms_head_preserved": true,
+    "brier_and_log_loss_must_not_increase": true,
+    "release_max_false_positive_increase": 0,
+    "release_max_true_positive_decrease": 0,
+    "threshold_selection_performed": false,
+    "new_independent_benchmark": false,
+    "expert_labels_created": 0,
+    "holdout_rows_fitted": 0
+  },
+  "verification": {
+    "python_tests": 118,
+    "javascript_unit_tests": 47,
+    "inference_lifecycle_tests": 3,
+    "api_integration_tests": 17,
+    "lint": "pass",
+    "build": "pass",
+    "types": "pass",
+    "serving_bundle_unchanged": true,
+    "activation_rejected": true,
+    "sms_head_byte_identical": true,
+    "url_train_test_owner_domains_disjoint": true,
+    "initial_api_configuration_failure": "Port 3107 missing from test-server allowed origins; configured test-server origin and all 17 API tests passed; production configuration unchanged"
+  }
+}

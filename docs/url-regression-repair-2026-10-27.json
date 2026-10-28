@@ -1,0 +1,756 @@
+{
+  "status": "regressions_resolved_and_model_activated_locally",
+  "data_preparation": {
+    "counts": {
+      "fresh_test": {
+        "rows": 4000,
+        "labels": {
+          "1": 1293,
+          "0": 2707
+        },
+        "owners": 3740
+      },
+      "calibration_train": {
+        "rows": 3000,
+        "labels": {
+          "0": 2062,
+          "1": 938
+        },
+        "owners": 2838
+      },
+      "calibration_validation": {
+        "rows": 3000,
+        "labels": {
+          "1": 978,
+          "0": 2022
+        },
+        "owners": 2825
+      }
+    },
+    "excluded_owners": 115947,
+    "source_audit": {
+      "raw_rows": 549346,
+      "candidate_rows": 502428,
+      "quarantined_rows": 5158,
+      "conflicting_groups": 1,
+      "conflicting_rows": 3,
+      "duplicates_removed": 41760,
+      "repaired_source_rows": 39
+    },
+    "source_sha256": "b1a7c26b354632c80817e10af154c4e5007f9480fb43a8ac2730491500fa2780",
+    "psl_sha256": "0232f4df0831911356e8ee1f4d5c3b6b12c0ed3f6bd66b0f81c8ab5d3d49e9ca",
+    "primary_data_manifest_sha256": "05148b71e05b3153e0e49bb4008c911a197c50f1c1c45e12ede99e01d80df315",
+    "files_sha256": {
+      "calibration_train.jsonl": "eaa4af3fe037323cc31c4dc840465cfc8fcc11711adc4cf08ab82aa9e36fe809",
+      "calibration_validation.jsonl": "02e0aa73209abe165f6f174a20f1514db16e5fb7b9c7818a3cec525618eb7389",
+      "fresh_test.jsonl": "713f0d419110a089707d020437130e8ddf35c9fb50e70943c95f283753d409d9"
+    }
+  },
+  "gate_training": {
+    "gate_pass": true,
+    "selected": {
+      "confusion_matrix_tn_fp_fn_tp": [
+        49967,
+        1057,
+        2112,
+        18163
+      ],
+      "accuracy": 0.9555533738201096,
+      "precision": 0.9450052029136317,
+      "recall": 0.8958323057953145,
+      "f1": 0.9197619951892645
+    },
+    "cutoff": 0.8,
+    "parent_reference": {
+      "confusion_matrix_tn_fp_fn_tp": [
+        49797,
+        1227,
+        5031,
+        15244
+      ],
+      "accuracy": 0.9122287830123844,
+      "precision": 0.9255054337927267,
+      "recall": 0.7518618988902589,
+      "f1": 0.8296957491971916
+    },
+    "primary_reference": {
+      "confusion_matrix_tn_fp_fn_tp": [
+        50046,
+        978,
+        2171,
+        18104
+      ],
+      "accuracy": 0.955833882663151,
+      "precision": 0.9487475107431087,
+      "recall": 0.8929223181257706,
+      "f1": 0.9199888202860991
+    },
+    "candidates": [
+      {
+        "cutoff": 0.5,
+        "metrics": {
+          "confusion_matrix_tn_fp_fn_tp": [
+            49170,
+            1854,
+            1804,
+            18471
+          ],
+          "accuracy": 0.9486949326077505,
+          "precision": 0.9087822878228782,
+          "recall": 0.9110234278668311,
+          "f1": 0.9099014778325123
+        },
+        "new_benign_seed_alerts": 3,
+        "eligible": false
+      },
+      {
+        "cutoff": 0.6,
+        "metrics": {
+          "confusion_matrix_tn_fp_fn_tp": [
+            49612,
+            1412,
+            1928,
+            18347
+          ],
+          "accuracy": 0.9531550232121068,
+          "precision": 0.9285388936687079,
+          "recall": 0.9049075215782983,
+          "f1": 0.9165709147224859
+        },
+        "new_benign_seed_alerts": 3,
+        "eligible": false
+      },
+      {
+        "cutoff": 0.7,
+        "metrics": {
+          "confusion_matrix_tn_fp_fn_tp": [
+            49842,
+            1182,
+            2030,
+            18245
+          ],
+          "accuracy": 0.954950279807571,
+          "precision": 0.9391568435682298,
+          "recall": 0.8998766954377312,
+          "f1": 0.9190972746964888
+        },
+        "new_benign_seed_alerts": 2,
+        "eligible": false
+      },
+      {
+        "cutoff": 0.8,
+        "metrics": {
+          "confusion_matrix_tn_fp_fn_tp": [
+            49967,
+            1057,
+            2112,
+            18163
+          ],
+          "accuracy": 0.9555533738201096,
+          "precision": 0.9450052029136317,
+          "recall": 0.8958323057953145,
+          "f1": 0.9197619951892645
+        },
+        "new_benign_seed_alerts": 0,
+        "eligible": true
+      },
+      {
+        "cutoff": 0.85,
+        "metrics": {
+          "confusion_matrix_tn_fp_fn_tp": [
+            50007,
+            1017,
+            2128,
+            18147
+          ],
+          "accuracy": 0.9558899844317592,
+          "precision": 0.9469317470256732,
+          "recall": 0.8950431565967941,
+          "f1": 0.9202565987981439
+        },
+        "new_benign_seed_alerts": 0,
+        "eligible": true
+      },
+      {
+        "cutoff": 0.9,
+        "metrics": {
+          "confusion_matrix_tn_fp_fn_tp": [
+            50031,
+            993,
+            2151,
+            18124
+          ],
+          "accuracy": 0.9559040098739112,
+          "precision": 0.9480567034576555,
+          "recall": 0.893908754623921,
+          "f1": 0.920186839967506
+        },
+        "new_benign_seed_alerts": 0,
+        "eligible": true
+      },
+      {
+        "cutoff": 0.95,
+        "metrics": {
+          "confusion_matrix_tn_fp_fn_tp": [
+            50044,
+            980,
+            2167,
+            18108
+          ],
+          "accuracy": 0.9558619335474551,
+          "precision": 0.9486588432523051,
+          "recall": 0.8931196054254007,
+          "f1": 0.9200518253181922
+        },
+        "new_benign_seed_alerts": 0,
+        "eligible": true
+      },
+      {
+        "cutoff": 0.975,
+        "metrics": {
+          "confusion_matrix_tn_fp_fn_tp": [
+            50046,
+            978,
+            2171,
+            18104
+          ],
+          "accuracy": 0.955833882663151,
+          "precision": 0.9487475107431087,
+          "recall": 0.8929223181257706,
+          "f1": 0.9199888202860991
+        },
+        "new_benign_seed_alerts": 0,
+        "eligible": true
+      },
+      {
+        "cutoff": 0.99,
+        "metrics": {
+          "confusion_matrix_tn_fp_fn_tp": [
+            50046,
+            978,
+            2171,
+            18104
+          ],
+          "accuracy": 0.955833882663151,
+          "precision": 0.9487475107431087,
+          "recall": 0.8929223181257706,
+          "f1": 0.9199888202860991
+        },
+        "new_benign_seed_alerts": 0,
+        "eligible": true
+      },
+      {
+        "cutoff": 1.01,
+        "metrics": {
+          "confusion_matrix_tn_fp_fn_tp": [
+            50046,
+            978,
+            2171,
+            18104
+          ],
+          "accuracy": 0.955833882663151,
+          "precision": 0.9487475107431087,
+          "recall": 0.8929223181257706,
+          "f1": 0.9199888202860991
+        },
+        "new_benign_seed_alerts": 0,
+        "eligible": true
+      }
+    ],
+    "estimates_are_training_selection_not_independent_test": true
+  },
+  "sigmoid_rejected": {
+    "raw": {
+      "rows": 3000,
+      "labels": {
+        "1": 978,
+        "0": 2022
+      },
+      "brier": 0.03628517214774495,
+      "log_loss": 0.1331798282268655,
+      "ece_10_bins": 0.01878761219232746
+    },
+    "calibrated": {
+      "rows": 3000,
+      "labels": {
+        "1": 978,
+        "0": 2022
+      },
+      "brier": 0.036115236084542354,
+      "log_loss": 0.1363017609853254,
+      "ece_10_bins": 0.010701369471495699
+    },
+    "gate_pass": false,
+    "calibration_fit_rows": 3000,
+    "disjoint_validation_rows": 3000,
+    "base_models_refitted": false,
+    "source_labels_not_expert_verified": true,
+    "sms_gate_inherited": true
+  },
+  "calibration": {
+    "method": "temperature",
+    "raw": {
+      "rows": 3000,
+      "labels": {
+        "1": 978,
+        "0": 2022
+      },
+      "brier": 0.03628517214774495,
+      "log_loss": 0.1331798282268655,
+      "ece_10_bins": 0.01878761219232746
+    },
+    "calibrated": {
+      "rows": 3000,
+      "labels": {
+        "1": 978,
+        "0": 2022
+      },
+      "brier": 0.03589042434663619,
+      "log_loss": 0.13060172444540163,
+      "ece_10_bins": 0.012114856085571602
+    },
+    "gate_pass": true,
+    "calibration_fit_rows": 3000,
+    "disjoint_validation_rows": 3000,
+    "calibration_validation_used_for_method_selection": true,
+    "family_candidates_seen": [
+      "sigmoid",
+      "temperature"
+    ],
+    "fresh_test_used": false,
+    "raw_heads_and_gate_refitted": false,
+    "source_labels_not_expert_verified": true,
+    "sms_gate_inherited": true
+  },
+  "evaluation": {
+    "bundle_sha256": "26373a849458c95c3bfea30f73e93be7460e7a2b314a5ece80a71fa890efd008",
+    "metrics": {
+      "fresh": {
+        "parent": {
+          "rows": 4000,
+          "threshold": 0.5,
+          "labels": {
+            "1": 1293,
+            "0": 2707
+          },
+          "confusion_matrix_tn_fp_fn_tp": [
+            2640,
+            67,
+            366,
+            927
+          ],
+          "precision": 0.9325955734406438,
+          "recall": 0.7169373549883991,
+          "f1": 0.8106689986882378,
+          "accuracy": 0.89175,
+          "balanced_accuracy": 0.8460933542581448,
+          "accuracy_wilson_95ci": [
+            0.8817430326588235,
+            0.9010052435236956
+          ],
+          "accuracy_above_95": false,
+          "majority_class_accuracy": 0.67675
+        },
+        "primary": {
+          "rows": 4000,
+          "threshold": 0.5,
+          "labels": {
+            "1": 1293,
+            "0": 2707
+          },
+          "confusion_matrix_tn_fp_fn_tp": [
+            2661,
+            46,
+            150,
+            1143
+          ],
+          "precision": 0.9613120269133726,
+          "recall": 0.8839907192575406,
+          "f1": 0.9210314262691378,
+          "accuracy": 0.951,
+          "balanced_accuracy": 0.9334988690487924,
+          "accuracy_wilson_95ci": [
+            0.9438668183415736,
+            0.9572677638111157
+          ],
+          "accuracy_above_95": true,
+          "majority_class_accuracy": 0.67675
+        },
+        "candidate": {
+          "rows": 4000,
+          "threshold": 0.5,
+          "labels": {
+            "1": 1293,
+            "0": 2707
+          },
+          "confusion_matrix_tn_fp_fn_tp": [
+            2659,
+            48,
+            145,
+            1148
+          ],
+          "precision": 0.959866220735786,
+          "recall": 0.8878576952822892,
+          "f1": 0.9224588188027321,
+          "accuracy": 0.95175,
+          "balanced_accuracy": 0.9350629444272547,
+          "accuracy_wilson_95ci": [
+            0.9446647029553098,
+            0.957968440032445
+          ],
+          "accuracy_above_95": true,
+          "majority_class_accuracy": 0.67675
+        }
+      },
+      "previous_fresh_reused": {
+        "parent": {
+          "rows": 4000,
+          "threshold": 0.5,
+          "labels": {
+            "0": 2670,
+            "1": 1330
+          },
+          "confusion_matrix_tn_fp_fn_tp": [
+            2575,
+            95,
+            332,
+            998
+          ],
+          "precision": 0.9130832570905764,
+          "recall": 0.750375939849624,
+          "f1": 0.8237721832439125,
+          "accuracy": 0.89325,
+          "balanced_accuracy": 0.8573977077525274,
+          "accuracy_wilson_95ci": [
+            0.8833003673763403,
+            0.9024450304763095
+          ],
+          "accuracy_above_95": false,
+          "majority_class_accuracy": 0.6675
+        },
+        "primary": {
+          "rows": 4000,
+          "threshold": 0.5,
+          "labels": {
+            "0": 2670,
+            "1": 1330
+          },
+          "confusion_matrix_tn_fp_fn_tp": [
+            2619,
+            51,
+            134,
+            1196
+          ],
+          "precision": 0.9591018444266239,
+          "recall": 0.8992481203007519,
+          "f1": 0.9282110981761739,
+          "accuracy": 0.95375,
+          "balanced_accuracy": 0.9400734983526231,
+          "accuracy_wilson_95ci": [
+            0.9467945705265916,
+            0.9598347346880044
+          ],
+          "accuracy_above_95": true,
+          "majority_class_accuracy": 0.6675
+        },
+        "candidate": {
+          "rows": 4000,
+          "threshold": 0.5,
+          "labels": {
+            "0": 2670,
+            "1": 1330
+          },
+          "confusion_matrix_tn_fp_fn_tp": [
+            2611,
+            59,
+            128,
+            1202
+          ],
+          "precision": 0.9532117367168914,
+          "recall": 0.9037593984962407,
+          "f1": 0.9278270937861829,
+          "accuracy": 0.95325,
+          "balanced_accuracy": 0.9408310101095436,
+          "accuracy_wilson_95ci": [
+            0.9462618003207178,
+            0.9593684643371679
+          ],
+          "accuracy_above_95": true,
+          "majority_class_accuracy": 0.6675
+        }
+      },
+      "historical_reused": {
+        "parent": {
+          "rows": 9935,
+          "threshold": 0.5,
+          "labels": {
+            "1": 2230,
+            "0": 7705
+          },
+          "confusion_matrix_tn_fp_fn_tp": [
+            7545,
+            160,
+            606,
+            1624
+          ],
+          "precision": 0.9103139013452914,
+          "recall": 0.7282511210762331,
+          "f1": 0.8091679123069258,
+          "accuracy": 0.9228988424760947,
+          "balanced_accuracy": 0.8537426922707577,
+          "accuracy_wilson_95ci": [
+            0.9174885391100546,
+            0.927982236816486
+          ],
+          "accuracy_above_95": false,
+          "majority_class_accuracy": 0.7755410166079517
+        },
+        "primary": {
+          "rows": 9935,
+          "threshold": 0.5,
+          "labels": {
+            "1": 2230,
+            "0": 7705
+          },
+          "confusion_matrix_tn_fp_fn_tp": [
+            7574,
+            131,
+            264,
+            1966
+          ],
+          "precision": 0.9375298044825942,
+          "recall": 0.8816143497757848,
+          "f1": 0.9087127339958401,
+          "accuracy": 0.9602415702063413,
+          "balanced_accuracy": 0.9323062014939923,
+          "accuracy_wilson_95ci": [
+            0.9562182051463961,
+            0.9639091595862246
+          ],
+          "accuracy_above_95": true,
+          "majority_class_accuracy": 0.7755410166079517
+        },
+        "candidate": {
+          "rows": 9935,
+          "threshold": 0.5,
+          "labels": {
+            "1": 2230,
+            "0": 7705
+          },
+          "confusion_matrix_tn_fp_fn_tp": [
+            7565,
+            140,
+            258,
+            1972
+          ],
+          "precision": 0.9337121212121212,
+          "recall": 0.884304932735426,
+          "f1": 0.9083371718102257,
+          "accuracy": 0.9599396074484147,
+          "balanced_accuracy": 0.933067456633774,
+          "accuracy_wilson_95ci": [
+            0.9559024258335433,
+            0.9636212468063057
+          ],
+          "accuracy_above_95": true,
+          "majority_class_accuracy": 0.7755410166079517
+        }
+      }
+    },
+    "serving": {
+      "qi_score": 94,
+      "qi_action": "BLOCK",
+      "mixed_url_review": true,
+      "mixed_action": "REVIEW",
+      "long_url_score": 59,
+      "bare_facebook_action": "CLEAR",
+      "sms_state_preserved": true
+    },
+    "official_url_checks": [
+      {
+        "domain": "youtube.com",
+        "url": "https://www.youtube.com/",
+        "evidence_url": "https://about.youtube/",
+        "status": "added",
+        "parent_score": 0.3873229192626251,
+        "primary_score": 0.002359716184180777,
+        "candidate_score": 0.002359716184180777
+      },
+      {
+        "domain": "facebook.com",
+        "url": "https://www.facebook.com/",
+        "evidence_url": "https://about.fb.com/news/2020/05/the-new-facebook-com/",
+        "status": "added",
+        "parent_score": 0.2544498543275971,
+        "primary_score": 0.011668193244367983,
+        "candidate_score": 0.011668193244367983
+      },
+      {
+        "domain": "google.com",
+        "url": "https://www.google.com/",
+        "evidence_url": "https://www.google.com/",
+        "status": "reserved_domain",
+        "parent_score": 0.34553616796333786,
+        "primary_score": 0.016807552780639615,
+        "candidate_score": 0.016807552780639615
+      },
+      {
+        "domain": "microsoft.com",
+        "url": "https://www.microsoft.com/vi-vn/",
+        "evidence_url": "https://www.microsoft.com/vi-vn/",
+        "status": "reserved_domain",
+        "parent_score": 0.1430994318585142,
+        "primary_score": 0.033292363182382365,
+        "candidate_score": 0.033292363182382365
+      },
+      {
+        "domain": "apple.com",
+        "url": "https://www.apple.com/vn/contact/",
+        "evidence_url": "https://www.apple.com/vn/contact/",
+        "status": "reserved_domain",
+        "parent_score": 0.059549116505333746,
+        "primary_score": 0.061546105737092155,
+        "candidate_score": 0.061546105737092155
+      },
+      {
+        "domain": "zalo.me",
+        "url": "https://zalo.me/pc",
+        "evidence_url": "https://zalo.me/pc",
+        "status": "added",
+        "parent_score": 0.7519576669353225,
+        "primary_score": 0.28925024183215203,
+        "candidate_score": 0.28925024183215203
+      },
+      {
+        "domain": "shopee.vn",
+        "url": "https://shopee.vn/",
+        "evidence_url": "https://shopee.vn/",
+        "status": "added",
+        "parent_score": 0.4834552474039878,
+        "primary_score": 0.13575191787114652,
+        "candidate_score": 0.13575191787114652
+      },
+      {
+        "domain": "tiki.vn",
+        "url": "https://tiki.vn/",
+        "evidence_url": "https://tiki.vn/",
+        "status": "added",
+        "parent_score": 0.46756403630106647,
+        "primary_score": 0.06556320088207117,
+        "candidate_score": 0.06556320088207117
+      },
+      {
+        "domain": "vietcombank.com.vn",
+        "url": "https://www.vietcombank.com.vn/",
+        "evidence_url": "https://www.vietcombank.com.vn/",
+        "status": "added",
+        "parent_score": 0.7756288327780889,
+        "primary_score": 0.1505522902249887,
+        "candidate_score": 0.1505522902249887
+      },
+      {
+        "domain": "bidv.com.vn",
+        "url": "https://bidv.com.vn/",
+        "evidence_url": "https://bidv.com.vn/",
+        "status": "added",
+        "parent_score": 0.0941052810799894,
+        "primary_score": 0.13291802327784058,
+        "candidate_score": 0.13291802327784058
+      },
+      {
+        "domain": "momo.vn",
+        "url": "https://www.momo.vn/",
+        "evidence_url": "https://www.momo.vn/",
+        "status": "added",
+        "parent_score": 0.6382596817003242,
+        "primary_score": 0.07433650383342726,
+        "candidate_score": 0.07433650383342726
+      },
+      {
+        "domain": "dichvucong.gov.vn",
+        "url": "https://dichvucong.gov.vn/p/home/dvc-tthc-category.html",
+        "evidence_url": "https://dichvucong.gov.vn/p/home/dvc-tthc-category.html",
+        "status": "added",
+        "parent_score": 0.011294116470444664,
+        "primary_score": 0.00307573372484253,
+        "candidate_score": 0.00307573372484253
+      },
+      {
+        "domain": "wikipedia.org",
+        "url": "https://www.wikipedia.org/",
+        "evidence_url": "https://www.wikipedia.org/",
+        "status": "reserved_domain",
+        "parent_score": 0.08321336444960047,
+        "primary_score": 0.0007017213024596699,
+        "candidate_score": 0.0007017213024596699
+      },
+      {
+        "domain": "vnexpress.net",
+        "url": "https://vnexpress.net/",
+        "evidence_url": "https://vnexpress.net/",
+        "status": "added",
+        "parent_score": 0.22319391859584828,
+        "primary_score": 0.02131951205885983,
+        "candidate_score": 0.02131951205885983
+      }
+    ],
+    "serving_gate_pass": true,
+    "fresh_accuracy_above_95": true,
+    "historical_nonregression_gate_pass": true,
+    "source_labels_not_expert_verified": true,
+    "new_test_is_same_source_not_external_benchmark": true,
+    "numerical_gates_pass": true
+  },
+  "api_verification": {
+    "exit_code": 0,
+    "tests_passed": 17,
+    "bundle_sha256": "26373a849458c95c3bfea30f73e93be7460e7a2b314a5ece80a71fa890efd008",
+    "manifest_sha256": "b14bd6e155354321398b676ac2a3c7a0ce9d623e7a4ade176d0629efc374e1ac",
+    "server": "standalone production build on 127.0.0.1:3109",
+    "test_scripts_sha256": {
+      "scripts/analyze.integration.test.mjs": "9c74279b884d93956eb1139f00f74dbdb3db05ab415338d7ca452d8bd1efa70b",
+      "scripts/api-security.integration.test.mjs": "06278aeb8275f928a7bb382e7756f975ad4138f8ff65ffd9ac1f9057997e4c40"
+    }
+  },
+  "independent_audit": {
+    "source_rows_traced": 10000,
+    "label_url_source_trace_pass": true,
+    "expert_labels_created": 0,
+    "calibration_test_owner_overlap": 0,
+    "base_model_reserved_owner_overlap": 0,
+    "old_test_reserved_owner_overlap": 0,
+    "regression_domain_present_in_fitting": false,
+    "regression_domain_present_in_calibration": false,
+    "fresh_rows": 4000,
+    "fresh_owners": 3740,
+    "fresh_accuracy": 0.95175,
+    "owner_cluster_bootstrap_95ci": [
+      0.9447059689217044,
+      0.9580297012098931
+    ],
+    "bootstrap_repeats": 1000,
+    "seed": 42,
+    "deployed_local_bundle_sha256": "26373a849458c95c3bfea30f73e93be7460e7a2b314a5ece80a71fa890efd008",
+    "deployed_manifest_matches_candidate": true,
+    "remote_deployment": false,
+    "audit_code_sha256": "43584911ee5052d5792fafcf46f7e4dbf9c7d7e2f71587b8af0bf0ce8c65af86"
+  },
+  "activation": {
+    "activated": "url-ensemble-20261027",
+    "bundle_sha256": "26373a849458c95c3bfea30f73e93be7460e7a2b314a5ece80a71fa890efd008",
+    "manifest_sha256": "b14bd6e155354321398b676ac2a3c7a0ce9d623e7a4ade176d0629efc374e1ac",
+    "api_verification_sha256": "89cd46c66762c441e1d98cc3d281b59d2ab9b8b21d26e602281e895215a5bdac",
+    "backup": "C:\\Users\\PV\\OneDrive\\Documents\\ChatGPT\\ScamGuard-AI\\ml_model\\data\\prepared\\url_regression_repair_final_2026-10-27\\previous_active",
+    "remote_deployment": false
+  },
+  "verification": {
+    "python_tests_passed": 136,
+    "javascript_tests_passed": 47,
+    "candidate_api_tests_passed": 17,
+    "active_inference_lifecycle_tests_passed": 3,
+    "total_checks_passed": 203,
+    "lint": "pass",
+    "build": "pass",
+    "types": "pass"
+  }
+}

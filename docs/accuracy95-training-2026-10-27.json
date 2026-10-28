@@ -1,0 +1,508 @@
+{
+  "status": "observed_fresh_accuracy_above_95_candidate_not_activated_serving_regression",
+  "data_preparation": {
+    "new_train": 40000,
+    "total_url_train": 71309,
+    "fresh_test": 4000,
+    "fresh_labels": {
+      "0": 2670,
+      "1": 1330
+    },
+    "excluded_owner_domains": 77966,
+    "new_train_labels": {
+      "0": 26773,
+      "1": 13227
+    },
+    "source_audit": {
+      "raw_rows": 549346,
+      "candidate_rows": 502428,
+      "quarantined_rows": 5158,
+      "conflicting_groups": 1,
+      "conflicting_rows": 3,
+      "duplicates_removed": 41760,
+      "repaired_source_rows": 39
+    },
+    "fresh_expert_verified": false,
+    "same_source_as_training": true,
+    "not_external_independent_benchmark": true,
+    "fresh_ever_fitted": false,
+    "inputs_sha256": {
+      "data\\phishing_site_urls.csv": "b1a7c26b354632c80817e10af154c4e5007f9480fb43a8ac2730491500fa2780",
+      "data\\prepared\\repaired_training_2026-10-26-icann\\all_rows.jsonl": "c7a8d5b54a47400d48d07c232e9a1728753160f8d9edf57159e7e60297d77b6c",
+      "data\\urls_preprocessed.csv": "fa1876640d8e361f2a0bf2702eb13daabe054b484ec058fe2ee3ea20c1b76335",
+      "data\\smishing_preprocessed.csv": "b401a4707e335c758727aae90c79e85a08cf20cc5d227dc319b2828e96f6b8c7",
+      "data\\prepared\\external_training_2026-10-25\\sms_additional_smishing_review.jsonl": "e896ce91a61f26cbcd0148b85f87f9d0d87a39705106c2054f9310605e7e96f5",
+      "data\\prepared\\external_training_2026-10-25\\sms_quarantine.jsonl": "2929b03817a52134ab72e5dc6d129c8644354ec3c311c3b65866b0970f0b1b28",
+      "data\\prepared\\external_training_2026-10-25\\sms_semantic_review_sample.jsonl": "4efe1caf8e574e371867ee9d689d2c83f525a05f01682e3d5231c1c8cc39f60c",
+      "data\\prepared\\external_training_2026-10-25\\sms_test.jsonl": "12bc06782b452d82cb2cd932ea775d5d38db04946021391a5136ef0a055709c5",
+      "data\\prepared\\external_training_2026-10-25\\sms_train.jsonl": "25a53dac701d616df84a994e4c251417e3dba7bbedfa9e964841d2282c2e72dc",
+      "data\\prepared\\external_training_2026-10-25\\sms_validation.jsonl": "b17a9d8d13871399b4f5aa217af5c5acc9a1e2d6ba6dd674e56134e0170df0ba",
+      "data\\prepared\\external_training_2026-10-25\\url_human_audit_all_200.jsonl": "fc627598e9efa73cc965e3e0dd628b7b2aa5a173c87e48f7899fd644da05951c",
+      "data\\prepared\\external_training_2026-10-25\\url_human_strict_test.jsonl": "10346118fc0ee1f7eba59bfd972fa20d06ec0b1fb956e29ca27c7d4d9f8663ff",
+      "data\\prepared\\external_training_2026-10-25\\url_quarantine.jsonl": "ff2e5edc378efa02bde68ae110eda862bce52fa4aa0ff91acf41439bfea90b1f",
+      "data\\prepared\\external_training_2026-10-25\\url_test.jsonl": "2a53d5b35751f3fa899ee33ea6dd177ee779f624783d4752c3f9c0523b0c1209",
+      "data\\prepared\\external_training_2026-10-25\\url_train.jsonl": "c1dc5744c29f42c46278d384dd070fc445c60a0b1eec315e88d1b5ff0581fee3",
+      "data\\prepared\\external_training_2026-10-25\\url_validation.jsonl": "715209d3143132ce5d4c7acd50f8297573c3856c8ddde94339e07cc5ce838786"
+    },
+    "files_sha256": {
+      "fit_rows.jsonl": "d70041f83d47a69ddcda37a003889c56193cbc8b9acf31e46bb723a6994e5024",
+      "fresh_test.jsonl": "82741b8fbb0e7d43716abfbb9d64ee9cda392ca033fe4ccd4189340452dda3c4",
+      "parent_bundle.pkl": "6a0fd38b35570bff4b0ae56dd52a07747a6670d3dc2eceda304e1f10898314d0",
+      "parent_manifest.json": "a3686ebcb5e268e1e1917483f5962d75500b64dd76491a818aad1a6d1a0f0377",
+      "seeds.json": "20359fe36a1668aa713de6fa993906fd565220b7db50204dbb27efad6b32e1cd",
+      "seed_decisions.json": "d338bc583045732dcee3d3a9ef87c71950f4f47baf0df2db1bb21a2cd7fa2acf",
+      "sms_fit_rows.jsonl": "14ba54a040b08b7b3793eeeb44dd97a794e43c87e7b3e4f34425a98269f7b006",
+      "url_fit_rows.jsonl": "c47b8939ef4ef5c2d67b2e72f2ba7775be335c6889bea8c695afd8ab164f72d8",
+      "url_test.jsonl": "c01b3adb3d1ebcb407d929fd8c1907f2183b95c3fc8dde8cdfabe1eb9b0dd030"
+    }
+  },
+  "selection": {
+    "reference": {
+      "rows": 71309,
+      "threshold": 0.5,
+      "labels": {
+        "0": 51034,
+        "1": 20275
+      },
+      "confusion_matrix_tn_fp_fn_tp": [
+        49944,
+        1090,
+        4730,
+        15545
+      ],
+      "precision": 0.9344755034565675,
+      "recall": 0.7667077681874229,
+      "f1": 0.8423191547006231,
+      "accuracy": 0.9183833737676871,
+      "balanced_accuracy": 0.8726747290206229,
+      "accuracy_wilson_95ci": [
+        0.9163513139735809,
+        0.9203703588608357
+      ],
+      "accuracy_above_95": false,
+      "majority_class_accuracy": 0.7156740383401815
+    },
+    "candidates": {
+      "wide_lr_c1": {
+        "rows": 71309,
+        "threshold": 0.5,
+        "labels": {
+          "0": 51034,
+          "1": 20275
+        },
+        "confusion_matrix_tn_fp_fn_tp": [
+          50162,
+          872,
+          2798,
+          17477
+        ],
+        "precision": 0.9524769742220285,
+        "recall": 0.8619975339087547,
+        "f1": 0.9049813587406794,
+        "accuracy": 0.9485338456576309,
+        "balanced_accuracy": 0.9224554428959065,
+        "accuracy_wilson_95ci": [
+          0.9468878752090708,
+          0.9501314931320244
+        ],
+        "accuracy_above_95": false,
+        "majority_class_accuracy": 0.7156740383401815
+      },
+      "wide_lr_c4": {
+        "rows": 71309,
+        "threshold": 0.5,
+        "labels": {
+          "0": 51034,
+          "1": 20275
+        },
+        "confusion_matrix_tn_fp_fn_tp": [
+          50055,
+          979,
+          2171,
+          18104
+        ],
+        "precision": 0.9486977938479275,
+        "recall": 0.8929223181257706,
+        "f1": 0.9199654453986483,
+        "accuracy": 0.955826052812408,
+        "balanced_accuracy": 0.9368695142770562,
+        "accuracy_wilson_95ci": [
+          0.9542931756603029,
+          0.9573098213614771
+        ],
+        "accuracy_above_95": true,
+        "majority_class_accuracy": 0.7156740383401815
+      },
+      "numeric_trees": {
+        "rows": 71309,
+        "threshold": 0.5,
+        "labels": {
+          "0": 51034,
+          "1": 20275
+        },
+        "confusion_matrix_tn_fp_fn_tp": [
+          46122,
+          4912,
+          7348,
+          12927
+        ],
+        "precision": 0.7246482426144963,
+        "recall": 0.6375832305795315,
+        "f1": 0.6783334207902608,
+        "accuracy": 0.8280721928508323,
+        "balanced_accuracy": 0.7706668357310402,
+        "accuracy_wilson_95ci": [
+          0.8252851551856594,
+          0.8308238855264277
+        ],
+        "accuracy_above_95": false,
+        "majority_class_accuracy": 0.7156740383401815
+      },
+      "svd_boost": {
+        "rows": 71309,
+        "threshold": 0.5,
+        "labels": {
+          "0": 51034,
+          "1": 20275
+        },
+        "confusion_matrix_tn_fp_fn_tp": [
+          49403,
+          1631,
+          3250,
+          17025
+        ],
+        "precision": 0.9125750428816467,
+        "recall": 0.8397040690505548,
+        "f1": 0.8746243353625646,
+        "accuracy": 0.9315514170721788,
+        "balanced_accuracy": 0.9038724914755458,
+        "accuracy_wilson_95ci": [
+          0.9296747069298988,
+          0.9333816338490625
+        ],
+        "accuracy_above_95": false,
+        "majority_class_accuracy": 0.7156740383401815
+      }
+    },
+    "winner": "wide_lr_c4",
+    "target_selection_gate_pass": true,
+    "selection_estimate_has_selection_bias": true
+  },
+  "calibration": {
+    "raw": {
+      "rows": 71309,
+      "labels": {
+        "0": 51034,
+        "1": 20275
+      },
+      "brier": 0.03541365335505871,
+      "log_loss": 0.131955462535496,
+      "ece_10_bins": 0.021659632948811236
+    },
+    "calibrated": {
+      "rows": 71309,
+      "labels": {
+        "0": 51034,
+        "1": 20275
+      },
+      "brier": 0.03432637377787778,
+      "log_loss": 0.12648090373822382,
+      "ece_10_bins": 0.0029790554352706416
+    },
+    "gate_pass": true,
+    "selection_bias_possible": true,
+    "sms_gate_inherited": true,
+    "fit_seconds": 397.354
+  },
+  "evaluation": {
+    "bundle_sha256": "cb64212f5bec259ac8ad62b3c701fd9119fb46cd50091a333f5e3800b6ca9e62",
+    "metrics": {
+      "fresh": {
+        "baseline": {
+          "rows": 4000,
+          "threshold": 0.5,
+          "labels": {
+            "0": 2670,
+            "1": 1330
+          },
+          "confusion_matrix_tn_fp_fn_tp": [
+            2575,
+            95,
+            332,
+            998
+          ],
+          "precision": 0.9130832570905764,
+          "recall": 0.750375939849624,
+          "f1": 0.8237721832439125,
+          "accuracy": 0.89325,
+          "balanced_accuracy": 0.8573977077525274,
+          "accuracy_wilson_95ci": [
+            0.8833003673763403,
+            0.9024450304763095
+          ],
+          "accuracy_above_95": false,
+          "majority_class_accuracy": 0.6675
+        },
+        "candidate": {
+          "rows": 4000,
+          "threshold": 0.5,
+          "labels": {
+            "0": 2670,
+            "1": 1330
+          },
+          "confusion_matrix_tn_fp_fn_tp": [
+            2619,
+            51,
+            134,
+            1196
+          ],
+          "precision": 0.9591018444266239,
+          "recall": 0.8992481203007519,
+          "f1": 0.9282110981761739,
+          "accuracy": 0.95375,
+          "balanced_accuracy": 0.9400734983526231,
+          "accuracy_wilson_95ci": [
+            0.9467945705265916,
+            0.9598347346880044
+          ],
+          "accuracy_above_95": true,
+          "majority_class_accuracy": 0.6675
+        }
+      },
+      "historical": {
+        "baseline": {
+          "rows": 9935,
+          "threshold": 0.5,
+          "labels": {
+            "1": 2230,
+            "0": 7705
+          },
+          "confusion_matrix_tn_fp_fn_tp": [
+            7545,
+            160,
+            606,
+            1624
+          ],
+          "precision": 0.9103139013452914,
+          "recall": 0.7282511210762331,
+          "f1": 0.8091679123069258,
+          "accuracy": 0.9228988424760947,
+          "balanced_accuracy": 0.8537426922707577,
+          "accuracy_wilson_95ci": [
+            0.9174885391100546,
+            0.927982236816486
+          ],
+          "accuracy_above_95": false,
+          "majority_class_accuracy": 0.7755410166079517
+        },
+        "candidate": {
+          "rows": 9935,
+          "threshold": 0.5,
+          "labels": {
+            "1": 2230,
+            "0": 7705
+          },
+          "confusion_matrix_tn_fp_fn_tp": [
+            7574,
+            131,
+            264,
+            1966
+          ],
+          "precision": 0.9375298044825942,
+          "recall": 0.8816143497757848,
+          "f1": 0.9087127339958401,
+          "accuracy": 0.9602415702063413,
+          "balanced_accuracy": 0.9323062014939923,
+          "accuracy_wilson_95ci": [
+            0.9562182051463961,
+            0.9639091595862246
+          ],
+          "accuracy_above_95": true,
+          "majority_class_accuracy": 0.7755410166079517
+        }
+      }
+    },
+    "official_url_checks": [
+      {
+        "domain": "youtube.com",
+        "url": "https://www.youtube.com/",
+        "evidence_url": "https://about.youtube/",
+        "status": "added",
+        "baseline_score": 0.3873229192626251,
+        "candidate_score": 0.002359716184180777
+      },
+      {
+        "domain": "facebook.com",
+        "url": "https://www.facebook.com/",
+        "evidence_url": "https://about.fb.com/news/2020/05/the-new-facebook-com/",
+        "status": "added",
+        "baseline_score": 0.2544498543275971,
+        "candidate_score": 0.011668193244367983
+      },
+      {
+        "domain": "google.com",
+        "url": "https://www.google.com/",
+        "evidence_url": "https://www.google.com/",
+        "status": "reserved_domain",
+        "baseline_score": 0.34553616796333786,
+        "candidate_score": 0.016807552780639615
+      },
+      {
+        "domain": "microsoft.com",
+        "url": "https://www.microsoft.com/vi-vn/",
+        "evidence_url": "https://www.microsoft.com/vi-vn/",
+        "status": "reserved_domain",
+        "baseline_score": 0.1430994318585142,
+        "candidate_score": 0.033292363182382365
+      },
+      {
+        "domain": "apple.com",
+        "url": "https://www.apple.com/vn/contact/",
+        "evidence_url": "https://www.apple.com/vn/contact/",
+        "status": "reserved_domain",
+        "baseline_score": 0.059549116505333746,
+        "candidate_score": 0.061546105737092155
+      },
+      {
+        "domain": "zalo.me",
+        "url": "https://zalo.me/pc",
+        "evidence_url": "https://zalo.me/pc",
+        "status": "added",
+        "baseline_score": 0.7519576669353225,
+        "candidate_score": 0.28925024183215203
+      },
+      {
+        "domain": "shopee.vn",
+        "url": "https://shopee.vn/",
+        "evidence_url": "https://shopee.vn/",
+        "status": "added",
+        "baseline_score": 0.4834552474039878,
+        "candidate_score": 0.13575191787114652
+      },
+      {
+        "domain": "tiki.vn",
+        "url": "https://tiki.vn/",
+        "evidence_url": "https://tiki.vn/",
+        "status": "added",
+        "baseline_score": 0.46756403630106647,
+        "candidate_score": 0.06556320088207117
+      },
+      {
+        "domain": "vietcombank.com.vn",
+        "url": "https://www.vietcombank.com.vn/",
+        "evidence_url": "https://www.vietcombank.com.vn/",
+        "status": "added",
+        "baseline_score": 0.7756288327780889,
+        "candidate_score": 0.1505522902249887
+      },
+      {
+        "domain": "bidv.com.vn",
+        "url": "https://bidv.com.vn/",
+        "evidence_url": "https://bidv.com.vn/",
+        "status": "added",
+        "baseline_score": 0.0941052810799894,
+        "candidate_score": 0.13291802327784058
+      },
+      {
+        "domain": "momo.vn",
+        "url": "https://www.momo.vn/",
+        "evidence_url": "https://www.momo.vn/",
+        "status": "added",
+        "baseline_score": 0.6382596817003242,
+        "candidate_score": 0.07433650383342726
+      },
+      {
+        "domain": "dichvucong.gov.vn",
+        "url": "https://dichvucong.gov.vn/p/home/dvc-tthc-category.html",
+        "evidence_url": "https://dichvucong.gov.vn/p/home/dvc-tthc-category.html",
+        "status": "added",
+        "baseline_score": 0.011294116470444664,
+        "candidate_score": 0.00307573372484253
+      },
+      {
+        "domain": "wikipedia.org",
+        "url": "https://www.wikipedia.org/",
+        "evidence_url": "https://www.wikipedia.org/",
+        "status": "reserved_domain",
+        "baseline_score": 0.08321336444960047,
+        "candidate_score": 0.0007017213024596699
+      },
+      {
+        "domain": "vnexpress.net",
+        "url": "https://vnexpress.net/",
+        "evidence_url": "https://vnexpress.net/",
+        "status": "added",
+        "baseline_score": 0.22319391859584828,
+        "candidate_score": 0.02131951205885983
+      }
+    ],
+    "source_labels_not_expert_verified": true,
+    "fresh_test_previously_unused_by_these_fits": true,
+    "historical_diagnostic_reused": true,
+    "new_external_independent_benchmark": false,
+    "fresh_accuracy_above_95": true,
+    "historical_nonregression_gate_pass": true,
+    "serving_checks": {
+      "qi_score": 27,
+      "qi_action": "CLEAR",
+      "mixed_url_review_required": false,
+      "mixed_action": "CLEAR",
+      "long_url_score": 59,
+      "sms_head_byte_identical": false
+    },
+    "serving_gate_pass": false,
+    "eligible_for_activation": false
+  },
+  "trace_audit": {
+    "added_source_rows_traced": 40000,
+    "fresh_source_rows_traced": 4000,
+    "labels_and_repaired_urls_match_original_source": true,
+    "expert_labels_created": 0,
+    "train_owner_domains": 54290,
+    "fresh_owner_domains": 3764,
+    "train_fresh_owner_overlap": 0,
+    "legacy_selected_fresh_owner_overlap": 0,
+    "fresh_rows_fitted": 0,
+    "pinned_psl_verified": true,
+    "active_bundle_unchanged": true,
+    "data_manifest_sha256": "05148b71e05b3153e0e49bb4008c911a197c50f1c1c45e12ede99e01d80df315",
+    "audit_code_sha256": "fd7ac79cd770f19a8bc8bc24c5748b96fb64468e97369bbd1d09884aa89a93ba"
+  },
+  "fresh_group_interval": {
+    "owner_domain_groups": 3764,
+    "rows": 4000,
+    "accuracy": 0.95375,
+    "owner_cluster_bootstrap_95ci": [
+      0.9470504456377412,
+      0.9600204955325805
+    ],
+    "bootstrap_repeats": 1000,
+    "seed": 42,
+    "source_labels_not_expert_verified": true,
+    "eval_sha256": "070f0d82024d822101720abdeb437a29002e819f817192da29b2943e9788f6b1",
+    "code_sha256": "872c1b619850772bf3cbc5addc2c942fb66c4e4e855425ec9caf0cbd8711b28f"
+  },
+  "sms_state_audit_correction": {
+    "bundle_sha256": "cb64212f5bec259ac8ad62b3c701fd9119fb46cd50091a333f5e3800b6ca9e62",
+    "sms_exact_serialized_state_matches_before_inference": true,
+    "parent_sms_state_sha256": "4bcd9784c00bf2115a6c4da80b29070462cdfd041c17ede694f008a1c7171129",
+    "candidate_sms_state_sha256": "4bcd9784c00bf2115a6c4da80b29070462cdfd041c17ede694f008a1c7171129",
+    "post_inference_changed_word_vectorizer_attributes": [
+      "_stop_words_id"
+    ],
+    "sms_prediction_scores_equal": true,
+    "trained_sms_weights_unchanged": true,
+    "original_post_inference_pickle_check_was_cache_false_alarm": true,
+    "qi_regression_remains_and_activation_still_blocked": true,
+    "code_sha256": "5b49faceca2f24dcc0cdd48f9ba1759dad757a9dec6719fed02ac6beb5a552a3"
+  },
+  "verification": {
+    "python_tests_passed": 128,
+    "javascript_unit_tests_passed": 47,
+    "lint": "pass",
+    "build": "pass",
+    "types": "pass",
+    "active_model_unchanged": true,
+    "candidate_activated": false
+  }
+}
